@@ -1,0 +1,248 @@
+/* Writer desk refinement: a fixed-height three-column editing table. */
+@media (min-width: 981px) {
+  .i2Desk form {
+    grid-template-columns: 218px minmax(620px, 1fr) 238px;
+  }
+
+  .i2WriterAside {
+    min-height: calc(100dvh - 124px);
+    padding-right: 24px;
+  }
+
+  .i2WriterAsideRight {
+    position: sticky;
+    top: 78px;
+    align-self: start;
+    display: grid;
+    gap: 16px;
+    min-height: calc(100dvh - 124px);
+    padding: 30px 0 28px 23px;
+    border-left: 1px solid var(--line);
+  }
+
+  .i2WriterStage {
+    padding: 0 23px 0;
+  }
+
+  .i2WriterGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: 1.24fr 1fr 1fr;
+    height: calc(100dvh - 170px);
+    margin-top: 16px;
+  }
+
+  .i2WriterCell {
+    min-height: 0;
+  }
+
+  .i2DiaryCell {
+    grid-column: span 2;
+  }
+
+  .i2WriterCell textarea {
+    min-height: 0;
+  }
+
+  .i2WriterAsideRight .i2HabitCell {
+    min-height: 0;
+    max-height: 306px;
+    overflow: auto;
+    border: 1px solid var(--line);
+  }
+
+  .i2WriterAsideRight .i2CellHead {
+    padding: 13px 15px 6px;
+  }
+
+  .i2WriterAsideRight .i2CellHead label {
+    font-size: 17px;
+  }
+
+  .i2WriterAsideRight .i2HabitList {
+    gap: 8px;
+    padding: 7px 15px;
+  }
+
+  .i2WriterAsideRight .i2HabitList label {
+    font-size: 13px;
+  }
+
+  .i2WriterAsideRight .i2HabitNote {
+    min-height: 48px !important;
+    padding: 8px 15px 12px;
+  }
+
+  .i2WriterAsideRight .i2WriterQuick {
+    padding: 2px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .i2WriterAsideRight .i2WriterQuick > span {
+    margin-top: 11px;
+  }
+
+  .i2WriterAsideRight .i2WriterMore {
+    width: auto;
+    margin: 0;
+  }
+
+  .i2WriterAsideRight .i2MoreGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .i2WriterAsideRight .i2WriterPreviewPanel {
+    display: block;
+    margin: 0;
+    border: 1px solid var(--line);
+  }
+
+  .i2WriterAsideRight .i2WriterPreviewPanel section {
+    min-height: 0;
+    padding: 13px 15px;
+    border-right: 0;
+  }
+
+  .i2WriterAsideRight .i2WriterPreviewPanel p {
+    font-size: 13px;
+    line-height: 1.65;
+  }
+
+  .i2WriterLive {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: end;
+    gap: 5px 8px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .i2WriterLive span {
+    grid-column: 1 / -1;
+    color: var(--muted);
+    font: 9px var(--type-mono);
+    letter-spacing: .12em;
+  }
+
+  .i2WriterLive strong {
+    font: 400 38px/.9 var(--type-serif);
+    letter-spacing: -.05em;
+  }
+
+  .i2WriterLive small,
+  .i2WriterLive p {
+    margin: 0;
+    color: var(--muted);
+    font: 9px var(--type-mono);
+  }
+
+  .i2WriterLive p {
+    justify-self: end;
+  }
+
+  .i2DeskFocus form {
+    grid-template-columns: 1fr;
+  }
+
+  .i2DeskFocus .i2WriterAsideRight {
+    display: none;
+  }
+
+  .i2DeskFocus .i2WriterGrid {
+    height: calc(100dvh - 145px);
+  }
+}
+
+@media (min-width: 761px) and (max-width: 980px) {
+  .i2WriterAsideRight {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    padding: 20px 0 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .i2WriterAsideRight .i2HabitCell,
+  .i2WriterAsideRight .i2WriterPreviewPanel,
+  .i2WriterAsideRight .i2WriterQuick,
+  .i2WriterAsideRight .i2WriterMore {
+    margin: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .i2WriterAsideRight {
+    display: grid;
+    gap: 16px;
+    padding: 18px 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .i2WriterLive {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .i2WriterLive span { display: none; }
+  .i2WriterLive strong { font: 400 30px var(--type-serif); }
+  .i2WriterLive small,
+  .i2WriterLive p { margin: 0; color: var(--muted); font: 9px var(--type-mono); }
+  .i2WriterAsideRight .i2WriterMore { width: auto; margin: 0; }
+}
+
+/* Local desk configuration: intentionally compact so it remains part of the
+   writing table instead of becoming a separate settings screen. */
+.i2WriterCell.i2Hidden { display: none; }
+.i2WriterGrid .i2WriterCell textarea:focus,
+.i2WriterGrid .i2WriterCell textarea:focus-visible {
+  /* Keep the caret as the primary writing cue.  The previous browser focus
+     ring looked like a second, oversized cell frame on large diary panels. */
+  outline: none !important;
+  box-shadow: none !important;
+  border-inline-start: 2px solid color-mix(in srgb, var(--dream-accent) 62%, transparent);
+  background: color-mix(in srgb, var(--dream-accent) 3%, transparent);
+  caret-color: var(--dream-accent);
+}
+.i2CellHead { position: relative; }
+.i2CellTune {
+  appearance: none;
+  margin-left: auto;
+  padding: 1px 4px 5px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: 700 15px/1 var(--type-mono);
+  letter-spacing: .08em;
+  cursor: pointer;
+}
+.i2CellTune:hover,.i2CellTune:focus-visible { color: var(--ink); outline: 1px solid var(--line-dark); outline-offset: 2px; }
+.i2CustomCell { min-height: 170px; }
+.i2DeskCellEditor { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.i2DeskCellEditor summary { display: grid; gap: 4px; padding: 13px 0; cursor: pointer; font: 600 13px var(--type-sans); list-style: none; }
+.i2DeskCellEditor summary::-webkit-details-marker { display: none; }
+.i2DeskCellEditor summary::after { content: '+'; position: absolute; right: 0; font: 400 18px/1 var(--type-mono); }
+.i2DeskCellEditor[open] summary::after { content: '−'; }
+.i2DeskCellEditor summary { position: relative; }
+.i2DeskCellEditor summary small,.i2DeskCellEditorBody>p { color: var(--muted); font: 10px/1.55 var(--type-mono); letter-spacing: .02em; }
+.i2DeskCellEditorBody { padding: 0 0 14px; }
+.i2DeskCellEditorBody>p { margin: 0 0 12px; }
+.i2DeskCellRows { display: grid; gap: 9px; max-height: 42vh; overflow: auto; padding-right: 3px; }
+.i2DeskCellRow { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 8px; padding: 10px; border: 1px solid var(--line); background: color-mix(in srgb,var(--paper) 78%,transparent); }
+.i2DeskCellRowTop { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; }
+.i2DeskCellRowTop>label { display: flex; align-items: center; gap: 5px; font-size: 11px; }
+.i2DeskCellRowTop>span { color: var(--muted); font: 9px var(--type-mono); }
+.i2DeskCellRowTop>div { display: flex; gap: 2px; margin-left: auto; }
+.i2DeskCellRowTop button { width: 22px; height: 20px; padding: 0; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; }
+.i2DeskCellRowTop button:disabled { opacity: .35; cursor: default; }
+.i2DeskCellRowTop .i2DeskRemove { color: var(--danger,#9b504c); }
+.i2DeskCellRow>label { display: grid; gap: 3px; color: var(--muted); font: 9px var(--type-mono); }
+.i2DeskCellRow>label:last-child { grid-column: 1 / -1; }
+.i2DeskCellRow .input { min-width: 0; height: 29px; padding: 5px 7px; font: 12px var(--type-sans); }
+.i2DeskCellActions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 11px; }
+.i2DeskCellActions button { min-height: 29px; padding: 5px 8px; border: 1px solid var(--line-dark); background: transparent; color: var(--ink); font: 11px var(--type-sans); cursor: pointer; }
+.i2DeskCellActions .primary { margin-left: auto; }
+@media (max-width: 760px) { .i2DeskCellRows { max-height: none; } .i2DeskCellRow { grid-template-columns: 1fr; } .i2DeskCellRow>label:last-child { grid-column: auto; } }

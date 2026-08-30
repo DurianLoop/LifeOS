@@ -1,0 +1,96 @@
+{
+  "name": "lifeos-v0.1-desktop",
+  "private": true,
+  "version": "0.1.0",
+  "description": "LifeOS V0.1 local-first private journal desktop app",
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder",
+    "dist:win": "electron-builder --win nsis",
+    "dist:mac": "electron-builder --mac dmg zip",
+    "dist:linux": "electron-builder --linux AppImage",
+    "dist:all": "electron-builder -mwl"
+  },
+  "dependencies": {
+    "electron-updater": "^6.6.2"
+  },
+  "devDependencies": {
+    "electron": "^37.2.6",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "life.lifeos.desktop",
+    "productName": "LifeOS",
+    "asar": false,
+    "files": [
+      "**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "../app",
+        "to": "app"
+      },
+      {
+        "from": "../backend",
+        "to": "backend"
+      },
+      {
+        "from": "../engine",
+        "to": "engine"
+      },
+      {
+        "from": "../importers",
+        "to": "importers"
+      },
+      {
+        "from": "../config",
+        "to": "config"
+      },
+      {
+        "from": "../vault",
+        "to": "vault"
+      },
+      {
+        "from": "../data",
+        "to": "data"
+      },
+      {
+        "from": "../connectors",
+        "to": "connectors"
+      },
+      {
+        "from": "server-dist",
+        "to": "server"
+      },
+      {
+        "from": "../marketplace",
+        "to": "marketplace"
+      }
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.lifestyle"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Utility"
+    },
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "${env.LIFEOS_UPDATE_URL}"
+      }
+    ]
+  }
+}

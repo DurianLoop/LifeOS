@@ -1,0 +1,3294 @@
+{
+  "schema": "LifeOS Chinese Cultural Copy System",
+  "version": "lifeos-copy-v1",
+  "generated_at": "2026-08-29",
+  "brand": {
+    "key": "brand",
+    "display_name": "LifeOS · 浮生书",
+    "english": "LifeOS",
+    "subtitle": "把今日写下，让来日重逢。",
+    "body": "一生很长，记忆很轻。把今天落成一页，等许多年后，旧日从字里回来。",
+    "source_key": "li_bai_banquet",
+    "source_type": "意象取材",
+    "notes": "保留 LifeOS 现代品牌；“浮生书”作为中文世界观名，不必替换产品英文名。"
+  },
+  "principles": [
+    {
+      "rule": "诗意负责情绪，功能词负责无歧义",
+      "detail": "“藏本 · 备份”“归来 · 恢复”采用双层命名；用户永远知道按钮会做什么。"
+    },
+    {
+      "rule": "出处必须分级",
+      "detail": "原句 = 真正引用；化用 = 改写古意；意象取材 = 只借意象；原创 = LifeOS 自写。"
+    },
+    {
+      "rule": "不把古典变成玄学",
+      "detail": "AI、分析、图谱只能是观察工具；禁止用“命数、天命、注定”等词替模型推断增加权威感。"
+    },
+    {
+      "rule": "危险操作拒绝浪漫化",
+      "detail": "删除、覆盖、恢复、权限、云上传必须出现明确现代汉语。"
+    },
+    {
+      "rule": "一句只承担一个意象",
+      "detail": "避免“星河、月色、山海、流年”同时堆进一行；长期品牌需要克制。"
+    },
+    {
+      "rule": "核心入口短，副标题清",
+      "detail": "主名尽量 2–4 字；副标题解释为什么值得点，而不是重复功能名。"
+    }
+  ],
+  "navigation": [
+    {
+      "key": "home",
+      "label": "今朝",
+      "assistive": "首页"
+    },
+    {
+      "key": "writer",
+      "label": "落笔",
+      "assistive": "写日记"
+    },
+    {
+      "key": "journal",
+      "label": "流年",
+      "assistive": "浏览日记"
+    },
+    {
+      "key": "on_this_day",
+      "label": "旧信",
+      "assistive": "历史上的今天"
+    },
+    {
+      "key": "search",
+      "label": "寻迹",
+      "assistive": "搜索"
+    },
+    {
+      "key": "ask",
+      "label": "近思",
+      "assistive": "Ask My Life"
+    },
+    {
+      "key": "advanced_lab",
+      "label": "观象阁",
+      "assistive": "高级分析"
+    }
+  ],
+  "onboarding": [
+    {
+      "step": 1,
+      "title": "先落一笔",
+      "subtitle": "不必从自传开始。写今天真正发生的一件小事。",
+      "cta": "写下第一篇",
+      "source_key": "zhouyi_sincerity"
+    },
+    {
+      "step": 2,
+      "title": "旧日也可以归来",
+      "subtitle": "如果你已经写了很多年，把 Markdown 或旧日记带进来即可。",
+      "cta": "归卷 · 导入",
+      "source_key": "tao_return"
+    },
+    {
+      "step": 3,
+      "title": "文字有安处",
+      "subtitle": "默认先保存在你的电脑里；你随时可以备份、导出、带走。",
+      "cta": "看看数据在哪里",
+      "source_key": "su_home"
+    },
+    {
+      "step": 4,
+      "title": "后来，会重新相逢",
+      "subtitle": "LifeOS 会帮你找到、重读，并在有证据时回答关于过去的问题。",
+      "cta": "进入今朝",
+      "source_key": "wang_lanting"
+    }
+  ],
+  "core_surfaces": [
+    {
+      "key": "home",
+      "display_name": "今朝",
+      "english": "Home",
+      "subtitle": "今日这一页，从这里开始；过去偶尔会来敲门。",
+      "primary": "落笔 · 写今天",
+      "secondary": [
+        "翻一页 · 流年",
+        "旧日来信 · 昔日今朝",
+        "问问过去 · 近思"
+      ],
+      "empty": "今天还没有落笔。日子不必惊天动地，写下一件真实发生的小事就好。",
+      "source_key": "li_bai_banquet",
+      "source_type": "意象取材"
+    },
+    {
+      "key": "writer",
+      "display_name": "落笔",
+      "english": "Write",
+      "subtitle": "把今日写下，来日自有回声。",
+      "placeholder": "从今天的一件小事写起……",
+      "primary": "收笔 · 保存",
+      "states": {
+        "saving": "正在收笔…",
+        "saved": "已保存 · 此页已落定",
+        "autosaved": "已悄悄替你留住这一笔",
+        "failed": "未保存 · 这一笔尚未落定，请重试",
+        "offline": "离线也可以写。文字先安放在这台电脑里。"
+      },
+      "source_key": "zhouyi_sincerity",
+      "source_type": "化用"
+    },
+    {
+      "key": "journal",
+      "display_name": "流年",
+      "english": "Journal",
+      "subtitle": "一页一日，翻过去，便是来路。",
+      "empty": "卷首尚空。第一篇不必写得好，只要是真的。",
+      "search_placeholder": "在流年里找一句话…",
+      "source_key": "conf_time",
+      "source_type": "意象取材"
+    },
+    {
+      "key": "reading",
+      "display_name": "展卷",
+      "english": "Reading Ritual",
+      "subtitle": "旧页重开，故书亦可再读。",
+      "primary": "继续展卷",
+      "end": "这一页，读到尽头了。",
+      "next": "再翻一页",
+      "source_key": "su_oldbook",
+      "source_type": "化用"
+    },
+    {
+      "key": "on_this_day",
+      "display_name": "昔日今朝",
+      "english": "On This Day",
+      "subtitle": "同一个今日，隔着不同年岁重新相逢。",
+      "primary": "拆开旧信",
+      "empty": "今日没有旧信。岁月偶有沉默，也很好。",
+      "source_key": "wang_lanting",
+      "source_type": "意象取材"
+    },
+    {
+      "key": "search",
+      "display_name": "寻迹",
+      "english": "Universal Search",
+      "subtitle": "从一句话，寻回一段已经远去的日子。",
+      "placeholder": "记得一句话、一个人、一个地方，或某一年吗？",
+      "primary": "去寻",
+      "empty": "这一卷里，还没有找到你说的那句话。换个词，再寻一程。",
+      "source_key": "xin_search",
+      "source_type": "意象取材"
+    },
+    {
+      "key": "ask",
+      "display_name": "近思",
+      "english": "Ask My Life",
+      "subtitle": "只从你真正写下的文字里作答。",
+      "placeholder": "想问过去的自己什么？",
+      "primary": "去问",
+      "evidence_title": "据此",
+      "thin_evidence": "此处记载尚薄。LifeOS 宁可留白，也不替你补写人生。",
+      "no_evidence": "这一问，在现有日记里没有足够依据。换一种问法，或以后再回来。",
+      "source_key": "conf_near",
+      "source_type": "化用",
+      "secondary_source_key": "conf_know"
+    },
+    {
+      "key": "import",
+      "display_name": "归卷 · 导入",
+      "english": "Import",
+      "subtitle": "让散在别处的旧日子，重新归到一卷。",
+      "primary": "迎回旧日",
+      "preview": "先看一眼，再归卷",
+      "success": "旧日已归卷。原文件没有被改动。",
+      "failure": "这一次没有归进来。原文件仍安然无恙。",
+      "source_key": "tao_return",
+      "source_type": "意象取材"
+    },
+    {
+      "key": "backup",
+      "display_name": "藏本 · 备份",
+      "english": "Backup",
+      "subtitle": "为此刻留一份可归来的副本。",
+      "primary": "藏一份副本",
+      "success": "藏本已成。愿你很久都用不上它。",
+      "failure": "藏本未成，请确认保存位置后重试。",
+      "source_key": "sima_archive",
+      "source_type": "意象取材"
+    },
+    {
+      "key": "restore",
+      "display_name": "归来 · 恢复",
+      "english": "Restore",
+      "subtitle": "回到曾经保存的那一刻，但不让你误以为没有代价。",
+      "warning": "恢复会改变当前数据。LifeOS 会先为现在再留一份安全副本。",
+      "primary": "确认恢复",
+      "cancel": "暂不归来",
+      "success": "已经回到所选藏本。刚才的数据也另有一份备份。",
+      "source_key": "tao_return",
+      "source_type": "意象取材"
+    },
+    {
+      "key": "export",
+      "display_name": "携卷 · 导出",
+      "english": "Export",
+      "subtitle": "文字归你，去留也由你。",
+      "primary": "带走全部日记",
+      "formats": "Markdown / JSON / ZIP",
+      "success": "已经替你装好这一卷。",
+      "source_key": "sima_archive",
+      "source_type": "化用"
+    },
+    {
+      "key": "revision",
+      "display_name": "留痕 · 历史版本",
+      "english": "Revision History",
+      "subtitle": "每一次改写都留着，从前不会被后来抹去。",
+      "primary": "查看旧稿",
+      "restore": "从此版恢复",
+      "warning": "恢复旧稿前，会先保存当前版本。",
+      "source_key": "du_article",
+      "source_type": "意象取材"
+    },
+    {
+      "key": "privacy",
+      "display_name": "安处 · 隐私与数据",
+      "english": "Privacy & Data",
+      "subtitle": "原文安放在你自己的电脑里；AI 去哪里，也由你知道。",
+      "local": "本地保存 · 原文不必离开这台电脑",
+      "ai_off": "AI 已关闭",
+      "ai_byok": "使用我的 API Key",
+      "ai_local": "使用本地模型",
+      "source_key": "su_home",
+      "source_type": "意象取材"
+    },
+    {
+      "key": "settings",
+      "display_name": "章法 · 设置",
+      "english": "Settings",
+      "subtitle": "把写作、数据与陪伴，调成你舒服的样子。",
+      "source_key": "zhouyi_sincerity",
+      "source_type": "原创·古典语感"
+    },
+    {
+      "key": "weekly",
+      "display_name": "温故",
+      "english": "Weekly Review",
+      "subtitle": "把这一周写过的、重逢的，再轻轻看一遍。",
+      "empty": "这一周还很轻。哪怕只有一页，也已经是你走过的日子。",
+      "primary": "重看这一周",
+      "source_key": "conf_review",
+      "source_type": "意象取材"
+    },
+    {
+      "key": "advanced_lab",
+      "display_name": "观象阁 · Advanced Lab",
+      "english": "Advanced Lab",
+      "subtitle": "换一个角度，看同一段人生；不替你下结论。",
+      "body": "141 个观察系统都还在这里。它们是望远镜、镜子与地图，不是关于你的判词。",
+      "source_key": "su_mountain",
+      "source_type": "意象取材"
+    },
+    {
+      "key": "pet",
+      "display_name": "灵犀",
+      "english": "Companion",
+      "subtitle": "不读你的正文，只陪你经过这些日子。",
+      "bubbles": [
+        "我在。",
+        "且去看看。",
+        "一灯一卷，且读此页。",
+        "有些旧日子，正在轻轻发光。",
+        "这一页，已读到灯尽。"
+      ],
+      "source_key": "li_soul",
+      "source_type": "意象取材"
+    },
+    {
+      "key": "fatal_error",
+      "display_name": "此卷暂未打开",
+      "english": "Error",
+      "subtitle": "有些地方没有按预想展开，但你的原文不该因此受损。",
+      "primary": "再试一次",
+      "secondary": "查看技术详情",
+      "source_key": "sima_archive",
+      "source_type": "原创·意象取材"
+    },
+    {
+      "key": "delete",
+      "display_name": "清空本地数据",
+      "english": "Delete local data",
+      "subtitle": "此操作不可逆。请先确认已经备份。",
+      "primary": "永久删除",
+      "cancel": "取消",
+      "source_key": "conf_know",
+      "source_type": "功能直述",
+      "notes": "破坏性动作禁止用浪漫隐喻弱化风险。"
+    }
+  ],
+  "rooms": [
+    {
+      "key": "NOW",
+      "display_name": "今朝",
+      "subtitle": "今日与往昔在这里相逢。",
+      "source_key": "li_bai_banquet"
+    },
+    {
+      "key": "MEMORY",
+      "display_name": "旧藏",
+      "subtitle": "沿原文回去，所有解释都应当有来处。",
+      "source_key": "conf_time"
+    },
+    {
+      "key": "PEOPLE",
+      "display_name": "故人",
+      "subtitle": "人、地与相遇，只认你真正留下的字。",
+      "source_key": "du_people"
+    },
+    {
+      "key": "GROWTH",
+      "display_name": "年轮",
+      "subtitle": "看工夫怎样在岁月里慢慢长出来。",
+      "source_key": "lao_step"
+    },
+    {
+      "key": "IDEAS",
+      "display_name": "念起",
+      "subtitle": "一念初生，也值得留下来处。",
+      "source_key": "zhouyi_sincerity"
+    },
+    {
+      "key": "BOOK",
+      "display_name": "浮生卷",
+      "subtitle": "把散落的日子装订成一卷人生。",
+      "source_key": "li_bai_banquet"
+    },
+    {
+      "key": "TIME",
+      "display_name": "岁时",
+      "subtitle": "隔着年月，与不同年岁的自己对坐。",
+      "source_key": "wang_lanting"
+    },
+    {
+      "key": "ARCHIVE",
+      "display_name": "藏书",
+      "subtitle": "来处、改动、边界，都留得清清楚楚。",
+      "source_key": "sima_archive"
+    },
+    {
+      "key": "CURIOSITY",
+      "display_name": "偶得",
+      "subtitle": "不必刻意寻找，让旧日自己递来线索。",
+      "source_key": "xin_search"
+    },
+    {
+      "key": "OBSERVATORY",
+      "display_name": "观象",
+      "subtitle": "站远一点，看日子怎样起伏。",
+      "source_key": "su_mountain"
+    },
+    {
+      "key": "TIMEFOLD",
+      "display_name": "折光",
+      "subtitle": "把相隔很远的日子折到一起。",
+      "source_key": "jiang_time"
+    },
+    {
+      "key": "MIRROR",
+      "display_name": "照见",
+      "subtitle": "只照见，不裁判。",
+      "source_key": "tang_mirror"
+    },
+    {
+      "key": "COMPASS",
+      "display_name": "问津",
+      "subtitle": "不替你决定，只点亮值得再看的地方。",
+      "source_key": "qu_seek"
+    },
+    {
+      "key": "TOPOLOGY",
+      "display_name": "经纬",
+      "subtitle": "把散落的人、地、事织成可回溯的经纬。",
+      "source_key": "zhouyi_hetu"
+    },
+    {
+      "key": "FOOTPRINT",
+      "display_name": "履痕",
+      "subtitle": "看看什么真正从你手中留下。",
+      "source_key": "lao_step"
+    },
+    {
+      "key": "LINEAGE",
+      "display_name": "源脉",
+      "subtitle": "沿证据回看一件事从念起到成形。",
+      "source_key": "zhu_source"
+    },
+    {
+      "key": "ASK",
+      "display_name": "近思",
+      "subtitle": "只从你真正写过的文字里作答。",
+      "source_key": "conf_near"
+    }
+  ],
+  "themes": [
+    {
+      "id": "moon",
+      "display_name": "月白书斋",
+      "subtitle": "月色落在旧页上，远近的日子共一盏清光。",
+      "source_key": "zhang_moon",
+      "source_type": "意象取材"
+    },
+    {
+      "id": "candy",
+      "display_name": "桃夭梦",
+      "subtitle": "明亮、温柔，像一枝初开的桃花。",
+      "source_key": "shijing_peach",
+      "source_type": "意象取材"
+    },
+    {
+      "id": "rain",
+      "display_name": "夜雨灯窗",
+      "subtitle": "窗外有雨，灯下只留这一页。",
+      "source_key": "li_nightrain",
+      "source_type": "原创·古典意象"
+    },
+    {
+      "id": "pixel",
+      "display_name": "河图小筑",
+      "subtitle": "把记忆化作格点与星图，仍可循迹而归。",
+      "source_key": "zhouyi_hetu",
+      "source_type": "意象取材"
+    },
+    {
+      "id": "greenhouse",
+      "display_name": "兰畹春深",
+      "subtitle": "让缓慢生长的事，在这里有一方温室。",
+      "source_key": "qu_orchid",
+      "source_type": "意象延展"
+    },
+    {
+      "id": "abyss",
+      "display_name": "沧海夜航",
+      "subtitle": "在很深的蓝里，听旧日从远处传来。",
+      "source_key": "li_jinse",
+      "source_type": "意象取材"
+    },
+    {
+      "id": "post",
+      "display_name": "锦书驿",
+      "subtitle": "有些话写给今天，有些话许多年后才抵达。",
+      "source_key": "liqing_letter",
+      "source_type": "意象取材"
+    },
+    {
+      "id": "hotel",
+      "display_name": "逆旅",
+      "subtitle": "人生暂住于此，日子一页页经过。",
+      "source_key": "li_bai_banquet",
+      "source_type": "意象取材"
+    },
+    {
+      "id": "oracle",
+      "display_name": "灵台星官",
+      "subtitle": "仰观其象，但不把星光当作命定。",
+      "source_key": "su_mountain",
+      "source_type": "原创·古典天文意象"
+    },
+    {
+      "id": "film",
+      "display_name": "流光夏日",
+      "subtitle": "光阴很快，胶片替你多留一格。",
+      "source_key": "jiang_time",
+      "source_type": "意象取材"
+    }
+  ],
+  "features": [
+    {
+      "no": 1,
+      "key": "Home",
+      "room": "NOW",
+      "room_display": "今朝",
+      "display_name": "今朝",
+      "subtitle": "从今日出发：现在的我与本地 Memory Engine 总览；让现在与过去在同一页相遇。",
+      "function_desc": "现在的我与本地 Memory Engine 总览",
+      "source_key": "li_bai_banquet",
+      "source_type": "意象取材",
+      "source": {
+        "era": "唐",
+        "author": "李白",
+        "work": "《春夜宴从弟桃花园序》",
+        "quote": "夫天地者，万物之逆旅也；光阴者，百代之过客也。",
+        "note": "时间、人生如旅与“浮生”世界观。"
+      }
+    },
+    {
+      "no": 2,
+      "key": "Journal",
+      "room": "MEMORY",
+      "room_display": "旧藏",
+      "display_name": "流年",
+      "subtitle": "沿原文回去：550 篇 Markdown 的原始阅读器；所有路最终都能回到那一页。",
+      "function_desc": "550 篇 Markdown 的原始阅读器",
+      "source_key": "conf_time",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "孔子言论",
+        "work": "《论语·子罕》",
+        "quote": "逝者如斯夫，不舍昼夜。",
+        "note": "时间流逝与流年。"
+      }
+    },
+    {
+      "no": 3,
+      "key": "Timeline",
+      "room": "MEMORY",
+      "room_display": "旧藏",
+      "display_name": "岁序",
+      "subtitle": "沿原文回去：来自日程原文的时间线；所有路最终都能回到那一页。",
+      "function_desc": "来自日程原文的时间线",
+      "source_key": "conf_time",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "孔子言论",
+        "work": "《论语·子罕》",
+        "quote": "逝者如斯夫，不舍昼夜。",
+        "note": "时间流逝与流年。"
+      }
+    },
+    {
+      "no": 4,
+      "key": "On This Day",
+      "room": "NOW",
+      "room_display": "今朝",
+      "display_name": "昔日今朝",
+      "subtitle": "从今日出发：历史上的今天；让现在与过去在同一页相遇。",
+      "function_desc": "历史上的今天",
+      "source_key": "wang_lanting",
+      "source_type": "意象取材",
+      "source": {
+        "era": "东晋",
+        "author": "王羲之",
+        "work": "《兰亭集序》",
+        "quote": "后之视今，亦犹今之视昔。",
+        "note": "On This Day 与代际回望。"
+      }
+    },
+    {
+      "no": 5,
+      "key": "Ask My Life",
+      "room": "ASK",
+      "room_display": "近思",
+      "display_name": "近思",
+      "subtitle": "只据你写过的文字作答：基于 证据包 的人生问答；不知道的地方，就让它留白。",
+      "function_desc": "基于 Evidence Pack 的人生问答",
+      "source_key": "conf_near",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "子夏言论",
+        "work": "《论语·子张》",
+        "quote": "博学而笃志，切问而近思。",
+        "note": "提问、回看、近思。"
+      }
+    },
+    {
+      "no": 6,
+      "key": "Deep Read",
+      "room": "MEMORY",
+      "room_display": "旧藏",
+      "display_name": "穷源",
+      "subtitle": "沿原文回去：对一个主题做长周期证据阅读；所有路最终都能回到那一页。",
+      "function_desc": "对一个主题做长周期证据阅读",
+      "source_key": "su_oldbook",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋",
+        "author": "苏轼",
+        "work": "《送安惇秀才失解西归》",
+        "quote": "旧书不厌百回读，熟读深思子自知。",
+        "note": "沉浸阅读与 Deep Read。"
+      }
+    },
+    {
+      "no": 7,
+      "key": "Book",
+      "room": "BOOK",
+      "room_display": "浮生卷",
+      "display_name": "浮生卷",
+      "subtitle": "把散落的日子装订成一卷：把人生阶段组织成可翻阅章节；叙事再远，也能翻回原页。",
+      "function_desc": "把人生阶段组织成可翻阅章节",
+      "source_key": "li_bai_banquet",
+      "source_type": "意象取材",
+      "source": {
+        "era": "唐",
+        "author": "李白",
+        "work": "《春夜宴从弟桃花园序》",
+        "quote": "夫天地者，万物之逆旅也；光阴者，百代之过客也。",
+        "note": "时间、人生如旅与“浮生”世界观。"
+      }
+    },
+    {
+      "no": 8,
+      "key": "Chapters",
+      "room": "BOOK",
+      "room_display": "浮生卷",
+      "display_name": "篇章",
+      "subtitle": "把散落的日子装订成一卷：基于时间段生成章节候选；叙事再远，也能翻回原页。",
+      "function_desc": "基于时间段生成章节候选",
+      "source_key": "sima_history",
+      "source_type": "意象取材",
+      "source": {
+        "era": "西汉",
+        "author": "司马迁",
+        "work": "《报任少卿书》",
+        "quote": "述往事，思来者。",
+        "note": "回顾过去、面向后来。"
+      }
+    },
+    {
+      "no": 9,
+      "key": "People",
+      "room": "PEOPLE",
+      "room_display": "故人",
+      "display_name": "故人谱",
+      "subtitle": "在人与地方留下的痕迹里：角色与显式配置人物的出现轨迹；只认你真正写过的相遇。",
+      "function_desc": "角色与显式配置人物的出现轨迹",
+      "source_key": "du_people",
+      "source_type": "意象取材",
+      "source": {
+        "era": "唐",
+        "author": "杜甫",
+        "work": "《赠卫八处士》",
+        "quote": "人生不相见，动如参与商。",
+        "note": "人物、故人、重逢。"
+      }
+    },
+    {
+      "no": 10,
+      "key": "Life Map",
+      "room": "PEOPLE",
+      "room_display": "故人",
+      "display_name": "行迹",
+      "subtitle": "在人与地方留下的痕迹里：地点提及与空间记忆；只认你真正写过的相遇。",
+      "function_desc": "地点提及与空间记忆",
+      "source_key": "su_traveler",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋",
+        "author": "苏轼",
+        "work": "《临江仙·送钱穆父》",
+        "quote": "人生如逆旅，我亦是行人。",
+        "note": "行迹、人生地图与旅途。"
+      }
+    },
+    {
+      "no": 11,
+      "key": "Ideas",
+      "room": "IDEAS",
+      "room_display": "念起",
+      "display_name": "念起",
+      "subtitle": "把一闪而过的念头轻轻拣起：从原文中抽取的想法候选；让后来知道它从何时开始。",
+      "function_desc": "从原文中抽取的想法候选",
+      "source_key": "zhouyi_sincerity",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "佚名 / 《周易》传统",
+        "work": "《周易·乾·文言》",
+        "quote": "修辞立其诚。",
+        "note": "写作与真实。"
+      }
+    },
+    {
+      "no": 12,
+      "key": "Beliefs",
+      "room": "BOOK",
+      "room_display": "浮生卷",
+      "display_name": "所信",
+      "subtitle": "把散落的日子装订成一卷：自我探索/体系构建中的显式观点候选；叙事再远，也能翻回原页。",
+      "function_desc": "自我探索/体系构建中的显式观点候选",
+      "source_key": "zhouyi_sincerity",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "佚名 / 《周易》传统",
+        "work": "《周易·乾·文言》",
+        "quote": "修辞立其诚。",
+        "note": "写作与真实。"
+      }
+    },
+    {
+      "no": 13,
+      "key": "Contradictions",
+      "room": "BOOK",
+      "room_display": "浮生卷",
+      "display_name": "两端",
+      "subtitle": "把散落的日子装订成一卷：前后观点的人工复核候选；叙事再远，也能翻回原页。",
+      "function_desc": "前后观点的人工复核候选",
+      "source_key": "tang_mirror",
+      "source_type": "意象取材",
+      "source": {
+        "era": "唐",
+        "author": "唐太宗相关史载",
+        "work": "《旧唐书·魏徵传》等所载“三镜”典故",
+        "quote": "以人为镜，可以明得失。",
+        "note": "Mirror 系列；使用典故，不做人格裁判。"
+      }
+    },
+    {
+      "no": 14,
+      "key": "Skill Constellation",
+      "room": "GROWTH",
+      "room_display": "年轮",
+      "display_name": "技艺星图",
+      "subtitle": "看工夫怎样在岁月里长出来：技能簇与父子关系；不把人生变成分数。",
+      "function_desc": "技能簇与父子关系",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 15,
+      "key": "Skill Points",
+      "room": "GROWTH",
+      "room_display": "年轮",
+      "display_name": "工夫",
+      "subtitle": "看工夫怎样在岁月里长出来：基于真实提及日数的活动分数；不把人生变成分数。",
+      "function_desc": "基于真实提及日数的活动分数",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 16,
+      "key": "Skill Evidence",
+      "room": "GROWTH",
+      "room_display": "年轮",
+      "display_name": "学有据",
+      "subtitle": "看工夫怎样在岁月里长出来：每个技能对应的日记证据；不把人生变成分数。",
+      "function_desc": "每个技能对应的日记证据",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 17,
+      "key": "Skill Evolution",
+      "room": "GROWTH",
+      "room_display": "年轮",
+      "display_name": "日进",
+      "subtitle": "看工夫怎样在岁月里长出来：技能随月份的变化；不把人生变成分数。",
+      "function_desc": "技能随月份的变化",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 18,
+      "key": "Builds",
+      "room": "GROWTH",
+      "room_display": "年轮",
+      "display_name": "年岁之我",
+      "subtitle": "看工夫怎样在岁月里长出来：不同年份的角色 Build；不把人生变成分数。",
+      "function_desc": "不同年份的角色 Build",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 19,
+      "key": "Achievements",
+      "room": "GROWTH",
+      "room_display": "年轮",
+      "display_name": "里程",
+      "subtitle": "看工夫怎样在岁月里长出来：里程碑候选；不把人生变成分数。",
+      "function_desc": "里程碑候选",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 20,
+      "key": "Habits",
+      "room": "GROWTH",
+      "room_display": "年轮",
+      "display_name": "日课",
+      "subtitle": "看工夫怎样在岁月里长出来：习惯栏目结构与长期存在；不把人生变成分数。",
+      "function_desc": "习惯栏目结构与长期存在",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 21,
+      "key": "Analytics",
+      "room": "GROWTH",
+      "room_display": "年轮",
+      "display_name": "数观",
+      "subtitle": "看工夫怎样在岁月里长出来：写作、事件、想法、主题统计；不把人生变成分数。",
+      "function_desc": "写作、事件、想法、主题统计",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 22,
+      "key": "Word Evolution",
+      "room": "GROWTH",
+      "room_display": "年轮",
+      "display_name": "字词流变",
+      "subtitle": "看工夫怎样在岁月里长出来：核心词随时间的变化；不把人生变成分数。",
+      "function_desc": "核心词随时间的变化",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 23,
+      "key": "Self Model",
+      "room": "GROWTH",
+      "room_display": "年轮",
+      "display_name": "自画像",
+      "subtitle": "看工夫怎样在岁月里长出来：显式观点、问题和关注主题组成的动态模型；不把人生变成分数。",
+      "function_desc": "显式观点、问题和关注主题组成的动态模型",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 24,
+      "key": "Past Me",
+      "room": "TIME",
+      "room_display": "岁时",
+      "display_name": "旧我",
+      "subtitle": "隔着年月与自己对坐：严格 cutoff 的历史版本检索；不预言，只重读。",
+      "function_desc": "严格 cutoff 的历史版本检索",
+      "source_key": "tao_return",
+      "source_type": "意象取材",
+      "source": {
+        "era": "东晋",
+        "author": "陶渊明",
+        "work": "《归去来兮辞》",
+        "quote": "悟已往之不谏，知来者之可追。",
+        "note": "旧我、来者、恢复与归来。"
+      }
+    },
+    {
+      "no": 25,
+      "key": "Roundtable",
+      "room": "TIME",
+      "room_display": "岁时",
+      "display_name": "对坐",
+      "subtitle": "隔着年月与自己对坐：不同时间版本共享同一问题的证据包；不预言，只重读。",
+      "function_desc": "不同时间版本共享同一问题的证据包",
+      "source_key": "wang_lanting",
+      "source_type": "意象取材",
+      "source": {
+        "era": "东晋",
+        "author": "王羲之",
+        "work": "《兰亭集序》",
+        "quote": "后之视今，亦犹今之视昔。",
+        "note": "On This Day 与代际回望。"
+      }
+    },
+    {
+      "no": 26,
+      "key": "Future Me",
+      "room": "TIME",
+      "room_display": "岁时",
+      "display_name": "来者",
+      "subtitle": "隔着年月与自己对坐：从真实目标/计划出发，不预测未来；不预言，只重读。",
+      "function_desc": "从真实目标/计划出发，不预测未来",
+      "source_key": "tao_return",
+      "source_type": "意象取材",
+      "source": {
+        "era": "东晋",
+        "author": "陶渊明",
+        "work": "《归去来兮辞》",
+        "quote": "悟已往之不谏，知来者之可追。",
+        "note": "旧我、来者、恢复与归来。"
+      }
+    },
+    {
+      "no": 27,
+      "key": "Time Capsule",
+      "room": "TIME",
+      "room_display": "岁时",
+      "display_name": "缄书",
+      "subtitle": "隔着年月与自己对坐：本地时间胶囊；不预言，只重读。",
+      "function_desc": "本地时间胶囊",
+      "source_key": "liqing_letter",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋",
+        "author": "李清照",
+        "work": "《一剪梅·红藕香残玉簟秋》",
+        "quote": "云中谁寄锦书来？",
+        "note": "来信、时间胶囊、邮局主题。"
+      }
+    },
+    {
+      "no": 28,
+      "key": "Year in Review",
+      "room": "NOW",
+      "room_display": "今朝",
+      "display_name": "岁成",
+      "subtitle": "从今日出发：年度结构化回顾；让现在与过去在同一页相遇。",
+      "function_desc": "年度结构化回顾",
+      "source_key": "conf_review",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "孔子言论",
+        "work": "《论语·为政》",
+        "quote": "温故而知新，可以为师矣。",
+        "note": "周回顾与重读。"
+      }
+    },
+    {
+      "no": 29,
+      "key": "Life Movie",
+      "room": "TIME",
+      "room_display": "岁时",
+      "display_name": "流光影",
+      "subtitle": "隔着年月与自己对坐：基于月份与证据的年度故事板；不预言，只重读。",
+      "function_desc": "基于月份与证据的年度故事板",
+      "source_key": "jiang_time",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋末元初",
+        "author": "蒋捷",
+        "work": "《一剪梅·舟过吴江》",
+        "quote": "流光容易把人抛。",
+        "note": "时间折叠、流光与阶段变化。"
+      }
+    },
+    {
+      "no": 30,
+      "key": "Memory Graph",
+      "room": "PEOPLE",
+      "room_display": "故人",
+      "display_name": "经纬",
+      "subtitle": "在人与地方留下的痕迹里：技能、主题、角色、地点的共现图；只认你真正写过的相遇。",
+      "function_desc": "技能、主题、角色、地点的共现图",
+      "source_key": "zhouyi_hetu",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "佚名 / 《周易》传统",
+        "work": "《周易·系辞上》",
+        "quote": "河出图，洛出书，圣人则之。",
+        "note": "图谱、经纬、拓扑意象。"
+      }
+    },
+    {
+      "no": 31,
+      "key": "Universal Search",
+      "room": "MEMORY",
+      "room_display": "旧藏",
+      "display_name": "寻迹",
+      "subtitle": "沿原文回去：跨全部原文的本地搜索；所有路最终都能回到那一页。",
+      "function_desc": "跨全部原文的本地搜索",
+      "source_key": "xin_search",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "辛弃疾",
+        "work": "《青玉案·元夕》",
+        "quote": "众里寻他千百度。蓦然回首。",
+        "note": "搜索与意外发现。"
+      }
+    },
+    {
+      "no": 32,
+      "key": "Quotes",
+      "room": "MEMORY",
+      "room_display": "旧藏",
+      "display_name": "拾句",
+      "subtitle": "沿原文回去：心得与摘录中的摘录候选；所有路最终都能回到那一页。",
+      "function_desc": "心得与摘录中的摘录候选",
+      "source_key": "du_article",
+      "source_type": "意象取材",
+      "source": {
+        "era": "唐",
+        "author": "杜甫",
+        "work": "《偶题》",
+        "quote": "文章千古事，得失寸心知。",
+        "note": "文字、版本与作品。"
+      }
+    },
+    {
+      "no": 33,
+      "key": "Questions",
+      "room": "IDEAS",
+      "room_display": "念起",
+      "display_name": "问笺",
+      "subtitle": "把一闪而过的念头轻轻拣起：反复出现的问题候选；让后来知道它从何时开始。",
+      "function_desc": "反复出现的问题候选",
+      "source_key": "conf_near",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "子夏言论",
+        "work": "《论语·子张》",
+        "quote": "博学而笃志，切问而近思。",
+        "note": "提问、回看、近思。"
+      }
+    },
+    {
+      "no": 34,
+      "key": "Projects",
+      "room": "IDEAS",
+      "room_display": "念起",
+      "display_name": "成事",
+      "subtitle": "把一闪而过的念头轻轻拣起：项目/课题/论文/产品相关候选；让后来知道它从何时开始。",
+      "function_desc": "项目/课题/论文/产品相关候选",
+      "source_key": "bai_write",
+      "source_type": "意象取材",
+      "source": {
+        "era": "唐",
+        "author": "白居易",
+        "work": "《与元九书》",
+        "quote": "文章合为时而著，歌诗合为事而作。",
+        "note": "项目、作品与发生之事。"
+      }
+    },
+    {
+      "no": 35,
+      "key": "Decisions",
+      "room": "IDEAS",
+      "room_display": "念起",
+      "display_name": "取舍",
+      "subtitle": "把一闪而过的念头轻轻拣起：选择与决定候选；让后来知道它从何时开始。",
+      "function_desc": "选择与决定候选",
+      "source_key": "tao_return",
+      "source_type": "意象取材",
+      "source": {
+        "era": "东晋",
+        "author": "陶渊明",
+        "work": "《归去来兮辞》",
+        "quote": "悟已往之不谏，知来者之可追。",
+        "note": "旧我、来者、恢复与归来。"
+      }
+    },
+    {
+      "no": 36,
+      "key": "Forks",
+      "room": "IDEAS",
+      "room_display": "念起",
+      "display_name": "岔路",
+      "subtitle": "把一闪而过的念头轻轻拣起：可能的人生岔路，需人工确认；让后来知道它从何时开始。",
+      "function_desc": "可能的人生岔路，需人工确认",
+      "source_key": "tao_return",
+      "source_type": "意象取材",
+      "source": {
+        "era": "东晋",
+        "author": "陶渊明",
+        "work": "《归去来兮辞》",
+        "quote": "悟已往之不谏，知来者之可追。",
+        "note": "旧我、来者、恢复与归来。"
+      }
+    },
+    {
+      "no": 37,
+      "key": "Git Life",
+      "room": "ARCHIVE",
+      "room_display": "藏书",
+      "display_name": "藏本",
+      "subtitle": "把来处、改动与边界留得清楚：本地档案、版本与唯一原文；文字始终归你。",
+      "function_desc": "Vault、版本与 Source of Truth",
+      "source_key": "sima_archive",
+      "source_type": "意象取材",
+      "source": {
+        "era": "西汉",
+        "author": "司马迁",
+        "work": "《报任少卿书》",
+        "quote": "藏诸名山，传之其人。",
+        "note": "备份、存档、传存。"
+      }
+    },
+    {
+      "no": 38,
+      "key": "CHANGELOG",
+      "room": "ARCHIVE",
+      "room_display": "藏书",
+      "display_name": "岁差",
+      "subtitle": "把来处、改动与边界留得清楚：年度差异；文字始终归你。",
+      "function_desc": "年度差异",
+      "source_key": "sima_history",
+      "source_type": "意象取材",
+      "source": {
+        "era": "西汉",
+        "author": "司马迁",
+        "work": "《报任少卿书》",
+        "quote": "述往事，思来者。",
+        "note": "回顾过去、面向后来。"
+      }
+    },
+    {
+      "no": 39,
+      "key": "Compare Me",
+      "room": "TIME",
+      "room_display": "岁时",
+      "display_name": "对影",
+      "subtitle": "隔着年月与自己对坐：任意两个时期对比；不预言，只重读。",
+      "function_desc": "任意两个时期对比",
+      "source_key": "tang_mirror",
+      "source_type": "意象取材",
+      "source": {
+        "era": "唐",
+        "author": "唐太宗相关史载",
+        "work": "《旧唐书·魏徵传》等所载“三镜”典故",
+        "quote": "以人为镜，可以明得失。",
+        "note": "Mirror 系列；使用典故，不做人格裁判。"
+      }
+    },
+    {
+      "no": 40,
+      "key": "Memory Provenance",
+      "room": "MEMORY",
+      "room_display": "旧藏",
+      "display_name": "源流",
+      "subtitle": "沿原文回去：来源、哈希、AI/原文分层；所有路最终都能回到那一页。",
+      "function_desc": "来源、哈希、AI/原文分层",
+      "source_key": "zhu_source",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "朱熹",
+        "work": "《观书有感·其一》",
+        "quote": "问渠那得清如许，为有源头活水来。",
+        "note": "来源、源流与证据链。"
+      }
+    },
+    {
+      "no": 41,
+      "key": "Correct AI",
+      "room": "ARCHIVE",
+      "room_display": "藏书",
+      "display_name": "正解",
+      "subtitle": "把来处、改动与边界留得清楚：纠正 Interpretation Layer；文字始终归你。",
+      "function_desc": "纠正 Interpretation Layer",
+      "source_key": "conf_know",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "孔子言论",
+        "work": "《论语·为政》",
+        "quote": "知之为知之，不知为不知。",
+        "note": "AI 不确定性与证据边界。"
+      }
+    },
+    {
+      "no": 42,
+      "key": "Private / Share",
+      "room": "ARCHIVE",
+      "room_display": "藏书",
+      "display_name": "藏与寄",
+      "subtitle": "把来处、改动与边界留得清楚：默认私有、按视图选择公开；文字始终归你。",
+      "function_desc": "默认私有、按视图选择公开",
+      "source_key": "su_home",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋",
+        "author": "苏轼",
+        "work": "《定风波·南海归赠王定国侍人寓娘》",
+        "quote": "此心安处是吾乡。",
+        "note": "隐私、本地存储与“安处”。"
+      }
+    },
+    {
+      "no": 43,
+      "key": "Cabinet of Curiosities",
+      "room": "CURIOSITY",
+      "room_display": "偶得",
+      "display_name": "博物匣",
+      "subtitle": "不必刻意寻找：从统计、共现、时间跨度里捞出你没主动寻找的线索；让旧日自己递来一条意外线索。",
+      "function_desc": "从统计、共现、时间跨度里捞出你没主动寻找的线索",
+      "source_key": "xin_search",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "辛弃疾",
+        "work": "《青玉案·元夕》",
+        "quote": "众里寻他千百度。蓦然回首。",
+        "note": "搜索与意外发现。"
+      }
+    },
+    {
+      "no": 44,
+      "key": "Memory Echoes",
+      "room": "CURIOSITY",
+      "room_display": "偶得",
+      "display_name": "旧响",
+      "subtitle": "不必刻意寻找：让两篇相隔很远却共享少见语言片段的日记相遇；让旧日自己递来一条意外线索。",
+      "function_desc": "让两篇相隔很远却共享少见语言片段的日记相遇",
+      "source_key": "xin_search",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "辛弃疾",
+        "work": "《青玉案·元夕》",
+        "quote": "众里寻他千百度。蓦然回首。",
+        "note": "搜索与意外发现。"
+      }
+    },
+    {
+      "no": 45,
+      "key": "Hidden Chapters",
+      "room": "CURIOSITY",
+      "room_display": "偶得",
+      "display_name": "潜章",
+      "subtitle": "不必刻意寻找：从月度注意力结构变化提出人生章节候选；让旧日自己递来一条意外线索。",
+      "function_desc": "从月度注意力结构变化提出人生章节候选",
+      "source_key": "xin_search",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "辛弃疾",
+        "work": "《青玉案·元夕》",
+        "quote": "众里寻他千百度。蓦然回首。",
+        "note": "搜索与意外发现。"
+      }
+    },
+    {
+      "no": 46,
+      "key": "First / Last",
+      "room": "CURIOSITY",
+      "room_display": "偶得",
+      "display_name": "初见·再见",
+      "subtitle": "不必刻意寻找：追踪技能、主题、地点、角色的第一次与最近一次出现；让旧日自己递来一条意外线索。",
+      "function_desc": "追踪技能、主题、地点、角色的第一次与最近一次出现",
+      "source_key": "xin_search",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "辛弃疾",
+        "work": "《青玉案·元夕》",
+        "quote": "众里寻他千百度。蓦然回首。",
+        "note": "搜索与意外发现。"
+      }
+    },
+    {
+      "no": 47,
+      "key": "Recurring Questions",
+      "room": "CURIOSITY",
+      "room_display": "偶得",
+      "display_name": "复问",
+      "subtitle": "不必刻意寻找：跨越数月反复出现的问题线索；让旧日自己递来一条意外线索。",
+      "function_desc": "跨越数月反复出现的问题线索",
+      "source_key": "xin_search",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "辛弃疾",
+        "work": "《青玉案·元夕》",
+        "quote": "众里寻他千百度。蓦然回首。",
+        "note": "搜索与意外发现。"
+      }
+    },
+    {
+      "no": 48,
+      "key": "Life Rhythms",
+      "room": "CURIOSITY",
+      "room_display": "偶得",
+      "display_name": "日候",
+      "subtitle": "不必刻意寻找：星期节律、长日记与沉默区间；让旧日自己递来一条意外线索。",
+      "function_desc": "星期节律、长日记与沉默区间",
+      "source_key": "xin_search",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "辛弃疾",
+        "work": "《青玉案·元夕》",
+        "quote": "众里寻他千百度。蓦然回首。",
+        "note": "搜索与意外发现。"
+      }
+    },
+    {
+      "no": 49,
+      "key": "Skill Alchemy",
+      "room": "CURIOSITY",
+      "room_display": "偶得",
+      "display_name": "合技",
+      "subtitle": "不必刻意寻找：哪些技能总在同一天共同出现；让旧日自己递来一条意外线索。",
+      "function_desc": "哪些技能总在同一天共同出现",
+      "source_key": "xin_search",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "辛弃疾",
+        "work": "《青玉案·元夕》",
+        "quote": "众里寻他千百度。蓦然回首。",
+        "note": "搜索与意外发现。"
+      }
+    },
+    {
+      "no": 50,
+      "key": "Serendipity",
+      "room": "CURIOSITY",
+      "room_display": "偶得",
+      "display_name": "偶遇",
+      "subtitle": "不必刻意寻找：随机打开一个你没有主动搜索的时间桥；让旧日自己递来一条意外线索。",
+      "function_desc": "随机打开一个你没有主动搜索的时间桥",
+      "source_key": "xin_search",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "辛弃疾",
+        "work": "《青玉案·元夕》",
+        "quote": "众里寻他千百度。蓦然回首。",
+        "note": "搜索与意外发现。"
+      }
+    },
+    {
+      "no": 51,
+      "key": "Trajectory Observatory",
+      "room": "OBSERVATORY",
+      "room_display": "观象",
+      "display_name": "观澜台",
+      "subtitle": "站远一点看这条长路：把阶段、回归、早期信号、写作结构与未再出现的线索放在同一张观测台；只观其势，不替你命名人生。",
+      "function_desc": "把阶段、回归、早期信号、写作结构与未再出现的线索放在同一张观测台",
+      "source_key": "su_mountain",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋",
+        "author": "苏轼",
+        "work": "《题西林壁》",
+        "quote": "横看成岭侧成峰，远近高低各不同。",
+        "note": "观察、镜像、多视角。"
+      }
+    },
+    {
+      "no": 52,
+      "key": "Personal Eras",
+      "room": "OBSERVATORY",
+      "room_display": "观象",
+      "display_name": "人生纪",
+      "subtitle": "站远一点看这条长路：从月度主题+技能结构变化提出人生阶段候选；只观其势，不替你命名人生。",
+      "function_desc": "从月度主题+技能结构变化提出人生阶段候选",
+      "source_key": "su_mountain",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋",
+        "author": "苏轼",
+        "work": "《题西林壁》",
+        "quote": "横看成岭侧成峰，远近高低各不同。",
+        "note": "观察、镜像、多视角。"
+      }
+    },
+    {
+      "no": 53,
+      "key": "Return Map",
+      "room": "OBSERVATORY",
+      "room_display": "观象",
+      "display_name": "归来图",
+      "subtitle": "站远一点看这条长路：哪些技能或主题沉寂很久之后又重新出现；只观其势，不替你命名人生。",
+      "function_desc": "哪些技能或主题沉寂很久之后又重新出现",
+      "source_key": "su_mountain",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋",
+        "author": "苏轼",
+        "work": "《题西林壁》",
+        "quote": "横看成岭侧成峰，远近高低各不同。",
+        "note": "观察、镜像、多视角。"
+      }
+    },
+    {
+      "no": 54,
+      "key": "Dormant Threads",
+      "room": "OBSERVATORY",
+      "room_display": "观象",
+      "display_name": "伏线",
+      "subtitle": "站远一点看这条长路：曾多次出现、但最近较久没有再次记录的问题/想法/项目线索；只观其势，不替你命名人生。",
+      "function_desc": "曾多次出现、但最近较久没有再次记录的问题/想法/项目线索",
+      "source_key": "su_mountain",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋",
+        "author": "苏轼",
+        "work": "《题西林壁》",
+        "quote": "横看成岭侧成峰，远近高低各不同。",
+        "note": "观察、镜像、多视角。"
+      }
+    },
+    {
+      "no": 55,
+      "key": "Idea Genealogy",
+      "room": "OBSERVATORY",
+      "room_display": "观象",
+      "display_name": "念脉",
+      "subtitle": "站远一点看这条长路：把相似的想法片段连接成可能的想法谱系；只观其势，不替你命名人生。",
+      "function_desc": "把相似的想法片段连接成可能的想法谱系",
+      "source_key": "su_mountain",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋",
+        "author": "苏轼",
+        "work": "《题西林壁》",
+        "quote": "横看成岭侧成峰，远近高低各不同。",
+        "note": "观察、镜像、多视角。"
+      }
+    },
+    {
+      "no": 56,
+      "key": "Before / After",
+      "room": "OBSERVATORY",
+      "room_display": "观象",
+      "display_name": "前后",
+      "subtitle": "站远一点看这条长路：比较里程碑或决定前后30天的主题与技能结构；只观其势，不替你命名人生。",
+      "function_desc": "比较里程碑或决定前后30天的主题与技能结构",
+      "source_key": "su_mountain",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋",
+        "author": "苏轼",
+        "work": "《题西林壁》",
+        "quote": "横看成岭侧成峰，远近高低各不同。",
+        "note": "观察、镜像、多视角。"
+      }
+    },
+    {
+      "no": 57,
+      "key": "Voice Drift",
+      "room": "OBSERVATORY",
+      "room_display": "观象",
+      "display_name": "文声流变",
+      "subtitle": "站远一点看这条长路：观察写作长度、反思比例、问题/想法密度如何变化；只观其势，不替你命名人生。",
+      "function_desc": "观察写作长度、反思比例、问题/想法密度如何变化",
+      "source_key": "su_mountain",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋",
+        "author": "苏轼",
+        "work": "《题西林壁》",
+        "quote": "横看成岭侧成峰，远近高低各不同。",
+        "note": "观察、镜像、多视角。"
+      }
+    },
+    {
+      "no": 58,
+      "key": "Memory Weather",
+      "room": "OBSERVATORY",
+      "room_display": "观象",
+      "display_name": "晴雨录",
+      "subtitle": "站远一点看这条长路：把每个月的写作结构归纳为 Reflective / Sparse / Mixed 等档案天气；只观其势，不替你命名人生。",
+      "function_desc": "把每个月的写作结构归纳为 Reflective / Sparse / Mixed 等档案天气",
+      "source_key": "su_weather",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋",
+        "author": "苏轼",
+        "work": "《定风波·莫听穿林打叶声》",
+        "quote": "也无风雨也无晴。",
+        "note": "记忆天气与状态不评判。"
+      }
+    },
+    {
+      "no": 59,
+      "key": "Skill Bridges",
+      "room": "OBSERVATORY",
+      "room_display": "观象",
+      "display_name": "技桥",
+      "subtitle": "站远一点看这条长路：技能与生活主题在同一天共同出现的桥梁；只观其势，不替你命名人生。",
+      "function_desc": "技能与生活主题在同一天共同出现的桥梁",
+      "source_key": "su_mountain",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋",
+        "author": "苏轼",
+        "work": "《题西林壁》",
+        "quote": "横看成岭侧成峰，远近高低各不同。",
+        "note": "观察、镜像、多视角。"
+      }
+    },
+    {
+      "no": 60,
+      "key": "Month Portraits",
+      "room": "OBSERVATORY",
+      "room_display": "观象",
+      "display_name": "月相",
+      "subtitle": "站远一点看这条长路：每个月的主题、技能、写作天气与高密度日期画像；只观其势，不替你命名人生。",
+      "function_desc": "每个月的主题、技能、写作天气与高密度日期画像",
+      "source_key": "su_mountain",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋",
+        "author": "苏轼",
+        "work": "《题西林壁》",
+        "quote": "横看成岭侧成峰，远近高低各不同。",
+        "note": "观察、镜像、多视角。"
+      }
+    },
+    {
+      "no": 61,
+      "key": "Archive Health",
+      "room": "OBSERVATORY",
+      "room_display": "观象",
+      "display_name": "藏卷自检",
+      "subtitle": "站远一点看这条长路：检查覆盖率、日期异常、重复哈希、栏目完整度与来源策略；只观其势，不替你命名人生。",
+      "function_desc": "检查覆盖率、日期异常、重复哈希、栏目完整度与来源策略",
+      "source_key": "su_mountain",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋",
+        "author": "苏轼",
+        "work": "《题西林壁》",
+        "quote": "横看成岭侧成峰，远近高低各不同。",
+        "note": "观察、镜像、多视角。"
+      }
+    },
+    {
+      "no": 62,
+      "key": "Early Signals",
+      "room": "OBSERVATORY",
+      "room_display": "观象",
+      "display_name": "微明",
+      "subtitle": "站远一点看这条长路：寻找第一次留下记录远早于后续高峰的技能与主题；只观其势，不替你命名人生。",
+      "function_desc": "寻找第一次留下记录远早于后续高峰的技能与主题",
+      "source_key": "su_mountain",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋",
+        "author": "苏轼",
+        "work": "《题西林壁》",
+        "quote": "横看成岭侧成峰，远近高低各不同。",
+        "note": "观察、镜像、多视角。"
+      }
+    },
+    {
+      "no": 63,
+      "key": "Timefold Atlas",
+      "room": "TIMEFOLD",
+      "room_display": "折光",
+      "display_name": "折光图",
+      "subtitle": "把相隔很远的日子折到一起：把承诺、自我描述、动量、跨年同月与长距离重现放进同一张时间折叠图；看时间如何彼此照见。",
+      "function_desc": "把承诺、自我描述、动量、跨年同月与长距离重现放进同一张时间折叠图",
+      "source_key": "jiang_time",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋末元初",
+        "author": "蒋捷",
+        "work": "《一剪梅·舟过吴江》",
+        "quote": "流光容易把人抛。",
+        "note": "时间折叠、流光与阶段变化。"
+      }
+    },
+    {
+      "no": 64,
+      "key": "Growth Rings",
+      "room": "TIMEFOLD",
+      "room_display": "折光",
+      "display_name": "年轮",
+      "subtitle": "把相隔很远的日子折到一起：看技能、主题、地点、角色第一次进入档案的累积年轮；看时间如何彼此照见。",
+      "function_desc": "看技能、主题、地点、角色第一次进入档案的累积年轮",
+      "source_key": "jiang_time",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋末元初",
+        "author": "蒋捷",
+        "work": "《一剪梅·舟过吴江》",
+        "quote": "流光容易把人抛。",
+        "note": "时间折叠、流光与阶段变化。"
+      }
+    },
+    {
+      "no": 65,
+      "key": "Novelty Atlas",
+      "room": "TIMEFOLD",
+      "room_display": "折光",
+      "display_name": "新痕",
+      "subtitle": "把相隔很远的日子折到一起：比较每天和此前90天的语言/主题新颖度；看时间如何彼此照见。",
+      "function_desc": "比较每天和此前90天的语言/主题新颖度",
+      "source_key": "jiang_time",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋末元初",
+        "author": "蒋捷",
+        "work": "《一剪梅·舟过吴江》",
+        "quote": "流光容易把人抛。",
+        "note": "时间折叠、流光与阶段变化。"
+      }
+    },
+    {
+      "no": 66,
+      "key": "Bridge Days",
+      "room": "TIMEFOLD",
+      "room_display": "折光",
+      "display_name": "渡日",
+      "subtitle": "把相隔很远的日子折到一起：寻找同一天连接多个生活领域的跨域页面；看时间如何彼此照见。",
+      "function_desc": "寻找同一天连接多个生活领域的跨域页面",
+      "source_key": "jiang_time",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋末元初",
+        "author": "蒋捷",
+        "work": "《一剪梅·舟过吴江》",
+        "quote": "流光容易把人抛。",
+        "note": "时间折叠、流光与阶段变化。"
+      }
+    },
+    {
+      "no": 67,
+      "key": "Attention Portfolio",
+      "room": "TIMEFOLD",
+      "room_display": "折光",
+      "display_name": "心目所注",
+      "subtitle": "把相隔很远的日子折到一起：观察每个月主题组合的集中度与多样性；看时间如何彼此照见。",
+      "function_desc": "观察每个月主题组合的集中度与多样性",
+      "source_key": "jiang_time",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋末元初",
+        "author": "蒋捷",
+        "work": "《一剪梅·舟过吴江》",
+        "quote": "流光容易把人抛。",
+        "note": "时间折叠、流光与阶段变化。"
+      }
+    },
+    {
+      "no": 68,
+      "key": "Promise Ledger",
+      "room": "TIMEFOLD",
+      "room_display": "折光",
+      "display_name": "来日笺",
+      "subtitle": "把相隔很远的日子折到一起：收集未来式自我承诺/计划候选，并追踪后续语言回声；看时间如何彼此照见。",
+      "function_desc": "收集未来式自我承诺/计划候选，并追踪后续语言回声",
+      "source_key": "jiang_time",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋末元初",
+        "author": "蒋捷",
+        "work": "《一剪梅·舟过吴江》",
+        "quote": "流光容易把人抛。",
+        "note": "时间折叠、流光与阶段变化。"
+      }
+    },
+    {
+      "no": 69,
+      "key": "Future Echoes",
+      "room": "TIMEFOLD",
+      "room_display": "折光",
+      "display_name": "来音",
+      "subtitle": "把相隔很远的日子折到一起：把早先面向未来的句子与后来相似的记录并排；看时间如何彼此照见。",
+      "function_desc": "把早先面向未来的句子与后来相似的记录并排",
+      "source_key": "jiang_time",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋末元初",
+        "author": "蒋捷",
+        "work": "《一剪梅·舟过吴江》",
+        "quote": "流光容易把人抛。",
+        "note": "时间折叠、流光与阶段变化。"
+      }
+    },
+    {
+      "no": 70,
+      "key": "Identity Ledger",
+      "room": "TIMEFOLD",
+      "room_display": "折光",
+      "display_name": "自述录",
+      "subtitle": "把相隔很远的日子折到一起：只记录本人明确写过的自我描述、偏好、边界与愿景；看时间如何彼此照见。",
+      "function_desc": "只记录本人明确写过的自我描述、偏好、边界与愿景",
+      "source_key": "jiang_time",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋末元初",
+        "author": "蒋捷",
+        "work": "《一剪梅·舟过吴江》",
+        "quote": "流光容易把人抛。",
+        "note": "时间折叠、流光与阶段变化。"
+      }
+    },
+    {
+      "no": 71,
+      "key": "Motif Atlas",
+      "room": "TIMEFOLD",
+      "room_display": "折光",
+      "display_name": "母题谱",
+      "subtitle": "把相隔很远的日子折到一起：聚合跨很长时间重复出现的语言母题；看时间如何彼此照见。",
+      "function_desc": "聚合跨很长时间重复出现的语言母题",
+      "source_key": "jiang_time",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋末元初",
+        "author": "蒋捷",
+        "work": "《一剪梅·舟过吴江》",
+        "quote": "流光容易把人抛。",
+        "note": "时间折叠、流光与阶段变化。"
+      }
+    },
+    {
+      "no": 72,
+      "key": "Turning Point Index",
+      "room": "TIMEFOLD",
+      "room_display": "折光",
+      "display_name": "转折处",
+      "subtitle": "把相隔很远的日子折到一起：以结构密度生成值得人工重读的转折候选日期；看时间如何彼此照见。",
+      "function_desc": "以结构密度生成值得人工重读的转折候选日期",
+      "source_key": "jiang_time",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋末元初",
+        "author": "蒋捷",
+        "work": "《一剪梅·舟过吴江》",
+        "quote": "流光容易把人抛。",
+        "note": "时间折叠、流光与阶段变化。"
+      }
+    },
+    {
+      "no": 73,
+      "key": "Thread Reopenings",
+      "room": "TIMEFOLD",
+      "room_display": "折光",
+      "display_name": "再续",
+      "subtitle": "把相隔很远的日子折到一起：寻找想法/问题/项目沉默数月后再次出现的候选链；看时间如何彼此照见。",
+      "function_desc": "寻找想法/问题/项目沉默数月后再次出现的候选链",
+      "source_key": "jiang_time",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋末元初",
+        "author": "蒋捷",
+        "work": "《一剪梅·舟过吴江》",
+        "quote": "流光容易把人抛。",
+        "note": "时间折叠、流光与阶段变化。"
+      }
+    },
+    {
+      "no": 74,
+      "key": "Skill Momentum",
+      "room": "TIMEFOLD",
+      "room_display": "折光",
+      "display_name": "势起",
+      "subtitle": "把相隔很远的日子折到一起：比较最近60天与此前180天的技能证据可见度；看时间如何彼此照见。",
+      "function_desc": "比较最近60天与此前180天的技能证据可见度",
+      "source_key": "jiang_time",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋末元初",
+        "author": "蒋捷",
+        "work": "《一剪梅·舟过吴江》",
+        "quote": "流光容易把人抛。",
+        "note": "时间折叠、流光与阶段变化。"
+      }
+    },
+    {
+      "no": 75,
+      "key": "Seasonal Echoes",
+      "room": "TIMEFOLD",
+      "room_display": "折光",
+      "display_name": "同月异年",
+      "subtitle": "把相隔很远的日子折到一起：并排比较两个年份的同一个月份；看时间如何彼此照见。",
+      "function_desc": "并排比较两个年份的同一个月份",
+      "source_key": "jiang_time",
+      "source_type": "意象取材",
+      "source": {
+        "era": "宋末元初",
+        "author": "蒋捷",
+        "work": "《一剪梅·舟过吴江》",
+        "quote": "流光容易把人抛。",
+        "note": "时间折叠、流光与阶段变化。"
+      }
+    },
+    {
+      "no": 76,
+      "key": "Mirror Atlas",
+      "room": "MIRROR",
+      "room_display": "照见",
+      "display_name": "照见",
+      "subtitle": "只照见，不裁判：把计划、兑现线索、阻力、规则、边界、沉默与完成方式放在同一面镜子里；把判断留给今天的你。",
+      "function_desc": "把计划、兑现线索、阻力、规则、边界、沉默与完成方式放在同一面镜子里",
+      "source_key": "tang_mirror",
+      "source_type": "意象取材",
+      "source": {
+        "era": "唐",
+        "author": "唐太宗相关史载",
+        "work": "《旧唐书·魏徵传》等所载“三镜”典故",
+        "quote": "以人为镜，可以明得失。",
+        "note": "Mirror 系列；使用典故，不做人格裁判。"
+      }
+    },
+    {
+      "no": 77,
+      "key": "Intention / Outcome",
+      "room": "MIRROR",
+      "room_display": "照见",
+      "display_name": "愿与成",
+      "subtitle": "只照见，不裁判：比较未来式语言后来是否留下可追溯的回声或闭环候选；把判断留给今天的你。",
+      "function_desc": "比较未来式语言后来是否留下可追溯的回声或闭环候选",
+      "source_key": "tang_mirror",
+      "source_type": "意象取材",
+      "source": {
+        "era": "唐",
+        "author": "唐太宗相关史载",
+        "work": "《旧唐书·魏徵传》等所载“三镜”典故",
+        "quote": "以人为镜，可以明得失。",
+        "note": "Mirror 系列；使用典故，不做人格裁判。"
+      }
+    },
+    {
+      "no": 78,
+      "key": "Closure Candidates",
+      "room": "MIRROR",
+      "room_display": "照见",
+      "display_name": "收束",
+      "subtitle": "只照见，不裁判：把早先的计划/愿望与后来里程碑或项目候选配对，等待人工确认；把判断留给今天的你。",
+      "function_desc": "把早先的计划/愿望与后来里程碑或项目候选配对，等待人工确认",
+      "source_key": "tang_mirror",
+      "source_type": "意象取材",
+      "source": {
+        "era": "唐",
+        "author": "唐太宗相关史载",
+        "work": "《旧唐书·魏徵传》等所载“三镜”典故",
+        "quote": "以人为镜，可以明得失。",
+        "note": "Mirror 系列；使用典故，不做人格裁判。"
+      }
+    },
+    {
+      "no": 79,
+      "key": "Friction Atlas",
+      "room": "MIRROR",
+      "room_display": "照见",
+      "display_name": "阻痕",
+      "subtitle": "只照见，不裁判：只收集原文中明确出现的卡点、没时间、担心、困难等阻力语言；把判断留给今天的你。",
+      "function_desc": "只收集原文中明确出现的卡点、没时间、担心、困难等阻力语言",
+      "source_key": "tang_mirror",
+      "source_type": "意象取材",
+      "source": {
+        "era": "唐",
+        "author": "唐太宗相关史载",
+        "work": "《旧唐书·魏徵传》等所载“三镜”典故",
+        "quote": "以人为镜，可以明得失。",
+        "note": "Mirror 系列；使用典故，不做人格裁判。"
+      }
+    },
+    {
+      "no": 80,
+      "key": "Personal Protocols",
+      "room": "MIRROR",
+      "room_display": "照见",
+      "display_name": "自持之法",
+      "subtitle": "只照见，不裁判：收集反复写下的“我应该 / 我需要 / 不要 / 下次要”等个人规则；把判断留给今天的你。",
+      "function_desc": "收集反复写下的“我应该 / 我需要 / 不要 / 下次要”等个人规则",
+      "source_key": "tang_mirror",
+      "source_type": "意象取材",
+      "source": {
+        "era": "唐",
+        "author": "唐太宗相关史载",
+        "work": "《旧唐书·魏徵传》等所载“三镜”典故",
+        "quote": "以人为镜，可以明得失。",
+        "note": "Mirror 系列；使用典故，不做人格裁判。"
+      }
+    },
+    {
+      "no": 81,
+      "key": "Boundary Ledger",
+      "room": "MIRROR",
+      "room_display": "照见",
+      "display_name": "界线",
+      "subtitle": "只照见，不裁判：只记录本人明确写过的“不想 / 不喜欢 / 不愿意 / 不能接受”等边界；把判断留给今天的你。",
+      "function_desc": "只记录本人明确写过的“不想 / 不喜欢 / 不愿意 / 不能接受”等边界",
+      "source_key": "tang_mirror",
+      "source_type": "意象取材",
+      "source": {
+        "era": "唐",
+        "author": "唐太宗相关史载",
+        "work": "《旧唐书·魏徵传》等所载“三镜”典故",
+        "quote": "以人为镜，可以明得失。",
+        "note": "Mirror 系列；使用典故，不做人格裁判。"
+      }
+    },
+    {
+      "no": 82,
+      "key": "Quiet Priorities",
+      "room": "MIRROR",
+      "room_display": "照见",
+      "display_name": "静下来的事",
+      "subtitle": "只照见，不裁判：找历史上常出现、最近90天明显安静下来的主题与技能；把判断留给今天的你。",
+      "function_desc": "找历史上常出现、最近90天明显安静下来的主题与技能",
+      "source_key": "tang_mirror",
+      "source_type": "意象取材",
+      "source": {
+        "era": "唐",
+        "author": "唐太宗相关史载",
+        "work": "《旧唐书·魏徵传》等所载“三镜”典故",
+        "quote": "以人为镜，可以明得失。",
+        "note": "Mirror 系列；使用典故，不做人格裁判。"
+      }
+    },
+    {
+      "no": 83,
+      "key": "Idea Survival",
+      "room": "MIRROR",
+      "room_display": "照见",
+      "display_name": "念久",
+      "subtitle": "只照见，不裁判：看哪些想法跨过数周数月后仍会重新出现；把判断留给今天的你。",
+      "function_desc": "看哪些想法跨过数周数月后仍会重新出现",
+      "source_key": "tang_mirror",
+      "source_type": "意象取材",
+      "source": {
+        "era": "唐",
+        "author": "唐太宗相关史载",
+        "work": "《旧唐书·魏徵传》等所载“三镜”典故",
+        "quote": "以人为镜，可以明得失。",
+        "note": "Mirror 系列；使用典故，不做人格裁判。"
+      }
+    },
+    {
+      "no": 84,
+      "key": "Milestone Lead-up",
+      "room": "MIRROR",
+      "room_display": "照见",
+      "display_name": "将成之前",
+      "subtitle": "只照见，不裁判：把里程碑候选和更早的相关想法/项目记录并排；把判断留给今天的你。",
+      "function_desc": "把里程碑候选和更早的相关想法/项目记录并排",
+      "source_key": "tang_mirror",
+      "source_type": "意象取材",
+      "source": {
+        "era": "唐",
+        "author": "唐太宗相关史载",
+        "work": "《旧唐书·魏徵传》等所载“三镜”典故",
+        "quote": "以人为镜，可以明得失。",
+        "note": "Mirror 系列；使用典故，不做人格裁判。"
+      }
+    },
+    {
+      "no": 85,
+      "key": "Decision Replay",
+      "room": "MIRROR",
+      "room_display": "照见",
+      "display_name": "再看取舍",
+      "subtitle": "只照见，不裁判：重放明确决定前后30天的主题与技能上下文；把判断留给今天的你。",
+      "function_desc": "重放明确决定前后30天的主题与技能上下文",
+      "source_key": "tang_mirror",
+      "source_type": "意象取材",
+      "source": {
+        "era": "唐",
+        "author": "唐太宗相关史载",
+        "work": "《旧唐书·魏徵传》等所载“三镜”典故",
+        "quote": "以人为镜，可以明得失。",
+        "note": "Mirror 系列；使用典故，不做人格裁判。"
+      }
+    },
+    {
+      "no": 86,
+      "key": "Fork Replay",
+      "room": "MIRROR",
+      "room_display": "照见",
+      "display_name": "岔路回望",
+      "subtitle": "只照见，不裁判：从“还是 / 要不要 / 选择 / 放弃”等岔路语言出发，看后来哪条路径留下了记录；把判断留给今天的你。",
+      "function_desc": "从“还是 / 要不要 / 选择 / 放弃”等岔路语言出发，看后来哪条路径留下了记录",
+      "source_key": "tang_mirror",
+      "source_type": "意象取材",
+      "source": {
+        "era": "唐",
+        "author": "唐太宗相关史载",
+        "work": "《旧唐书·魏徵传》等所载“三镜”典故",
+        "quote": "以人为镜，可以明得失。",
+        "note": "Mirror 系列；使用典故，不做人格裁判。"
+      }
+    },
+    {
+      "no": 87,
+      "key": "Identity Mirror",
+      "room": "MIRROR",
+      "room_display": "照见",
+      "display_name": "自照",
+      "subtitle": "只照见，不裁判：把明确自我描述与同一篇日记里的主题/技能上下文并排，而不替你验证人格；把判断留给今天的你。",
+      "function_desc": "把明确自我描述与同一篇日记里的主题/技能上下文并排，而不替你验证人格",
+      "source_key": "tang_mirror",
+      "source_type": "意象取材",
+      "source": {
+        "era": "唐",
+        "author": "唐太宗相关史载",
+        "work": "《旧唐书·魏徵传》等所载“三镜”典故",
+        "quote": "以人为镜，可以明得失。",
+        "note": "Mirror 系列；使用典故，不做人格裁判。"
+      }
+    },
+    {
+      "no": 88,
+      "key": "Completion Texture",
+      "room": "MIRROR",
+      "room_display": "照见",
+      "display_name": "成事纹理",
+      "subtitle": "只照见，不裁判：观察里程碑候选通常与哪些主题/技能在同一天共同出现；把判断留给今天的你。",
+      "function_desc": "观察里程碑候选通常与哪些主题/技能在同一天共同出现",
+      "source_key": "tang_mirror",
+      "source_type": "意象取材",
+      "source": {
+        "era": "唐",
+        "author": "唐太宗相关史载",
+        "work": "《旧唐书·魏徵传》等所载“三镜”典故",
+        "quote": "以人为镜，可以明得失。",
+        "note": "Mirror 系列；使用典故，不做人格裁判。"
+      }
+    },
+    {
+      "no": 89,
+      "key": "Compass Atlas",
+      "room": "COMPASS",
+      "room_display": "问津",
+      "display_name": "问津",
+      "subtitle": "不替你决定方向：把问题、技能迁移、人物/地点上下文、聚焦窗口、修订轨迹和证据缺口组织成下一步回看的方向盘；只把值得再看的地方点亮。",
+      "function_desc": "把问题、技能迁移、人物/地点上下文、聚焦窗口、修订轨迹和证据缺口组织成下一步回看的方向盘",
+      "source_key": "qu_seek",
+      "source_type": "意象取材",
+      "source": {
+        "era": "战国",
+        "author": "屈原",
+        "work": "《离骚》",
+        "quote": "路曼曼其修远兮，吾将上下而求索。",
+        "note": "方向、探索、问津。"
+      }
+    },
+    {
+      "no": 90,
+      "key": "Learning Loops",
+      "room": "COMPASS",
+      "room_display": "问津",
+      "display_name": "学而复",
+      "subtitle": "不替你决定方向：寻找一个明确问题与后来相关想法、项目或里程碑之间的高置信回看链；只把值得再看的地方点亮。",
+      "function_desc": "寻找一个明确问题与后来相关想法、项目或里程碑之间的高置信回看链",
+      "source_key": "qu_seek",
+      "source_type": "意象取材",
+      "source": {
+        "era": "战国",
+        "author": "屈原",
+        "work": "《离骚》",
+        "quote": "路曼曼其修远兮，吾将上下而求索。",
+        "note": "方向、探索、问津。"
+      }
+    },
+    {
+      "no": 91,
+      "key": "Skill Transfer Trails",
+      "room": "COMPASS",
+      "room_display": "问津",
+      "display_name": "旁通",
+      "subtitle": "不替你决定方向：观察不同技能家族在哪些真实日期里长期共同出现；只把值得再看的地方点亮。",
+      "function_desc": "观察不同技能家族在哪些真实日期里长期共同出现",
+      "source_key": "qu_seek",
+      "source_type": "意象取材",
+      "source": {
+        "era": "战国",
+        "author": "屈原",
+        "work": "《离骚》",
+        "quote": "路曼曼其修远兮，吾将上下而求索。",
+        "note": "方向、探索、问津。"
+      }
+    },
+    {
+      "no": 92,
+      "key": "Social Gravity",
+      "room": "COMPASS",
+      "room_display": "问津",
+      "display_name": "人间引力",
+      "subtitle": "不替你决定方向：角色与主题/技能在同一天出现的上下文矩阵，不评价关系本身；只把值得再看的地方点亮。",
+      "function_desc": "角色与主题/技能在同一天出现的上下文矩阵，不评价关系本身",
+      "source_key": "qu_seek",
+      "source_type": "意象取材",
+      "source": {
+        "era": "战国",
+        "author": "屈原",
+        "work": "《离骚》",
+        "quote": "路曼曼其修远兮，吾将上下而求索。",
+        "note": "方向、探索、问津。"
+      }
+    },
+    {
+      "no": 93,
+      "key": "Place Imprints",
+      "room": "COMPASS",
+      "room_display": "问津",
+      "display_name": "地有痕",
+      "subtitle": "不替你决定方向：地点与主题/技能在同一天留下的记录纹理；只把值得再看的地方点亮。",
+      "function_desc": "地点与主题/技能在同一天留下的记录纹理",
+      "source_key": "qu_seek",
+      "source_type": "意象取材",
+      "source": {
+        "era": "战国",
+        "author": "屈原",
+        "work": "《离骚》",
+        "quote": "路曼曼其修远兮，吾将上下而求索。",
+        "note": "方向、探索、问津。"
+      }
+    },
+    {
+      "no": 94,
+      "key": "Focus Bursts",
+      "room": "COMPASS",
+      "room_display": "问津",
+      "display_name": "聚光",
+      "subtitle": "不替你决定方向：寻找短时间内某主题或技能连续高密度出现的记录窗口；只把值得再看的地方点亮。",
+      "function_desc": "寻找短时间内某主题或技能连续高密度出现的记录窗口",
+      "source_key": "qu_seek",
+      "source_type": "意象取材",
+      "source": {
+        "era": "战国",
+        "author": "屈原",
+        "work": "《离骚》",
+        "quote": "路曼曼其修远兮，吾将上下而求索。",
+        "note": "方向、探索、问津。"
+      }
+    },
+    {
+      "no": 95,
+      "key": "Visibility Arcs",
+      "room": "COMPASS",
+      "room_display": "问津",
+      "display_name": "显隐",
+      "subtitle": "不替你决定方向：把主题/技能按月展开成峰值、安静与再次出现的档案弧线；只把值得再看的地方点亮。",
+      "function_desc": "把主题/技能按月展开成峰值、安静与再次出现的档案弧线",
+      "source_key": "qu_seek",
+      "source_type": "意象取材",
+      "source": {
+        "era": "战国",
+        "author": "屈原",
+        "work": "《离骚》",
+        "quote": "路曼曼其修远兮，吾将上下而求索。",
+        "note": "方向、探索、问津。"
+      }
+    },
+    {
+      "no": 96,
+      "key": "After Friction",
+      "room": "COMPASS",
+      "room_display": "问津",
+      "display_name": "雨后",
+      "subtitle": "不替你决定方向：把明确阻力语言与之后相关行动/里程碑候选并排，不把它解释成恢复或因果；只把值得再看的地方点亮。",
+      "function_desc": "把明确阻力语言与之后相关行动/里程碑候选并排，不把它解释成恢复或因果",
+      "source_key": "qu_seek",
+      "source_type": "意象取材",
+      "source": {
+        "era": "战国",
+        "author": "屈原",
+        "work": "《离骚》",
+        "quote": "路曼曼其修远兮，吾将上下而求索。",
+        "note": "方向、探索、问津。"
+      }
+    },
+    {
+      "no": 97,
+      "key": "Forgotten Doors",
+      "room": "COMPASS",
+      "room_display": "问津",
+      "display_name": "旧门",
+      "subtitle": "不替你决定方向：重新打开那些很久以前出现、后来几乎没有留下语言回声的想法与问题；只把值得再看的地方点亮。",
+      "function_desc": "重新打开那些很久以前出现、后来几乎没有留下语言回声的想法与问题",
+      "source_key": "lu_door",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "陆游",
+        "work": "《游山西村》",
+        "quote": "山重水复疑无路，柳暗花明又一村。",
+        "note": "遗忘之门、重新发现。"
+      }
+    },
+    {
+      "no": 98,
+      "key": "Revision Trails",
+      "room": "COMPASS",
+      "room_display": "问津",
+      "display_name": "改写之路",
+      "subtitle": "不替你决定方向：追踪同一主题下的显式观点、个人规则与自我描述如何被反复重写；只把值得再看的地方点亮。",
+      "function_desc": "追踪同一主题下的显式观点、个人规则与自我描述如何被反复重写",
+      "source_key": "du_article",
+      "source_type": "意象取材",
+      "source": {
+        "era": "唐",
+        "author": "杜甫",
+        "work": "《偶题》",
+        "quote": "文章千古事，得失寸心知。",
+        "note": "文字、版本与作品。"
+      }
+    },
+    {
+      "no": 99,
+      "key": "Evidence Gaps",
+      "room": "COMPASS",
+      "room_display": "问津",
+      "display_name": "留白",
+      "subtitle": "不替你决定方向：主动展示 LifeOS 不应该过度下结论的薄证据、异常和单点记录；只把值得再看的地方点亮。",
+      "function_desc": "主动展示 LifeOS 不应该过度下结论的薄证据、异常和单点记录",
+      "source_key": "conf_know",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "孔子言论",
+        "work": "《论语·为政》",
+        "quote": "知之为知之，不知为不知。",
+        "note": "AI 不确定性与证据边界。"
+      }
+    },
+    {
+      "no": 100,
+      "key": "Questions Worth Asking",
+      "room": "COMPASS",
+      "room_display": "问津",
+      "display_name": "可问",
+      "subtitle": "不替你决定方向：依据本地证据结构生成值得问自己的问题，而不是预生成答案；只把值得再看的地方点亮。",
+      "function_desc": "依据本地证据结构生成值得问自己的问题，而不是预生成答案",
+      "source_key": "conf_near",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "子夏言论",
+        "work": "《论语·子张》",
+        "quote": "博学而笃志，切问而近思。",
+        "note": "提问、回看、近思。"
+      }
+    },
+    {
+      "no": 101,
+      "key": "Orientation Cards",
+      "room": "COMPASS",
+      "room_display": "问津",
+      "display_name": "问津笺",
+      "subtitle": "不替你决定方向：把最值得重新打开的学习回路、技能桥、修订线和遗忘之门整理成一副方向卡；只把值得再看的地方点亮。",
+      "function_desc": "把最值得重新打开的学习回路、技能桥、修订线和遗忘之门整理成一副方向卡",
+      "source_key": "qu_seek",
+      "source_type": "意象取材",
+      "source": {
+        "era": "战国",
+        "author": "屈原",
+        "work": "《离骚》",
+        "quote": "路曼曼其修远兮，吾将上下而求索。",
+        "note": "方向、探索、问津。"
+      }
+    },
+    {
+      "no": 102,
+      "key": "Topology Atlas",
+      "room": "TOPOLOGY",
+      "room_display": "经纬",
+      "display_name": "山河经纬",
+      "subtitle": "把散落的人、地、事织成经纬：把技能、主题、角色与地点组成一张可追溯的人生拓扑图：看邻域、门户、桥接日期、转场与路径；每个节点都能回到原文。",
+      "function_desc": "把技能、主题、角色与地点组成一张可追溯的人生拓扑图：看邻域、门户、桥接日期、转场与路径",
+      "source_key": "zhouyi_hetu",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "佚名 / 《周易》传统",
+        "work": "《周易·系辞上》",
+        "quote": "河出图，洛出书，圣人则之。",
+        "note": "图谱、经纬、拓扑意象。"
+      }
+    },
+    {
+      "no": 103,
+      "key": "Life Neighborhoods",
+      "room": "TOPOLOGY",
+      "room_display": "经纬",
+      "display_name": "此间邻里",
+      "subtitle": "把散落的人、地、事织成经纬：从同日共现图中识别局部人生邻域；它们是导航簇，不是隐藏人格类别；每个节点都能回到原文。",
+      "function_desc": "从同日共现图中识别局部人生邻域；它们是导航簇，不是隐藏人格类别",
+      "source_key": "zhouyi_hetu",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "佚名 / 《周易》传统",
+        "work": "《周易·系辞上》",
+        "quote": "河出图，洛出书，圣人则之。",
+        "note": "图谱、经纬、拓扑意象。"
+      }
+    },
+    {
+      "no": 104,
+      "key": "Gateway Nodes",
+      "room": "TOPOLOGY",
+      "room_display": "经纬",
+      "display_name": "关津",
+      "subtitle": "把散落的人、地、事织成经纬：寻找同时连接多个人生邻域的技能、主题、角色或地点；每个节点都能回到原文。",
+      "function_desc": "寻找同时连接多个人生邻域的技能、主题、角色或地点",
+      "source_key": "zhouyi_hetu",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "佚名 / 《周易》传统",
+        "work": "《周易·系辞上》",
+        "quote": "河出图，洛出书，圣人则之。",
+        "note": "图谱、经纬、拓扑意象。"
+      }
+    },
+    {
+      "no": 105,
+      "key": "Bridge Memories",
+      "room": "TOPOLOGY",
+      "room_display": "经纬",
+      "display_name": "渡口",
+      "subtitle": "把散落的人、地、事织成经纬：寻找同一天横跨多个人生邻域的原始日记页；每个节点都能回到原文。",
+      "function_desc": "寻找同一天横跨多个人生邻域的原始日记页",
+      "source_key": "zhouyi_hetu",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "佚名 / 《周易》传统",
+        "work": "《周易·系辞上》",
+        "quote": "河出图，洛出书，圣人则之。",
+        "note": "图谱、经纬、拓扑意象。"
+      }
+    },
+    {
+      "no": 106,
+      "key": "Context Signatures",
+      "room": "TOPOLOGY",
+      "room_display": "经纬",
+      "display_name": "境纹",
+      "subtitle": "把散落的人、地、事织成经纬：查看每个人生邻域常伴随出现的技能、主题、人物角色、地点与月份；每个节点都能回到原文。",
+      "function_desc": "查看每个人生邻域常伴随出现的技能、主题、人物角色、地点与月份",
+      "source_key": "zhouyi_hetu",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "佚名 / 《周易》传统",
+        "work": "《周易·系辞上》",
+        "quote": "河出图，洛出书，圣人则之。",
+        "note": "图谱、经纬、拓扑意象。"
+      }
+    },
+    {
+      "no": 107,
+      "key": "Transition Matrix",
+      "room": "TOPOLOGY",
+      "room_display": "经纬",
+      "display_name": "移步",
+      "subtitle": "把散落的人、地、事织成经纬：观察相邻记录日之间人生上下文怎样发生切换，不用于预测；每个节点都能回到原文。",
+      "function_desc": "观察相邻记录日之间人生上下文怎样发生切换，不用于预测",
+      "source_key": "zhouyi_hetu",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "佚名 / 《周易》传统",
+        "work": "《周易·系辞上》",
+        "quote": "河出图，洛出书，圣人则之。",
+        "note": "图谱、经纬、拓扑意象。"
+      }
+    },
+    {
+      "no": 108,
+      "key": "Co-occurrence Surprise",
+      "room": "TOPOLOGY",
+      "room_display": "经纬",
+      "display_name": "偶合",
+      "subtitle": "把散落的人、地、事织成经纬：寻找实际共现次数明显高于简单独立基线的组合，专门用来触发重读；每个节点都能回到原文。",
+      "function_desc": "寻找实际共现次数明显高于简单独立基线的组合，专门用来触发重读",
+      "source_key": "zhouyi_hetu",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "佚名 / 《周易》传统",
+        "work": "《周易·系辞上》",
+        "quote": "河出图，洛出书，圣人则之。",
+        "note": "图谱、经纬、拓扑意象。"
+      }
+    },
+    {
+      "no": 109,
+      "key": "Rare Pairings",
+      "room": "TOPOLOGY",
+      "room_display": "经纬",
+      "display_name": "稀逢",
+      "subtitle": "把散落的人、地、事织成经纬：寻找只出现少数几次、却异常集中在一起的稀有组合；每个节点都能回到原文。",
+      "function_desc": "寻找只出现少数几次、却异常集中在一起的稀有组合",
+      "source_key": "zhouyi_hetu",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "佚名 / 《周易》传统",
+        "work": "《周易·系辞上》",
+        "quote": "河出图，洛出书，圣人则之。",
+        "note": "图谱、经纬、拓扑意象。"
+      }
+    },
+    {
+      "no": 110,
+      "key": "Orphan Islands",
+      "room": "TOPOLOGY",
+      "room_display": "经纬",
+      "display_name": "孤岛",
+      "subtitle": "把散落的人、地、事织成经纬：找到图里连接很弱的技能、地点或主题：可能孤立，也可能只是记录不足；每个节点都能回到原文。",
+      "function_desc": "找到图里连接很弱的技能、地点或主题：可能孤立，也可能只是记录不足",
+      "source_key": "zhouyi_hetu",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "佚名 / 《周易》传统",
+        "work": "《周易·系辞上》",
+        "quote": "河出图，洛出书，圣人则之。",
+        "note": "图谱、经纬、拓扑意象。"
+      }
+    },
+    {
+      "no": 111,
+      "key": "Anchor Memories",
+      "room": "TOPOLOGY",
+      "room_display": "经纬",
+      "display_name": "锚日",
+      "subtitle": "把散落的人、地、事织成经纬：按图结构找到连接很多节点和邻域的高密度原始日期；每个节点都能回到原文。",
+      "function_desc": "按图结构找到连接很多节点和邻域的高密度原始日期",
+      "source_key": "zhouyi_hetu",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "佚名 / 《周易》传统",
+        "work": "《周易·系辞上》",
+        "quote": "河出图，洛出书，圣人则之。",
+        "note": "图谱、经纬、拓扑意象。"
+      }
+    },
+    {
+      "no": 112,
+      "key": "Neighborhood Drift",
+      "room": "TOPOLOGY",
+      "room_display": "经纬",
+      "display_name": "境迁",
+      "subtitle": "把散落的人、地、事织成经纬：比较每个月人生邻域的结构占比如何漂移；每个节点都能回到原文。",
+      "function_desc": "比较每个月人生邻域的结构占比如何漂移",
+      "source_key": "zhouyi_hetu",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "佚名 / 《周易》传统",
+        "work": "《周易·系辞上》",
+        "quote": "河出图，洛出书，圣人则之。",
+        "note": "图谱、经纬、拓扑意象。"
+      }
+    },
+    {
+      "no": 113,
+      "key": "Context Switches",
+      "room": "TOPOLOGY",
+      "room_display": "经纬",
+      "display_name": "转场",
+      "subtitle": "把散落的人、地、事织成经纬：回看相邻记录日里主导人生上下文发生切换的瞬间；每个节点都能回到原文。",
+      "function_desc": "回看相邻记录日里主导人生上下文发生切换的瞬间",
+      "source_key": "zhouyi_hetu",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "佚名 / 《周易》传统",
+        "work": "《周易·系辞上》",
+        "quote": "河出图，洛出书，圣人则之。",
+        "note": "图谱、经纬、拓扑意象。"
+      }
+    },
+    {
+      "no": 114,
+      "key": "Life Routes",
+      "room": "TOPOLOGY",
+      "room_display": "经纬",
+      "display_name": "行路",
+      "subtitle": "把散落的人、地、事织成经纬：寻找在连续记录日里反复出现的人生上下文三步路径；每个节点都能回到原文。",
+      "function_desc": "寻找在连续记录日里反复出现的人生上下文三步路径",
+      "source_key": "zhouyi_hetu",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "佚名 / 《周易》传统",
+        "work": "《周易·系辞上》",
+        "quote": "河出图，洛出书，圣人则之。",
+        "note": "图谱、经纬、拓扑意象。"
+      }
+    },
+    {
+      "no": 115,
+      "key": "Footprint Atlas",
+      "room": "FOOTPRINT",
+      "room_display": "履痕",
+      "display_name": "履痕",
+      "subtitle": "沿着真正做过的事往回走：把作品、输出、分享、交接、反馈、外部认可和技能到产出的时间关系组织成“我留下了什么”；看什么曾从手中留下。",
+      "function_desc": "把作品、输出、分享、交接、反馈、外部认可和技能到产出的时间关系组织成“我留下了什么”",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 116,
+      "key": "Artifact Ledger",
+      "room": "FOOTPRINT",
+      "room_display": "履痕",
+      "display_name": "作品簿",
+      "subtitle": "沿着真正做过的事往回走：只收集带有明确产出动作与作品名词的原文候选：论文、简历、代码、网站、产品、PRD、PPT 等；看什么曾从手中留下。",
+      "function_desc": "只收集带有明确产出动作与作品名词的原文候选：论文、简历、代码、网站、产品、PRD、PPT 等",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 117,
+      "key": "Output Trails",
+      "room": "FOOTPRINT",
+      "room_display": "履痕",
+      "display_name": "成作之迹",
+      "subtitle": "沿着真正做过的事往回走：看同类作品在数月乃至一年多的日记里如何反复被创建、修改、提交、发布和分享；看什么曾从手中留下。",
+      "function_desc": "看同类作品在数月乃至一年多的日记里如何反复被创建、修改、提交、发布和分享",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 118,
+      "key": "Sharing Trails",
+      "room": "FOOTPRINT",
+      "room_display": "履痕",
+      "display_name": "寄出之迹",
+      "subtitle": "沿着真正做过的事往回走：只记录工作/作品语境中明确向外分享、展示或发送的候选轨迹；看什么曾从手中留下。",
+      "function_desc": "只记录工作/作品语境中明确向外分享、展示或发送的候选轨迹",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 119,
+      "key": "Handoff Moments",
+      "room": "FOOTPRINT",
+      "room_display": "履痕",
+      "display_name": "出手",
+      "subtitle": "沿着真正做过的事往回走：收集交给、交付、提交、上传、发给、对接、汇报等“东西离开我手里”的时刻；看什么曾从手中留下。",
+      "function_desc": "收集交给、交付、提交、上传、发给、对接、汇报等“东西离开我手里”的时刻",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 120,
+      "key": "Audience Map",
+      "room": "FOOTPRINT",
+      "room_display": "履痕",
+      "display_name": "所遇之人",
+      "subtitle": "沿着真正做过的事往回走：观察哪些角色曾出现在作品分享轨迹周围；不把共现解释成影响力或关系强度；看什么曾从手中留下。",
+      "function_desc": "观察哪些角色曾出现在作品分享轨迹周围；不把共现解释成影响力或关系强度",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 121,
+      "key": "Feedback Echoes",
+      "room": "FOOTPRINT",
+      "room_display": "履痕",
+      "display_name": "回音",
+      "subtitle": "沿着真正做过的事往回走：把明确反馈语言与附近的作品轨迹并排，等待你确认它们是否真指向同一件作品；看什么曾从手中留下。",
+      "function_desc": "把明确反馈语言与附近的作品轨迹并排，等待你确认它们是否真指向同一件作品",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 122,
+      "key": "External Validation",
+      "room": "FOOTPRINT",
+      "room_display": "履痕",
+      "display_name": "外证",
+      "subtitle": "沿着真正做过的事往回走：收集接收、发表、认可、肯定、夸奖、获奖等显式结果/认可候选，不转化成质量分；看什么曾从手中留下。",
+      "function_desc": "收集接收、发表、认可、肯定、夸奖、获奖等显式结果/认可候选，不转化成质量分",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 123,
+      "key": "Reuse Trails",
+      "room": "FOOTPRINT",
+      "room_display": "履痕",
+      "display_name": "再用",
+      "subtitle": "沿着真正做过的事往回走：寻找某类作品隔很久后再次出现：可能是复用、重做，也可能只是同类的新作品；看什么曾从手中留下。",
+      "function_desc": "寻找某类作品隔很久后再次出现：可能是复用、重做，也可能只是同类的新作品",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 124,
+      "key": "Learning → Output",
+      "room": "FOOTPRINT",
+      "room_display": "履痕",
+      "display_name": "学而成器",
+      "subtitle": "沿着真正做过的事往回走：观察输出前30天哪些技能留下过证据；只表示时间邻近，不做能力归因；看什么曾从手中留下。",
+      "function_desc": "观察输出前30天哪些技能留下过证据；只表示时间邻近，不做能力归因",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 125,
+      "key": "Artifact Lead-up",
+      "room": "FOOTPRINT",
+      "room_display": "履痕",
+      "display_name": "成作之前",
+      "subtitle": "沿着真正做过的事往回走：把创建/提交/发布前14天的技能与主题上下文铺开，重看作品出现前发生了什么；看什么曾从手中留下。",
+      "function_desc": "把创建/提交/发布前14天的技能与主题上下文铺开，重看作品出现前发生了什么",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 126,
+      "key": "Contribution Threads",
+      "room": "FOOTPRINT",
+      "room_display": "履痕",
+      "display_name": "与人",
+      "subtitle": "沿着真正做过的事往回走：追踪明确帮别人、分享经验、改材料等向外贡献的长期候选线；不做善意或影响力评分；看什么曾从手中留下。",
+      "function_desc": "追踪明确帮别人、分享经验、改材料等向外贡献的长期候选线；不做善意或影响力评分",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 127,
+      "key": "Legacy Questions",
+      "room": "FOOTPRINT",
+      "room_display": "履痕",
+      "display_name": "所留何物",
+      "subtitle": "沿着真正做过的事往回走：根据作品跨度、复用、分享与结果结构自动生成“我留下些什么”的问题，只生成问题不预写答案；看什么曾从手中留下。",
+      "function_desc": "根据作品跨度、复用、分享与结果结构自动生成“我留下些什么”的问题，只生成问题不预写答案",
+      "source_key": "lao_step",
+      "source_type": "意象取材",
+      "source": {
+        "era": "先秦",
+        "author": "老子传统",
+        "work": "《道德经》第六十四章",
+        "quote": "千里之行，始于足下。",
+        "note": "成长、足迹、作品与第一步。"
+      }
+    },
+    {
+      "no": 128,
+      "key": "Lineage Atlas",
+      "room": "LINEAGE",
+      "room_display": "源脉",
+      "display_name": "源脉",
+      "subtitle": "沿证据追一条源脉：把想法、项目、作品、交接、反馈、修改与结果串成可回到原文的证据谱系；只展示顺序与相似性，不编因果；缺失的环节就让它保持缺失。",
+      "function_desc": "把想法、项目、作品、交接、反馈、修改与结果串成可回到原文的证据谱系；只展示顺序与相似性，不编因果",
+      "source_key": "zhu_source",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "朱熹",
+        "work": "《观书有感·其一》",
+        "quote": "问渠那得清如许，为有源头活水来。",
+        "note": "来源、源流与证据链。"
+      }
+    },
+    {
+      "no": 129,
+      "key": "Thought → Artifact",
+      "room": "LINEAGE",
+      "room_display": "源脉",
+      "display_name": "念成其物",
+      "subtitle": "沿证据追一条源脉：寻找明确想法/未来式语言与后来作品痕迹之间的保守连接，展示共同锚点、上下文与时间间隔；缺失的环节就让它保持缺失。",
+      "function_desc": "寻找明确想法/未来式语言与后来作品痕迹之间的保守连接，展示共同锚点、上下文与时间间隔",
+      "source_key": "zhu_source",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "朱熹",
+        "work": "《观书有感·其一》",
+        "quote": "问渠那得清如许，为有源头活水来。",
+        "note": "来源、源流与证据链。"
+      }
+    },
+    {
+      "no": 130,
+      "key": "Project Families",
+      "room": "LINEAGE",
+      "room_display": "源脉",
+      "display_name": "同宗",
+      "subtitle": "沿证据追一条源脉：按作品类别把项目候选与产出痕迹组成家族；家族不是自动识别出的同一个真实项目；缺失的环节就让它保持缺失。",
+      "function_desc": "按作品类别把项目候选与产出痕迹组成家族；家族不是自动识别出的同一个真实项目",
+      "source_key": "zhu_source",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "朱熹",
+        "work": "《观书有感·其一》",
+        "quote": "问渠那得清如许，为有源头活水来。",
+        "note": "来源、源流与证据链。"
+      }
+    },
+    {
+      "no": 131,
+      "key": "Artifact Ancestry",
+      "room": "LINEAGE",
+      "room_display": "源脉",
+      "display_name": "作品源流",
+      "subtitle": "沿证据追一条源脉：把同类作品的相邻 create/revise/submit/publish/share 痕迹串起来，不冒充真实文件版本史；缺失的环节就让它保持缺失。",
+      "function_desc": "把同类作品的相邻 create/revise/submit/publish/share 痕迹串起来，不冒充真实文件版本史",
+      "source_key": "zhu_source",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "朱熹",
+        "work": "《观书有感·其一》",
+        "quote": "问渠那得清如许，为有源头活水来。",
+        "note": "来源、源流与证据链。"
+      }
+    },
+    {
+      "no": 132,
+      "key": "Version Trees",
+      "room": "LINEAGE",
+      "room_display": "源脉",
+      "display_name": "枝叶",
+      "subtitle": "沿证据追一条源脉：查看一种作品的动作序列与分支：创建之后通常出现修改、提交、发布还是分享；缺失的环节就让它保持缺失。",
+      "function_desc": "查看一种作品的动作序列与分支：创建之后通常出现修改、提交、发布还是分享",
+      "source_key": "zhu_source",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "朱熹",
+        "work": "《观书有感·其一》",
+        "quote": "问渠那得清如许，为有源头活水来。",
+        "note": "来源、源流与证据链。"
+      }
+    },
+    {
+      "no": 133,
+      "key": "Idea-to-Output Latency",
+      "room": "LINEAGE",
+      "room_display": "源脉",
+      "display_name": "从念到成",
+      "subtitle": "沿证据追一条源脉：统计保守“想法→作品”候选的日历间隔；它不是工期，更不是执行效率评分；缺失的环节就让它保持缺失。",
+      "function_desc": "统计保守“想法→作品”候选的日历间隔；它不是工期，更不是执行效率评分",
+      "source_key": "zhu_source",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "朱熹",
+        "work": "《观书有感·其一》",
+        "quote": "问渠那得清如许，为有源头活水来。",
+        "note": "来源、源流与证据链。"
+      }
+    },
+    {
+      "no": 134,
+      "key": "Feedback Loops",
+      "room": "LINEAGE",
+      "room_display": "源脉",
+      "display_name": "回声成环",
+      "subtitle": "沿证据追一条源脉：把作品→明确反馈→后续修改候选放在同一条线上；时间接近不等于反馈导致修改；缺失的环节就让它保持缺失。",
+      "function_desc": "把作品→明确反馈→后续修改候选放在同一条线上；时间接近不等于反馈导致修改",
+      "source_key": "zhu_source",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "朱熹",
+        "work": "《观书有感·其一》",
+        "quote": "问渠那得清如许，为有源头活水来。",
+        "note": "来源、源流与证据链。"
+      }
+    },
+    {
+      "no": 135,
+      "key": "Rework Cycles",
+      "room": "LINEAGE",
+      "room_display": "源脉",
+      "display_name": "重琢",
+      "subtitle": "沿证据追一条源脉：识别同类作品在短窗口内反复修改的周期，观察迭代纹理而不是评价反复返工好坏；缺失的环节就让它保持缺失。",
+      "function_desc": "识别同类作品在短窗口内反复修改的周期，观察迭代纹理而不是评价反复返工好坏",
+      "source_key": "zhu_source",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "朱熹",
+        "work": "《观书有感·其一》",
+        "quote": "问渠那得清如许，为有源头活水来。",
+        "note": "来源、源流与证据链。"
+      }
+    },
+    {
+      "no": 136,
+      "key": "Cross-Pollination",
+      "room": "LINEAGE",
+      "room_display": "源脉",
+      "display_name": "互染",
+      "subtitle": "沿证据追一条源脉：寻找两类作品在同日或七天内反复靠近的时期，并显示共同技能/主题上下文；缺失的环节就让它保持缺失。",
+      "function_desc": "寻找两类作品在同日或七天内反复靠近的时期，并显示共同技能/主题上下文",
+      "source_key": "zhu_source",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "朱熹",
+        "work": "《观书有感·其一》",
+        "quote": "问渠那得清如许，为有源头活水来。",
+        "note": "来源、源流与证据链。"
+      }
+    },
+    {
+      "no": 137,
+      "key": "First Proofs",
+      "room": "LINEAGE",
+      "room_display": "源脉",
+      "display_name": "初证",
+      "subtitle": "沿证据追一条源脉：寻找每类作品最早的保守完成/提交/发布/分享证据；first recorded 不等于人生第一次；缺失的环节就让它保持缺失。",
+      "function_desc": "寻找每类作品最早的保守完成/提交/发布/分享证据；first recorded 不等于人生第一次",
+      "source_key": "zhu_source",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "朱熹",
+        "work": "《观书有感·其一》",
+        "quote": "问渠那得清如许，为有源头活水来。",
+        "note": "来源、源流与证据链。"
+      }
+    },
+    {
+      "no": 138,
+      "key": "Unfinished Lineages",
+      "room": "LINEAGE",
+      "room_display": "源脉",
+      "display_name": "未竟",
+      "subtitle": "沿证据追一条源脉：重新打开重复出现后变安静、且当前没有强作品链支撑的想法/项目；untraced 不等于未完成；缺失的环节就让它保持缺失。",
+      "function_desc": "重新打开重复出现后变安静、且当前没有强作品链支撑的想法/项目；untraced 不等于未完成",
+      "source_key": "zhu_source",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "朱熹",
+        "work": "《观书有感·其一》",
+        "quote": "问渠那得清如许，为有源头活水来。",
+        "note": "来源、源流与证据链。"
+      }
+    },
+    {
+      "no": 139,
+      "key": "Release Cadence",
+      "room": "LINEAGE",
+      "room_display": "源脉",
+      "display_name": "出卷节律",
+      "subtitle": "沿证据追一条源脉：观察提交、发布、分享等向外痕迹在月份和时间间隔上的节奏，不将其变成生产力指标；缺失的环节就让它保持缺失。",
+      "function_desc": "观察提交、发布、分享等向外痕迹在月份和时间间隔上的节奏，不将其变成生产力指标",
+      "source_key": "zhu_source",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "朱熹",
+        "work": "《观书有感·其一》",
+        "quote": "问渠那得清如许，为有源头活水来。",
+        "note": "来源、源流与证据链。"
+      }
+    },
+    {
+      "no": 140,
+      "key": "Evidence Chain Builder",
+      "room": "LINEAGE",
+      "room_display": "源脉",
+      "display_name": "证据之链",
+      "subtitle": "沿证据追一条源脉：把已存在的 dated source records 组合成 Thought→Artifact→Handoff→Feedback/Validation 审计链，缺失步骤保持缺失；缺失的环节就让它保持缺失。",
+      "function_desc": "把已存在的 dated source records 组合成 Thought→Artifact→Handoff→Feedback/Validation 审计链，缺失步骤保持缺失",
+      "source_key": "zhu_source",
+      "source_type": "意象取材",
+      "source": {
+        "era": "南宋",
+        "author": "朱熹",
+        "work": "《观书有感·其一》",
+        "quote": "问渠那得清如许，为有源头活水来。",
+        "note": "来源、源流与证据链。"
+      }
+    },
+    {
+      "no": 141,
+      "key": "文言化",
+      "room": "BOOK",
+      "room_display": "浮生卷",
+      "display_name": "古调",
+      "subtitle": "把散落的日子装订成一卷：把选中的现代汉语日记或任意文本转换成可对照的文言文派生稿；原始 Markdown 永不改写；叙事再远，也能翻回原页。",
+      "function_desc": "把选中的现代汉语日记或任意文本转换成可对照的文言文派生稿；原始 Markdown 永不改写",
+      "source_key": "huang_write",
+      "source_type": "意象取材",
+      "source": {
+        "era": "清末",
+        "author": "黄遵宪",
+        "work": "《杂感》",
+        "quote": "我手写我口，古岂能拘牵。",
+        "note": "写作自由与文言化派生。"
+      }
+    }
+  ],
+  "sources": {
+    "li_bai_banquet": {
+      "era": "唐",
+      "author": "李白",
+      "work": "《春夜宴从弟桃花园序》",
+      "quote": "夫天地者，万物之逆旅也；光阴者，百代之过客也。",
+      "note": "时间、人生如旅与“浮生”世界观。"
+    },
+    "zhouyi_sincerity": {
+      "era": "先秦",
+      "author": "佚名 / 《周易》传统",
+      "work": "《周易·乾·文言》",
+      "quote": "修辞立其诚。",
+      "note": "写作与真实。"
+    },
+    "conf_time": {
+      "era": "先秦",
+      "author": "孔子言论",
+      "work": "《论语·子罕》",
+      "quote": "逝者如斯夫，不舍昼夜。",
+      "note": "时间流逝与流年。"
+    },
+    "conf_near": {
+      "era": "先秦",
+      "author": "子夏言论",
+      "work": "《论语·子张》",
+      "quote": "博学而笃志，切问而近思。",
+      "note": "提问、回看、近思。"
+    },
+    "conf_know": {
+      "era": "先秦",
+      "author": "孔子言论",
+      "work": "《论语·为政》",
+      "quote": "知之为知之，不知为不知。",
+      "note": "AI 不确定性与证据边界。"
+    },
+    "conf_review": {
+      "era": "先秦",
+      "author": "孔子言论",
+      "work": "《论语·为政》",
+      "quote": "温故而知新，可以为师矣。",
+      "note": "周回顾与重读。"
+    },
+    "zhouyi_hetu": {
+      "era": "先秦",
+      "author": "佚名 / 《周易》传统",
+      "work": "《周易·系辞上》",
+      "quote": "河出图，洛出书，圣人则之。",
+      "note": "图谱、经纬、拓扑意象。"
+    },
+    "shijing_peach": {
+      "era": "先秦",
+      "author": "佚名",
+      "work": "《诗经·周南·桃夭》",
+      "quote": "桃之夭夭，灼灼其华。",
+      "note": "明丽、生长、主题世界。"
+    },
+    "qu_seek": {
+      "era": "战国",
+      "author": "屈原",
+      "work": "《离骚》",
+      "quote": "路曼曼其修远兮，吾将上下而求索。",
+      "note": "方向、探索、问津。"
+    },
+    "qu_orchid": {
+      "era": "战国",
+      "author": "屈原",
+      "work": "《离骚》",
+      "quote": "扈江离与辟芷兮，纫秋兰以为佩。",
+      "note": "兰草、芳意与生长主题。"
+    },
+    "sima_archive": {
+      "era": "西汉",
+      "author": "司马迁",
+      "work": "《报任少卿书》",
+      "quote": "藏诸名山，传之其人。",
+      "note": "备份、存档、传存。"
+    },
+    "sima_history": {
+      "era": "西汉",
+      "author": "司马迁",
+      "work": "《报任少卿书》",
+      "quote": "述往事，思来者。",
+      "note": "回顾过去、面向后来。"
+    },
+    "wang_lanting": {
+      "era": "东晋",
+      "author": "王羲之",
+      "work": "《兰亭集序》",
+      "quote": "后之视今，亦犹今之视昔。",
+      "note": "On This Day 与代际回望。"
+    },
+    "tao_return": {
+      "era": "东晋",
+      "author": "陶渊明",
+      "work": "《归去来兮辞》",
+      "quote": "悟已往之不谏，知来者之可追。",
+      "note": "旧我、来者、恢复与归来。"
+    },
+    "du_people": {
+      "era": "唐",
+      "author": "杜甫",
+      "work": "《赠卫八处士》",
+      "quote": "人生不相见，动如参与商。",
+      "note": "人物、故人、重逢。"
+    },
+    "du_article": {
+      "era": "唐",
+      "author": "杜甫",
+      "work": "《偶题》",
+      "quote": "文章千古事，得失寸心知。",
+      "note": "文字、版本与作品。"
+    },
+    "zhang_moon": {
+      "era": "唐",
+      "author": "张九龄",
+      "work": "《望月怀远》",
+      "quote": "海上生明月，天涯共此时。",
+      "note": "月光、远距共时。"
+    },
+    "li_soul": {
+      "era": "唐",
+      "author": "李商隐",
+      "work": "《无题·昨夜星辰昨夜风》",
+      "quote": "心有灵犀一点通。",
+      "note": "桌宠“灵犀”与陪伴感。"
+    },
+    "li_nightrain": {
+      "era": "唐",
+      "author": "李商隐",
+      "work": "《夜雨寄北》",
+      "quote": "何当共剪西窗烛，却话巴山夜雨时。",
+      "note": "夜雨、灯窗与回忆叙事。"
+    },
+    "li_jinse": {
+      "era": "唐",
+      "author": "李商隐",
+      "work": "《锦瑟》",
+      "quote": "此情可待成追忆，只是当时已惘然。",
+      "note": "追忆与记忆再现。"
+    },
+    "liqing_letter": {
+      "era": "宋",
+      "author": "李清照",
+      "work": "《一剪梅·红藕香残玉簟秋》",
+      "quote": "云中谁寄锦书来？",
+      "note": "来信、时间胶囊、邮局主题。"
+    },
+    "su_traveler": {
+      "era": "宋",
+      "author": "苏轼",
+      "work": "《临江仙·送钱穆父》",
+      "quote": "人生如逆旅，我亦是行人。",
+      "note": "行迹、人生地图与旅途。"
+    },
+    "su_home": {
+      "era": "宋",
+      "author": "苏轼",
+      "work": "《定风波·南海归赠王定国侍人寓娘》",
+      "quote": "此心安处是吾乡。",
+      "note": "隐私、本地存储与“安处”。"
+    },
+    "su_weather": {
+      "era": "宋",
+      "author": "苏轼",
+      "work": "《定风波·莫听穿林打叶声》",
+      "quote": "也无风雨也无晴。",
+      "note": "记忆天气与状态不评判。"
+    },
+    "su_mountain": {
+      "era": "宋",
+      "author": "苏轼",
+      "work": "《题西林壁》",
+      "quote": "横看成岭侧成峰，远近高低各不同。",
+      "note": "观察、镜像、多视角。"
+    },
+    "su_oldbook": {
+      "era": "宋",
+      "author": "苏轼",
+      "work": "《送安惇秀才失解西归》",
+      "quote": "旧书不厌百回读，熟读深思子自知。",
+      "note": "沉浸阅读与 Deep Read。"
+    },
+    "zhu_source": {
+      "era": "南宋",
+      "author": "朱熹",
+      "work": "《观书有感·其一》",
+      "quote": "问渠那得清如许，为有源头活水来。",
+      "note": "来源、源流与证据链。"
+    },
+    "xin_search": {
+      "era": "南宋",
+      "author": "辛弃疾",
+      "work": "《青玉案·元夕》",
+      "quote": "众里寻他千百度。蓦然回首。",
+      "note": "搜索与意外发现。"
+    },
+    "jiang_time": {
+      "era": "宋末元初",
+      "author": "蒋捷",
+      "work": "《一剪梅·舟过吴江》",
+      "quote": "流光容易把人抛。",
+      "note": "时间折叠、流光与阶段变化。"
+    },
+    "tang_mirror": {
+      "era": "唐",
+      "author": "唐太宗相关史载",
+      "work": "《旧唐书·魏徵传》等所载“三镜”典故",
+      "quote": "以人为镜，可以明得失。",
+      "note": "Mirror 系列；使用典故，不做人格裁判。"
+    },
+    "lu_door": {
+      "era": "南宋",
+      "author": "陆游",
+      "work": "《游山西村》",
+      "quote": "山重水复疑无路，柳暗花明又一村。",
+      "note": "遗忘之门、重新发现。"
+    },
+    "wang_jing": {
+      "era": "清末民初",
+      "author": "王国维",
+      "work": "《人间词话》",
+      "quote": "一切景语，皆情语也。",
+      "note": "主题世界与视觉氛围。"
+    },
+    "huang_write": {
+      "era": "清末",
+      "author": "黄遵宪",
+      "work": "《杂感》",
+      "quote": "我手写我口，古岂能拘牵。",
+      "note": "写作自由与文言化派生。"
+    },
+    "bai_write": {
+      "era": "唐",
+      "author": "白居易",
+      "work": "《与元九书》",
+      "quote": "文章合为时而著，歌诗合为事而作。",
+      "note": "项目、作品与发生之事。"
+    },
+    "lao_step": {
+      "era": "先秦",
+      "author": "老子传统",
+      "work": "《道德经》第六十四章",
+      "quote": "千里之行，始于足下。",
+      "note": "成长、足迹、作品与第一步。"
+    }
+  },
+  "implementation_note": "Do not rename internal feature keys or theme IDs. Replace only user-facing labels/copy. Critical actions keep explicit functional nouns."
+}

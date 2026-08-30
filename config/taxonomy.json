@@ -1,0 +1,536 @@
+{
+  "skills": [
+    {
+      "name": "AI",
+      "category": "AI",
+      "parent": null,
+      "description": "AI / 大模型相关学习与实践",
+      "terms": [
+        "AI",
+        "人工智能",
+        "大模型",
+        "LLM",
+        "模型"
+      ]
+    },
+    {
+      "name": "LLM & Prompting",
+      "category": "AI",
+      "parent": "AI",
+      "description": "提示词、上下文与大模型使用",
+      "terms": [
+        "LLM",
+        "大模型",
+        "提示词",
+        "prompt",
+        "Prompt",
+        "上下文",
+        "Context",
+        "context"
+      ]
+    },
+    {
+      "name": "RAG",
+      "category": "AI",
+      "parent": "AI",
+      "description": "检索增强、Embedding、Rerank 等",
+      "terms": [
+        "RAG",
+        "rag",
+        "检索",
+        "embedding",
+        "Embedding",
+        "向量",
+        "Rerank",
+        "rerank",
+        "HyDE",
+        "hyde"
+      ]
+    },
+    {
+      "name": "AI Agent",
+      "category": "AI",
+      "parent": "AI",
+      "description": "Agent、Tool Use、MCP、自动化",
+      "terms": [
+        "Agent",
+        "agent",
+        "MCP",
+        "Tool Use",
+        "tool use",
+        "工具调用",
+        "自动化",
+        "Computer Use",
+        "computer use"
+      ]
+    },
+    {
+      "name": "Model Evaluation",
+      "category": "AI",
+      "parent": "AI",
+      "description": "Benchmark、评测、指标与验证",
+      "terms": [
+        "benchmark",
+        "Benchmark",
+        "评测",
+        "准确率",
+        "指标",
+        "ELO",
+        "Arena",
+        "验证"
+      ]
+    },
+    {
+      "name": "Product Thinking",
+      "category": "Product",
+      "parent": null,
+      "description": "从用户、需求、场景到产品判断",
+      "terms": [
+        "产品",
+        "产品经理",
+        "用户",
+        "需求",
+        "场景",
+        "MVP",
+        "P0",
+        "P1",
+        "P2",
+        "路线图"
+      ]
+    },
+    {
+      "name": "PRD & Product Design",
+      "category": "Product",
+      "parent": "Product Thinking",
+      "description": "PRD、原型、交互与页面设计",
+      "terms": [
+        "PRD",
+        "prd",
+        "原型",
+        "交互",
+        "页面",
+        "界面",
+        "功能设计",
+        "墨刀"
+      ]
+    },
+    {
+      "name": "Market & Commercialization",
+      "category": "Product",
+      "parent": "Product Thinking",
+      "description": "市场、竞品、商业化、定价",
+      "terms": [
+        "市场",
+        "竞品",
+        "商业化",
+        "定价",
+        "商业模式",
+        "付费",
+        "收费"
+      ]
+    },
+    {
+      "name": "Communication & Ownership",
+      "category": "Product",
+      "parent": "Product Thinking",
+      "description": "沟通、协作、汇报与推进闭环",
+      "terms": [
+        "沟通",
+        "协作",
+        "汇报",
+        "Ownership",
+        "ownership",
+        "推进",
+        "闭环",
+        "老板",
+        "会议"
+      ]
+    },
+    {
+      "name": "Research",
+      "category": "Research",
+      "parent": null,
+      "description": "科研、课题与研究工作",
+      "terms": [
+        "科研",
+        "研究",
+        "课题",
+        "实验",
+        "论文"
+      ]
+    },
+    {
+      "name": "Paper Writing",
+      "category": "Research",
+      "parent": "Research",
+      "description": "论文写作、投稿、修改与审稿",
+      "terms": [
+        "论文",
+        "投稿",
+        "审稿",
+        "期刊",
+        "会议",
+        "LaTeX",
+        "latex",
+        "写作"
+      ]
+    },
+    {
+      "name": "Experiment Design",
+      "category": "Research",
+      "parent": "Research",
+      "description": "实验、评测、对照与指标设计",
+      "terms": [
+        "实验",
+        "对照",
+        "消融",
+        "指标",
+        "数据集",
+        "训练",
+        "测试",
+        "验证"
+      ]
+    },
+    {
+      "name": "Computer Vision",
+      "category": "Research",
+      "parent": "Research",
+      "description": "视觉、分割、医学影像等",
+      "terms": [
+        "计算机视觉",
+        "视觉",
+        "CV",
+        "分割",
+        "SAM",
+        "MRI",
+        "超声",
+        "影像",
+        "图像"
+      ]
+    },
+    {
+      "name": "Presentation",
+      "category": "Research",
+      "parent": "Research",
+      "description": "学术汇报、演讲与海报",
+      "terms": [
+        "汇报",
+        "PPT",
+        "ppt",
+        "演讲",
+        "海报",
+        "presentation",
+        "Presentation"
+      ]
+    },
+    {
+      "name": "Coding",
+      "category": "Engineering",
+      "parent": null,
+      "description": "代码实现与工程实践",
+      "terms": [
+        "代码",
+        "开发",
+        "编程",
+        "Codex",
+        "Claude Code",
+        "Cursor",
+        "Python",
+        "JavaScript",
+        "TypeScript"
+      ]
+    },
+    {
+      "name": "Database",
+      "category": "Engineering",
+      "parent": "Coding",
+      "description": "数据库、SQL 与检索基础设施",
+      "terms": [
+        "数据库",
+        "SQL",
+        "MySQL",
+        "MongoDB",
+        "Elasticsearch",
+        "Redis",
+        "DBeaver"
+      ]
+    },
+    {
+      "name": "Frontend",
+      "category": "Engineering",
+      "parent": "Coding",
+      "description": "网页、React 与前端实现",
+      "terms": [
+        "前端",
+        "网页",
+        "HTML",
+        "CSS",
+        "React",
+        "JavaScript",
+        "TypeScript"
+      ]
+    },
+    {
+      "name": "Backend & API",
+      "category": "Engineering",
+      "parent": "Coding",
+      "description": "后端、接口与服务",
+      "terms": [
+        "后端",
+        "API",
+        "api",
+        "接口",
+        "服务",
+        "server",
+        "Server"
+      ]
+    },
+    {
+      "name": "Git & Version Control",
+      "category": "Engineering",
+      "parent": "Coding",
+      "description": "Git、GitHub 与版本管理",
+      "terms": [
+        "Git",
+        "git",
+        "GitHub",
+        "github",
+        "仓库",
+        "repo",
+        "commit"
+      ]
+    },
+    {
+      "name": "English",
+      "category": "Personal",
+      "parent": null,
+      "description": "英语学习与英文沟通",
+      "terms": [
+        "英语",
+        "英文",
+        "English",
+        "雅思",
+        "GRE"
+      ]
+    },
+    {
+      "name": "Reading",
+      "category": "Personal",
+      "parent": null,
+      "description": "阅读与知识输入",
+      "terms": [
+        "阅读",
+        "读书",
+        "看书"
+      ]
+    },
+    {
+      "name": "Writing",
+      "category": "Personal",
+      "parent": null,
+      "description": "写作、记录与表达",
+      "terms": [
+        "写作",
+        "日记",
+        "记录",
+        "总结",
+        "复盘"
+      ]
+    },
+    {
+      "name": "Fitness",
+      "category": "Personal",
+      "parent": null,
+      "description": "运动、健身与身体活动",
+      "terms": [
+        "健身",
+        "运动",
+        "街舞",
+        "跑步",
+        "游泳"
+      ]
+    },
+    {
+      "name": "Reflection",
+      "category": "Personal",
+      "parent": null,
+      "description": "自我探索、反思与体系构建",
+      "terms": [
+        "自我探索",
+        "探索自己",
+        "体系构建",
+        "反思",
+        "复盘",
+        "自我评价"
+      ]
+    }
+  ],
+  "topics": {
+    "AI": [
+      "AI",
+      "人工智能",
+      "大模型",
+      "Agent",
+      "RAG",
+      "Codex",
+      "Claude",
+      "DeepSeek",
+      "MCP"
+    ],
+    "Product": [
+      "产品",
+      "产品经理",
+      "用户",
+      "需求",
+      "PRD",
+      "MVP",
+      "竞品",
+      "商业化",
+      "市场"
+    ],
+    "Research": [
+      "科研",
+      "研究",
+      "论文",
+      "实验",
+      "期刊",
+      "会议",
+      "投稿",
+      "课题"
+    ],
+    "Career": [
+      "工作",
+      "实习",
+      "职业",
+      "岗位",
+      "求职",
+      "申请",
+      "offer",
+      "老板"
+    ],
+    "Learning": [
+      "学习",
+      "阅读",
+      "课程",
+      "英语",
+      "知识",
+      "复习",
+      "考试"
+    ],
+    "Relationships": [
+      "朋友",
+      "家人",
+      "同学",
+      "老师",
+      "关系",
+      "老妈",
+      "爸",
+      "妈"
+    ],
+    "Travel": [
+      "旅行",
+      "旅游",
+      "酒店",
+      "航班",
+      "机场",
+      "高铁",
+      "飞机"
+    ],
+    "Self": [
+      "自我",
+      "反思",
+      "焦虑",
+      "目标",
+      "未来",
+      "意义",
+      "成长",
+      "选择"
+    ],
+    "Health": [
+      "睡眠",
+      "健身",
+      "运动",
+      "身体",
+      "医院",
+      "健康"
+    ],
+    "Money": [
+      "钱",
+      "收入",
+      "工资",
+      "商业化",
+      "定价",
+      "付费",
+      "消费"
+    ]
+  },
+  "places": [
+    "北京",
+    "上海",
+    "苏州",
+    "南京",
+    "西安",
+    "杭州",
+    "深圳",
+    "广州",
+    "成都",
+    "香港",
+    "澳门",
+    "新加坡",
+    "牛津",
+    "伦敦",
+    "奥克兰",
+    "武汉",
+    "重庆",
+    "天津",
+    "厦门",
+    "青岛",
+    "三亚"
+  ],
+  "roles": [
+    "朋友",
+    "家人",
+    "同学",
+    "老师",
+    "老板",
+    "同事",
+    "老妈",
+    "妈妈",
+    "爸爸",
+    "父母",
+    "导师",
+    "advisor",
+    "Advisor"
+  ],
+  "word_terms": [
+    "AI",
+    "科研",
+    "论文",
+    "产品",
+    "用户",
+    "需求",
+    "商业化",
+    "Agent",
+    "RAG",
+    "Codex",
+    "Claude",
+    "GitHub",
+    "学习",
+    "阅读",
+    "工作",
+    "实习",
+    "朋友",
+    "家人",
+    "老师",
+    "申请",
+    "英语",
+    "旅行",
+    "健身",
+    "睡眠",
+    "日记"
+  ],
+  "section_normalize": {
+    "探索自己": "自我探索",
+    "反思日记": "日记"
+  }
+}

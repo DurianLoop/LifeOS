@@ -1,0 +1,6 @@
+/* Readme-style action previews: character first, interface second. */
+.petPageCard{grid-template-columns:112px minmax(0,1fr) auto}
+.petPageCard figure{display:grid;place-items:center;width:112px;height:112px;margin:0}
+.petPagePreview{display:block;width:112px;height:112px;object-fit:contain}
+.petPagePreviewSprite{background-repeat:no-repeat;background-size:800% 900%;background-position:0 0}
+@media(max-width:760px){.petPageCard{grid-template-columns:80px minmax(0,1fr);gap:12px}.petPageCard figure,.petPagePreview{width:80px;height:80px}.petPageCard button{grid-column:2;justify-self:start}}

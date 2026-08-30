@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "policy": "Catalog packages are data/manifest packages. LifeOS does not auto-execute arbitrary marketplace code.",
+  "items": [
+    {"id":"lifeos.import.dayone","type":"importer","version":"1.0.0","name":"Day One Importer","description":"Import Day One JSON exports into EntryDraft.","permissions":["read-import-file"],"bundled":true},
+    {"id":"lifeos.import.ics","type":"connector","version":"1.0.0","name":"Calendar Letterbox","description":"Turn local ICS calendar exports into Memory Inbox cards.","permissions":["read-selected-file"],"bundled":true},
+    {"id":"lifeos.pet.codex-compatible","type":"pet","version":"2.0.0","name":"Codex Pet Adapter","description":"Use compatible pet.json + spritesheet packages without redistributing community assets.","permissions":["read-user-selected-pet"],"bundled":true}
+  ]
+}

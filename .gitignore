@@ -1,0 +1,21 @@
+# Private, user-created archive data — never publish these layers.
+/vault/**
+!/vault/.gitkeep
+/data/**
+!/data/.gitkeep
+/.lifeos/
+.env
+*.db
+*.db-wal
+*.db-shm
+
+# Build and local tool output.
+/desktop/node_modules/
+/desktop/dist/
+/desktop/server-dist/
+/desktop/build/
+/desktop/*.spec
+/docs/qa_*/
+__pycache__/
+*.pyc
+.DS_Store

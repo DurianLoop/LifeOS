@@ -1,0 +1,5 @@
+# Optional but recommended for storing API/sync tokens in the OS keychain.
+keyring>=25.0,<27
+
+# P2 optional end-to-end sync encryption.
+cryptography>=46.0,<47
