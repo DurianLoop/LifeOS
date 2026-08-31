@@ -10,11 +10,15 @@ const PET_BLOCKED_KEYS=/content|body|text|excerpt|markdown|evidence|answer|quest
 
 function pythonCmd(){return process.env.LIFEOS_PYTHON|| (process.platform==='win32'?'python':'python3')}
 function backendLaunch(){
-  const bundled=path.join(ROOT,'server',process.platform==='win32'?'LifeOSServer.exe':'LifeOSServer');
-  if(app.isPackaged&&fs.existsSync(bundled))return {command:bundled,args:[]};
+  const bundled=path.join(ROOT,'python',process.platform==='win32'?'python.exe':'bin/python3');
+  if(app.isPackaged&&fs.existsSync(bundled)){
+    const runtime=path.dirname(bundled);
+    const libraryBin=path.join(runtime,'Library','bin');
+    return {command:bundled,args:[path.join(ROOT,'backend','server.py')],env:{PYTHONHOME:runtime,PATH:[runtime,path.join(runtime,'DLLs'),libraryBin,process.env.PATH||''].join(path.delimiter)}};
+  }
   return {command:pythonCmd(),args:[path.join(ROOT,'backend','server.py')]};
 }
-function startBackend(){if(process.env.LIFEOS_EXTERNAL_BACKEND==='1')return;const launch=backendLaunch();backend=spawn(launch.command,launch.args,{cwd:ROOT,stdio:process.env.LIFEOS_DESKTOP_DEBUG==='1'?'inherit':'ignore',windowsHide:true,env:{...process.env,LIFEOS_NO_BROWSER:'1'}});backend.on('exit',()=>{backend=null;if(!quitting&&mainWindow&&!mainWindow.isDestroyed())mainWindow.webContents.send('lifeos:backend-exit')})}
+function startBackend(){if(process.env.LIFEOS_EXTERNAL_BACKEND==='1')return;const launch=backendLaunch();backend=spawn(launch.command,launch.args,{cwd:ROOT,stdio:process.env.LIFEOS_DESKTOP_DEBUG==='1'?'inherit':'ignore',windowsHide:true,env:{...process.env,...launch.env,LIFEOS_NO_BROWSER:'1'}});backend.on('exit',()=>{backend=null;if(!quitting&&mainWindow&&!mainWindow.isDestroyed())mainWindow.webContents.send('lifeos:backend-exit')})}
 function waitForServer(url,tries=100){return new Promise((resolve,reject)=>{let n=0;const tick=()=>{http.get(url,r=>{r.resume();resolve()}).on('error',()=>{if(++n>=tries)reject(new Error('LifeOS backend did not start'));else setTimeout(tick,180)});};tick()})}
 function petRoots(){return [path.join(ROOT,'app','assets','pets'),path.join(os.homedir(),'.codex','pets'),path.join(ROOT,'pets')].filter(p=>fs.existsSync(p));}
 function findPets(){const out=[];for(const base of petRoots()){for(const ent of fs.readdirSync(base,{withFileTypes:true})){if(!ent.isDirectory())continue;const dir=path.join(base,ent.name),meta=path.join(dir,'pet.json'),sprite=path.join(dir,'spritesheet.webp');if(fs.existsSync(meta)&&fs.existsSync(sprite)){try{const j=JSON.parse(fs.readFileSync(meta,'utf8'));out.push({id:j.id||ent.name,name:j.displayName||j.name||ent.name,version:Number(j.spriteVersionNumber||1),sprite});}catch{}}}}return out;}

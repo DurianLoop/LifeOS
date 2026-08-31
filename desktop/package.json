@@ -12,19 +12,18 @@
     "dist:linux": "electron-builder --linux AppImage",
     "dist:all": "electron-builder -mwl"
   },
-  "dependencies": {
-    "electron-updater": "^6.6.2"
-  },
-  "devDependencies": {
-    "electron": "^37.2.6",
-    "electron-builder": "^26.0.12"
-  },
+  "dependencies": {},
+  "devDependencies": {},
   "build": {
     "appId": "life.lifeos.desktop",
     "productName": "LifeOS",
+    "electronVersion": "37.10.3",
     "asar": false,
     "files": [
-      "**/*"
+      "**/*",
+      "!python-runtime/**",
+      "!server-dist/**",
+      "!build/**"
     ],
     "extraResources": [
       {
@@ -60,8 +59,8 @@
         "to": "connectors"
       },
       {
-        "from": "server-dist",
-        "to": "server"
+        "from": "python-runtime",
+        "to": "python"
       },
       {
         "from": "../marketplace",
@@ -85,12 +84,6 @@
         "AppImage"
       ],
       "category": "Utility"
-    },
-    "publish": [
-      {
-        "provider": "generic",
-        "url": "${env.LIFEOS_UPDATE_URL}"
-      }
-    ]
+    }
   }
 }

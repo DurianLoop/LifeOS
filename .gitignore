@@ -13,6 +13,7 @@
 /desktop/node_modules/
 /desktop/dist/
 /desktop/server-dist/
+/desktop/python-runtime/
 /desktop/build/
 /desktop/*.spec
 /docs/qa_*/

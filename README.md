@@ -34,17 +34,19 @@ For browser mode, run `.\start.bat`. It creates the first local index from the e
 
 ## Build a Windows installer
 
-From `desktop/`:
+The released installer is built with a portable Python runtime bundled as a
+build artifact; it is intentionally not committed to this repository. To make
+your own installer, place a compatible CPython runtime in
+`desktop/python-runtime/`, then run the desktop packaging command:
 
 ```powershell
-python -m pip install pyinstaller
-python -m PyInstaller --noconfirm --clean --onedir --name LifeOSServer --collect-all cryptography server_bootstrap.py
-Move-Item .\dist\LifeOSServer .\server-dist
-npm ci
+cd desktop
+npm install
 npm run dist:win
 ```
 
-The generated NSIS installer is in `desktop/dist/`. Do not add generated `vault/`, `data/`, `.lifeos/`, `.env`, or `desktop/server-dist/` to Git.
+The generated NSIS installer is in `desktop/dist/`. Do not add generated
+`vault/`, `data/`, `.lifeos/`, `.env`, or `desktop/python-runtime/` to Git.
 
 ## License and pet assets
 
