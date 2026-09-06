@@ -45,7 +45,7 @@
 
   .i2WriterAsideRight .i2HabitCell {
     min-height: 0;
-    max-height: 306px;
+    max-height: min(520px, calc(100dvh - 160px));
     overflow: auto;
     border: 1px solid var(--line);
   }
@@ -246,3 +246,1200 @@
 .i2DeskCellActions button { min-height: 29px; padding: 5px 8px; border: 1px solid var(--line-dark); background: transparent; color: var(--ink); font: 11px var(--type-sans); cursor: pointer; }
 .i2DeskCellActions .primary { margin-left: auto; }
 @media (max-width: 760px) { .i2DeskCellRows { max-height: none; } .i2DeskCellRow { grid-template-columns: 1fr; } .i2DeskCellRow>label:last-child { grid-column: auto; } }
+
+/* Direct layout board: the desk is edited in place, without a hidden
+   accordion or an extra apply step. */
+.i2DeskCellEditor { border: 1px solid var(--line); background: color-mix(in srgb, var(--paper2) 52%, transparent); padding: 14px; }
+.i2DeskEditorHead { display: flex; align-items: flex-start; gap: 10px; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.i2DeskEditorHead>div>span { color: var(--dream-accent); font: 9px var(--type-mono); letter-spacing: .12em; }
+.i2DeskEditorHead h3 { margin: 5px 0 3px; font: 400 20px var(--type-serif); }
+.i2DeskEditorHead p { margin: 0; color: var(--muted); font: 10px/1.55 var(--type-serif); }
+.i2DeskEditorHead>button { flex: 0 0 auto; border: 0; border-bottom: 1px solid var(--line-dark); background: transparent; padding: 3px 0; color: var(--muted); font: 10px var(--type-mono); cursor: pointer; }
+.i2DeskEditorHead>button:hover { color: var(--ink); border-color: var(--dream-accent); }
+.i2DeskCellRows { display: grid; gap: 8px; max-height: 48vh; overflow: auto; padding: 12px 3px 2px 0; }
+.i2DeskCellRow { display: grid; gap: 7px 8px; padding: 10px; border: 1px solid var(--line); background: color-mix(in srgb, var(--paper) 82%, transparent); transition: border-color .16s, background .16s, opacity .16s; }
+.i2DeskCellRow:hover,.i2DeskCellRow:focus-within { border-color: var(--line-dark); background: var(--paper); }
+.i2DeskCellRow.is-hidden { opacity: .52; }
+.i2DeskCellRow.is-dragging { opacity: .34; border-style: dashed; }
+.i2DeskCellRowTop { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.i2DeskCellRowTop strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); font: 400 15px var(--type-serif); }
+.i2DeskCellRowTop>span { color: var(--muted); font: 8px var(--type-mono); }
+.i2DeskCellRowTop>div { display: flex; gap: 2px; margin-left: auto; }
+.i2DragHandle { flex: 0 0 auto; border: 0; background: transparent; padding: 0 2px; color: var(--dream-accent); font: 16px/1 var(--type-mono); cursor: grab; }
+.i2DragHandle:active { cursor: grabbing; }
+.i2DeskVisibility { display: flex; align-items: center; gap: 4px; margin-left: auto; color: var(--muted); font: 9px var(--type-mono); white-space: nowrap; cursor: pointer; }
+.i2DeskVisibility input { accent-color: var(--dream-accent); }
+.i2DeskCellRowTop button:not(.i2DragHandle) { width: 22px; height: 21px; padding: 0; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; }
+.i2DeskCellRowTop button:not(.i2DragHandle):hover { border-color: var(--dream-accent); }
+.i2DeskCellRowTop .i2DeskRemove { color: var(--danger,#9b504c); }
+.i2DeskCellControls { display: grid; grid-template-columns: minmax(0,1.35fr) minmax(0,.8fr) minmax(0,.8fr); gap: 6px; }
+.i2DeskCellControls { grid-template-columns: 1fr 1fr; }
+.i2DeskCellControls label:first-child { grid-column: 1 / -1; }
+.i2DeskCellRow>label,.i2DeskCellControls label { display: grid; gap: 3px; color: var(--muted); font: 8px var(--type-mono); }
+.i2DeskCellRow .input { min-width: 0; height: 29px; padding: 5px 7px; border-color: var(--line); background: color-mix(in srgb, var(--paper) 72%, transparent); font: 12px var(--type-sans); }
+.i2DeskCellActions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 11px; }
+.i2DeskCellActions button { min-height: 29px; padding: 5px 8px; border: 1px solid var(--line-dark); background: transparent; color: var(--ink); font: 10px var(--type-sans); cursor: pointer; }
+.i2DeskCellActions button:hover { border-color: var(--dream-accent); }
+.i2DeskCellActions small { color: var(--muted); font: 9px var(--type-mono); }
+.i2WriterGrid .i2CellStyle-paper { background: color-mix(in srgb, var(--paper) 95%, var(--dream-accent) 5%); }
+.i2WriterGrid .i2CellStyle-wash { background: color-mix(in srgb, var(--paper) 86%, var(--dream-accent) 14%); }
+.i2WriterGrid .i2CellStyle-ink { background: color-mix(in srgb, var(--paper) 78%, var(--ink) 22%); }
+.i2WriterGrid .i2CellSize-compact { min-height: 170px; }
+.i2WriterGrid .i2CellSize-standard { min-height: 250px; }
+.i2WriterGrid .i2CellSize-tall { min-height: 350px; }
+.i2WriterGrid .i2CellSize-wide { grid-column: span 2; min-height: 250px; }
+.i2WriterGrid .i2CellSize-large { grid-column: span 2; grid-row: span 2; min-height: 500px; }
+@media (max-width: 760px) {
+  .i2DeskCellEditor { padding: 12px; }
+  .i2DeskCellRows { max-height: none; }
+  .i2DeskCellControls { grid-template-columns: 1fr 1fr; }
+  .i2DeskCellControls label:first-child { grid-column: 1 / -1; }
+  .i2WriterGrid .i2CellSize-compact { min-height: 170px; }
+  .i2WriterGrid .i2CellSize-standard { min-height: 230px; }
+  .i2WriterGrid .i2CellSize-tall { min-height: 320px; }
+  .i2WriterGrid .i2CellSize-wide { grid-column: auto; min-height: 230px; }
+  .i2WriterGrid .i2CellSize-large { grid-column: auto; grid-row: auto; min-height: 320px; }
+}
+
+/* PC keeps the writing desk wide; layout controls live below the grid rather
+   than inside a thin secondary rail. */
+.i2WriterStageIntro { display: grid; gap: 6px; min-width: 0; }
+.i2WriterStageIntro>button { width: max-content; border: 0; border-bottom: 1px solid var(--line-dark); background: transparent; color: var(--dream-accent); padding: 0 0 3px; font: 10px var(--type-mono); cursor: pointer; }
+.i2WriterStageIntro>button:hover { color: var(--ink); }
+.i2WriterGrid .i2WriterCell { cursor: text; }
+.i2WriterGrid .i2WriterCell:focus-visible { outline: 2px solid var(--dream-accent); outline-offset: -2px; }
+.i2WriterGrid.is-focused-cell { display: block; border-right: 1px solid var(--line); }
+.i2WriterGrid.is-focused-cell .i2WriterCell:not(.is-active-cell) { display: none; }
+.i2WriterGrid.is-focused-cell .i2WriterCell.is-active-cell { min-height: min(70vh, 720px); border-right: 0; }
+.i2WriterGrid.is-focused-cell .i2WriterCell.is-active-cell .i2CellHead { padding: 22px 26px 12px; }
+.i2WriterGrid.is-focused-cell .i2WriterCell.is-active-cell textarea { min-height: min(58vh, 600px); padding: 12px 26px 28px; }
+.i2WriterStage>.i2DeskCellEditor { width: 100%; margin-top: 22px; }
+.i2DeskLayoutOpen .i2WriterGrid { height: auto; min-height: 0; grid-template-rows: none; }
+.i2DeskLayoutOpen .i2WriterGrid .i2WriterCell { min-height: 260px; }
+.i2DeskLayoutOpen .i2WriterGrid .i2DiaryCell { min-height: 360px; }
+.i2DeskCellEditor.is-open { animation: i2Fade .18s ease both; }
+.i2DeskTemplateArea { margin-top: 17px; padding-top: 16px; border-top: 1px solid var(--line); }
+.i2DeskTemplateHead span { display: block; color: var(--dream-accent); font: 9px var(--type-mono); letter-spacing: .12em; }
+.i2DeskTemplateHead p { margin: 5px 0 0; color: var(--muted); font: 12px/1.55 var(--type-serif); }
+.i2DeskTemplateSave { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; margin-top: 11px; }
+.i2DeskTemplateSave .input { min-width: 0; height: 34px; font: 13px var(--type-serif); }
+.i2DeskTemplateSave button,.i2DeskTemplateCard button { border: 1px solid var(--line-dark); background: transparent; color: var(--ink); padding: 6px 10px; font: 10px var(--type-mono); cursor: pointer; }
+.i2DeskTemplateSave button:hover,.i2DeskTemplateCard button:hover { border-color: var(--dream-accent); color: var(--dream-accent); }
+.i2DeskTemplates { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; margin-top: 11px; }
+.i2DeskTemplateCard { display: grid; grid-template-columns: 1fr auto auto; gap: 4px 7px; align-items: center; padding: 9px 10px; border: 1px solid var(--line); background: color-mix(in srgb, var(--paper) 80%, transparent); }
+.i2DeskTemplateCard strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 400 15px var(--type-serif); }
+.i2DeskTemplateCard span { grid-column: 1 / -1; color: var(--muted); font: 9px var(--type-mono); }
+.i2DeskTemplateCard button { padding: 3px 7px; }
+.i2DeskTemplateCard button:last-child { color: var(--danger, #9b504c); }
+.i2DeskTemplatesEmpty { grid-column: 1 / -1; margin: 0; color: var(--muted); font: 12px var(--type-serif); }
+.i2HabitCell .i2CellHead { align-items: center; }
+.i2HabitCell .i2CellTune { margin-left: auto; }
+.i2HabitEditor { margin: 8px 15px 14px; padding: 12px; border-top: 1px solid var(--line); background: color-mix(in srgb, var(--paper2) 62%, transparent); }
+.i2HabitEditor p { margin: 0 0 9px; color: var(--muted); font: 11px/1.55 var(--type-serif); }
+.i2HabitEditorRows { display: grid; gap: 6px; }
+.i2HabitEditorRow { display: grid; grid-template-columns: minmax(0,1fr) 28px; gap: 5px; align-items: center; }
+.i2HabitEditorRow .input { min-width: 0; height: 30px; padding: 5px 7px; font: 12px var(--type-serif); }
+.i2HabitEditorRow button { width: 28px; height: 28px; border: 1px solid var(--line); background: transparent; color: var(--danger, #9b504c); cursor: pointer; }
+.i2HabitEditorActions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+.i2HabitEditorActions button { min-height: 30px; padding: 5px 9px; border: 1px solid var(--line-dark); background: transparent; color: var(--ink); font: 10px var(--type-mono); cursor: pointer; }
+.i2HabitEditorActions button.primary { background: var(--dream-accent); border-color: var(--dream-accent); color: var(--paper); }
+.i2HabitEditorActions button:hover { border-color: var(--dream-accent); }
+.i2DeskFocus .i2WriterStage { width: min(1600px, 100%); max-width: none; padding-inline: clamp(24px, 5vw, 96px); margin: 0 auto; }
+.i2DeskFocus .i2WriterGrid { max-width: 1500px; margin-inline: auto; }
+.i2DeskFocus .i2WriterGrid.is-focused-cell .i2WriterCell.is-active-cell { min-height: min(76vh, 860px); }
+@media (max-width: 980px) {
+  .i2DeskFocus .i2WriterStage { padding-inline: 20px; }
+  .i2DeskTemplateSave { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .i2WriterStageIntro { gap: 3px; }
+  .i2WriterTools { overflow-x: auto; padding-bottom: 3px; }
+  .i2WriterTools button { flex: 0 0 auto; }
+  .i2WriterGrid.is-focused-cell .i2WriterCell.is-active-cell { min-height: 68vh; }
+  .i2WriterGrid.is-focused-cell .i2WriterCell.is-active-cell textarea { min-height: 58vh; padding-inline: 18px; }
+  .i2DeskFocus .i2WriterStage { padding-inline: 15px; }
+}
+
+/* The PC desk is the primary surface. It should use the available window
+   width instead of leaving a narrow centered strip with empty margins. */
+@media (min-width: 981px) {
+  body.productDockOpen .productDockBox {
+    width: min(1740px, calc(100vw - 48px));
+    height: min(920px, calc(100dvh - 32px));
+  }
+
+  .i2Writer.i2Desk { width: min(1740px, 100%); padding-inline: 22px; }
+  .i2Desk form { grid-template-columns: 218px minmax(0, 1fr) 238px; }
+  .i2WriterGrid {
+    grid-template-rows: auto;
+    height: auto;
+    min-height: calc(100dvh - 170px);
+  }
+  .i2WriterGrid .i2WriterCell { min-height: clamp(250px, 30vh, 400px); }
+  .i2WriterGrid .i2DiaryCell { min-height: clamp(340px, 42vh, 520px); }
+  .i2WriterGrid .i2HabitCell { min-height: clamp(250px, 30vh, 380px); }
+}
+
+/* Inline layout editing and per-cell rich text. */
+.i2CellHead label {
+  display: flex;
+  align-items: baseline;
+  min-width: 0;
+  gap: 8px;
+}
+.i2CellTitleInput {
+  width: min(190px, 48%);
+  min-width: 0;
+  border: 0;
+  border-bottom: 1px solid var(--dream-accent);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  padding: 0 2px 2px;
+  font: 400 19px var(--type-serif);
+}
+.i2CellTitleInput:focus { outline: 0; border-color: var(--ink); }
+.i2CellActions { display: flex; align-items: center; gap: 3px; margin-left: auto; }
+.i2CellEdit,
+.i2CellRemove {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 25px;
+  height: 25px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  line-height: 1;
+}
+.i2CellEdit:hover,
+.i2CellEdit:focus-visible,
+.i2CellRemove:hover,
+.i2CellRemove:focus-visible { border-color: var(--line-dark); color: var(--ink); outline: 0; }
+.i2CellRemove { color: var(--danger, #9b504c); font-size: 20px; }
+.i2CellRemove:disabled { opacity: .25; cursor: not-allowed; }
+.i2DeskInlineEdit .i2CellEdit,
+.i2DeskInlineEdit .i2CellRemove { display: inline-flex; }
+.i2DeskInlineEdit .i2WriterCell { cursor: grab; }
+.i2DeskInlineEdit .i2WriterCell:active { cursor: grabbing; }
+.i2WriterCell .i2CellEditor {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 154px;
+  overflow: auto;
+  padding: 7px 18px 18px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+  font: 400 19px/1.78 var(--type-serif);
+  outline: 0;
+  cursor: text;
+}
+.i2WriterCell .i2CellEditor:focus {
+  border-inline-start: 2px solid color-mix(in srgb, var(--dream-accent) 62%, transparent);
+  background: color-mix(in srgb, var(--dream-accent) 4%, transparent);
+  caret-color: var(--dream-accent);
+}
+.i2CellEditor b,
+.i2CellEditor strong { font-weight: 700; }
+.i2CellEditor u { text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.i2InlineTag {
+  padding: 0 .22em;
+  border-bottom: 1px solid var(--dream-accent);
+  background: color-mix(in srgb, var(--dream-accent) 14%, transparent);
+}
+.i2CellFormatBar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 6px 18px;
+  border-top: 1px solid color-mix(in srgb, var(--line) 78%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 78%, transparent);
+  background: color-mix(in srgb, var(--paper2) 35%, transparent);
+}
+.i2CellFormatBar[hidden] { display: none; }
+.i2CellFormatBar button {
+  min-width: 27px;
+  height: 25px;
+  padding: 2px 6px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font: 12px var(--type-mono);
+}
+.i2CellFormatBar button:hover,
+.i2CellFormatBar button:focus-visible { border-color: var(--dream-accent); outline: 0; }
+.i2CellFormatHint { margin-right: auto; color: var(--muted); font: 9px var(--type-mono); }
+.i2CellFormatBar label { display: inline-flex; align-items: center; gap: 5px; color: var(--muted); font: 9px var(--type-mono); }
+.i2CellFormatBar select {
+  min-height: 25px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  padding: 2px 5px;
+  font: 11px var(--type-sans);
+}
+.i2HabitCell .i2CellFormatBar { margin-top: 2px; }
+.i2HabitCell .i2HabitNote { min-height: 66px; margin-top: 0; }
+.i2WriterGrid.is-focused-cell .i2WriterCell.is-active-cell .i2CellEditor { min-height: min(58vh, 600px); padding: 12px 26px 28px; }
+@media (max-width: 760px) {
+  .i2CellFormatHint { display: none; }
+  .i2CellFormatBar { padding-inline: 12px; }
+  .i2WriterCell .i2CellEditor { min-height: 154px; padding-inline: 15px; }
+  .i2CellTitleInput { width: min(150px, 48%); font-size: 18px; }
+  .i2WriterGrid.is-focused-cell .i2WriterCell.is-active-cell .i2CellEditor { min-height: 58vh; padding-inline: 18px; }
+}
+
+@media (min-width: 981px) {
+  /* Focus mode must win over the three-column desk rule above. */
+  .i2DeskFocus form { grid-template-columns: minmax(0, 1fr) !important; }
+  .i2DeskFocus .i2WriterStage {
+    width: min(1600px, 100%);
+    max-width: none;
+    padding-inline: clamp(24px, 5vw, 96px);
+    margin: 0 auto;
+  }
+  .i2DeskFocus .i2WriterGrid { width: 100%; max-width: 1500px; margin-inline: auto; }
+}
+
+/* v0.2 page-first canvas: the desktop writer is one quiet sheet, while
+   tools float above it instead of taking a permanent content column. */
+@media (min-width: 981px) {
+  body.writerImmersive .productPanel { overflow: hidden; }
+  body.writerImmersive #productDock { z-index: 600; }
+  body.writerImmersive .i2Desk {
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+    max-width: none;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+  .i2DeskHead { flex: 0 0 auto; }
+  .i2Desk form {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+    overflow: hidden;
+    grid-template-columns: clamp(156px, 12vw, 210px) minmax(0, 1fr) !important;
+  }
+  .i2WriterAside {
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+    padding: clamp(20px, 3vh, 34px) clamp(16px, 2vw, 28px) clamp(16px, 2vh, 28px) 0;
+  }
+  .i2WriterStage {
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 0 clamp(16px, 1.5vw, 28px) 14px;
+  }
+  .i2WriterStageTop {
+    flex: 0 0 auto;
+    min-height: 56px;
+    padding: 10px 0;
+  }
+  .i2WriterStageTop p { max-width: 560px; }
+  .i2WriterTools { gap: 4px; }
+  .i2WriterTools button { padding-inline: 6px; }
+  .i2WriterGrid {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+    margin-top: 12px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: minmax(0, 1fr);
+    overflow: hidden;
+  }
+  .i2WriterGrid .i2WriterCell,
+  .i2WriterGrid .i2CellSize-compact,
+  .i2WriterGrid .i2CellSize-standard,
+  .i2WriterGrid .i2CellSize-tall,
+  .i2WriterGrid .i2CellSize-wide,
+  .i2WriterGrid .i2CellSize-large {
+    min-height: 0 !important;
+    max-height: none;
+  }
+  .i2WriterGrid .i2WriterCell { overflow: hidden; }
+  .i2WriterGrid .i2DiaryCell { grid-column: span 2; grid-row: span 1; }
+  .i2WriterGrid .i2CellSize-wide { grid-column: span 2; }
+  .i2WriterGrid .i2CellSize-tall:not(.i2DiaryCell) { grid-row: span 2; }
+  .i2WriterGrid .i2CellSize-large { grid-column: span 2; grid-row: span 2; }
+  .i2WriterCell .i2CellHead { flex: 0 0 auto; padding: 10px 14px 6px; }
+  .i2WriterCell .i2CellEditor {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    padding: 4px 14px 12px;
+    display: block;
+    line-height: 1.52;
+  }
+  .i2HabitCell .i2HabitList { gap: 5px; padding: 5px 14px; }
+  .i2HabitCell .i2HabitNote { flex: 1 1 auto; min-height: 0 !important; overflow: hidden; }
+  .i2DeskCellEditor { display: none !important; }
+  .i2WriterPreviewPanel { flex: 0 0 auto; max-height: 25vh; overflow: auto; }
+  .i2WriterPreviewPanel[hidden] { display: none; }
+  .i2WriterStage > .i2FocusToolbar { flex: 0 0 auto; }
+
+  /* The tool rail is an overlay, so opening it never reflows the sheet. */
+  .i2ToolDrawer {
+    position: absolute;
+    z-index: 640;
+    top: 78px;
+    right: 0;
+    bottom: 0;
+    width: min(340px, 32vw);
+    overflow: auto;
+    padding: 18px 22px 28px;
+    border-left: 1px solid var(--line);
+    background: color-mix(in srgb, var(--paper) 96%, transparent);
+    box-shadow: -18px 0 45px rgba(43, 33, 27, .1);
+    backdrop-filter: blur(14px);
+    animation: i2DrawerIn .2s ease both;
+  }
+  .i2ToolDrawer[hidden] { display: none; }
+  .i2ToolDrawer .i2ToolDrawerHead {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .i2ToolDrawerHead span { color: var(--dream-accent); font: 9px var(--type-mono); letter-spacing: .12em; }
+  .i2ToolDrawerHead h3 { margin: 5px 0 0; font: 400 24px var(--type-serif); }
+  .i2ToolDrawerHead button { border: 0; background: transparent; color: var(--muted); font: 24px/1 var(--type-serif); cursor: pointer; }
+  .i2ToolDrawerHead button:hover { color: var(--ink); }
+  .i2ToolDrawer .i2WriterLive { margin: 16px 0 0; }
+  .i2ToolDrawer .i2WriterQuick { margin-top: 18px; padding: 14px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .i2ToolDrawer .i2WriterMore { width: auto; margin: 0; }
+  .i2ToolDrawer .i2MoreGrid { grid-template-columns: 1fr; }
+  .i2ToolDrawer .i2DeskTemplateArea { margin-top: 16px; }
+  .i2Desk.i2DrawerOpen .i2WriterGrid { filter: saturate(.92); }
+  @keyframes i2DrawerIn { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: none; } }
+}
+
+/* The drawer is created as an aside for accessibility, but it must not be a
+   flex child of the form.  Keep the id selector as a guard for old cached DOM
+   nodes while the new class settles in. */
+@media (min-width: 981px) {
+  #writerToolDrawer {
+    position: absolute;
+    z-index: 640;
+    top: 78px;
+    right: 0;
+    bottom: 0;
+    width: min(340px, 32vw);
+    overflow: auto;
+    padding: 18px 22px 28px;
+    border-left: 1px solid var(--line);
+    background: color-mix(in srgb, var(--paper) 96%, transparent);
+    box-shadow: -18px 0 45px rgba(43, 33, 27, .1);
+    backdrop-filter: blur(14px);
+    animation: i2DrawerIn .2s ease both;
+  }
+  #writerToolDrawer[hidden] { display: none; }
+  #writerToolDrawer .i2ToolDrawerHead {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  #writerToolDrawer .i2DeskTemplateArea { margin-top: 16px; }
+  #writerToolDrawer .i2ToolDrawerHead h3 { font-size: calc(24px * var(--life-font-scale)); }
+  #writerToolDrawer .i2ToolDrawerHead span { font-size: calc(9px * var(--life-font-scale)); }
+}
+
+@media (min-width: 981px) and (max-width: 1279px) {
+  .i2WriterGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+  }
+  .i2WriterGrid .i2DiaryCell { grid-column: span 2; grid-row: span 1; }
+  .i2WriterGrid .i2HabitCell { overflow: auto; }
+}
+
+@media (min-width: 1681px) {
+  .i2WriterGrid { grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 2201px) {
+  .i2WriterGrid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
+
+/* Focused writing uses the same sheet, but grants the active cell the whole
+   stage and lets only its own editor scroll through long writing. */
+@media (min-width: 981px) {
+  .i2DeskFocus .i2WriterStage { padding-inline: clamp(24px, 4vw, 72px); }
+  .i2DeskFocus .i2WriterGrid { overflow: hidden; grid-template-columns: minmax(0, 1fr) !important; grid-template-rows: minmax(0, 1fr) !important; }
+  .i2DeskFocus .i2WriterGrid.is-focused-cell .i2WriterCell.is-active-cell { min-height: 0 !important; height: 100%; }
+  .i2DeskFocus .i2WriterGrid.is-focused-cell .i2WriterCell.is-active-cell .i2CellEditor { min-height: 0; height: 100%; max-height: none; overflow: auto; padding: 16px 30px 48px; line-height: 1.78; }
+}
+
+/* Bottom quick tools appear only while one cell is focused. */
+.i2FocusToolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 46px;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--paper2) 86%, transparent);
+  box-shadow: 0 12px 26px rgba(43, 33, 27, .07);
+}
+.i2FocusToolbar[hidden] { display: none; }
+.i2FocusToolbarLead { color: var(--muted); font: 10px var(--type-mono); white-space: nowrap; }
+.i2FocusToolbarActions { display: flex; align-items: center; gap: 4px; min-width: 0; flex-wrap: wrap; }
+.i2FocusToolbarActions button { min-width: 28px; height: 28px; padding: 3px 7px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; font: 13px var(--type-mono); }
+.i2FocusToolbarActions button:hover,
+.i2FocusToolbarActions button:focus-visible { border-color: var(--dream-accent); outline: 0; }
+.i2FocusToolbarActions span { flex: 1 1 20px; }
+@media (min-width: 981px) {
+  .i2FocusToolbar { flex-wrap: nowrap; }
+  .i2FocusToolbarActions { flex: 1 1 auto; flex-wrap: nowrap; overflow-x: auto; }
+  .i2Desk.i2CellFocus form { grid-template-columns: minmax(0, 1fr) !important; }
+  .i2Desk.i2CellFocus .i2WriterAside { display: none; }
+.i2Desk.i2CellFocus .i2WriterStage { padding-inline: clamp(24px, 5vw, 96px); }
+}
+.i2DeskInlineEdit .i2CellEditor { pointer-events: none; opacity: .68; }
+.i2DeskInlineEdit .i2CellFormatBar { display: flex !important; pointer-events: auto; }
+.i2DeskInlineEdit .i2CellFormatBar button[data-cell-format] { display: none; }
+@media (max-width: 760px) {
+  .i2FocusToolbar { position: sticky; bottom: 8px; z-index: 8; overflow-x: auto; }
+  .i2FocusToolbarLead { display: none; }
+  .i2FocusToolbarActions { flex-wrap: nowrap; }
+}
+
+/* The date is a visible command, not an invisible native-input hit target. */
+.i2DateNavigator label.i2DateJumpWrap {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3px;
+  min-width: 146px;
+  padding: 2px 6px 4px;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 78%, transparent);
+  cursor: default;
+}
+.i2DateNavigator label.i2DateJumpWrap > span {
+  grid-column: auto;
+}
+.i2DateNavigator label.i2DateJumpWrap > b { display: none; }
+.i2DateNative {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  inset: auto auto 0 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+.i2DateJump {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+.i2DateJump b { font: 400 18px var(--type-serif); letter-spacing: -.01em; }
+.i2DateJump small {
+  color: var(--muted);
+  font: 9px var(--type-mono);
+  white-space: nowrap;
+}
+.i2DateJump:hover b,
+.i2DateJump:focus-visible b { color: var(--dream-accent); }
+.i2DateJump:focus-visible { outline: 1px solid var(--dream-accent); outline-offset: 4px; }
+.i2DatePicker {
+  position: absolute;
+  z-index: 820;
+  top: calc(100% + 12px);
+  left: 50%;
+  width: min(290px, calc(100vw - 32px));
+  padding: 15px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--paper) 97%, transparent);
+  box-shadow: 0 18px 40px color-mix(in srgb, var(--ink) 18%, transparent);
+  backdrop-filter: blur(14px);
+  transform: translateX(-50%);
+}
+.i2DatePicker[hidden] { display: none; }
+.i2DatePickerHead,
+.i2DatePickerActions { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.i2DatePickerHead { padding-bottom: 11px; border-bottom: 1px solid var(--line); }
+.i2DatePickerHead strong { font: 400 18px var(--type-serif); }
+.i2DatePickerHead small { color: var(--muted); font: 9px var(--type-mono); }
+.i2DatePickerClose { border: 0; background: transparent; color: var(--muted); font: 22px/1 var(--type-serif); cursor: pointer; }
+.i2DatePickerClose:hover { color: var(--ink); }
+.i2DatePickerFields { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: 8px; margin: 14px 0; }
+.i2DatePickerFields label { display: grid; gap: 5px; color: var(--muted); font: 9px var(--type-mono); }
+.i2DatePickerFields input {
+  position: static !important;
+  inset: auto !important;
+  width: 100%;
+  min-width: 0;
+  height: 34px;
+  padding: 5px 7px;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--paper2);
+  color: var(--ink);
+  font: 15px var(--type-serif);
+  opacity: 1 !important;
+  cursor: text !important;
+}
+.i2DatePickerFields input:focus { outline: 1px solid var(--dream-accent); outline-offset: 1px; }
+.i2DatePickerActions { justify-content: flex-end; padding-top: 11px; border-top: 1px solid var(--line); }
+.i2DatePickerActions button { min-height: 32px; padding: 6px 10px; border: 1px solid var(--line-dark); background: transparent; color: var(--ink); font: 10px var(--type-mono); cursor: pointer; }
+.i2DatePickerActions button:hover,
+.i2DatePickerActions button:focus-visible { border-color: var(--dream-accent); outline: 0; }
+.i2DatePickerActions .primary { border-color: var(--dream-accent); background: var(--dream-accent); color: var(--paper); }
+
+/* Keep the stage header a guaranteed hit layer when a custom tall cell or a
+   large reading scale tries to make the grid's intrinsic content taller. */
+@media (min-width: 981px) {
+  body.writerImmersive .i2DeskHead { position: relative; z-index: 50; }
+  body.writerImmersive .i2WriterStageTop { position: relative; z-index: 40; isolation: isolate; }
+  body.writerImmersive .i2WriterTools,
+  body.writerImmersive .i2WriterTools button,
+  body.writerImmersive .i2WriterStageIntro > button { pointer-events: auto; }
+  body.writerImmersive .i2WriterGrid {
+    position: relative;
+    z-index: 1;
+    flex: 1 1 0;
+    max-height: 100%;
+    contain: layout paint;
+  }
+  body.writerImmersive .i2WriterGrid .i2WriterCell { max-height: 100%; }
+  body.writerImmersive .i2WriterGrid .i2CellEditor { overflow: auto; }
+  body.writerImmersive .i2DeskInlineEdit .i2WriterGrid { overflow: auto; }
+  body.writerImmersive .i2DeskInlineEdit .i2WriterGrid .i2WriterCell { max-height: none; }
+}
+
+/* The everyday writing state keeps one clear path per task.  Layout-only
+   actions appear after entering arrange mode, while low-frequency actions
+   stay in the drawer. */
+@media (min-width: 981px) {
+  body.writerImmersive .i2WriterTools #writerAddQuick,
+  body.writerImmersive .i2WriterTools > button[data-template="daily"],
+  body.writerImmersive .i2WriterTools > span { display: none; }
+  body.writerImmersive .i2DeskInlineEdit .i2WriterTools #writerAddQuick { display: inline-flex; }
+  body.writerImmersive .i2DeskInlineEdit #writerCellEditor #writerAddCell { display: none; }
+  body.writerImmersive #writerToolDrawer #writerCustomizeCellsSecondary { display: none; }
+  body.writerImmersive #writerToolDrawer .i2WriterQuick > span { display: none; }
+  body.writerImmersive #writerToolDrawer .i2ToolDrawerHead h3 { margin: 0; }
+}
+
+@media (max-width: 760px) {
+  .i2DateNavigator label.i2DateJumpWrap { min-width: 124px; padding-inline: 2px; }
+  .i2DateJump b { font-size: 14px; }
+  .i2DateJump small { display: none; }
+  .i2DatePicker { position: fixed; top: calc(var(--life-titlebar-h, 58px) + 12px); left: 50%; }
+}
+
+/* Desktop writing cells keep the page still while their own writing surface
+   carries overflow. This also keeps wheel/touch scrolling from chaining to
+   the desk and gives the scrollbar the same quiet paper treatment. */
+@media (min-width: 981px) {
+  html:has(body.writerImmersive),
+  html:has(body.writerImmersive) body {
+    height: 100% !important;
+    max-height: 100dvh !important;
+    overflow: hidden !important;
+  }
+  body.writerImmersive { overflow: hidden; }
+  body.writerImmersive .i2Desk { height: calc(100dvh - 16px); max-height: calc(100dvh - 16px); }
+  body.writerImmersive .i2WriterStage,
+  body.writerImmersive .i2WriterGrid { min-height: 0; overflow: hidden; }
+  body.writerImmersive .i2WriterGrid { grid-template-rows: minmax(0, 1.24fr) minmax(0, 1fr) minmax(0, 1fr); }
+  body.writerImmersive .i2WriterGrid .i2WriterCell {
+    min-width: 0;
+    min-height: 0 !important;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  body.writerImmersive .i2WriterGrid .i2CellHead,
+  body.writerImmersive .i2WriterGrid .i2CellFormatBar { flex: 0 0 auto; }
+  body.writerImmersive .i2WriterGrid .i2CellEditor {
+    min-height: 0;
+    max-height: none;
+    flex: 1 1 auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    scrollbar-color: color-mix(in srgb, var(--dream-accent) 28%, var(--paper)) transparent;
+  }
+  body.writerImmersive .i2WriterGrid .i2CellEditor::-webkit-scrollbar { width: 8px; height: 8px; }
+  body.writerImmersive .i2WriterGrid .i2CellEditor::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--dream-accent) 28%, var(--paper));
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  body.writerImmersive .i2WriterGrid .i2CellEditor::-webkit-scrollbar-track { background: transparent; }
+  body.writerImmersive .i2DeskInlineEdit .i2WriterGrid { overflow: hidden; }
+  body.writerImmersive .i2DeskInlineEdit .i2CellEditor { pointer-events: auto; }
+}
+
+/* Keep cell scrolling available without showing a scrollbar track or thumb. */
+.i2WriterGrid .i2CellEditor {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scrollbar-gutter: auto;
+}
+.i2WriterGrid .i2CellEditor::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* Habits are a first-class writing cell.  The cell keeps its own quiet scroll
+   surface when the desk is dense, while the control itself stays borderless
+   so editing never looks like a second dialog or a floating card. */
+.i2HabitCell {
+  min-width: 0;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.i2HabitCell::-webkit-scrollbar,
+.i2HabitCell *::-webkit-scrollbar { display: none; width: 0; height: 0; }
+.i2HabitCell > .i2CellHead,
+.i2HabitCell > .i2CellFormatBar { flex: 0 0 auto; }
+.i2HabitCell > .i2CellHead { min-width: 0; }
+.i2HabitCell .i2HabitList {
+  flex: 0 0 auto;
+  min-width: 0;
+  gap: calc(5px * var(--life-font-scale));
+  padding: calc(10px * var(--life-font-scale)) calc(18px * var(--life-font-scale)) calc(6px * var(--life-font-scale));
+}
+.i2HabitCell .i2HabitList label {
+  min-width: 0;
+  line-height: 1.4;
+  font-family: var(--type-serif);
+  font-size: calc(15px * var(--life-font-scale)) !important;
+}
+.i2HabitCell .i2HabitList label > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: inherit !important;
+}
+.i2HabitCell .i2HabitList i {
+  flex: 0 0 auto;
+  width: calc(16px * var(--life-font-scale));
+  height: calc(16px * var(--life-font-scale));
+}
+.i2HabitCell .i2HabitNote {
+  flex: 0 0 auto;
+  min-height: clamp(72px, 12vh, 150px) !important;
+  margin: 0;
+  overflow: visible;
+  font-family: var(--type-serif);
+  font-size: calc(16px * var(--life-font-scale)) !important;
+  line-height: 1.65 !important;
+}
+body.writerImmersive .i2WriterGrid .i2HabitCell .i2HabitNote:empty { min-height: 0 !important; }
+body.writerImmersive .i2WriterGrid .i2HabitCell .i2HabitNote:focus { min-height: clamp(72px, 12vh, 150px) !important; }
+.i2HabitCell .i2CellTune {
+  min-height: calc(30px * var(--life-font-scale));
+  padding-inline: calc(7px * var(--life-font-scale));
+  border-bottom: 1px solid transparent;
+  border-radius: 0;
+  font-size: calc(14px * var(--life-font-scale)) !important;
+  transition: color .16s ease, background .16s ease, border-color .16s ease;
+}
+
+@media (min-width: 981px) {
+  .i2DeskHead .i2WriterCommands { min-width: 0; white-space: nowrap; }
+  .i2DeskHead .i2WriterState { display: block; min-width: 0; max-width: clamp(84px, 12vw, 170px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .i2DeskHead .i2WriterCommands .productAction { flex: 0 0 auto; min-width: max-content; white-space: nowrap; }
+}
+.i2HabitCell .i2CellTune:hover,
+.i2HabitCell .i2CellTune:focus-visible,
+.i2HabitCell .i2CellTune.is-active {
+  color: var(--dream-accent);
+  background: color-mix(in srgb, var(--dream-accent) 9%, transparent);
+  border-bottom-color: var(--dream-accent);
+  outline: 0;
+}
+.i2HabitCell.is-habit-editing .i2HabitList,
+.i2HabitCell.is-habit-editing .i2HabitNote { display: none; }
+.i2HabitCell.is-habit-editing .i2CellFormatBar { display: none !important; }
+.i2HabitEditor {
+  margin: 0;
+  padding: calc(5px + 2px * var(--life-font-scale)) calc(10px + 3px * var(--life-font-scale)) calc(7px + 2px * var(--life-font-scale));
+  border: 0;
+  border-top: 1px solid var(--line);
+  background: transparent;
+  box-shadow: none;
+}
+.i2HabitEditor p { display: none; }
+.i2HabitEditorRows {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: calc(3px * var(--life-font-scale)) calc(7px * var(--life-font-scale));
+}
+.i2HabitEditorRow {
+  grid-template-columns: minmax(0, 1fr) calc(25px * var(--life-font-scale));
+  gap: calc(3px * var(--life-font-scale));
+  padding: calc(2px * var(--life-font-scale)) 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+}
+.i2HabitEditorRow .input {
+  height: clamp(30px, calc(22px + 5px * var(--life-font-scale)), 38px);
+  min-height: clamp(30px, calc(22px + 5px * var(--life-font-scale)), 38px) !important;
+  padding: calc(4px * var(--life-font-scale)) calc(6px * var(--life-font-scale));
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: color-mix(in srgb, var(--paper2) 42%, transparent);
+  font-family: var(--type-serif);
+  font-size: calc(13px * var(--life-font-scale)) !important;
+}
+.i2HabitEditorRow .input:focus {
+  border-color: var(--dream-accent);
+  outline: 0;
+  box-shadow: none;
+}
+.i2HabitEditorRow button {
+  width: clamp(24px, calc(17px + 5px * var(--life-font-scale)), 30px);
+  height: clamp(26px, calc(20px + 4px * var(--life-font-scale)), 32px);
+  min-height: clamp(26px, calc(20px + 4px * var(--life-font-scale)), 32px) !important;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  color: var(--danger, #9b504c);
+  font-size: calc(20px * var(--life-font-scale)) !important;
+  cursor: pointer;
+  transition: background .16s ease, border-color .16s ease;
+}
+.i2HabitEditorRow button:hover,
+.i2HabitEditorRow button:focus-visible {
+  border-bottom-color: var(--danger, #9b504c);
+  background: color-mix(in srgb, var(--danger, #9b504c) 8%, transparent);
+  outline: 0;
+}
+.i2HabitEditorActions { gap: calc(8px * var(--life-font-scale)); margin-top: calc(10px * var(--life-font-scale)); }
+.i2HabitEditorActions button {
+  min-height: clamp(34px, calc(28px + 4px * var(--life-font-scale)), 42px);
+  min-height: clamp(34px, calc(28px + 4px * var(--life-font-scale)), 42px) !important;
+  padding: calc(6px * var(--life-font-scale)) calc(10px * var(--life-font-scale));
+  border: 1px solid var(--line-dark);
+  background: transparent;
+  font-size: calc(12px * var(--life-font-scale)) !important;
+  transition: color .16s ease, background .16s ease, border-color .16s ease;
+}
+.i2HabitEditorActions button:hover,
+.i2HabitEditorActions button:focus-visible {
+  border-color: var(--dream-accent);
+  color: var(--dream-accent);
+  outline: 0;
+}
+.i2HabitEditorActions button.primary { color: var(--paper); }
+.i2HabitEditorActions button.is-confirmed {
+  border-color: var(--dream-accent);
+  background: color-mix(in srgb, var(--dream-accent) 15%, transparent);
+  color: var(--dream-accent);
+}
+
+/* The immersive desk constrains grid rows to the available window height.
+   Let the habit cell consume that row and scroll its own content instead of
+   clipping its checklist or covering the stage controls. */
+@media (min-width: 981px) {
+  body.writerImmersive .i2WriterGrid .i2HabitCell {
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+  body.writerImmersive .i2WriterGrid .i2HabitCell .i2HabitNote {
+    flex: 0 0 auto;
+    min-height: 84px !important;
+  }
+  body.writerImmersive .i2WriterGrid.is-focused-cell .i2HabitCell .i2HabitNote {
+    flex: 1 1 auto;
+    min-height: 0 !important;
+    overflow-y: auto;
+  }
+}
+@media (max-width: 760px) {
+  .i2HabitCell .i2HabitList { padding-inline: calc(15px * var(--life-font-scale)); }
+  .i2HabitCell .i2HabitNote { min-height: 88px !important; }
+  .i2HabitEditor { padding-inline: calc(15px * var(--life-font-scale)); }
+}
+@media (max-width: 430px) {
+  .i2HabitEditorRows { grid-template-columns: 1fr; }
+}
+
+/* A checkbox is a state toggle, not a request for the writing toolbar.  Keep
+   the toolbar quiet until the user is actually inside a rich-text editor. */
+.i2WriterGrid:not(.is-focused-cell):not(.is-arranging) .i2CellFormatBar {
+  display: none !important;
+}
+.i2HabitCell:has([data-writer-habit]:focus) .i2CellFormatBar {
+  display: none !important;
+}
+
+@media (min-width: 981px) {
+  body.writerImmersive .i2WriterGrid.is-focused-cell .i2HabitCell .i2HabitList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: calc(7px * var(--life-font-scale)) calc(20px * var(--life-font-scale));
+    padding: calc(12px * var(--life-font-scale)) calc(26px * var(--life-font-scale));
+  }
+  body.writerImmersive .i2WriterGrid.is-focused-cell .i2HabitCell .i2HabitNote {
+    min-height: clamp(84px, 18vh, 180px) !important;
+    flex: 1 1 auto;
+    overflow: auto !important;
+  }
+}
+
+/* Final interaction pass: the date remains a button, but its helper label is
+   intentionally silent. The date picker itself still provides the accessible
+   name and the year/month/day controls. */
+.i2DateNavigator label.i2DateJumpWrap .i2DateJump small { display: none !important; }
+.i2DateNavigator label.i2DateJumpWrap .i2DateJump { gap: 0; }
+
+/* The writer is a full-window sheet. Do not leave a second outer frame or a
+   24px inset around the sheet when the desktop dock is open. */
+body.writerImmersive .productDock,
+body.writerImmersive .productDockBox,
+body.writerImmersive #productPanel,
+body.writerImmersive .i2Desk {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+body.writerImmersive .productDock { padding: 0 !important; }
+body.writerImmersive .productDockBox {
+  width: 100vw !important;
+  height: 100dvh !important;
+  max-width: none !important;
+  border-radius: 0 !important;
+}
+body.writerImmersive .i2Desk { height: 100dvh; max-height: 100dvh; }
+
+/* Arrange mode is a real layout board: DOM order controls placement, rows
+   grow with the chosen cell size, and the board itself is the only temporary
+   scroll surface while arranging. */
+@media (min-width: 981px) {
+  body.writerImmersive .i2DeskInlineEdit .i2WriterGrid {
+    height: auto;
+    max-height: calc(100dvh - 178px);
+    min-height: 240px;
+    overflow: auto;
+    grid-template-rows: none !important;
+    grid-auto-rows: minmax(150px, auto);
+    align-content: start;
+    grid-auto-flow: row dense;
+    scrollbar-width: none;
+  }
+  body.writerImmersive .i2DeskInlineEdit .i2WriterGrid::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+  body.writerImmersive .i2DeskInlineEdit .i2WriterGrid .i2WriterCell {
+    min-height: 150px !important;
+    max-height: none !important;
+  }
+  body.writerImmersive .i2DeskInlineEdit .i2WriterGrid .i2CellSize-compact { min-height: 150px !important; }
+  body.writerImmersive .i2DeskInlineEdit .i2WriterGrid .i2CellSize-standard { min-height: 190px !important; }
+  body.writerImmersive .i2DeskInlineEdit .i2WriterGrid .i2CellSize-tall { min-height: 300px !important; }
+  body.writerImmersive .i2DeskInlineEdit .i2WriterGrid .i2CellSize-wide { min-height: 190px !important; }
+  body.writerImmersive .i2DeskInlineEdit .i2WriterGrid .i2CellSize-large { min-height: 360px !important; }
+  body.writerImmersive .i2DeskInlineEdit .i2WriterGrid .i2CellHead {
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+  }
+  body.writerImmersive .i2DeskInlineEdit .i2WriterGrid .i2WriterCell.is-dragging {
+    opacity: .55;
+    outline: 1px dashed var(--dream-accent);
+    outline-offset: -4px;
+  }
+}
+
+/* At 125–150% browser zoom, keep the PC writer usable by moving the side
+   notes out of the way before the canvas becomes too narrow. */
+@media (min-width: 761px) and (max-width: 1100px) {
+  body.writerImmersive .i2Desk form { grid-template-columns: minmax(0, 1fr) !important; }
+  body.writerImmersive .i2WriterAside { display: none; }
+  body.writerImmersive .i2WriterStage { padding-inline: clamp(14px, 3vw, 28px); }
+  body.writerImmersive .i2WriterGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body.writerImmersive .i2WriterGrid .i2DiaryCell { grid-column: span 2; }
+}
+
+/* The overview still gets a quiet responsive grid on smaller CSS viewports;
+   a cell's editor keeps the wheel/touch scroll inside that cell. */
+@media (max-width: 760px) {
+  body.writerImmersive .productDockBox { width: 100vw !important; height: 100dvh !important; }
+  body.writerImmersive .i2DeskInlineEdit .i2WriterGrid {
+    max-height: none;
+    overflow: visible;
+    grid-template-rows: none !important;
+    grid-auto-rows: minmax(190px, auto);
+  }
+  body.writerImmersive .i2DeskInlineEdit .i2WriterGrid .i2WriterCell { min-height: 190px !important; }
+  body.writerImmersive .i2DeskInlineEdit .i2WriterGrid .i2CellHead { cursor: grab; touch-action: none; user-select: none; }
+}
+
+/* The shell already supplies the theme divider. Avoid a dark browser-like
+   frame around the page itself while preserving the quiet internal rules. */
+body:not(.writerImmersive) .app,
+body:not(.writerImmersive) .shell,
+body:not(.writerImmersive) #view,
+body:not(.writerImmersive) .page { outline: 0 !important; }
+
+/* When a title is being edited, replace the display label instead of
+   squeezing a second input beside it. This keeps the title field usable even
+   in a narrow two-column cell at high browser zoom. */
+.i2WriterCell.is-renaming [data-cell-title] { display: none; }
+.i2WriterCell.is-renaming .i2CellHead > label { flex: 1 1 auto; }
+.i2WriterCell.is-renaming .i2CellTitleInput {
+  flex: 1 1 110px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Keep the everyday overview visually packed after custom sizes are mixed.
+   Dense flow only fills earlier holes; it does not change the saved order. */
+@media (min-width: 981px) {
+  body.writerImmersive .i2WriterGrid:not(.is-focused-cell):not(.is-arranging) {
+    grid-auto-flow: row dense;
+  }
+}
+
+/* At the common laptop width, three columns make mixed 1x1 / 2x1 / 1x2
+   cells read as one compact canvas instead of leaving a long dead corner. */
+@media (min-width: 981px) and (max-width: 1400px) {
+  body.writerImmersive .i2WriterGrid:not(.is-focused-cell):not(.is-arranging) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+  }
+  body.writerImmersive .i2WriterGrid:not(.is-focused-cell):not(.is-arranging) .i2DiaryCell,
+  body.writerImmersive .i2WriterGrid:not(.is-focused-cell):not(.is-arranging) .i2CellSize-wide,
+  body.writerImmersive .i2WriterGrid:not(.is-focused-cell):not(.is-arranging) .i2CellSize-large {
+    grid-column: span 2;
+  }
+}
+
+/* A quiet hover cue tells the user that a cell opens directly, without adding
+   another card, modal, or heavy focus frame. */
+.i2WriterGrid:not(.is-focused-cell):not(.is-arranging) .i2WriterCell {
+  cursor: pointer;
+  transition: background-color .16s ease, box-shadow .16s ease;
+}
+.i2WriterGrid:not(.is-focused-cell):not(.is-arranging) .i2WriterCell:hover {
+  background: color-mix(in srgb, var(--dream-accent) 6%, var(--paper));
+  box-shadow: inset 0 2px 0 color-mix(in srgb, var(--dream-accent) 52%, transparent);
+}
+.i2WriterGrid:not(.is-focused-cell):not(.is-arranging) .i2CellEditor {
+  cursor: text;
+}
+
+ /* In arrange mode the visible title is the shortest path to rename a cell;
+    the separate pencil control is intentionally unnecessary. */
+.i2WriterGrid.is-arranging [data-cell-title] {
+  cursor: text;
+  text-decoration: underline dotted color-mix(in srgb, var(--dream-accent) 58%, transparent);
+  text-underline-offset: 4px;
+}
+
+/* Native details disclosure is intentionally made explicit because the
+   typography layer gives .i2MoreBody a display value that can otherwise
+   override the browser's closed-details rule. */
+.i2WriterMore:not([open]) > .i2MoreBody { display: none !important; }
+.i2WriterMore[open] > .i2MoreBody { display: grid; }
+
+/* At larger type scales the tool rail must remain a reachable scroll surface;
+   its content should never extend past the bottom of the writing window. */
+@media (min-width: 981px) {
+  #writerToolDrawer {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    max-height: calc(100dvh - 78px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+  }
+  #writerToolDrawer::-webkit-scrollbar { display: none; width: 0; height: 0; }
+  #writerToolDrawer > * { flex: 0 0 auto; }
+}
+
+/* The side rail is intentionally removed at narrow PC widths. Keep the
+   writing lens switcher in the stage toolbar so the feature never becomes
+   unreachable just because the layout is adapting. */
+.i2WriterViewCompact { display: none; }
+@media (min-width: 761px) and (max-width: 1100px) {
+  body.writerImmersive .i2WriterViewCompact {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(28px, 1fr));
+    gap: 3px;
+    flex: 0 0 auto;
+    margin-right: 4px;
+    padding-right: 8px;
+    border-right: 1px solid var(--line);
+  }
+  body.writerImmersive .i2WriterViewCompact button {
+    min-width: 28px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--muted);
+    padding: 6px 7px;
+    font: calc(10px * var(--life-font-scale)) var(--type-mono);
+    cursor: pointer;
+  }
+  body.writerImmersive .i2WriterViewCompact button.active,
+  body.writerImmersive .i2WriterViewCompact button:hover,
+  body.writerImmersive .i2WriterViewCompact button:focus-visible {
+    border-color: var(--ink);
+    background: color-mix(in srgb, var(--dream-accent) 7%, transparent);
+    color: var(--ink);
+    outline: 0;
+  }
+}
+@media (max-width: 760px) {
+  body.writerImmersive .i2WriterTools {
+    flex-wrap: wrap;
+    white-space: normal;
+  }
+  body.writerImmersive .i2WriterViewCompact {
+    display: grid;
+    flex: 1 0 100%;
+    order: 5;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+    width: 100%;
+    margin-top: 6px;
+  }
+  body.writerImmersive .i2WriterViewCompact button {
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--muted);
+    padding: 6px 7px;
+    font: calc(10px * var(--life-font-scale)) var(--type-mono);
+    cursor: pointer;
+  }
+  body.writerImmersive .i2WriterViewCompact button.active,
+  body.writerImmersive .i2WriterViewCompact button:hover,
+  body.writerImmersive .i2WriterViewCompact button:focus-visible {
+    border-color: var(--ink);
+    background: color-mix(in srgb, var(--dream-accent) 7%, transparent);
+    color: var(--ink);
+    outline: 0;
+  }
+}
+
+/* Writing views are distinct lenses, not only four labels.  Each one gives
+   the same cells a different rhythm while leaving focus and arrange mode
+   untouched so those actions remain predictable. */
+@media (min-width: 981px) {
+  body.writerImmersive .i2WriterGrid[data-view="day"]:not(.is-focused-cell):not(.is-arranging) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: minmax(0, 1.24fr) repeat(2, minmax(0, 1fr));
+    grid-auto-flow: row dense;
+  }
+  body.writerImmersive .i2WriterGrid[data-view="day"]:not(.is-focused-cell):not(.is-arranging) .i2DiaryCell {
+    grid-column: span 2;
+  }
+
+  body.writerImmersive .i2WriterGrid[data-view="week"]:not(.is-focused-cell):not(.is-arranging) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(4, minmax(0, 1fr));
+    grid-auto-flow: row dense;
+  }
+  body.writerImmersive .i2WriterGrid[data-view="week"]:not(.is-focused-cell):not(.is-arranging) .i2DiaryCell {
+    grid-column: 1 / -1;
+  }
+  body.writerImmersive .i2WriterGrid[data-view="week"]:not(.is-focused-cell):not(.is-arranging) .i2CellHead {
+    padding-bottom: 6px;
+  }
+
+  body.writerImmersive .i2WriterGrid[data-view="month"]:not(.is-focused-cell):not(.is-arranging) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    grid-auto-flow: row dense;
+  }
+  body.writerImmersive .i2WriterGrid[data-view="month"]:not(.is-focused-cell):not(.is-arranging) .i2DiaryCell {
+    grid-column: span 2;
+  }
+  body.writerImmersive .i2WriterGrid[data-view="month"]:not(.is-focused-cell):not(.is-arranging) .i2CellHead {
+    padding: 11px 12px 5px;
+  }
+  body.writerImmersive .i2WriterGrid[data-view="month"]:not(.is-focused-cell):not(.is-arranging) .i2CellEditor {
+    padding: 4px 12px 12px;
+  }
+
+  body.writerImmersive .i2WriterGrid[data-view="year"]:not(.is-focused-cell):not(.is-arranging) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: minmax(0, .72fr) repeat(2, minmax(0, 1fr));
+    grid-auto-flow: row dense;
+    align-content: start;
+  }
+  body.writerImmersive .i2WriterGrid[data-view="year"]:not(.is-focused-cell):not(.is-arranging) .i2DiaryCell {
+    grid-column: 1 / -1;
+  }
+  body.writerImmersive .i2WriterGrid[data-view="year"]:not(.is-focused-cell):not(.is-arranging) .i2CellHead {
+    padding: 9px 13px 4px;
+  }
+  body.writerImmersive .i2WriterGrid[data-view="year"]:not(.is-focused-cell):not(.is-arranging) .i2CellEditor {
+    padding: 3px 13px 11px;
+    font-size: calc(16px * var(--life-font-scale)) !important;
+    line-height: 1.62;
+  }
+  body.writerImmersive .i2WriterGrid[data-view="year"]:not(.is-focused-cell):not(.is-arranging) .i2CellHead label {
+    font-size: calc(17px * var(--life-font-scale)) !important;
+  }
+
+  body.writerImmersive #writerViewDescription {
+    transition: color .16s ease, letter-spacing .16s ease;
+  }
+  body.writerImmersive #writerViewDescription[data-view="week"] {
+    color: var(--dream-accent);
+  }
+  body.writerImmersive #writerViewDescription[data-view="month"] {
+    letter-spacing: .04em;
+  }
+  body.writerImmersive #writerViewDescription[data-view="year"] {
+    color: var(--muted);
+    letter-spacing: .1em;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 980px) {
+  body.writerImmersive .i2WriterGrid[data-view="day"]:not(.is-focused-cell):not(.is-arranging),
+  body.writerImmersive .i2WriterGrid[data-view="week"]:not(.is-focused-cell):not(.is-arranging) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  body.writerImmersive .i2WriterGrid[data-view="week"]:not(.is-focused-cell):not(.is-arranging) .i2DiaryCell,
+  body.writerImmersive .i2WriterGrid[data-view="month"]:not(.is-focused-cell):not(.is-arranging) .i2DiaryCell {
+    grid-column: 1 / -1;
+  }
+  body.writerImmersive .i2WriterGrid[data-view="month"]:not(.is-focused-cell):not(.is-arranging),
+  body.writerImmersive .i2WriterGrid[data-view="year"]:not(.is-focused-cell):not(.is-arranging) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  body.writerImmersive .i2WriterGrid[data-view="day"] .i2WriterCell { min-height: 215px; }
+  body.writerImmersive .i2WriterGrid[data-view="week"] .i2WriterCell { min-height: 190px; }
+  body.writerImmersive .i2WriterGrid[data-view="month"] .i2WriterCell { min-height: 170px; }
+  body.writerImmersive .i2WriterGrid[data-view="year"] .i2WriterCell { min-height: 150px; }
+}

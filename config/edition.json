@@ -1,7 +1,7 @@
 {
-  "edition": "public-template",
-  "display_name": "LifeOS V0.1",
-  "contains_user_memory": false,
-  "intended_for": "personal local journaling",
-  "distribution_warning": "This public release contains an empty Vault. Your journals, local index, attachments, revisions and API credentials stay on your own device."
+  "edition": "personal",
+  "display_name": "LifeOS Core X · Personal Edition",
+  "contains_user_memory": true,
+  "intended_for": "private owner use",
+  "distribution_warning": "Contains the owner's journal Vault, revisions, derived indexes and private QA artifacts. Do not redistribute."
 }

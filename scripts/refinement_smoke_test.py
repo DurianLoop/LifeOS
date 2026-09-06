@@ -25,15 +25,15 @@ try:
 finally:
     con.close()
 # exact feature parity
-p=subprocess.run([sys.executable,str(ROOT/'scripts/feature_parity_audit.py')],capture_output=True,text=True)
+p=subprocess.run([sys.executable,str(ROOT/'scripts/feature_parity_audit.py')],capture_output=True,text=True,encoding='utf-8',errors='replace')
 if p.returncode: errors.append('feature parity audit failed')
 # JS syntax
 html=(ROOT/'app/index.html').read_text(encoding='utf-8')
 js=html.rsplit('<script>',1)[1].split('</script>',1)[0]
-with tempfile.NamedTemporaryFile('w',suffix='.js',encoding='utf-8',delete=False) as f:
+with tempfile.NamedTemporaryFile('w',suffix='.js',encoding='utf-8',delete=False,dir=ROOT) as f:
     f.write(js); jsfile=Path(f.name)
 try:
-    n=subprocess.run(['node','--check',str(jsfile)],capture_output=True,text=True)
+    n=subprocess.run(['node','--check',str(jsfile)],capture_output=True,text=True,encoding='utf-8',errors='replace')
     if n.returncode: errors.append('frontend JavaScript syntax failed: '+n.stderr.strip())
 finally:
     jsfile.unlink(missing_ok=True)

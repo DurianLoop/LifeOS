@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light">
-<title>LifeOS · The Living Archive / Refinement VIII</title>
+<title>LifeOS · 归一</title>
 <!-- REFINEMENT VIII -->
 <style>
 :root{
@@ -129,7 +129,7 @@ button,input,textarea,select{font:inherit;color:inherit}button{cursor:pointer}.a
 @media(max-width:900px){.lineageHero{grid-template-columns:1fr}.proofRow,.cycle,.chain{grid-template-columns:1fr}.chainSteps{flex-direction:column}.chainArrow{transform:rotate(90deg)}}
 
 
-/* Refinement Edition · 141 systems, less chrome, stronger provenance */
+/* v0.2 · 142 systems, less chrome, stronger provenance */
 :root{--content:1480px;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 .layerGhosts{display:none}.askPrimary{border:1px solid var(--ink);border-radius:999px;padding:8px 13px}.systemCount{color:var(--teal)}
 .page{max-width:var(--content);margin:0 auto;width:100%}.roomHead{padding-top:2px}.subnav{margin-left:-2px}.subnav button{transition:background .16s,color .16s,transform .16s}.subnav button:hover{transform:translateY(-1px)}
@@ -784,12 +784,13 @@ html[data-theme="pixel"] .sectionRail button:after,html[data-theme="hotel"] .sec
 @media(prefers-reduced-motion:reduce){.productDock *{scroll-behavior:auto!important;transition:none!important}}
 </style>
   <link rel="stylesheet" href="/v01.css?v=4">
-  <link rel="stylesheet" href="/v012.css?v=5">
-  <link rel="stylesheet" href="/v012-writer-desk.css?v=3">
-  <link rel="stylesheet" href="/v012-pet.css?v=3">
+  <link rel="stylesheet" href="/v012.css?v=6">
+  <link rel="stylesheet" href="/v012-writer-desk.css?v=36">
+  <link rel="stylesheet" href="/v012-pet.css?v=4">
   <link rel="stylesheet" href="/v012-pet-preview.css?v=1">
-  <link rel="stylesheet" href="/v012-pet-float.css?v=7">
-  <link rel="stylesheet" href="/lifeos-shell.css?v=4">
+<link rel="stylesheet" href="/v012-pet-float.css?v=7">
+<link rel="stylesheet" href="/lifeos-shell.css?v=4">
+<link rel="stylesheet" href="/v02.css?v=22">
 </head>
 <body>
 <a class="skipLink" href="#view">Skip to archive content</a>
@@ -803,7 +804,7 @@ html[data-theme="pixel"] .sectionRail button:after,html[data-theme="hotel"] .sec
     <div class="topActions">
       <button class="linkBtn writePrimary" id="memoryDockOpen" type="button">写下来 <span aria-hidden="true">＋</span></button>
       <div class="layerGhosts" aria-hidden="true"><button tabindex="-1" class="linkBtn" id="lineageTop">Lineage</button><button tabindex="-1" class="linkBtn" id="footprintTop">Footprint</button><button tabindex="-1" class="linkBtn" id="topologyTop">Topology</button><button tabindex="-1" class="linkBtn" id="compassTop">Compass</button><button tabindex="-1" class="linkBtn" id="mirrorTop">Mirror</button><button tabindex="-1" class="linkBtn" id="timefoldTop">Timefold</button><button tabindex="-1" class="linkBtn" id="observeTop">Observe</button><button tabindex="-1" class="linkBtn" id="surpriseTop">Surprise</button></div>
-      <button class="linkBtn systemCount" id="searchTop" type="button" aria-label="搜索 141 个系统"><span class="desktopOnly">搜日记</span><span class="kbd">⌘ K</span></button>
+      <button class="linkBtn systemCount" id="searchTop" type="button" aria-label="搜索 142 个系统"><span class="desktopOnly">搜日记</span><span class="kbd">⌘ K</span></button>
       <button class="linkBtn askPrimary" id="askTop" type="button">问过去的我 <span aria-hidden="true">↗</span></button>
     </div>
   </div>
@@ -826,16 +827,16 @@ html[data-theme="pixel"] .sectionRail button:after,html[data-theme="hotel"] .sec
   <main id="view" class="page" tabindex="-1"></main>
 </section>
 </div>
-<div class="modal" id="askModal" role="dialog" aria-modal="true" aria-labelledby="askTitle"><div class="modalBox"><div class="modalHead"><div><div class="kicker">Evidence-grounded · human-reviewed</div><h2 id="askTitle">Ask My Life</h2></div><button class="close iconButton" id="closeAsk" type="button" aria-label="关闭问答窗口">×</button></div><div style="padding-top:18px"><input class="input" id="askInput" placeholder="例如：我什么时候开始真正重视产品？"><div class="actions"><button class="btn primary" id="askRun">1 · Retrieve evidence</button><button class="btn" id="askInterpret" style="display:none">2 · Interpret selected</button><button class="btn" data-q="我什么时候开始真正重视产品？">职业变化</button><button class="btn" data-q="过去一年我反复问自己的问题是什么？">反复问题</button></div><div class="small askContract">先检索，再由你删减证据，最后才允许模型解释。证据不足时默认不调用模型。</div><div id="askAnswer"></div></div></div></div>
+<div class="modal" id="askModal" role="dialog" aria-modal="true" aria-labelledby="askTitle"><div class="modalBox"><div class="modalHead"><div><div class="kicker">近思 · 只从你的文字出发</div><h2 id="askTitle">近思</h2></div><button class="close iconButton" id="closeAsk" type="button" aria-label="关闭近思">×</button></div><div style="padding-top:18px"><input class="input" id="askInput" placeholder="例如：我什么时候开始真正重视产品？"><div class="actions"><button class="btn primary" id="askRun">先找记录</button><button class="btn" id="askInterpret" style="display:none">基于所选记录回答</button><button class="btn" data-q="我什么时候开始真正重视产品？">职业变化</button><button class="btn" data-q="过去一年我反复问自己的问题是什么？">反复的问题</button></div><div class="small askContract">近思只从你真正写下的记录里寻找依据。文字不足时，它会明确停在这里。</div><div id="askAnswer"></div></div></div></div>
 
 
 <div class="productDock" id="productDock" role="dialog" aria-modal="true" aria-labelledby="productDockTitle" aria-hidden="true" inert>
   <div class="productDockBox">
-    <header class="productDockHead"><div><div class="kicker">CORE X · PERSONAL MEMORY PLATFORM</div><h2 id="productDockTitle">把记忆交给一个不会偷偷覆盖你的系统。</h2><p>写作、导入、版本、备份、同步与隐私都在这里。</p></div><div class="productDockStatus" id="productDockStatus"></div><button class="close iconButton" id="productDockClose" type="button" aria-label="关闭 Living Memory">×</button></header>
+    <header class="productDockHead"><div><div class="kicker">日记工作台</div><h2 id="productDockTitle">把今天留在这里。</h2><p>写下、导入、版本与备份，先把属于你的内容安稳地留下来。</p></div><div class="productDockStatus" id="productDockStatus"></div><button class="close iconButton" id="productDockClose" type="button" aria-label="关闭日记工作台">×</button></header>
     <div class="productDockBody"><nav class="productTabs" aria-label="LifeOS 档案工作流"><div class="productFlowLabel">日记工作流</div><button data-producttab="import"><span>01</span>导入</button><button data-producttab="writer"><span>02</span>写日记</button><button data-producttab="export"><span>03</span>导出</button><div class="productFlowLabel">保管与设置</div><button data-producttab="versions"><span>04</span>版本</button><button data-producttab="backup"><span>05</span>备份</button><button data-producttab="sync"><span>06</span>同步</button><button data-producttab="privacy"><span>07</span>隐私 / AI</button><button data-producttab="inbox"><span>08</span>收件箱</button><button data-producttab="platform"><span>09</span>P2 / 多端</button></nav><main class="productPanel" id="productPanel"></main></div>
   </div>
 </div>
-<div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="LifeOS system palette"><div class="paletteBox"><input id="palInput" placeholder="Search 141 systems by name, room, or purpose…"><div class="paletteResults" id="palResults"></div></div></div>
+<div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="LifeOS 系统目录"><div class="paletteBox"><input id="palInput" placeholder="按名称、空间或用途寻找…"><div class="paletteResults" id="palResults"></div></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="memoryVeil" id="memoryVeil" aria-hidden="true"></div>
 <div class="worldFlash" id="worldFlash" role="status" aria-live="polite"><span>VISUAL WORLD</span><b id="worldFlashTitle"></b><small id="worldFlashNote"></small></div>
@@ -849,7 +850,8 @@ html[data-theme="pixel"] .sectionRail button:after,html[data-theme="hotel"] .sec
   <label class="tweakField"><span>视觉世界</span><select id="themeSelect"><optgroup label="熟悉的世界"><option value="moon">月光档案馆</option><option value="candy">蜜桃梦境</option><option value="rain">雨夜录像厅</option><option value="pixel">像素卧室</option></optgroup><optgroup label="Theme Lab · 新世界"><option value="greenhouse">玻璃温室</option><option value="abyss">深海电台</option><option value="post">星际邮局</option><option value="hotel">无尽旅馆</option><option value="oracle">黑猫占星室</option><option value="film">胶片夏日</option></optgroup></select><small class="themeHint" id="themeHint">暖纸、月相与旧墨。适合长期阅读。</small></label>
   <label class="tweakField"><span>动画</span><select id="motionSelect"><option value="alive">会呼吸</option><option value="quiet">安静一点</option><option value="off">不动</option></select></label>
   <label class="tweakField"><span>排版节奏</span><div><select id="typeSelect"><option value="literary">文学 · 默认</option><option value="airy">舒展 · 慢慢读</option><option value="compact">紧凑 · 多看一点</option></select><small class="typeHint" id="typeHint">适中的字距与行宽，适合日常阅读。</small></div></label>
-  <button class="tweakAction" id="atticOpen" type="button">打开「其他 · 阁楼」<span aria-hidden="true">→</span></button>
+  <label class="tweakField"><span>字体大小</span><div><select id="fontScaleSelect"><option value="small">小 · 更紧凑</option><option value="default">大 · 默认</option><option value="large">更大 · 舒展阅读</option><option value="xlarge">特大 · 最大字号</option></select><small class="fontScaleHint" id="fontScaleHint">标题、正文与编辑器会一起调整。</small></div></label>
+  <button class="tweakAction" id="atticOpen" type="button">进入「其他」<span aria-hidden="true">→</span></button>
   <p class="small">视觉偏好只保存在这个浏览器。日记正文与 Vault 不会因此改变。</p>
 </div>
 <div class="mobileMorePanel" id="mobileMorePanel" role="dialog" aria-modal="false" aria-label="更多导航" aria-hidden="true" inert>
@@ -857,16 +859,16 @@ html[data-theme="pixel"] .sectionRail button:after,html[data-theme="hotel"] .sec
   <button type="button" data-mobilefeature="Projects"><span data-ui-icon="grow"></span><b>正在生长</b><small>想法、项目与技能</small></button>
   <button type="button" data-mobilefeature="Memory Graph"><span data-ui-icon="world"></span><b>我的世界</b><small>人物、地点与星群</small></button>
   <button type="button" data-mobilefeature="Past Me"><span data-ui-icon="magic"></span><b>时间魔法</b><small>过去、未来与胶囊</small></button>
-  <button type="button" id="mobileSearch"><span data-ui-icon="search"></span><b>在旧日里寻找</b><small>搜索全部 141 个系统</small></button>
+  <button type="button" id="mobileSearch"><span data-ui-icon="search"></span><b>在旧日里寻找</b><small>搜索全部 142 个系统</small></button>
   <button type="button" id="mobileTweaks"><span data-ui-icon="tune"></span><b>界面微调</b><small>主题、动画与氛围</small></button>
-  <button type="button" id="mobileAttic"><span data-ui-icon="attic"></span><b>其他 · 阁楼</b><small>高级分析与证据工具</small></button>
+  <button type="button" id="mobileAttic"><span data-ui-icon="attic"></span><b>其他</b><small>高级分析与证据工具</small></button>
 </div>
-<div class="atticPanel" id="atticPanel"><div class="atticHead"><div><div class="kicker">THE ATTIC · 其他</div><h2>一些不常打开，但舍不得丢掉的东西。</h2><p class="small">141 个系统完整保留。这里收纳高级分析、证据、治理与实验视图。</p></div><button class="close iconButton" id="atticClose" type="button" aria-label="关闭阁楼">×</button></div><div class="atticGrid" id="atticGrid"></div></div>
+<div class="atticPanel" id="atticPanel"><div class="atticHead"><div><div class="kicker">THE ATTIC · 其他</div><h2>一些不常打开，但舍不得丢掉的东西。</h2><p class="small">142 个系统完整保留。这里收纳高级分析、证据、治理与实验视图。</p></div><button class="close iconButton" id="atticClose" type="button" aria-label="关闭阁楼">×</button></div><div class="atticGrid" id="atticGrid"></div></div>
 
 
 <script>
 const FEATURES=[
-["Home","NOW","现在的我与本地 Memory Engine 总览"],["Journal","MEMORY","550 篇 Markdown 的原始阅读器"],["Timeline","MEMORY","来自日程原文的时间线"],["On This Day","NOW","历史上的今天"],["Ask My Life","ASK","基于 Evidence Pack 的人生问答"],["Deep Read","MEMORY","对一个主题做长周期证据阅读"],["Book","BOOK","把人生阶段组织成可翻阅章节"],["Chapters","BOOK","基于时间段生成章节候选"],
+["Home","NOW","现在的我与本地 Memory Engine 总览"],["Journal","MEMORY","原始日记与周记的阅读器"],["Timeline","MEMORY","来自日程原文的时间线"],["On This Day","NOW","历史上的今天"],["Ask My Life","ASK","基于真实记录的近思"],["Deep Read","MEMORY","对一个主题做长周期证据阅读"],["Book","BOOK","把人生阶段组织成可翻阅章节"],["Chapters","BOOK","基于时间段生成章节候选"],
 ["People","PEOPLE","角色与显式配置人物的出现轨迹"],["Life Map","PEOPLE","地点提及与空间记忆"],["Ideas","IDEAS","从原文中抽取的想法候选"],["Beliefs","BOOK","自我探索/体系构建中的显式观点候选"],["Contradictions","BOOK","前后观点的人工复核候选"],["Skill Constellation","GROWTH","技能簇与父子关系"],["Skill Points","GROWTH","基于真实提及日数的活动分数"],["Skill Evidence","GROWTH","每个技能对应的日记证据"],["Skill Evolution","GROWTH","技能随月份的变化"],["Builds","GROWTH","不同年份的角色 Build"],["Achievements","GROWTH","里程碑候选"],["Habits","GROWTH","习惯栏目结构与长期存在"],["Analytics","GROWTH","写作、事件、想法、主题统计"],["Word Evolution","GROWTH","核心词随时间的变化"],["Self Model","GROWTH","显式观点、问题和关注主题组成的动态模型"],["Past Me","TIME","严格 cutoff 的历史版本检索"],["Roundtable","TIME","不同时间版本共享同一问题的证据包"],["Future Me","TIME","从真实目标/计划出发，不预测未来"],["Time Capsule","TIME","本地时间胶囊"],["Year in Review","NOW","年度结构化回顾"],["Life Movie","TIME","基于月份与证据的年度故事板"],["Memory Graph","PEOPLE","技能、主题、角色、地点的共现图"],["Universal Search","MEMORY","跨全部原文的本地搜索"],["Quotes","MEMORY","心得与摘录中的摘录候选"],["Questions","IDEAS","反复出现的问题候选"],["Projects","IDEAS","项目/课题/论文/产品相关候选"],["Decisions","IDEAS","选择与决定候选"],["Forks","IDEAS","可能的人生岔路，需人工确认"],["Git Life","ARCHIVE","Vault、版本与 Source of Truth"],["CHANGELOG","ARCHIVE","年度差异"],["Compare Me","TIME","任意两个时期对比"],["Memory Provenance","MEMORY","来源、哈希、AI/原文分层"],["Correct AI","ARCHIVE","纠正 Interpretation Layer"],["Private / Share","ARCHIVE","默认私有、按视图选择公开"],
 ["Cabinet of Curiosities","CURIOSITY","从统计、共现、时间跨度里捞出你没主动寻找的线索"],["Memory Echoes","CURIOSITY","让两篇相隔很远却共享少见语言片段的日记相遇"],["Hidden Chapters","CURIOSITY","从月度注意力结构变化提出人生章节候选"],["First / Last","CURIOSITY","追踪技能、主题、地点、角色的第一次与最近一次出现"],["Recurring Questions","CURIOSITY","跨越数月反复出现的问题线索"],["Life Rhythms","CURIOSITY","星期节律、长日记与沉默区间"],["Skill Alchemy","CURIOSITY","哪些技能总在同一天共同出现"],["Serendipity","CURIOSITY","随机打开一个你没有主动搜索的时间桥"],
 ["Trajectory Observatory","OBSERVATORY","把阶段、回归、早期信号、写作结构与未再出现的线索放在同一张观测台"],
@@ -959,7 +961,8 @@ const FEATURES=[
 ["Unfinished Lineages","LINEAGE","重新打开重复出现后变安静、且当前没有强作品链支撑的想法/项目；untraced 不等于未完成"],
 ["Release Cadence","LINEAGE","观察提交、发布、分享等向外痕迹在月份和时间间隔上的节奏，不将其变成生产力指标"],
 ["Evidence Chain Builder","LINEAGE","把已存在的 dated source records 组合成 Thought→Artifact→Handoff→Feedback/Validation 审计链，缺失步骤保持缺失"],
-["文言化","BOOK","把选中的现代汉语日记或任意文本转换成可对照的文言文派生稿；原始 Markdown 永不改写"]
+ ["文言化","BOOK","把选中的现代汉语日记或任意文本转换成可对照的文言文派生稿；原始 Markdown 永不改写"],
+ ["Other","OTHER","完整保留不常打开的分析、证据、治理与实验工具；现在它们也有自己的一间房"]
 ].map((x,i)=>({name:x[0],room:x[1],desc:x[2],no:i+1}));
 const ROOMS={
  NOW:{no:"01",desc:"现在发生了什么，以及这一年正在变成什么。",features:["Home","On This Day","Year in Review"]},
@@ -977,7 +980,8 @@ const ROOMS={
  COMPASS:{no:"12",desc:"前面的层负责记住、发现、观察与映照；Compass 开始回答“接下来值得重新看哪里”。它生成方向，不替你决定方向。",features:["Compass Atlas","Learning Loops","Skill Transfer Trails","Social Gravity","Place Imprints","Focus Bursts","Visibility Arcs","After Friction","Forgotten Doors","Revision Trails","Evidence Gaps","Questions Worth Asking","Orientation Cards"]},
  TOPOLOGY:{no:"13",desc:"把人生看成一张关系地形图：哪些东西形成邻域，哪些节点跨域，哪些日期像桥，哪些上下文会反复切换。所有拓扑都来自日期共现，不推断因果。",features:["Topology Atlas","Life Neighborhoods","Gateway Nodes","Bridge Memories","Context Signatures","Transition Matrix","Co-occurrence Surprise","Rare Pairings","Orphan Islands","Anchor Memories","Neighborhood Drift","Context Switches","Life Routes"]},
  FOOTPRINT:{no:"14",desc:"前面的层更关注你经历、思考和成长；Footprint 转向外部世界：哪些作品被做出来、修改、交出去、分享出去、得到反馈，又在后来重新出现。它记录痕迹，不量化影响力。",features:["Footprint Atlas","Artifact Ledger","Output Trails","Sharing Trails","Handoff Moments","Audience Map","Feedback Echoes","External Validation","Reuse Trails","Learning → Output","Artifact Lead-up","Contribution Threads","Legacy Questions"]},
- LINEAGE:{no:"15",desc:"Footprint 记录散落的外部痕迹；Lineage 把这些痕迹与更早的想法、项目候选、反馈和修改串成可审计谱系。它允许空白、断链与未知，不把顺序自动写成人生因果故事。",features:["Lineage Atlas","Thought → Artifact","Project Families","Artifact Ancestry","Version Trees","Idea-to-Output Latency","Feedback Loops","Rework Cycles","Cross-Pollination","First Proofs","Unfinished Lineages","Release Cadence","Evidence Chain Builder"]}
+ LINEAGE:{no:"15",desc:"Footprint 记录散落的外部痕迹；Lineage 把这些痕迹与更早的想法、项目候选、反馈和修改串成可审计谱系。它允许空白、断链与未知，不把顺序自动写成人生因果故事。",features:["Lineage Atlas","Thought → Artifact","Project Families","Artifact Ancestry","Version Trees","Idea-to-Output Latency","Feedback Loops","Rework Cycles","Cross-Pollination","First Proofs","Unfinished Lineages","Release Cadence","Evidence Chain Builder"]},
+ OTHER:{no:"✧",desc:"不常打开的系统也值得有一间自己的房间。这里保留分析、证据、治理与实验工具，并让它们从主内容区自然进入。",features:["Other"]}
 };
 const DREAM_META={
  "Home":["今天住在哪里？","这一页从现在开始，过去偶尔会来敲门。"],
@@ -1010,7 +1014,8 @@ const DREAM_META={
  "Thought → Artifact":["念头落地的那一天","从“我想”到“我做了”的证据距离。"],
  "First Proofs":["第一次留下痕迹","最早被日记记录下来的明确产出。"],
  "Evidence Chain Builder":["故事的证据线","每一个故事都必须能够走回原文。"],
- "文言化":["把今天写成旧时光","只换语言，不换掉真正发生过的事。"]
+ "文言化":["把今天写成旧时光","只换语言，不换掉真正发生过的事。"],
+ "Other":["其他","一些不常打开，却值得被保留的工具。"]
 };
 const USER_NAV=[
  {id:"today",icon:"☀",label:"此刻",feature:"Home"},
@@ -1019,9 +1024,10 @@ const USER_NAV=[
  {id:"grow",icon:"✦",label:"正在生长",feature:"Projects"},
  {id:"world",icon:"⌖",label:"我的世界",feature:"Memory Graph"},
  {id:"magic",icon:"∞",label:"时间魔法",feature:"Past Me"},
- {id:"discover",icon:"?",label:"意外发现",feature:"Serendipity"}
+ {id:"discover",icon:"?",label:"意外发现",feature:"Serendipity"},
+ {id:"other",icon:"▦",label:"其他",feature:"Other"}
 ];
-const FRONT_FEATURES=new Set(["Home","Journal","On This Day","Universal Search","Deep Read","Quotes","People","Life Map","Memory Graph","Ideas","Projects","Questions","Skill Constellation","Achievements","Past Me","Future Me","Time Capsule","Compare Me","Life Movie","Memory Echoes","Hidden Chapters","Serendipity","Memory Weather","Forgotten Doors","Skill Momentum","Thought → Artifact","文言化"]);
+const FRONT_FEATURES=new Set(["Home","Journal","On This Day","Universal Search","Deep Read","Quotes","People","Life Map","Memory Graph","Ideas","Projects","Questions","Skill Constellation","Achievements","Past Me","Future Me","Time Capsule","Compare Me","Life Movie","Memory Echoes","Hidden Chapters","Serendipity","Memory Weather","Forgotten Doors","Skill Momentum","Thought → Artifact","文言化","Other"]);
 function dreamMeta(name){const f=FEATURES.find(x=>x.name===name);const m=DREAM_META[name];return {title:m?.[0]||name,subtitle:m?.[1]||f?.desc||"",canonical:name}}
 function lifeEvent(type,detail={}){window.dispatchEvent(new CustomEvent('lifeos:event',{detail:{type,...detail,at:Date.now()}}));try{if(window.lifeosDesktop?.event)window.lifeosDesktop.event(type,detail)}catch(e){}}
 let STATE={room:"NOW",feature:"Home",journalPath:null,journalKind:"daily",skill:null,bookChapter:null,bookMode:"all",personKind:"role",personName:null,projectTrigger:null,projectStatus:"all",placeName:null,yearReview:null,graphNode:null,onThisDate:null,askPack:null,deepReadQ:"产品",deepReadPeriod:"",searchQ:"",searchKind:"all",searchYear:"",searchSection:"",searchSort:"relevance",compareMode:"normalized",classicalSource:null,sourceOrigin:null};
@@ -1517,6 +1523,10 @@ async function renderCompassQuestions(){
 async function renderOrientationCards(){
  const d=await api('/api/orientation-cards');return pageWrap(`${moduleHead('Orientation Cards','一副由本地证据生成的“重新阅读卡牌”：每张卡只告诉你哪里值得打开。')}<div class="warning">${esc(d.note)}</div><div class="orientationDeck">${(d.items||[]).map(x=>`<article class="orientationCard"><div class="kicker">${esc(x.card_type)}</div><h3>${esc(x.title)}</h3><div class="metric">${esc(x.metric)}</div><p>${esc(x.body)}</p><div class="actions"><button class="btn" data-feature="${esc(x.target_feature)}">Open module ↗</button>${(x.source_paths||[]).slice(0,1).map(p=>`<button class="btn source" data-source="${esc(p)}">Source ↗</button>`).join('')}</div></article>`).join('')}</div>`)
 }
+async function renderOther(){
+ const items=FEATURES.filter(f=>!FRONT_FEATURES.has(f.name));
+ return pageWrap(`<section class="otherPage"><header class="otherHero"><div><div class="kicker">OTHER · LIFEOS SYSTEMS</div><h1>其他，也是一间房。</h1><p>不常打开的工具不再藏在一个可关闭的弹窗里。这里保留分析、证据、治理与实验视图，每一张卡片都可以直接进入。</p></div><aside class="otherCount"><span>完整保留</span><b>${String(items.length).padStart(2,'0')}</b><small>个系统入口</small></aside></header><section class="otherShelf"><div class="otherShelfHead"><div><div class="kicker">THE OTHER ROOM</div><h2>从这里继续探索。</h2></div><p>它们仍然以原始日记为依据；只是现在有了和今朝、流年一样的主内容位置。</p></div><div class="otherGrid">${items.map(f=>{const dm=dreamMeta(f.name);return `<button type="button" class="otherItem" data-feature="${esc(f.name)}"><span>${String(f.no).padStart(3,'0')} · ${esc(f.room)}</span><b>${esc(dm.title)}</b><small>${esc(f.desc)}</small><i aria-hidden="true">↗</i></button>`}).join('')}</div></section></section>`)
+}
 async function renderGeneric(){const f=featureObj(STATE.feature);return pageWrap(`${moduleHead(f.name,f.desc)}<div class="card"><h3>${esc(f.name)}</h3><p>${esc(f.desc)}</p></div>`)}
 async function renderTopology(){
  const d=await api('/api/topology');
@@ -1587,6 +1597,7 @@ async function renderClassicalChinese(){
 }
 
 const RENDERERS={
+ "Other":renderOther,
  "Home":renderHome,"Journal":renderJournal,"Timeline":renderTimeline,"On This Day":renderOnThisDay,"Deep Read":renderDeepRead,"Universal Search":renderSearch,"Quotes":renderQuotes,
  "People":renderPeople,"Life Map":renderPlaces,"Memory Graph":renderGraph,
  "Ideas":renderIdeas,"Projects":renderProjects,"Questions":renderQuestions,"Decisions":renderDecisions,"Forks":renderForks,
@@ -1814,10 +1825,114 @@ render();
 // implementation and to keep re-renders (preview / commit / rollback) bound.
 renderProductImport=async function(){const job=PRODUCT.importJob,foot=job?`<div class="writerFoot"><span class="writerDraft">Job ${esc(job.job_id)} · 任何失败都会回滚到导入前快照。</span><div class="actions"><button class="productAction" id="importRollback" type="button" ${job.status==='committed'?'':'disabled'}>回滚这次导入</button><button class="productAction primary" id="importCommit" type="button" ${job.status&&job.status!=='preview'?'disabled':''}>确认导入</button></div></div>`:'';$('#productPanel').innerHTML=`<div class="productPanelInner">${productIntro('IMPORT · PREVIEW FIRST','把旧日记搬进来，但先别动它。','Markdown、TXT、HTML、CSV、通用 JSON、Day One JSON 与包含这些文件的 ZIP 都会先经过 Detect → Normalize → Preview。提交前自动备份。')}<div class="fileDrop" role="button" tabindex="0" aria-label="选择或拖入日记文件"><div><b>选择日记文件 / ZIP</b><p class="small">原始导入包会保留在 <span class="mono">.lifeos/imports</span>，便于以后追溯。</p><input id="importFiles" type="file" multiple accept=".md,.markdown,.txt,.html,.htm,.csv,.json,.zip,text/*,application/json,application/zip"><div class="actions" style="justify-content:center;margin-top:14px"><button class="productAction primary" id="importPreview" type="button">先看导入计划</button></div></div></div><div id="importResult">${job?importJobHtml(job):''}</div>${foot}</div>`;enhanceImportInteraction();$('#importPreview').onclick=async()=>{const files=[...$('#importFiles').files];if(!files.length)return toast('先选择一些文件');const button=$('#importPreview');button.disabled=true;button.textContent='正在阅读导入包…';try{PRODUCT.importFiles=files;PRODUCT.importJob=await post('/api/import/preview',{source_name:'LifeOS browser import',files:await readImportFiles(files)});await renderProductImport();lifeEvent('import-preview',{count:PRODUCT.importJob.stats?.total||0})}catch(error){toast(error.message)}finally{button.disabled=false}};if($('#importCommit'))$('#importCommit').onclick=async()=>{const overrides={};$$('[data-import-action]').forEach(item=>{overrides[item.dataset.importAction]={action:item.value}});$$('[data-import-date]').forEach(item=>{overrides[item.dataset.importDate]=overrides[item.dataset.importDate]||{};overrides[item.dataset.importDate].journal_date=item.value});const button=$('#importCommit');button.disabled=true;button.textContent='正在安全提交…';try{const out=await post('/api/import/commit',{job_id:PRODUCT.importJob.job_id,overrides});PRODUCT.importJob=await api('/api/import/job?job_id='+encodeURIComponent(PRODUCT.importJob.job_id),{noCache:true});lifeEvent('import-completed',{count:out.changed?.length||0,status:'committed'});dreamBubble(`搬进来了 ${out.changed?.length||0} 页，旧版本都还在。`);await renderProductImport();refreshProductDockStatus()}catch(error){toast(error.message);button.disabled=false;button.textContent='确认导入'}};if($('#importRollback'))$('#importRollback').onclick=async()=>{if(!confirm('把 Vault 和版本元数据恢复到这次导入之前？系统会先保留当前安全备份。'))return;await post('/api/import/rollback',{job_id:PRODUCT.importJob.job_id});lifeEvent('import-rollback',{status:'restored'});toast('已恢复到导入前快照；建议重启 LifeOS');PRODUCT.importJob=null;await renderProductImport()}}
 </script>
-<script src="/v01.js?v=5"></script>
-<script src="/v012.js?v=6"></script>
-<script src="/v012-pet-rail.js?v=7"></script>
-<script src="/v012-pet-float.js?v=9"></script>
+<script src="/v01.js?v=7"></script>
+  <script src="/v012.js?v=37"></script>
+<script>
+(() => {
+  const pad = value => String(value).padStart(2, '0');
+  const parseISO = value => {
+    const [year, month, day] = String(value || '').split('-').map(Number);
+    return { year: year || new Date().getFullYear(), month: month || new Date().getMonth() + 1, day: day || new Date().getDate() };
+  };
+  const todayISO = () => { const now = new Date(); return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`; };
+  const closePicker = () => {
+    const picker = document.querySelector('#writerDatePicker');
+    const trigger = document.querySelector('#writerDateJump');
+    if (picker) picker.hidden = true;
+    trigger?.setAttribute('aria-expanded', 'false');
+  };
+  const enhance = () => {
+    const input = document.querySelector('body.writerImmersive #writerDate');
+    const label = input?.closest('.i2DateNavigator label');
+    if (!input || !label || label.dataset.dateJumpReady === '1') return;
+    window.__lifeosDateJumpCleanup?.();
+    label.dataset.dateJumpReady = '1';
+    label.classList.add('i2DateJumpWrap');
+    input.classList.add('i2DateNative');
+    input.tabIndex = -1;
+    const original = label.querySelector('b');
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.id = 'writerDateJump';
+    trigger.className = 'i2DateJump';
+    trigger.setAttribute('aria-haspopup', 'dialog');
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.setAttribute('aria-label', '跳转日期');
+    trigger.innerHTML = `<b>${original?.textContent || input.value}</b>`;
+    const parts = parseISO(input.value);
+    const picker = document.createElement('div');
+    picker.id = 'writerDatePicker';
+    picker.className = 'i2DatePicker';
+    picker.hidden = true;
+    picker.setAttribute('role', 'dialog');
+    picker.setAttribute('aria-label', '日期跳转');
+    picker.innerHTML = `<div class="i2DatePickerHead"><div><strong>跳转到日期</strong><small>年 · 月 · 日</small></div><button class="i2DatePickerClose" type="button" aria-label="关闭日期选择">×</button></div><div class="i2DatePickerFields"><label>年<input id="writerDateYear" type="text" inputmode="numeric" autocomplete="off" maxlength="4" value="${parts.year}"></label><label>月<input id="writerDateMonth" type="text" inputmode="numeric" autocomplete="off" maxlength="2" value="${parts.month}"></label><label>日<input id="writerDateDay" type="text" inputmode="numeric" autocomplete="off" maxlength="2" value="${parts.day}"></label></div><div class="i2DatePickerActions"><button type="button" id="writerDateTodayQuick">回到今天</button><button type="button" class="primary" id="writerDateApply">跳转</button></div>`;
+    label.append(trigger, picker);
+    const close = () => { picker.hidden = true; trigger.setAttribute('aria-expanded', 'false'); };
+    const dateFields = [...picker.querySelectorAll('.i2DatePickerFields input')];
+    dateFields.forEach(field => {
+      field.addEventListener('focus', () => field.select());
+      field.addEventListener('click', () => field.select());
+    });
+    const open = () => { picker.hidden = false; trigger.setAttribute('aria-expanded', 'true'); picker.querySelector('#writerDateYear')?.focus(); };
+    const sync = () => { const next = parseISO(input.value); trigger.querySelector('b').textContent = original?.textContent || input.value; picker.querySelector('#writerDateYear').value = next.year; picker.querySelector('#writerDateMonth').value = next.month; picker.querySelector('#writerDateDay').value = next.day; };
+    const apply = () => {
+      const year = Number(picker.querySelector('#writerDateYear').value), month = Number(picker.querySelector('#writerDateMonth').value), day = Number(picker.querySelector('#writerDateDay').value);
+      const validDay = year >= 1970 && year <= 2100 && month >= 1 && month <= 12 && day >= 1 && day <= new Date(year, month, 0).getDate();
+      if (!validDay) return window.toast?.('请输入有效的年月日');
+      const next = `${String(year).padStart(4, '0')}-${pad(month)}-${pad(day)}`;
+      input.value = next;
+      close();
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    };
+    const onOutside = event => { if (!label.contains(event.target)) close(); };
+    const onKey = event => { if (event.key === 'Escape' && !picker.hidden) { event.preventDefault(); event.stopPropagation(); close(); trigger.focus(); } };
+    trigger.addEventListener('click', open);
+    picker.querySelector('.i2DatePickerClose').addEventListener('click', close);
+    picker.querySelector('#writerDateApply').addEventListener('click', apply);
+    picker.querySelector('#writerDateTodayQuick').addEventListener('click', () => { input.value = todayISO(); close(); input.dispatchEvent(new Event('change', { bubbles: true })); });
+    input.addEventListener('change', sync);
+    document.addEventListener('pointerdown', onOutside, true);
+    document.addEventListener('keydown', onKey, true);
+    window.__lifeosDateJumpCleanup = () => { document.removeEventListener('pointerdown', onOutside, true); document.removeEventListener('keydown', onKey, true); };
+  };
+  const scheduleEnhance = () => {
+    clearTimeout(window.__lifeosDateJumpTimer);
+    window.__lifeosDateJumpTimer = setTimeout(enhance, 0);
+  };
+  const writerPanel = document.querySelector('#productPanel');
+  if (writerPanel) new MutationObserver(scheduleEnhance).observe(writerPanel, { childList: true });
+  scheduleEnhance();
+})();
+</script>
+<script src="/v012-pet-rail.js?v=8"></script>
+<script src="/v012-pet-float.js?v=10"></script>
 <script src="/lifeos-shell.js?v=2"></script>
+<script src="/v02.js?v=8"></script>
+<script src="/v02-polish.js?v=3"></script>
+<script>
+(() => {
+  if (window.__lifeosDrawerDelegated) return;
+  window.__lifeosDrawerDelegated = true;
+  document.addEventListener('click', event => {
+    const toggle = event.target.closest?.('#writerDrawerToggle');
+    const close = event.target.closest?.('#writerDrawerClose');
+    if (event.defaultPrevented || toggle?.onclick || close?.onclick) return;
+    const drawer = document.querySelector('#writerToolDrawer');
+    const desk = document.querySelector('.i2Desk');
+    if (toggle && drawer) {
+      event.preventDefault();
+      const open = drawer.hidden;
+      drawer.hidden = !open;
+      desk?.classList.toggle('i2DrawerOpen', open);
+      if (open) document.querySelector('#writerDrawerClose')?.focus();
+    } else if (close && drawer) {
+      event.preventDefault();
+      drawer.hidden = true;
+      desk?.classList.remove('i2DrawerOpen');
+    }
+  }, true);
+})();
+</script>
 </body>
 </html>

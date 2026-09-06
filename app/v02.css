@@ -1,0 +1,405 @@
+/* LifeOS v0.2 · 归一 core surface. The attic and rail keep their existing layout. */
+.v02Home{--v02-accent:var(--dream-accent,var(--teal));--v02-ink:var(--ink);--v02-line:var(--line);max-width:1180px;margin:0 auto}
+.v02HomeHero{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(260px,.82fr);gap:clamp(28px,6vw,82px);align-items:end;padding:clamp(34px,6vw,82px) 0 34px;border-bottom:1px solid var(--v02-line)}
+.v02Kicker{color:var(--v02-accent);font:10px/1.3 var(--type-mono,ui-monospace,monospace);letter-spacing:.14em;text-transform:uppercase}
+.v02Home h1{font:400 clamp(52px,8vw,108px)/.9 var(--type-serif,var(--serif));letter-spacing:-.065em;margin:15px 0 22px;white-space:pre-line}.v02Home h1 em{font-style:normal;color:var(--v02-accent)}
+.v02Lead{max-width:650px;color:var(--muted);font:18px/1.65 var(--type-serif,var(--serif));margin:0}.v02Actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:27px}.v02Actions button,.v02SourceButton{border:1px solid var(--v02-line);background:transparent;color:var(--v02-ink);padding:10px 14px;min-height:44px;cursor:pointer}.v02Actions button:hover,.v02SourceButton:hover{border-color:var(--v02-accent);color:var(--v02-accent)}.v02Actions .primary{background:var(--v02-ink);border-color:var(--v02-ink);color:var(--paper)}.v02Actions .primary:hover{background:var(--v02-accent);border-color:var(--v02-accent)}
+.v02Pulse{border-left:2px solid var(--v02-accent);padding:11px 14px;margin-top:26px;background:color-mix(in srgb,var(--v02-accent) 6%,transparent)}.v02Pulse b{display:block;font:18px var(--type-serif,var(--serif));font-weight:400}.v02Pulse small{display:block;color:var(--muted);margin-top:4px}
+.v02Ledger{border-top:1px solid var(--v02-ink);padding-top:14px}.v02Ledger>span{display:flex;justify-content:space-between;color:var(--muted);font:10px var(--type-mono,ui-monospace,monospace);letter-spacing:.1em;text-transform:uppercase}.v02Stats{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--v02-line);border:1px solid var(--v02-line);margin-top:18px}.v02Stats div{background:var(--paper2);padding:16px 14px}.v02Stats strong{display:block;font:400 38px/.95 var(--type-serif,var(--serif));letter-spacing:-.05em}.v02Stats small{display:block;color:var(--muted);font-size:10px;margin-top:8px}
+.v02HomeGrid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr);gap:15px;margin-top:18px}.v02Card{border:1px solid var(--v02-line);background:var(--dream-card,var(--paper2));padding:clamp(20px,3vw,30px);box-shadow:var(--dream-shadow,0 14px 45px rgba(40,32,18,.06))}.v02Card h2{font:400 clamp(28px,3.5vw,44px)/1 var(--type-serif,var(--serif));letter-spacing:-.04em;margin:10px 0 14px}.v02Card p{color:var(--muted);margin:0;line-height:1.7}.v02Excerpt{font:18px/1.75 var(--type-serif,var(--serif));color:var(--ink)!important;white-space:pre-wrap;margin:18px 0!important}.v02CardFooter{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-top:20px}.v02CardFooter small{color:var(--muted)}.v02LinkButton{border:0;border-bottom:1px solid var(--v02-line);padding:5px 0;background:transparent;cursor:pointer}.v02LinkButton:hover{color:var(--v02-accent);border-color:var(--v02-accent)}.v02Paths{display:grid;gap:1px;background:var(--v02-line);border:1px solid var(--v02-line)}.v02Paths button{display:grid;grid-template-columns:38px 1fr;gap:12px;text-align:left;border:0;background:var(--paper2);padding:16px;cursor:pointer}.v02Paths button:hover{background:color-mix(in srgb,var(--v02-accent) 7%,var(--paper2))}.v02Paths b{font:19px var(--type-serif,var(--serif));font-weight:400}.v02Paths small{display:block;color:var(--muted);margin-top:4px;line-height:1.5}.v02PathNo{color:var(--v02-accent);font:11px var(--type-mono,ui-monospace,monospace);padding-top:4px}
+.v02FirstRun{max-width:880px;margin:0 auto;padding:clamp(28px,8vw,110px) 0 50px}.v02FirstRun .v02Card{margin-top:28px}.v02FirstRun h1{max-width:760px}.v02FirstRun .v02Stats{max-width:620px}
+.v02Empty,.v02Error{border:1px solid var(--v02-line);background:var(--paper2);padding:28px;margin-top:20px}.v02Empty h2,.v02Error h2{font:400 32px var(--type-serif,var(--serif));margin:0 0 9px}.v02Empty p,.v02Error p{max-width:620px;color:var(--muted);margin:0;line-height:1.7}
+.v02Journal{max-width:1220px;margin:0 auto}.v02JournalHead,.v02SearchHead{display:flex;justify-content:space-between;align-items:end;gap:24px;border-bottom:1px solid var(--v02-line);padding-bottom:24px}.v02JournalHead h1,.v02SearchHead h1{font:400 clamp(40px,6vw,74px)/.94 var(--type-serif,var(--serif));letter-spacing:-.06em;margin:10px 0 8px}.v02JournalHead p,.v02SearchHead p{margin:0;color:var(--muted)}.v02JournalActions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.v02JournalActions button{min-height:44px}.v02JournalLayout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:18px;margin-top:22px;align-items:start}.v02JournalList{border:1px solid var(--v02-line);background:var(--paper2);max-height:calc(100vh - 240px);overflow:auto;position:sticky;top:112px}.v02JournalListHead{padding:13px 14px;border-bottom:1px solid var(--v02-line);display:flex;justify-content:space-between;align-items:center}.v02JournalTabs{display:flex;gap:4px}.v02JournalTabs button{border:1px solid var(--v02-line);background:transparent;padding:6px 8px;font-size:10px;cursor:pointer}.v02JournalTabs button.active{background:var(--v02-ink);color:var(--paper)}.v02JournalItem{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--v02-line);background:transparent;padding:13px 14px;cursor:pointer}.v02JournalItem:hover,.v02JournalItem.active{background:color-mix(in srgb,var(--v02-accent) 9%,var(--paper2))}.v02JournalItem strong{display:block;font:18px var(--type-serif,var(--serif));font-weight:400}.v02JournalItem small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.v02JournalPaper{min-height:650px;border:1px solid var(--v02-line);padding:clamp(26px,5vw,58px);background:#fcf8ef;background-image:repeating-linear-gradient(180deg,transparent 0 31px,rgba(110,92,78,.035) 31px 32px);box-shadow:var(--dream-shadow,0 30px 85px rgba(43,33,27,.09));position:relative}.v02JournalPaper:before{content:"";position:absolute;left:clamp(22px,3vw,40px);top:0;bottom:0;border-left:1px solid rgba(151,78,54,.16)}.v02JournalPaper h2{font:400 42px var(--type-serif,var(--serif));letter-spacing:-.04em;margin:0 0 28px;padding-left:22px}.v02Section{max-width:820px;margin:0 0 28px;padding-left:22px}.v02Section h3{font:10px var(--type-mono,ui-monospace,monospace);letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin:0 0 8px}.v02Section p{font:18px/1.85 var(--type-serif,var(--serif));white-space:pre-wrap;margin:0}.v02JournalPaper .v02Empty{margin:0 0 0 22px;background:transparent;border:0;border-top:1px solid var(--v02-line);padding:18px 0}.v02JournalDetails{margin:28px 0 0 22px;border-top:1px solid var(--v02-line);padding-top:12px;color:var(--muted)}.v02JournalDetails summary{cursor:pointer}.v02JournalDetails div{display:grid;gap:5px;margin-top:10px;font-size:11px;word-break:break-word}
+.v02Search{max-width:1120px;margin:0 auto}.v02SearchBar{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;margin-top:22px}.v02SearchBar input{font:22px var(--type-serif,var(--serif));min-height:50px}.v02Filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.v02Filters label{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:11px}.v02Filters select{min-height:38px;padding:0 9px}.v02SearchSummary{display:flex;gap:10px;align-items:center;margin:24px 0 0;padding-bottom:12px;border-bottom:1px solid var(--v02-line);color:var(--muted);font-size:12px}.v02Result{display:grid;grid-template-columns:100px minmax(0,1fr) auto;gap:18px;padding:20px 0;border-bottom:1px solid var(--v02-line)}.v02Result time{font:11px var(--type-mono,ui-monospace,monospace);color:var(--v02-accent);padding-top:3px}.v02Result h3{font:400 18px var(--type-serif,var(--serif));margin:0}.v02Result p{font:18px/1.7 var(--type-serif,var(--serif));margin:7px 0;max-width:760px}.v02Result small{color:var(--muted)}.v02Result mark{background:#efdca8;color:inherit}.v02Result button{align-self:center;white-space:nowrap}.v02SearchIdle{border-top:1px solid var(--v02-line);margin-top:22px;padding:18px 0;color:var(--muted);font:17px var(--type-serif,var(--serif))}.v02SearchEmpty{margin-top:22px}.v02SearchError{margin-top:22px}
+.v02AskHead .kicker{color:var(--v02-accent)}.v02AskContract{padding:12px 14px;border-left:2px solid var(--v02-accent);background:color-mix(in srgb,var(--v02-accent) 5%,transparent);color:var(--muted);line-height:1.6}.v02AskSelection{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:18px;padding-bottom:12px;border-bottom:1px solid var(--line)}.v02AskEvidence{display:grid;gap:10px;margin-top:14px}.v02AskEvidenceRow{display:grid;grid-template-columns:24px 1fr auto;gap:10px;align-items:start;border-top:1px solid var(--line);padding:13px 0}.v02AskEvidenceRow input{margin-top:5px}.v02AskEvidenceRow p{font:16px/1.65 var(--type-serif,var(--serif));margin:4px 0;color:var(--ink)}.v02AskEvidenceRow small{color:var(--muted)}.v02AskSource{border:0;border-bottom:1px solid var(--line);background:transparent;padding:4px 0;cursor:pointer;color:var(--v02-accent);font-size:11px;white-space:nowrap}.v02Answer{border-top:2px solid var(--v02-accent);margin-top:22px;padding-top:16px}.v02Answer h3{font:400 13px var(--type-mono,ui-monospace,monospace);letter-spacing:.1em;color:var(--muted);margin:0 0 7px}.v02Answer p{font:20px/1.7 var(--type-serif,var(--serif));margin:0 0 18px;white-space:pre-wrap}.v02AnswerSources{display:grid;gap:7px;margin-bottom:18px}.v02AnswerSource{display:flex;gap:10px;align-items:baseline;border-bottom:1px solid var(--line);padding:8px 0}.v02AnswerSource time{font:10px var(--type-mono,ui-monospace,monospace);color:var(--v02-accent)}.v02AnswerSource button{border:0;background:transparent;text-align:left;padding:0;cursor:pointer;font:15px var(--type-serif,var(--serif))}.v02AnswerSource button:hover{color:var(--v02-accent)}
+.v02Loading{padding:30px 0;color:var(--muted);font:italic 20px var(--type-serif,var(--serif))}
+@media(max-width:900px){.v02HomeHero,.v02HomeGrid{grid-template-columns:1fr}.v02JournalHead,.v02SearchHead{display:block}.v02JournalActions{justify-content:flex-start;margin-top:16px}.v02JournalLayout{grid-template-columns:1fr}.v02JournalList{position:static;max-height:300px}.v02Result{grid-template-columns:78px minmax(0,1fr)}.v02Result>.v02SourceButton{grid-column:2;justify-self:start}.v02SearchBar{grid-template-columns:1fr 1fr}.v02SearchBar input{grid-column:1/-1}}
+@media(max-width:600px){.v02Home h1{font-size:clamp(49px,16vw,76px)}.v02Lead{font-size:16px}.v02Stats{grid-template-columns:1fr 1fr}.v02JournalPaper{padding:27px 22px}.v02JournalPaper h2,.v02Section,.v02JournalDetails{padding-left:13px;margin-left:0}.v02JournalPaper:before{left:20px}.v02Result{grid-template-columns:1fr;gap:5px}.v02Result>.v02SourceButton{grid-column:auto}.v02Filters{display:grid;grid-template-columns:1fr 1fr}.v02Filters label{display:grid;align-items:start}.v02Filters select{width:100%}.v02AskEvidenceRow{grid-template-columns:20px 1fr}.v02AskSource{grid-column:2;justify-self:start}}
+/* v0.2 shell rhythm: give the LifeOS header a little more horizontal and vertical air. */
+.topbar{min-height:76px;padding-inline:clamp(28px,5vw,78px)}
+.subnav{top:76px}
+@media(max-width:720px){.topbar{min-height:70px;padding-inline:18px}.subnav{top:70px}}
+
+/* LifeOS window bar: a slightly wider title strip keeps the identity and page context balanced. */
+:root{--life-rail-w:190px;--life-titlebar-h:54px}
+.lifeWindowBar{height:var(--life-titlebar-h)}
+.lifeWindowIdentity{padding-inline:15px}
+.lifeWindowPage{padding-inline:clamp(28px,4vw,62px)}
+@media(max-width:880px){:root{--life-titlebar-h:48px}.lifeWindowPage{padding-inline:14px}}
+@media(max-width:560px){.lifeWindowIdentity{padding-inline:12px}.lifeWindowPage{padding-inline:10px}}
+
+/* User-controlled reading scale. Core surfaces scale together; layouts collapse earlier when text needs room. */
+:root{--life-font-scale:1}
+body{font-size:calc(14px * var(--life-font-scale))}
+.lifeWindowBrand b{font-size:calc(15px * var(--life-font-scale))}.lifeWindowBrand span{font-size:calc(8px * var(--life-font-scale))}.lifeWindowBar button{font-size:calc(10px * var(--life-font-scale))}.roomBtn{font-size:calc(8px * var(--life-font-scale))}.roomBtn b{font-size:calc(12px * var(--life-font-scale))}
+.v02Home h1{font-size:clamp(calc(52px * var(--life-font-scale)),calc(6.4vw * var(--life-font-scale)),calc(92px * var(--life-font-scale)));text-wrap:pretty}.v02Lead{font-size:calc(18px * var(--life-font-scale))}.v02Pulse b{font-size:calc(18px * var(--life-font-scale))}.v02Stats strong{font-size:calc(38px * var(--life-font-scale))}.v02Stats small,.v02Filters label,.v02JournalItem small{font-size:calc(10px * var(--life-font-scale))}.v02JournalHead h1,.v02SearchHead h1{font-size:clamp(calc(40px * var(--life-font-scale)),calc(6vw * var(--life-font-scale)),calc(74px * var(--life-font-scale)))}.v02JournalPaper h2{font-size:calc(42px * var(--life-font-scale))}.v02Section p,.v02Result p{font-size:calc(18px * var(--life-font-scale))}.v02Result h3{font-size:calc(18px * var(--life-font-scale))}.v02SearchBar input{font-size:calc(22px * var(--life-font-scale))}.v02SearchIdle{font-size:calc(17px * var(--life-font-scale))}.v02Answer p{font-size:calc(20px * var(--life-font-scale))}
+.v02HomeHero{grid-template-columns:minmax(0,1.5fr) minmax(260px,.5fr);gap:clamp(28px,4vw,52px)}
+.productDockHead h2{font-size:clamp(calc(24px * var(--life-font-scale)),calc(2.5vw * var(--life-font-scale)),calc(36px * var(--life-font-scale)))}.productDockHead p{font-size:calc(11px * var(--life-font-scale))}.productTabs button,.productAction{font-size:calc(10px * var(--life-font-scale))}.writerSection label{font-size:calc(15px * var(--life-font-scale))}.writerSection textarea{font-size:calc(16.5px * var(--life-font-scale))}.writerSection.main textarea{font-size:calc(18px * var(--life-font-scale))}.writerDraft{font-size:calc(9px * var(--life-font-scale))}.tweaksPanel{font-size:calc(11px * var(--life-font-scale))}.tweakField select,.tweakField small{font-size:calc(10px * var(--life-font-scale))}
+html[data-font-scale="large"] .v02HomeHero,html[data-font-scale="xlarge"] .v02HomeHero{grid-template-columns:1fr}html[data-font-scale="large"] .v02JournalLayout,html[data-font-scale="xlarge"] .v02JournalLayout{grid-template-columns:1fr}html[data-font-scale="large"] .v02SearchBar,html[data-font-scale="xlarge"] .v02SearchBar{grid-template-columns:1fr 1fr}html[data-font-scale="large"] .v02SearchBar input,html[data-font-scale="xlarge"] .v02SearchBar input{grid-column:1/-1}html[data-font-scale="large"] .writerMeta,html[data-font-scale="xlarge"] .writerMeta{grid-template-columns:1fr 1fr}
+@media(max-width:600px){body{font-size:calc(14px * var(--life-font-scale))}.v02Lead{font-size:calc(16px * var(--life-font-scale))}.writerMeta{grid-template-columns:1fr!important}.productDockHead h2{font-size:calc(24px * var(--life-font-scale))}}
+
+/* The expanded writer is a second-level surface, so it follows the same
+   reading scale instead of retaining the old compact editor sizing. */
+.i2Writer{font-size:calc(16px * var(--life-font-scale))}
+.i2WriterHead{min-height:calc(78px * var(--life-font-scale))}
+.i2Back,.i2WriterIdentity span,.i2WriterState{font-size:calc(10px * var(--life-font-scale))}
+.i2WriterIdentity b{font-size:calc(20px * var(--life-font-scale))}
+.i2WriterCommands .productAction{font-size:calc(11px * var(--life-font-scale));padding:calc(10px * var(--life-font-scale)) calc(16px * var(--life-font-scale))}
+.i2Desk .i2WriterAsideDate b{font-size:calc(70px * var(--life-font-scale))}
+.i2Desk .i2WriterAsideDate p,.i2Desk .i2WriterStageTop p{font-size:calc(13px * var(--life-font-scale))}
+.i2Desk .i2WriterTitle,.i2Desk .i2WriterView>span,.i2Desk .i2WriterQuick>span{font-size:calc(10px * var(--life-font-scale))}
+.i2Desk .i2WriterTitle .input{font-size:calc(20px * var(--life-font-scale))}
+.i2Desk .i2WriterView button,.i2Desk .i2WriterTools button{font-size:calc(11px * var(--life-font-scale))}
+.i2Desk .i2WriterView small{font-size:calc(12px * var(--life-font-scale))}
+.i2Desk .i2WriterQuick button{font-size:calc(15px * var(--life-font-scale))}
+.i2Desk .i2CellHead label{font-size:calc(21px * var(--life-font-scale))}
+.i2Desk .i2CellHead span{font-size:calc(9px * var(--life-font-scale))}
+.i2Desk .i2WriterCell textarea{font-size:calc(19px * var(--life-font-scale));line-height:1.78}
+.i2Desk .i2HabitList label{font-size:calc(15px * var(--life-font-scale))}
+.i2Desk .i2HabitNote{font-size:calc(14px * var(--life-font-scale))!important}
+.i2Desk .i2WriterLive span,.i2Desk .i2WriterLive small,.i2Desk .i2WriterLive p{font-size:calc(10px * var(--life-font-scale))}
+.i2Desk .i2WriterLive strong{font-size:calc(42px * var(--life-font-scale))}
+.i2Desk .i2WriterPreviewPanel p{font-size:calc(15px * var(--life-font-scale))}
+@media(max-width:760px){.i2Desk .i2WriterCell textarea{font-size:calc(19px * var(--life-font-scale));line-height:1.78}.i2Desk .i2CellHead label{font-size:calc(20px * var(--life-font-scale))}.i2Desk .i2WriterQuick button{font-size:calc(14px * var(--life-font-scale))}}
+.i2DeskCellEditor{font-size:calc(12px * var(--life-font-scale))}
+.i2DeskEditorHead h3{font-size:calc(20px * var(--life-font-scale))}.i2DeskEditorHead p{font-size:calc(10px * var(--life-font-scale))}.i2DeskEditorHead>button{font-size:calc(10px * var(--life-font-scale))}
+.i2DeskCellRowTop strong{font-size:calc(15px * var(--life-font-scale))}.i2DeskCellRowTop>span,.i2DeskVisibility{font-size:calc(9px * var(--life-font-scale))}.i2DeskCellRow .input{font-size:calc(12px * var(--life-font-scale))}.i2DeskCellRow>label,.i2DeskCellControls label{font-size:calc(8px * var(--life-font-scale))}.i2DeskCellActions button{font-size:calc(10px * var(--life-font-scale))}.i2DeskCellActions small{font-size:calc(9px * var(--life-font-scale))}
+.lifeosConfirm{position:fixed;inset:0;z-index:620;display:grid;place-items:center;padding:24px;background:color-mix(in srgb,var(--ink) 38%,transparent);backdrop-filter:blur(4px)}
+.lifeosConfirm[hidden]{display:none}.lifeosConfirmBox{width:min(480px,calc(100vw - 32px));padding:26px 28px 24px;border:1px solid var(--line);background:var(--paper2);box-shadow:0 28px 80px color-mix(in srgb,var(--ink) 24%,transparent);animation:i2Fade .16s ease both}.lifeosConfirmBox h2{margin:8px 0 10px;font:400 clamp(28px,4vw,42px)/1.04 var(--type-serif);letter-spacing:-.04em}.lifeosConfirmBox p{margin:0;color:var(--muted);font:16px/1.7 var(--type-serif)}.lifeosConfirmActions{display:flex;justify-content:flex-end;gap:8px;margin-top:24px}.lifeosConfirmActions button{min-height:42px;padding:9px 14px;border:1px solid var(--line);background:transparent;color:var(--ink);font:11px var(--type-sans);cursor:pointer}.lifeosConfirmActions button:hover,.lifeosConfirmActions button:focus-visible{border-color:var(--dream-accent);outline:none}.lifeosConfirmActions button.primary{border-color:var(--dream-accent);background:var(--dream-accent);color:var(--paper)}
+@media(max-width:600px){.lifeosConfirm{padding:16px}.lifeosConfirmBox{padding:22px 20px 20px}.lifeosConfirmBox p{font-size:15px}.lifeosConfirmActions{display:grid;grid-template-columns:1fr}.lifeosConfirmActions button{width:100%}}
+
+/* Every scroll surface uses the same quiet paper-and-ink treatment. */
+html,body,*{scrollbar-width:thin;scrollbar-color:var(--dream-accent) var(--paper2)}
+html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{width:10px;height:10px}
+html::-webkit-scrollbar-track,body::-webkit-scrollbar-track,*::-webkit-scrollbar-track{background:color-mix(in srgb,var(--paper) 84%,var(--paper2));border-left:1px solid color-mix(in srgb,var(--line) 65%,transparent)}
+html::-webkit-scrollbar-thumb,body::-webkit-scrollbar-thumb,*::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--dream-accent) 55%,var(--line-dark));border:3px solid color-mix(in srgb,var(--paper) 84%,var(--paper2));border-radius:999px}
+html::-webkit-scrollbar-thumb:hover,body::-webkit-scrollbar-thumb:hover,*::-webkit-scrollbar-thumb:hover{background:var(--dream-accent)}
+
+/* Scale the second-level surfaces as a whole. These selectors intentionally
+   cover the older v0.12 journal/search markup as well as the newer desk, so
+   a font preference never leaves a small island of unscaled text behind. */
+.i2Journal,.i2Search{font-size:calc(16px * var(--life-font-scale))}
+.i2JournalHead h1,.i2Search h1{font-size:clamp(calc(34px * var(--life-font-scale)),calc(5vw * var(--life-font-scale)),calc(64px * var(--life-font-scale)))}
+.i2JournalHead p,.i2Search header p{font-size:calc(15px * var(--life-font-scale))}
+.i2JournalActions .btn,.i2SearchBar .btn{font-size:calc(11px * var(--life-font-scale))}
+.i2JournalListHead,.i2JournalListHead small,.i2JournalItem small,.i2JournalListEmpty{font-size:calc(10px * var(--life-font-scale))}
+.i2JournalItem strong{font-size:calc(17px * var(--life-font-scale))}
+.i2ReadingSection h2,.i2JournalDetails,.i2BookPageMark,.i2BookNav{font-size:calc(10px * var(--life-font-scale))}
+.i2ReadingSection p{font-size:clamp(calc(18px * var(--life-font-scale)),calc(1.45vw * var(--life-font-scale)),calc(23px * var(--life-font-scale)))}
+.i2JournalBook .i2JournalPaper>h2{font-size:clamp(calc(38px * var(--life-font-scale)),calc(5vw * var(--life-font-scale)),calc(70px * var(--life-font-scale)))}
+.i2SearchBar .input{font-size:calc(18px * var(--life-font-scale))}
+.i2Filters label{font-size:calc(9px * var(--life-font-scale))}.i2Filters .input{font-size:calc(13px * var(--life-font-scale))}
+.i2SearchSummary,.i2Result time,.i2Result span{font-size:calc(10px * var(--life-font-scale))}.i2Result p{font-size:calc(17px * var(--life-font-scale))}.i2Result .source{font-size:calc(11px * var(--life-font-scale))}
+.i2Desk .i2CellHead label,.i2Desk .i2CellTitleInput{font-size:calc(21px * var(--life-font-scale))}
+.i2Desk .i2CellHead>span{font-size:calc(9px * var(--life-font-scale))}
+.i2Desk .i2CellEditor{font-size:calc(19px * var(--life-font-scale));line-height:1.78}
+.i2Desk .i2WriterCell .i2HabitNote{font-size:calc(15px * var(--life-font-scale))!important}
+.i2Desk .i2HabitList label{font-size:calc(15px * var(--life-font-scale))}
+.i2Desk .i2CellFormatBar button{font-size:calc(12px * var(--life-font-scale))}.i2Desk .i2CellFormatHint,.i2Desk .i2CellFormatBar label{font-size:calc(9px * var(--life-font-scale))}.i2Desk .i2CellFormatBar select{font-size:calc(11px * var(--life-font-scale))}
+.i2Desk .i2WriterPreviewPanel p{font-size:calc(15px * var(--life-font-scale))}
+@media(max-width:760px){.i2JournalHead h1,.i2Search h1{font-size:clamp(calc(34px * var(--life-font-scale)),calc(9vw * var(--life-font-scale)),calc(54px * var(--life-font-scale)))}.i2ReadingSection p{font-size:calc(18px * var(--life-font-scale))}.i2Desk .i2CellHead label,.i2Desk .i2CellTitleInput{font-size:calc(20px * var(--life-font-scale))}.i2Desk .i2CellEditor{font-size:calc(19px * var(--life-font-scale))}}
+
+/* Keep the expanded writing tools in the same user-controlled scale. */
+.i2Desk .i2ArrangeHint{font-size:calc(12px * var(--life-font-scale))}
+.i2Desk .i2FocusToolbarLead{font-size:calc(10px * var(--life-font-scale))}
+.i2Desk .i2FocusToolbarActions button{font-size:calc(13px * var(--life-font-scale))}
+.tweakField select.is-confirmed{border-color:var(--dream-accent)!important;box-shadow:inset 0 -2px 0 var(--dream-accent)}
+.i2ToolDrawer .i2ToolDrawerHead h3{font-size:calc(24px * var(--life-font-scale))}
+.i2ToolDrawer .i2ToolDrawerHead span{font-size:calc(9px * var(--life-font-scale))}
+
+/* “其他” is a real room in the main content area, never a dismissible attic overlay. */
+.atticPanel{display:none!important}
+.tweaksPanel{max-height:calc(100vh - var(--life-titlebar-h) - 24px);overflow-y:auto}
+.otherPage{max-width:1240px;margin:0 auto;padding-bottom:clamp(36px,7vw,92px)}
+.otherHero{display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,210px);gap:clamp(28px,6vw,92px);align-items:end;padding:clamp(36px,7vw,88px) 0 34px;border-bottom:1px solid var(--line)}
+.otherHero h1{max-width:900px;margin:14px 0 20px;font:400 clamp(48px,7.2vw,94px)/.94 var(--type-serif,var(--serif));letter-spacing:-.075em;color:var(--ink)}
+.otherHero p{max-width:690px;margin:0;color:var(--muted);font:16px/1.8 var(--type-serif,var(--serif))}
+.otherCount{border-top:1px solid var(--ink);padding-top:12px;display:grid;gap:3px;color:var(--muted)}
+.otherCount span,.otherCount small{font:11px var(--type-mono,ui-monospace,monospace);letter-spacing:.08em}
+.otherCount b{font:400 clamp(52px,6vw,82px)/.9 var(--type-serif,var(--serif));letter-spacing:-.06em;color:var(--ink)}
+.otherShelf{padding-top:32px}
+.otherShelfHead{display:flex;justify-content:space-between;align-items:end;gap:32px;margin-bottom:20px}
+.otherShelfHead h2{margin:9px 0 0;font:400 clamp(28px,3.5vw,48px)/1 var(--type-serif,var(--serif));letter-spacing:-.055em}
+.otherShelfHead p{max-width:450px;margin:0;color:var(--muted);font-size:14px;line-height:1.7}
+.otherGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;min-width:0;border:1px solid var(--line);background:var(--line)}
+.otherItem{position:relative;display:flex;min-width:0;min-height:174px;flex-direction:column;align-items:flex-start;padding:23px 25px 21px;border:0;background:var(--paper2);color:var(--ink);text-align:left;overflow-wrap:anywhere;cursor:pointer;transition:background .18s ease,transform .18s ease,box-shadow .18s ease}
+.otherItem:hover,.otherItem:focus-visible{z-index:1;background:var(--dream-card);outline:none;box-shadow:0 12px 30px color-mix(in srgb,var(--ink) 11%,transparent);transform:translateY(-2px)}
+.otherItem>span{font:11px var(--type-mono,ui-monospace,monospace);letter-spacing:.08em;color:var(--muted)}
+.otherItem>b{margin-top:24px;font:400 clamp(22px,2.25vw,31px)/1.08 var(--type-serif,var(--serif));letter-spacing:-.045em}
+.otherItem>small{max-width:33em;margin-top:10px;color:var(--muted);font-size:13px;line-height:1.55}
+.otherItem>i{position:absolute;right:20px;bottom:18px;color:var(--dream-accent);font:normal 18px var(--type-sans,var(--sans));opacity:.7}
+@media(max-width:1100px){.otherGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.otherHero{gap:38px}}
+@media(max-width:720px){.otherHero{grid-template-columns:1fr;gap:26px;padding-top:30px}.otherHero h1{font-size:clamp(48px,14vw,72px)}.otherCount{max-width:180px}.otherShelfHead{display:block}.otherShelfHead p{margin-top:13px}.otherGrid{grid-template-columns:1fr}.otherItem{min-height:148px}}
+
+/*
+   Experience polish — quiet editorial controls.
+   The writing desk is the product's focus: navigation stays calm, while
+   actions become legible exactly when a person is ready to use them.
+*/
+@media(min-width:881px){
+  :root{--life-rail-w:202px}
+  .lifeWindowIdentity{padding-inline:18px;gap:11px}
+  .lifeWindowBrand b{font-size:calc(16px * var(--life-font-scale))}
+  .lifeWindowBrand span{font-size:calc(9px * var(--life-font-scale))}
+  .rail{padding:18px 13px 20px}
+}
+
+:where(button,.btn,.productAction,.v02SourceButton){
+  -webkit-tap-highlight-color:transparent;
+}
+:where(button,.btn,.productAction,.v02SourceButton):active:not(:disabled){
+  transform:translateY(1px) scale(.985);
+}
+:where(button,input,select,textarea):focus-visible{
+  outline:1px solid color-mix(in srgb,var(--dream-accent) 72%,var(--ink));
+  outline-offset:3px;
+}
+
+/* The rail is a wayfinding surface, not a second content panel. */
+.roomBtn{
+  min-height:40px;
+  padding:9px 12px;
+  border:1px solid transparent;
+  border-radius:10px;
+  transition:background-color .16s ease,border-color .16s ease,color .16s ease,transform .16s ease;
+}
+.roomBtn:hover{transform:translateX(2px);background:color-mix(in srgb,var(--dream-accent) 5%,transparent)}
+.roomBtn:active{transform:translateX(1px) scale(.985)}
+.roomBtn.active{
+  color:var(--ink);
+  background:color-mix(in srgb,var(--dream-accent) 9%,var(--paper2));
+  border-color:color-mix(in srgb,var(--dream-accent) 21%,var(--line));
+  box-shadow:none;
+}
+.roomBtn.active:before{
+  left:3px;
+  width:2px;
+  height:18px;
+  border-radius:2px;
+  background:var(--dream-accent);
+}
+.lifeWindowBar button{transition:background-color .16s ease,color .16s ease,border-color .16s ease}
+.lifeWindowBar button:hover{background:color-mix(in srgb,var(--dream-accent) 7%,transparent)}
+
+/* Home cards keep their editorial geometry, with just enough depth to read as
+   clickable without growing into a dashboard of panels. */
+.v02Home .v02Actions button,.v02HomePrimary button,.v02SourceButton{
+  border-radius:9px;
+  transition:background-color .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease,transform .16s ease;
+}
+.v02HomePrimary button:hover{box-shadow:0 8px 18px color-mix(in srgb,var(--dream-accent) 15%,transparent)}
+.v02Pulse{border-radius:0 9px 9px 0}
+.v02Stats,.v02Paths{border-radius:10px;overflow:hidden}
+
+/* PC writing desk: reduce chrome around the writing area and make the controls
+   feel like a single instrument. */
+@media(min-width:761px){
+  body.writerImmersive .i2DeskHead{padding-inline:clamp(18px,2.4vw,34px)}
+  body.writerImmersive .i2WriterStage{padding-inline:clamp(18px,2.4vw,34px);padding-top:12px}
+  body.writerImmersive .i2WriterStageTop{padding:9px 0 10px;border-bottom-color:color-mix(in srgb,var(--line) 72%,transparent)}
+  body.writerImmersive .i2WriterTools{gap:2px}
+  body.writerImmersive .i2WriterTools button{
+    min-height:34px;
+    padding:7px 9px;
+    border:1px solid transparent;
+    border-radius:8px;
+    background:transparent;
+    transition:background-color .16s ease,border-color .16s ease,color .16s ease,transform .16s ease;
+  }
+  body.writerImmersive .i2WriterTools button:hover,
+  body.writerImmersive .i2WriterTools button:focus-visible{
+    background:color-mix(in srgb,var(--dream-accent) 8%,var(--paper2));
+    border-color:color-mix(in srgb,var(--dream-accent) 18%,var(--line));
+  }
+  body.writerImmersive .i2DateNavigator label{
+    padding-inline:10px;
+    border-radius:8px;
+    transition:background-color .16s ease,border-color .16s ease;
+  }
+  body.writerImmersive .i2DateNavigator label:hover{background:color-mix(in srgb,var(--dream-accent) 6%,transparent)}
+  body.writerImmersive .i2WriterCommands .productAction.primary{border-radius:9px;box-shadow:0 7px 16px color-mix(in srgb,var(--dream-accent) 13%,transparent)}
+  body.writerImmersive .i2WriterGrid{margin-top:8px;gap:1px;border-color:color-mix(in srgb,var(--line) 82%,transparent)}
+  body.writerImmersive .i2WriterCell{border:0;transition:background-color .16s ease,box-shadow .16s ease}
+  body.writerImmersive .i2CellHead{padding:12px 15px 8px;gap:9px}
+  body.writerImmersive .i2DeskInlineEdit .i2CellHead:before{content:'⠿';flex:0 0 auto;color:var(--muted);font-size:calc(18px * var(--life-font-scale));line-height:1;cursor:grab;opacity:.72}
+  body.writerImmersive .i2DeskInlineEdit .i2CellHead:active:before{cursor:grabbing}
+  body.writerImmersive .i2CellHead [data-cell-title]{font-size:calc(18px * var(--life-font-scale));line-height:1.2}
+  body.writerImmersive .i2CellHead .i2CellTitleInput{font-size:calc(18px * var(--life-font-scale));line-height:1.2}
+  body.writerImmersive .i2CellHead>span{opacity:.68}
+  body.writerImmersive .i2CellActions{gap:4px}
+  body.writerImmersive .i2CellActions button{
+    min-width:30px;
+    min-height:30px;
+    padding:3px 7px;
+    border-radius:7px;
+    opacity:.58;
+    transition:background-color .16s ease,border-color .16s ease,color .16s ease,opacity .16s ease,transform .16s ease;
+  }
+  body.writerImmersive .i2CellActions button:hover,
+  body.writerImmersive .i2CellActions button:focus-visible{opacity:1}
+  body.writerImmersive .i2WriterGrid .i2CellEditor{padding:5px 15px 14px;line-height:1.72}
+  body.writerImmersive .i2HabitCell .i2HabitList{padding-inline:15px}
+  body.writerImmersive .i2FocusToolbar{min-height:50px;border:0;border-top:1px solid var(--line);box-shadow:none;background:color-mix(in srgb,var(--dream-panel) 88%,var(--paper))}
+  body.writerImmersive .i2FocusToolbarActions{gap:5px}
+  body.writerImmersive .i2FocusToolbarActions button{border-radius:7px}
+}
+
+/* Keep the dense mobile layout touchable while retaining the same visual
+   language as desktop. */
+@media(max-width:880px){
+  .roomBtn{min-height:44px;border-radius:8px}
+  .roomBtn:hover{transform:none}
+}
+
+/* A companion is welcome around the archive, but never over the writing
+   surface. Immersive writing keeps the whole canvas available to the cursor. */
+body.writerImmersive .lifePetFloat{visibility:hidden;opacity:0;pointer-events:none}
+
+/* The title is a title, even though it lives inside the same label as the
+   rename input. Keep the helper copy quiet without shrinking the heading. */
+.i2Desk .i2CellHead [data-cell-title]{font-size:calc(18px * var(--life-font-scale));line-height:1.2}
+.i2Desk .i2CellHead .i2CellTitleInput{font-size:calc(18px * var(--life-font-scale));line-height:1.2}
+
+/* Writing desk copy should recede behind the page itself. The controls keep
+   their labels; repeated explanations stay available in the markup for
+   accessibility and future help surfaces, but do not compete with writing. */
+body.writerImmersive .i2WriterStageIntro > p,
+body.writerImmersive .i2WriterView > small,
+body.writerImmersive .i2WriterTools > span,
+body.writerImmersive .i2DeskInlineEdit .i2CellFormatHint,
+body.writerImmersive .i2FocusToolbarLead{
+  display:none;
+}
+body.writerImmersive .i2WriterStageIntro{gap:0}
+body.writerImmersive .i2WriterStageTop{min-height:44px}
+
+/* A quieter home route: the card title is enough to identify each path at
+   desktop size; the longer explanation remains available on small screens. */
+@media(min-width:901px){
+  .v02Paths button{min-height:106px;padding:14px 16px;transition:background-color .16s ease,color .16s ease}
+  .v02Paths button:hover{background:color-mix(in srgb,var(--v02-accent) 9%,var(--paper2))}
+  .v02Paths b{font-size:21px}
+  .v02Paths small{display:none}
+}
+
+/* Habits are user content, not an alert panel. Keep the accent and remove the
+   heavy ink wash so the checklist sits naturally with the other cells. */
+body.writerImmersive .i2HabitCell{
+  background:color-mix(in srgb,var(--paper) 94%,var(--dream-accent) 6%) !important;
+}
+body.writerImmersive .i2HabitCell .i2HabitList{gap:10px}
+body.writerImmersive .i2HabitCell .i2HabitList label{font-size:calc(16px * var(--life-font-scale));line-height:1.35}
+body.writerImmersive .i2HabitCell .i2HabitList i{width:16px;height:16px;border-radius:3px}
+body.writerImmersive .i2HabitCell .i2HabitNote{background:transparent}
+
+/* Arrange mode is a direct manipulation surface. Keep only the affordances
+   needed to move, rename, remove, recolor, and resize a cell. */
+body.writerImmersive .i2DeskInlineEdit .i2ArrangeHint{display:none !important}
+body.writerImmersive .i2DeskInlineEdit .i2CellEdit{display:none}
+body.writerImmersive .i2DeskInlineEdit .i2CellFormatBar label{font-size:0;gap:0}
+body.writerImmersive .i2DeskInlineEdit .i2CellFormatBar label select{font-size:calc(11px * var(--life-font-scale)) !important}
+body.writerImmersive .i2DeskInlineEdit #writerCustomizeCells{
+  background:color-mix(in srgb,var(--dream-accent) 9%,var(--paper2));
+  border-color:color-mix(in srgb,var(--dream-accent) 24%,var(--line));
+}
+body.writerImmersive .i2DeskInlineEdit button[data-template="daily"],
+body.writerImmersive .i2DeskInlineEdit #writerDrawerToggle{display:none}
+body.writerImmersive .i2DeskInlineEdit .i2CellFormatBar label{color:transparent !important;gap:0}
+body.writerImmersive .i2DeskInlineEdit .i2CellFormatBar label select{color:var(--ink) !important}
+
+/* Habit editing stays available in the normal card; arrange mode is only for layout. */
+body.writerImmersive .i2DeskInlineEdit .i2HabitCell .i2CellTune{display:none !important}
+
+@media(max-width:980px){
+  body.writerImmersive .i2DeskInlineEdit .i2CellHead:before{
+    content:'⠿';
+    flex:0 0 auto;
+    color:var(--muted);
+    font-size:calc(17px * var(--life-font-scale));
+    line-height:1;
+    cursor:grab;
+    opacity:.72;
+  }
+  body.writerImmersive .i2DeskInlineEdit .i2CellHead:active:before{cursor:grabbing}
+}
+
+/* v0.2 finishing pass — a quiet, direct desk that gives the page to writing. */
+.lifeosWriterOpening{min-height:clamp(280px,54vh,620px);display:grid;place-content:center;gap:15px;color:var(--muted);font:400 17px var(--type-serif,var(--serif));letter-spacing:.08em}
+.lifeosWriterOpening i{display:block;width:168px;height:1px;background:linear-gradient(90deg,transparent,var(--dream-accent),transparent);animation:lifeosWriterOpening 1s ease-in-out infinite}
+.lifeosWriterOpening i+ i{animation-delay:.18s;opacity:.45}
+@keyframes lifeosWriterOpening{50%{transform:scaleX(.64);opacity:.45}}
+
+/* The date itself is the control. There is no extra “select date” label. */
+.i2DateJump{font:inherit!important;color:inherit!important}
+.i2DateJumpWrap .i2DateNative{cursor:pointer}
+
+/* A single compact tool line: add, arrange, save layout. */
+body.writerImmersive .i2WriterTools{gap:3px}
+body.writerImmersive .i2WriterTools button{letter-spacing:.02em}
+body.writerImmersive .i2WriterTools #writerAddQuick{font-size:calc(18px * var(--life-font-scale));line-height:1;padding-inline:8px}
+body.writerImmersive .i2WriterTools #writerCustomizeCells,
+body.writerImmersive .i2WriterTools #writerSaveTemplate{font-family:var(--type-serif,var(--serif));font-size:calc(14px * var(--life-font-scale))}
+body.writerImmersive .i2WriterTools [data-template="daily"],
+body.writerImmersive .i2WriterTools #writerDrawerToggle,
+body.writerImmersive .i2WriterTools>span{display:none}
+
+/* A size means exactly what it says: 1x1, 1x2, 2x1, or 2x2. */
+@media(min-width:761px){
+  body.writerImmersive{overflow:hidden}
+  body.writerImmersive .i2Desk{--life-writer-head:calc(78px * var(--life-font-scale));height:100dvh;min-height:0;overflow:hidden}
+  body.writerImmersive .i2Desk form{height:calc(100dvh - var(--life-writer-head));min-height:0}
+  body.writerImmersive .i2WriterAside{min-height:calc(100dvh - var(--life-writer-head))}
+  body.writerImmersive .i2WriterStage{height:calc(100dvh - var(--life-writer-head));min-height:0;display:flex;flex-direction:column;overflow:hidden;padding-bottom:16px}
+  body.writerImmersive .i2WriterStageTop{flex:0 0 auto}
+  body.writerImmersive .i2WriterGrid{flex:1 1 auto;min-height:0;height:auto;margin-top:10px;grid-auto-flow:row dense;grid-auto-rows:minmax(0,1fr);overflow:hidden}
+  body.writerImmersive .i2WriterCell{min-height:0!important;height:auto;overflow:hidden}
+  body.writerImmersive .i2WriterGrid .i2CellSize-tall{grid-row:span 2;min-height:0!important}
+  body.writerImmersive .i2WriterGrid .i2CellSize-wide{grid-column:span 2;min-height:0!important}
+  body.writerImmersive .i2WriterGrid .i2CellSize-large{grid-column:span 2;grid-row:span 2;min-height:0!important}
+  body.writerImmersive .i2WriterGrid[data-view="day"]{grid-template-columns:repeat(3,minmax(0,1fr))}
+  body.writerImmersive .i2WriterGrid[data-view="week"]{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(0,1fr)}
+  body.writerImmersive .i2WriterGrid[data-view="month"]{grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:minmax(0,.82fr)}
+  body.writerImmersive .i2WriterGrid[data-view="year"]{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:minmax(0,.72fr)}
+  body.writerImmersive .i2WriterGrid[data-view="year"] .i2CellHead{padding-block:9px 6px}
+  body.writerImmersive .i2WriterGrid[data-view="year"] .i2CellHead [data-cell-title]{font-size:calc(16px * var(--life-font-scale))}
+}
+
+@media(min-width:761px) and (max-width:980px){
+  body.writerImmersive .i2WriterGrid[data-view="day"],
+  body.writerImmersive .i2WriterGrid[data-view="month"],
+  body.writerImmersive .i2WriterGrid[data-view="year"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+/* Long notes scroll inside their own page without drawing a competing rail. */
+body.writerImmersive .i2WriterGrid .i2CellEditor,
+body.writerImmersive .i2WriterGrid .i2HabitNote{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-width:none}
+body.writerImmersive .i2WriterGrid .i2CellEditor::-webkit-scrollbar,
+body.writerImmersive .i2WriterGrid .i2HabitNote::-webkit-scrollbar,
+body.writerImmersive .i2WriterGrid .i2HabitList::-webkit-scrollbar{width:0;height:0}
+body.writerImmersive .i2WriterGrid .i2HabitList{flex:0 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-width:none}
+
+/* Cell actions only surface when they are useful; arranging keeps them present. */
+@media(hover:hover) and (min-width:981px){
+  body.writerImmersive .i2CellActions{opacity:0;transition:opacity .16s ease}
+  body.writerImmersive .i2WriterCell:hover .i2CellActions,
+  body.writerImmersive .i2WriterCell:focus-within .i2CellActions,
+  body.writerImmersive .i2DeskInlineEdit .i2CellActions{opacity:1}
+}
+body.writerImmersive .i2DeskInlineEdit .i2CellFormatBar{border-top-color:color-mix(in srgb,var(--line) 70%,transparent)}
+body.writerImmersive .i2DeskInlineEdit .i2CellFormatBar select{min-width:76px}
+
+/* The scale preference reaches every core reading and writing label. */
+.otherHero p,.otherShelfHead p,.otherItem small{font-size:calc(13px * var(--life-font-scale))}
+.otherItem>span,.otherCount span,.otherCount small{font-size:calc(10px * var(--life-font-scale))}
+.otherItem>b{font-size:clamp(calc(22px * var(--life-font-scale)),calc(2.1vw * var(--life-font-scale)),calc(31px * var(--life-font-scale)))}
+.i2DatePicker,.i2DatePicker input,.i2DatePicker button{font-size:calc(13px * var(--life-font-scale))}
+
+@media(max-width:760px){
+  body.writerImmersive{overflow:auto}
+  body.writerImmersive .i2WriterStage{height:auto;display:block;overflow:visible}
+  body.writerImmersive .i2WriterGrid{height:auto;overflow:visible;grid-auto-rows:auto}
+  body.writerImmersive .i2WriterCell{min-height:220px!important}
+  body.writerImmersive .i2WriterGrid .i2CellSize-tall,
+  body.writerImmersive .i2WriterGrid .i2CellSize-wide,
+  body.writerImmersive .i2WriterGrid .i2CellSize-large{grid-column:auto;grid-row:auto}
+}

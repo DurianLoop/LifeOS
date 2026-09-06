@@ -1,22 +1,20 @@
-# Private, user-created archive data — never publish these layers.
-/vault/**
-!/vault/.gitkeep
-/data/**
-!/data/.gitkeep
-/.lifeos/
+# Private data layers
+/vault/
+/data/
 .env
-*.db
-*.db-wal
-*.db-shm
-
-# Build and local tool output.
-/desktop/node_modules/
-/desktop/dist/
-/desktop/server-dist/
-/desktop/python-runtime/
-/desktop/build/
-/desktop/*.spec
-/docs/qa_*/
 __pycache__/
 *.pyc
 .DS_Store
+.lifeos/
+cloud/dev_cloud.db
+cloud/*.db-wal
+cloud/*.db-shm
+docs/qa_full/
+docs/qa_v0_2/
+mobile/node_modules/
+mobile/ios/
+mobile/android/
+desktop/node_modules/
+desktop/dist/
+desktop/build/
+desktop/python-runtime/

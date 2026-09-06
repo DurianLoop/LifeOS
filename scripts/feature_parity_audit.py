@@ -2,7 +2,7 @@
 from pathlib import Path
 import json, subprocess, tempfile, sys
 ROOT=Path(__file__).resolve().parents[1]
-base=json.loads((ROOT/'config/features_141_baseline.json').read_text(encoding='utf-8'))
+base=json.loads((ROOT/'config/features_142_baseline.json').read_text(encoding='utf-8'))
 html=(ROOT/'app/index.html').read_text(encoding='utf-8')
 expr=html.split('const FEATURES=',1)[1].split('.map((x,i)=>',1)[0].strip()
 js='const arr='+expr+'; console.log(JSON.stringify(arr.map(x=>x[0])));'

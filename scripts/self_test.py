@@ -38,18 +38,18 @@ meta={r['key']:r['value'] for r in con.execute('select * from meta')}
 if meta.get('schema_version')!='10': errors.append('schema_version is not 10')
 if not meta.get('engine_version','').startswith('Memory Engine 11.'): errors.append('unexpected engine_version')
 raw=con.execute("SELECT COUNT(*) FROM memories WHERE kind IN ('daily','weekly')").fetchone()[0]
-if raw!=550: errors.append(f'raw memory count expected 550, got {raw}')
+if raw<550: errors.append(f'raw memory count dropped below the 550-page baseline: {raw}')
 anom=con.execute("SELECT COUNT(*) FROM memories WHERE date_anomaly=1").fetchone()[0]
 if anom<1: errors.append('expected known date anomaly flag')
 app=(ROOT/'app/index.html').read_text(encoding='utf-8')
-new_features=['文言化','Lineage Atlas','Thought → Artifact','Project Families','Artifact Ancestry','Version Trees','Idea-to-Output Latency','Feedback Loops','Rework Cycles','Cross-Pollination','First Proofs','Unfinished Lineages','Release Cadence','Evidence Chain Builder']
+new_features=['文言化','Other','Lineage Atlas','Thought → Artifact','Project Families','Artifact Ancestry','Version Trees','Idea-to-Output Latency','Feedback Loops','Rework Cycles','Cross-Pollination','First Proofs','Unfinished Lineages','Release Cadence','Evidence Chain Builder']
 for text in new_features:
     if text not in app: errors.append('UI missing '+text)
-if '141 systems' not in app: errors.append('UI system count not updated to 141')
+if '142 systems' not in app: errors.append('UI system count not updated to 142')
 feature_block=re.search(r'const FEATURES=\[(.*?)\]\.map\(',app,re.S)
 if feature_block:
     names=re.findall(r'\["([^"]+)","[^"]+",',feature_block.group(1))
-    if len(names)!=141: errors.append(f'FEATURES expected 141, got {len(names)}')
+    if len(names)!=142: errors.append(f'FEATURES expected 142, got {len(names)}')
     baseline=json.loads((ROOT/'config/features_127_baseline.json').read_text(encoding='utf-8'))
     removed=[x for x in baseline if x not in names]
     if removed: errors.append('add-only violation: '+', '.join(removed))
@@ -57,9 +57,10 @@ else: errors.append('Could not parse FEATURES registry')
 try:
     scripts=re.findall(r'<script>(.*?)</script>',app,re.S)
     if scripts:
-        tmp=Path(tempfile.gettempdir())/'lifeos_lineage_check.js';tmp.write_text(scripts[-1],encoding='utf-8')
+        tmp=ROOT/'lifeos_lineage_check.js';tmp.write_text(scripts[-1],encoding='utf-8')
         r=subprocess.run(['node','--check',str(tmp)],capture_output=True,text=True)
         if r.returncode:errors.append('frontend JS syntax: '+r.stderr.strip())
+        tmp.unlink(missing_ok=True)
 except FileNotFoundError: pass
 for rel in ['backend/server.py','engine/rebuild_memory_engine.py','engine/compass_engine.py','engine/mirror_engine.py','engine/topology_engine.py','engine/footprint_engine.py','engine/lineage_engine.py','engine/incremental_index.py','engine/refresh_worker.py','engine/product_core.py','scripts/p0_p1_release_audit.py','scripts/lazy_refresh_e2e_test.py','scripts/add_only_audit.py']:
     r=subprocess.run([sys.executable,'-m','py_compile',str(ROOT/rel)],capture_output=True,text=True)

@@ -8,7 +8,7 @@ try:
 except ImportError:
     Image=None
 
-ROOT=Path(os.getenv('LIFEOS_ROOT') or Path(__file__).resolve().parents[1])
+ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT)) if str(ROOT) not in sys.path else None
 from engine import product_core as product
 from engine.incremental_index import reindex_paths, run_one_pending_refresh
@@ -33,6 +33,7 @@ PET_PREVIEW_ROOT=APP/'assets'/'pet-readme-previews'
 PET_CATALOG_SNAPSHOT=ROOT/'config'/'pet_catalog_cache.json'
 PET_CATALOG_CACHE={'at':0.0,'items':[]}
 PET_FRAME_CACHE={}
+PET_LOCAL_CACHE={'signature':None,'items':[]}
 PET_SLUG=re.compile(r'^[a-z0-9][a-z0-9-]{1,110}$')
 
 def pet_license_allowed(license_text):
@@ -59,7 +60,7 @@ def pet_frame_map(sprite,version=1):
                 box=(column*cell_w,row*cell_h,(column+1)*cell_w,(row+1)*cell_h)
                 if alpha.crop(box).getbbox(): cells.append(column)
             result.append(cells or [0])
-        PET_FRAME_CACHE.clear();PET_FRAME_CACHE[stamp]=result
+        PET_FRAME_CACHE[stamp]=result
         return result
     except Exception:
         return fallback
@@ -75,14 +76,22 @@ def pet_catalog(force=False):
     now=time.monotonic()
     if not force and PET_CATALOG_CACHE['items'] and now-PET_CATALOG_CACHE['at']<900:
         return PET_CATALOG_CACHE['items']
-    try:
-        raw=json.loads(pet_fetch_bytes(PET_CATALOG_URL,2_000_000).decode('utf-8'))
-        PET_CATALOG_SNAPSHOT.write_text(json.dumps(raw,ensure_ascii=False),encoding='utf-8')
-    except Exception:
-        if PET_CATALOG_SNAPSHOT.exists(): raw=json.loads(PET_CATALOG_SNAPSHOT.read_text(encoding='utf-8'))
-        else:
-            # The local shelf stays usable even before its first gallery refresh.
-            raw=[{'slug':x['slug'],'name':x['name'],'author':x['author'],'license':x['license'],'description':x['description'],'spriteVersionNumber':x['spriteVersionNumber'],'primary_category':'Installed'} for x in pet_local_items()]
+    raw=None
+    # The release ships with the synchronized upstream snapshot. Use it for
+    # normal page loads so an offline or slow network never blocks the shelf;
+    # the explicit “更新目录” action passes force=True and refreshes upstream.
+    if not force and PET_CATALOG_SNAPSHOT.exists():
+        try: raw=json.loads(PET_CATALOG_SNAPSHOT.read_text(encoding='utf-8'))
+        except Exception: raw=None
+    if raw is None:
+        try:
+            raw=json.loads(pet_fetch_bytes(PET_CATALOG_URL,2_000_000).decode('utf-8'))
+            PET_CATALOG_SNAPSHOT.write_text(json.dumps(raw,ensure_ascii=False),encoding='utf-8')
+        except Exception:
+            if PET_CATALOG_SNAPSHOT.exists(): raw=json.loads(PET_CATALOG_SNAPSHOT.read_text(encoding='utf-8'))
+            else:
+                # The local shelf stays usable even before its first gallery refresh.
+                raw=[{'slug':x['slug'],'name':x['name'],'author':x['author'],'license':x['license'],'description':x['description'],'spriteVersionNumber':x['spriteVersionNumber'],'primary_category':'Installed'} for x in pet_local_items()]
     items=[]
     for item in raw if isinstance(raw,list) else []:
         slug=str(item.get('slug') or '')
@@ -96,11 +105,22 @@ def pet_catalog(force=False):
 
 def pet_local_items():
     PET_ASSET_ROOT.mkdir(parents=True,exist_ok=True)
-    found=[]
+    folders=[]
     for folder in PET_ASSET_ROOT.iterdir():
         if not folder.is_dir(): continue
         meta_path=folder/'pet.json'; sprite=folder/'spritesheet.webp'
         if not meta_path.exists() or not sprite.exists(): continue
+        try:
+            signature=(folder.name,meta_path.stat().st_mtime_ns,meta_path.stat().st_size,sprite.stat().st_mtime_ns,sprite.stat().st_size,(folder/'submission.json').stat().st_mtime_ns if (folder/'submission.json').exists() else 0)
+        except OSError:
+            continue
+        folders.append((folder,signature))
+    signature=tuple(sorted(item[1] for item in folders))
+    if PET_LOCAL_CACHE['signature']==signature:
+        return PET_LOCAL_CACHE['items']
+    found=[]
+    for folder,_ in folders:
+        meta_path=folder/'pet.json'; sprite=folder/'spritesheet.webp'
         try: meta=json.loads(meta_path.read_text(encoding='utf-8'))
         except Exception: continue
         submission={}
@@ -108,12 +128,17 @@ def pet_local_items():
         except Exception: pass
         slug=str(submission.get('slug') or meta.get('id') or folder.name)
         version=int(meta.get('spriteVersionNumber') or 1)
-        found.append({'slug':slug,'folder':folder.name,'name':meta.get('displayName') or submission.get('name') or slug,'author':submission.get('author') or 'community contributor','license':submission.get('license') or 'See package attribution','description':meta.get('description') or submission.get('description') or '', 'spriteVersionNumber':version,'frame_map':pet_frame_map(sprite,version),'asset_url':f'/assets/pets/{quote(folder.name)}/spritesheet.webp','builtin':folder.name=='desk-otter'})
+        found.append({'slug':slug,'folder':folder.name,'name':meta.get('displayName') or submission.get('name') or slug,'author':submission.get('author') or 'community contributor','license':submission.get('license') or 'See package attribution','description':meta.get('description') or submission.get('description') or '', 'spriteVersionNumber':version,'asset_url':f'/assets/pets/{quote(folder.name)}/spritesheet.webp','builtin':folder.name=='desk-otter'})
+    PET_LOCAL_CACHE.update({'signature':signature,'items':found})
     return found
 
 def pet_status(force=False):
-    installed=pet_local_items(); active=product.get_setting('pet.active_slug','desk-otter--zihualiu1997',ROOT)
+    installed=[dict(item) for item in pet_local_items()]; active=product.get_setting('pet.active_slug','desk-otter--zihualiu1997',ROOT)
     if not any(p['slug']==active for p in installed): active=installed[0]['slug'] if installed else ''
+    current=next((item for item in installed if item['slug']==active),None)
+    if current:
+        sprite=PET_ASSET_ROOT/current['folder']/'spritesheet.webp'
+        current['frame_map']=pet_frame_map(sprite,current.get('spriteVersionNumber',1))
     return {'catalog':pet_catalog(force),'installed':installed,'active_slug':active,'content_access':False,'source':'awesome-codex-pet'}
 
 def install_pet(slug):
@@ -986,6 +1011,10 @@ class Handler(SimpleHTTPRequestHandler):
         return json.loads(self.rfile.read(n).decode('utf-8') or '{}') if n else {}
     def do_GET(self):
         u=urlparse(self.path)
+        if u.path=='/config/core_copy_registry.json':
+            registry=ROOT/'config'/'core_copy_registry.json'
+            if not registry.exists(): return self.send_json({'error':'core copy registry not found'},404)
+            return self.send_binary(registry.read_bytes(),'application/json; charset=utf-8')
         if u.path.startswith('/api/'):
             try: return self.api_get(u.path,parse_qs(u.query))
             except Exception as e:

@@ -1,6 +1,6 @@
 /* LifeOS V0.1 · product direction implementation
    Scope: core journey, Writer first, local search first, locale + copyMode.
-   Existing 141 systems remain accessible through the attic/system palette. */
+   Existing 142 systems remain accessible through the system palette. */
 (() => {
   'use strict';
 
@@ -21,8 +21,8 @@
       home:{kicker:'LOCAL-FIRST · PRIVATE JOURNAL',titleA:'把今天',titleB:'写下来。',lead:'先把写、存、找、重读做得可靠。分析与 AI 都退到第二层，需要时再出现。',write:'写今天',continue:'继续写',journal:'翻日记',search:'搜一句话',memory:'看看旧日'},
       journey:[['01 · WRITE','写','空白页先出现，结构化模板以后再选。'],['02 · FIND','找','从一句话、一个人、一个地方回到原页。'],['03 · REREAD','重读','按日期翻阅，所有解释都能回到正文。'],['04 · RESURFACE','重逢','同一天的旧页偶尔回来，不制造打卡压力。']],
       writer:{kicker:'WRITE · REVISION SAFE',newTitle:'写下今天。',editTitle:'继续这一页。',note:'每次正式保存都会形成可恢复的 Revision；自动草稿只保存在这台设备。',date:'日期',title:'标题 · 可选',tags:'标签 · 逗号分隔',blank:'空白页',daily:'六段式',review:'周复盘',custom:'自定义',focus:'专注写作',exitFocus:'退出专注',saveNew:'留下这一页',saveEdit:'保存为新版本',clear:'清掉本地草稿',extras:'更多选项 · 结构 / 附件 / 版本',mainPlaceholder:'从今天真正发生的一件小事写起……',optionalPlaceholder:'留空也没关系。',draft:'草稿已留存在这台设备',saving:'正在保存正式版本…',saved:'已保存 · 此页已落定',failed:'未保存 · 请重试；草稿仍在本机',offline:'本地服务暂不可用 · 草稿仍在本机',templateHelp:'空白页是默认入口。模板只决定显示哪些段落，不会删除已经写过的内容。'},
-      search:{title:'在日记里找回一段过去。',lead:'优先搜索 550 篇原始日记与周记；结果永远可以回到那一页。',placeholder:'一句话、一个人、一个地方，或某一年…',go:'去找',empty:'输入一个词开始寻找。',none:'没有找到。换一个更接近原文的词试试。'},
-      themeLabel:'视觉世界', languageLabel:'语言与文案', languageHint:'中文 / English / 诗文只改变界面文案，不改动日记正文。', advanced:'其他 · 阁楼'
+      search:{title:'在日记里找回一段过去。',lead:'优先搜索你的原始日记与周记；结果永远可以回到那一页。',placeholder:'一句话、一个人、一个地方，或某一年…',go:'去找',empty:'输入一个词开始寻找。',none:'这一回没有找到相合的文字。换个说法，或去流年里看看。'},
+      themeLabel:'视觉世界', languageLabel:'语言与文案', languageHint:'中文 / English / 诗文只改变界面文案，不改动日记正文。', advanced:'其他'
     },
     en: {
       nav:{today:'Today',write:'Write',journal:'Journal',search:'Search',memory:'On this day',pet:'Companion',more:'More'},
@@ -30,8 +30,8 @@
       home:{kicker:'LOCAL-FIRST · PRIVATE JOURNAL',titleA:'Write down',titleB:'today.',lead:'Make writing, saving, finding, and rereading reliable first. Analysis and AI stay in the second layer until you ask for them.',write:'Write today',continue:'Continue writing',journal:'Open journal',search:'Find a phrase',memory:'On this day'},
       journey:[['01 · WRITE','Write','Start from a blank page. Templates stay optional.'],['02 · FIND','Find','Return to the source from a phrase, person, place, or year.'],['03 · REREAD','Reread','Browse by date. Every interpretation can return to the original page.'],['04 · RESURFACE','Resurface','Old pages can come back gently, without streak pressure.']],
       writer:{kicker:'WRITE · REVISION SAFE',newTitle:'Write today.',editTitle:'Continue this page.',note:'Every committed save creates a recoverable Revision. Autosaved drafts stay on this device.',date:'Date',title:'Title · optional',tags:'Tags · comma separated',blank:'Blank',daily:'Six-part',review:'Weekly review',custom:'Custom',focus:'Focus',exitFocus:'Exit focus',saveNew:'Save this page',saveEdit:'Save new revision',clear:'Clear local draft',extras:'More options · structure / attachments / versions',mainPlaceholder:'Start with one small thing that actually happened today…',optionalPlaceholder:'Optional.',draft:'Draft saved on this device',saving:'Saving committed revision…',saved:'Saved · revision committed',failed:'Save failed · local draft is still safe',offline:'Local service unavailable · draft is still safe',templateHelp:'Blank is the default. Templates only change which sections are visible; existing content is never removed.'},
-      search:{title:'Find a moment in your journals.',lead:'Search the 550 raw daily and weekly Markdown sources first. Every result returns to its source page.',placeholder:'A phrase, person, place, or year…',go:'Search',empty:'Type something to start.',none:'No match. Try wording closer to what you originally wrote.'},
-      themeLabel:'Visual world', languageLabel:'Language & copy', languageHint:'Language presets change interface copy only. Your journal text is never translated automatically.', advanced:'Other · Attic'
+      search:{title:'Find a moment in your journals.',lead:'Search your original daily and weekly sources first. Every result returns to its source page.',placeholder:'A phrase, person, place, or year…',go:'Search',empty:'Type something to start.',none:'Nothing matched this time. Try another phrase or browse the journal.'},
+      themeLabel:'Visual world', languageLabel:'Language & copy', languageHint:'Language presets change interface copy only. Your journal text is never translated automatically.', advanced:'Other'
     }
   };
 
@@ -58,12 +58,12 @@
       c.writer.draft=writer?.states?.autosaved || c.writer.draft; c.writer.saving=writer?.states?.saving || c.writer.saving; c.writer.saved=writer?.states?.saved || c.writer.saved; c.writer.failed=writer?.states?.failed || c.writer.failed; c.writer.offline=writer?.states?.offline || c.writer.offline;
       c.search.title=search?.subtitle || c.search.title; c.search.placeholder=search?.placeholder || c.search.placeholder; c.search.go=search?.primary || '去寻'; c.search.none=search?.empty || c.search.none;
       c.journey=[['01 · 落笔','写','今日这一页，从空白开始。'],['02 · 寻迹','找','从一句话，寻回一段已经远去的日子。'],['03 · 展卷','重读','旧页重开，所有路最终回到原文。'],['04 · 旧信','重逢','同一个今日，隔着不同年岁重新相逢。']];
-      c.themeLabel='视觉世界';c.languageLabel='语言与文案';c.languageHint='诗意负责情绪，功能词负责无歧义；正文永不被自动改写。';c.advanced='其他 · 阁楼';
+      c.themeLabel='视觉世界';c.languageLabel='语言与文案';c.languageHint='诗意负责情绪，功能词负责无歧义；正文永不被自动改写。';c.advanced='其他';
     }
     if (state.preset === 'bilingual') {
       c.nav={today:'今天 / Today',write:'写日记 / Write',journal:'日记 / Journal',search:'搜索 / Search',memory:'旧日 / On this day',pet:'灵犀 / Companion',more:'更多 / More'};
       c.top={write:'写下来 / Write',search:'搜日记 / Search',ask:'问过去 / Ask',tune:'微调 / Tune'};
-      c.themeLabel='视觉世界 / Theme';c.languageLabel='语言与文案 / Language';c.languageHint='仅切换界面语言，不会改动日记正文。';c.advanced='其他 / Attic';
+      c.themeLabel='视觉世界 / Theme';c.languageLabel='语言与文案 / Language';c.languageHint='仅切换界面语言，不会改动日记正文。';c.advanced='其他';
     }
     return c;
   };
@@ -121,7 +121,7 @@
     const rest=FEATURES.filter(f=>!core.has(f.name));
     grid.innerHTML=rest.map(f=>`<button class="atticItem" data-atticfeature="${esc(f.name)}"><b>${esc(dreamMeta(f.name).title)}</b><span>${String(f.no).padStart(3,'0')} · ${esc(f.name)} · ${esc(f.room)}</span></button>`).join('');
     $$('[data-atticfeature]').forEach(x=>x.onclick=()=>{$('#atticPanel').classList.remove('open');$('#atticPanel').setAttribute('aria-hidden','true');openFeature(x.dataset.atticfeature)});
-    const p=$('#atticPanel .small');if(p)p.textContent=state.preset==='en'?`${rest.length} existing capabilities are preserved here. V0.1 does not delete them; it simply removes them from the daily path.`:`${rest.length} 个现有能力完整保留在这里。V0.1 不删除它们，只是不再让它们抢占日常主链路。`;
+    const p=$('#atticPanel .small');if(p)p.textContent=state.preset==='en'?`${rest.length} existing capabilities are preserved here and kept outside the daily path.`:`${rest.length} 个现有能力完整保留在这里，不占用日常主链路。`;
   }
 
   function applyCoreCopy(){
@@ -159,13 +159,13 @@
       {id:'search',icon:'search',label:c.nav.search,feature:'Universal Search'},
       {id:'memory',icon:'memory',label:c.nav.memory,feature:'On This Day'},
       {id:'pet',icon:'magic',label:c.nav.pet,feature:'Pet Shelf',pet:true},
-      {id:'attic',icon:'attic',label:c.advanced.split(' · ')[0],action:'attic'}
+      {id:'other',icon:'attic',label:c.advanced.split(' · ')[0],feature:'Other'}
     ];
     el.innerHTML=items.map(v=>{const active=(v.feature&&STATE.feature===v.feature);return `<button class="roomBtn ${active?'active':''}" type="button" data-nav-id="${esc(v.id)}" ${v.pet?'data-petpage="true"':v.feature?`data-frontfeature="${esc(v.feature)}"`:''} ${v.action?`data-coreaction="${esc(v.action)}"`:''} aria-current="${active?'page':'false'}">${uiIcon(v.icon)}<span class="navText">${esc(v.label)}</span></button>`}).join('')+`<button class="roomBtn mobileMoreButton" id="mobileMoreBtn" type="button" aria-haspopup="dialog" aria-controls="mobileMorePanel" aria-expanded="false">${uiIcon('more')}<span class="navText">${esc(c.nav.more)}</span></button>`;
     $$('[data-frontfeature]').forEach(b=>b.onclick=()=>{closeMobileMore();openFeature(b.dataset.frontfeature)});
     $$('[data-petpage]').forEach(b=>b.onclick=()=>{closeMobileMore();window.dispatchEvent(new CustomEvent('lifeos:open-pet'))});
     $$('[data-coreaction="write"]').forEach(b=>b.onclick=()=>{closeMobileMore();openProductDock('writer',{date:localDateISO()})});
-    $$('[data-coreaction="attic"]').forEach(b=>b.onclick=()=>{closeMobileMore();$('#atticOpen')?.click()});
+    $$('[data-coreaction="attic"]').forEach(b=>b.onclick=()=>{closeMobileMore();openFeature('Other')});
     const mb=$('#mobileMoreBtn');if(mb)mb.onclick=()=>toggleMobileMore();
   }
 
@@ -173,7 +173,7 @@
     const [d,core]=await Promise.all([api('/api/home',{noCache:true}),api('/api/core/status',{noCache:true})]);
     const c=t(), latest=d.latest||[], recent=latest[0], p=core.core||{}, today=localDateISO();
     const todayEntry=latest.find(x=>x.date===today); const on=(d.on_this_day||[])[0];
-    return `<div class="page homePage"><section class="v01HomeHero"><div><div class="kicker">${esc(c.home.kicker)}</div><h1>${esc(c.home.titleA)}<br><em>${esc(c.home.titleB)}</em></h1><p>${esc(c.home.lead)}</p><div class="v01HomePrimary"><button class="primary" id="homeWrite">${esc(todayEntry?c.home.continue:c.home.write)}</button><button data-feature="Journal">${esc(c.home.journal)}</button><button data-feature="Universal Search">${esc(c.home.search)}</button><button data-feature="On This Day">${esc(c.home.memory)}</button></div></div><aside class="v01ArchiveCard"><div class="v01CoreBadge">V0.1 · CORE JOURNEY</div><h3>${state.preset==='en'?'Your archive is the test suite.':'你的档案，就是验收数据。'}</h3><dl><div><dt>${state.preset==='en'?'Entries':'日记与周记'}</dt><dd>${fmt(p.entries||550)}</dd></div><div><dt>${state.preset==='en'?'Revisions':'历史版本'}</dt><dd>${fmt(p.revisions||550)}</dd></div><div><dt>${state.preset==='en'?'Today':'今天'}</dt><dd>${todayEntry?(state.preset==='en'?'saved':'已写'):(state.preset==='en'?'blank':'未写')}</dd></div></dl>${recent?`<div class="small" style="margin-top:16px">${state.preset==='en'?'Latest source':'最近一页'} · ${esc(recent.date)}</div>`:''}</aside></section><section class="v01Journey">${c.journey.map((x,i)=>`<button type="button" ${i===0?'id="homeWriteJourney"':i===1?'data-feature="Universal Search"':i===2?'data-feature="Journal"':'data-feature="On This Day"'}><span>${esc(x[0])}</span><b>${esc(x[1])}</b><small>${esc(x[2])}</small></button>`).join('')}</section>${on?`<section class="homeResume"><button type="button" data-source="${esc(on.source_path)}"><span>${state.preset==='en'?'ON THIS DAY':'旧日来信'}</span><b>${esc(on.date)}</b><small>${state.preset==='en'?'Open the original page.':'打开原页，不生成额外结论。'}</small></button></section>`:''}</div>`;
+    return `<div class="page homePage"><section class="v01HomeHero"><div><div class="kicker">${esc(c.home.kicker)}</div><h1>${esc(c.home.titleA)}<br><em>${esc(c.home.titleB)}</em></h1><p>${esc(c.home.lead)}</p><div class="v01HomePrimary"><button class="primary" id="homeWrite">${esc(todayEntry?c.home.continue:c.home.write)}</button><button data-feature="Journal">${esc(c.home.journal)}</button><button data-feature="Universal Search">${esc(c.home.search)}</button><button data-feature="On This Day">${esc(c.home.memory)}</button></div></div><aside class="v01ArchiveCard"><h3>${state.preset==='en'?'Your archive, as it is.':'你的档案，就按真实样子在这里。'}</h3><dl><div><dt>${state.preset==='en'?'Entries':'日记与周记'}</dt><dd>${fmt(p.entries??0)}</dd></div><div><dt>${state.preset==='en'?'Revisions':'历史版本'}</dt><dd>${fmt(p.revisions??0)}</dd></div><div><dt>${state.preset==='en'?'Today':'今天'}</dt><dd>${todayEntry?(state.preset==='en'?'saved':'已写'):(state.preset==='en'?'blank':'未写')}</dd></div></dl>${recent?`<div class="small" style="margin-top:16px">${state.preset==='en'?'Latest source':'最近一页'} · ${esc(recent.date)}</div>`:''}</aside></section><section class="v01Journey">${c.journey.map((x,i)=>`<button type="button" ${i===0?'id="homeWriteJourney"':i===1?'data-feature="Universal Search"':i===2?'data-feature="Journal"':'data-feature="On This Day"'}><span>${esc(x[0])}</span><b>${esc(x[1])}</b><small>${esc(x[2])}</small></button>`).join('')}</section>${on?`<section class="homeResume"><button type="button" data-source="${esc(on.source_path)}"><span>${state.preset==='en'?'ON THIS DAY':'旧日来信'}</span><b>${esc(on.date)}</b><small>${state.preset==='en'?'Open the original page.':'打开原页，不生成额外结论。'}</small></button></section>`:''}</div>`;
   }
 
   const TEMPLATE_SECTIONS={
@@ -226,6 +226,9 @@
   function installBindings(){
     const oldRender=render; render=async function(){await oldRender();const journeyWrite=$('#homeWriteJourney');if(journeyWrite)journeyWrite.onclick=()=>openProductDock('writer',{date:localDateISO()});applyCoreCopy();};
     buildRail=v01BuildRail;
+    const openOther=()=>{closeMobileMore();setPanelOpen?.($('#tweaksPanel'),$('#allRail'),false);openFeature('Other')};
+    $('#atticOpen')?.addEventListener('click',event=>{event.preventDefault();event.stopImmediatePropagation();openOther()},true);
+    $('#mobileAttic')?.addEventListener('click',event=>{event.preventDefault();event.stopImmediatePropagation();openOther()},true);
     renderProductWriter=renderV01Writer;
     RENDERERS['Home']=renderV01Home;
     RENDERERS['Universal Search']=renderV01Search;

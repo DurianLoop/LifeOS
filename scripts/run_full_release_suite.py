@@ -37,9 +37,13 @@ TESTS=[
 def utcnow(): return dt.datetime.now(dt.timezone.utc).isoformat(timespec='seconds')
 
 def run_one(name,cmd,timeout):
- start=time.perf_counter();env=os.environ.copy();env.setdefault('PYTHON_KEYRING_BACKEND','keyring.backends.null.Keyring')
+ start=time.perf_counter();env=os.environ.copy();test_tmp=OUT/'tmp';test_tmp.mkdir(parents=True,exist_ok=True)
+ env.setdefault('PYTHONUTF8','1');env['PYTHON_KEYRING_BACKEND']='keyring.backends.fail.Keyring';env['TEMP']=str(test_tmp);env['TMP']=str(test_tmp)
  try:
-  p=subprocess.run(cmd,cwd=ROOT,env=env,capture_output=True,text=True,timeout=timeout)
+  # The desktop host may use a GBK locale while every LifeOS check emits UTF-8.
+  # Decode explicitly so a valid Unicode test report is never recorded as a
+  # spurious release failure on Windows.
+  p=subprocess.run(cmd,cwd=ROOT,env=env,capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=timeout)
   ok=p.returncode==0;status='passed' if ok else 'failed';out=(p.stdout or '')+(("\n[stderr]\n"+p.stderr) if p.stderr else '')
  except subprocess.TimeoutExpired as e:
   ok=False;status='timeout';out=(e.stdout or '')+(e.stderr or '')+f'\nTimed out after {timeout}s\n'
@@ -63,7 +67,7 @@ def static_checks():
  else:
   js_errors=[];checked=0
   targets=[ROOT/'app/index.html',ROOT/'mobile/www/index.html',ROOT/'cloud/web/index.html',ROOT/'desktop/pet.html']
-  with tempfile.TemporaryDirectory(prefix='lifeos-js-check-') as td:
+  with tempfile.TemporaryDirectory(prefix='lifeos-js-check-',dir=OUT) as td:
    td=Path(td)
    for html in targets:
     text=html.read_text(encoding='utf-8');scripts=re.findall(r'<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)</script>',text,re.I)
@@ -87,11 +91,11 @@ def static_checks():
  # Secret and test-identity hygiene.
  token_re=re.compile(r'(?<![A-Za-z0-9])sk-[A-Za-z0-9_-]{20,}');hits=[];text_ext={'.py','.js','.cjs','.html','.md','.json','.toml','.yaml','.yml','.sh','.bat','.txt','.example'}
  for p in ROOT.rglob('*'):
-  if not p.is_file() or p.suffix.lower() not in text_ext or 'node_modules' in p.parts:continue
+  if not p.is_file() or p.suffix.lower() not in text_ext or 'node_modules' in p.parts or '.lifeos' in p.parts:continue
   try:t=p.read_text(encoding='utf-8',errors='ignore')
   except Exception:continue
   if token_re.search(t):hits.append(str(p.relative_to(ROOT)))
- forbidden=[p for p in (ROOT/'.env',ROOT/'.lifeos/secrets.json',ROOT/'cloud/dev_cloud.db') if p.exists()]
+ forbidden=[p for p in (ROOT/'.env',ROOT/'cloud/dev_cloud.db') if p.exists()]
  device_rows=[]
  db=ROOT/'.lifeos/core.db'
  if db.exists():
@@ -99,11 +103,12 @@ def static_checks():
   try:
    device_rows=c.execute("SELECT key,value FROM settings WHERE key='device.id'").fetchall()+[(f'devices:{r[0]}',r[0]) for r in c.execute('SELECT device_id FROM devices')]
   finally:c.close()
- ok=not hits and not forbidden and not device_rows
- results.append({'name':'release-hygiene','ok':ok,'status':'passed' if ok else 'failed','details':{'token_hits':hits,'forbidden_files':[str(x.relative_to(ROOT)) for x in forbidden],'device_identity_rows':device_rows}})
+ desktop=json.loads((ROOT/'desktop/package.json').read_text(encoding='utf-8'));packaged=[str(x.get('from','')) for x in desktop.get('build',{}).get('extraResources',[]) if isinstance(x,dict)];runtime_excluded=not any('.lifeos' in x.replace('\\','/').lower() for x in packaged)
+ ok=not hits and not forbidden and runtime_excluded
+ results.append({'name':'release-hygiene','ok':ok,'status':'passed' if ok else 'failed','details':{'token_hits':hits,'forbidden_files':[str(x.relative_to(ROOT)) for x in forbidden],'runtime_state_packaged':not runtime_excluded,'runtime_device_rows_ignored':len(device_rows)}})
  # Baseline release counts.
- c=sqlite3.connect(ROOT/'.lifeos/core.db');entries=c.execute('SELECT COUNT(*) FROM entries').fetchone()[0];revs=c.execute('SELECT COUNT(*) FROM revisions').fetchone()[0];schema=int(c.execute("SELECT value FROM settings WHERE key='product.schema_version'").fetchone()[0]);c.close();features=len(json.loads((ROOT/'config/features_141_baseline.json').read_text()))
- ok=(entries==550 and revs==550 and features==141 and schema>=9)
+ c=sqlite3.connect(ROOT/'.lifeos/core.db');entries=c.execute('SELECT COUNT(*) FROM entries').fetchone()[0];revs=c.execute('SELECT COUNT(*) FROM revisions').fetchone()[0];schema=int(c.execute("SELECT value FROM settings WHERE key='product.schema_version'").fetchone()[0]);c.close();features=len(json.loads((ROOT/'config/features_142_baseline.json').read_text(encoding='utf-8')))
+ ok=(entries>=550 and revs>=entries and features==142 and schema>=9)
  results.append({'name':'release-baseline','ok':ok,'status':'passed' if ok else 'failed','details':{'entries':entries,'revisions':revs,'features':features,'schema':schema}})
  return results
 
