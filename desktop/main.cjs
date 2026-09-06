@@ -8,7 +8,16 @@ const DENSE_FEATURES=new Set(['Memory Graph','Analytics','Topology Atlas','Footp
 const PET_ALLOWED_DETAIL=new Set(['feature','title','count','status','kind','date','reason','conflicts','source']);
 const PET_BLOCKED_KEYS=/content|body|text|excerpt|markdown|evidence|answer|question|prompt|raw|sections/i;
 
-function pythonCmd(){return process.env.LIFEOS_PYTHON|| (process.platform==='win32'?'python':'python3')}
+function pythonCmd(){
+  if(process.env.LIFEOS_PYTHON)return process.env.LIFEOS_PYTHON;
+  if(process.platform==='win32'){
+    // The installer carries its own clean runtime, so a fresh Windows install
+    // can open LifeOS without first configuring Python system-wide.
+    const bundled=path.join(__dirname,'python-runtime','python.exe');
+    return fs.existsSync(bundled)?bundled:'python';
+  }
+  return 'python3';
+}
 function startBackend(){if(process.env.LIFEOS_EXTERNAL_BACKEND==='1')return;backend=spawn(pythonCmd(),[path.join(ROOT,'backend','server.py')],{cwd:ROOT,stdio:process.env.LIFEOS_DESKTOP_DEBUG==='1'?'inherit':'ignore',windowsHide:true,env:{...process.env,LIFEOS_NO_BROWSER:'1'}});backend.on('exit',()=>{backend=null;if(!quitting&&mainWindow&&!mainWindow.isDestroyed())mainWindow.webContents.send('lifeos:backend-exit')})}
 function waitForServer(url,tries=100){return new Promise((resolve,reject)=>{let n=0;const tick=()=>{http.get(url,r=>{r.resume();resolve()}).on('error',()=>{if(++n>=tries)reject(new Error('LifeOS backend did not start'));else setTimeout(tick,180)});};tick()})}
 function petRoots(){return [path.join(ROOT,'app','assets','pets'),path.join(os.homedir(),'.codex','pets'),path.join(ROOT,'pets')].filter(p=>fs.existsSync(p));}

@@ -24,7 +24,10 @@
     "productName": "LifeOS",
     "asar": false,
     "files": [
-      "**/*"
+      "**/*",
+      "!dist{,/**/*}",
+      "!release-output{,/**/*}",
+      "!build{,/**/*}"
     ],
     "extraResources": [
       {
@@ -82,11 +85,6 @@
       ],
       "category": "Utility"
     },
-    "publish": [
-      {
-        "provider": "generic",
-        "url": "${env.LIFEOS_UPDATE_URL}"
-      }
-    ]
+    "publish": null
   }
 }
