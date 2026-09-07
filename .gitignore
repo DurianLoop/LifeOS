@@ -20,3 +20,5 @@ desktop/build/
 desktop/python-runtime/
 desktop/release-output/
 desktop/release-v0.2-clean/
+desktop/release-v0.2.1-clean/
+desktop/release-*/

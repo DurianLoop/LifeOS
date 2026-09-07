@@ -1,7 +1,7 @@
 {
   "name": "lifeos-living-memory-desktop",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "LifeOS Core X Personal Memory Platform desktop shell",
   "main": "main.cjs",
   "scripts": {
@@ -27,6 +27,7 @@
       "**/*",
       "!dist{,/**/*}",
       "!release-output{,/**/*}",
+      "!release-*/**",
       "!build{,/**/*}"
     ],
     "extraResources": [

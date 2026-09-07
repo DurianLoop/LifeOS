@@ -30,6 +30,7 @@ PET_CATALOG_URL='https://raw.githubusercontent.com/legeling/awesome-codex-pet/ma
 PET_RAW_ROOT='https://raw.githubusercontent.com/legeling/awesome-codex-pet/main/pets'
 PET_ASSET_ROOT=APP/'assets'/'pets'
 PET_PREVIEW_ROOT=APP/'assets'/'pet-readme-previews'
+PET_REMOTE_PREVIEW_ROOT='https://codexpet.top/assets/previews'
 PET_CATALOG_SNAPSHOT=ROOT/'config'/'pet_catalog_cache.json'
 PET_CATALOG_CACHE={'at':0.0,'items':[]}
 PET_FRAME_CACHE={}
@@ -98,7 +99,11 @@ def pet_catalog(force=False):
         if not PET_SLUG.fullmatch(slug) or not pet_license_allowed(item.get('license')): continue
         record={key:item.get(key) for key in ('slug','name','localized_names','author','author_handle','author_url','primary_category','collections','license','description','spriteVersionNumber')}
         preview=PET_PREVIEW_ROOT/slug/'idle.webp'
-        record['preview_url']=f'/assets/pet-readme-previews/{quote(slug)}/idle.webp' if preview.exists() else ''
+        # Only a small starter shelf ships with LifeOS. Other thumbnails are
+        # loaded when shown, while complete animation packages stay opt-in.
+        record['preview_url']=(f'/assets/pet-readme-previews/{quote(slug)}/idle.webp'
+                               if preview.exists()
+                               else f'{PET_REMOTE_PREVIEW_ROOT}/{quote(slug)}/webp/idle.webp')
         items.append(record)
     PET_CATALOG_CACHE.update({'at':now,'items':items})
     return items

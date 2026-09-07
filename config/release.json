@@ -1,9 +1,11 @@
 {
   "product": "LifeOS",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "release": "v0.2",
   "petCatalogSource": "https://github.com/legeling/awesome-codex-pet",
   "petCatalogCommit": "3afad49",
-  "petPackageCount": 230,
+  "petPackageCount": 1,
+  "petPreviewCount": 10,
+  "petDelivery": "starter previews are bundled; full pet packages download only after an explicit user action",
   "petPackageContract": "pet.json + spritesheet.webp + submission.json"
 }

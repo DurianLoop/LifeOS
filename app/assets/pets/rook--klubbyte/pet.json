@@ -1,8 +1,0 @@
-{
-  "id": "rook--klubbyte",
-  "displayName": "Rook",
-  "description": "A tiny survivalist raccoon companion with a calm ready-for-anything attitude.",
-  "spriteVersionNumber": 1,
-  "spritesheetPath": "spritesheet.webp",
-  "kind": "animal"
-}
