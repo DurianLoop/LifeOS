@@ -7,7 +7,7 @@
   const applySidebar=(collapsed,{persist=true}={})=>{
     document.body.classList.toggle('sidebarCollapsed',collapsed);
     button?.setAttribute('aria-expanded',String(!collapsed));
-    if(button){button.setAttribute('aria-label',collapsed?'展开侧边栏':'收起侧边栏');button.title=collapsed?'展开侧边栏':'收起侧边栏'}
+    if(button){button.setAttribute('aria-label',collapsed?'展开侧边栏':'收起侧边栏');button.title=collapsed?'展开侧边栏':'收起侧边栏';const glyph=button.querySelector('[aria-hidden="true"]');if(glyph)glyph.textContent=collapsed?'›':'‹'}
     if(persist){try{localStorage.setItem(key,String(collapsed))}catch(_){}}
   };
   let collapsed=false;try{collapsed=localStorage.getItem(key)==='true'}catch(_){}

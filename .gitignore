@@ -16,6 +16,8 @@ mobile/ios/
 mobile/android/
 desktop/node_modules/
 desktop/dist/
+desktop/.electron-cache/
+desktop/.builder-cache/
 desktop/build/
 desktop/python-runtime/
 desktop/release-output/

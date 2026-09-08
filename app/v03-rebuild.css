@@ -1,0 +1,1041 @@
+/* LifeOS v0.2 rebuild on the v0.1.0 base.
+   This layer is deliberately small: it tunes the existing product surface
+   without changing the local-first data contract. */
+:root {
+  --life-font-scale: 1.12;
+  --life-nav-width: 202px;
+}
+
+/* The archive rail is the persistent navigation; focus mode is intentionally
+   not exposed as a separate journal prompt. */
+#journalFocusToggle,
+#focusExit {
+  display: none !important;
+}
+
+/* Flowing years · immersive journal book surface. */
+.i2JournalBookSurface {
+  position: relative;
+  width: min(1220px, 100%);
+  padding: clamp(26px, 4vw, 54px) clamp(18px, 3vw, 42px) 100px;
+  isolation: isolate;
+}
+
+.i2JournalBookSurface::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 30px 0 40px;
+  border: 1px solid color-mix(in srgb, var(--dream-accent) 18%, transparent);
+  background:
+    radial-gradient(circle at 13% 8%, color-mix(in srgb, var(--dream-accent) 14%, transparent), transparent 28%),
+    linear-gradient(135deg, color-mix(in srgb, var(--paper) 90%, var(--dream-accent) 10%), transparent 46%);
+  opacity: .8;
+  pointer-events: none;
+}
+
+.i2JournalHeading h1 {
+  max-width: 620px;
+  margin-bottom: 8px;
+  text-wrap: balance;
+}
+
+.i2JournalHeading p {
+  letter-spacing: .08em;
+}
+
+.i2JournalPageCount {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 9px;
+  color: var(--muted);
+  font: 10px var(--type-mono);
+  letter-spacing: .08em;
+}
+
+.i2JournalLayout {
+  display: grid;
+  grid-template-columns: minmax(210px, .3fr) minmax(0, 1fr);
+  gap: clamp(24px, 4vw, 54px);
+  align-items: stretch;
+  margin-top: clamp(28px, 4vw, 48px);
+}
+
+.i2JournalList {
+  position: sticky;
+  top: 112px;
+  align-self: start;
+  max-height: calc(100dvh - 160px);
+  overflow: auto;
+  padding: 8px 16px 14px 0;
+  border: 0;
+  background: transparent;
+}
+
+.i2JournalList::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(var(--dream-accent), color-mix(in srgb, var(--line) 65%, transparent) 35%, transparent);
+  opacity: .62;
+}
+
+.i2JournalListHead {
+  display: grid;
+  gap: 6px;
+  padding: 0 18px 15px 0;
+  border-bottom: 1px solid var(--ink);
+}
+
+.i2JournalListHead span {
+  color: var(--ink);
+  font: 400 20px/1.15 var(--type-serif);
+  letter-spacing: -.02em;
+}
+
+.i2JournalListHead small {
+  color: var(--muted);
+  font: 10px/1.5 var(--type-mono);
+}
+
+.i2JournalListRule {
+  width: 34px;
+  height: 3px;
+  margin: 16px 0 10px;
+  background: var(--dream-accent);
+  opacity: .6;
+}
+
+.i2JournalItem {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 8px;
+  width: 100%;
+  padding: 11px 17px 11px 0;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 62%, transparent);
+  background: transparent;
+  color: var(--muted);
+  text-align: left;
+  transition: color .18s ease, padding .18s ease, background .18s ease;
+}
+
+.i2JournalItem:hover,
+.i2JournalItem:focus-visible {
+  padding-left: 6px;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--dream-accent) 6%, transparent);
+  outline: 0;
+}
+
+.i2JournalItem.active {
+  padding-left: 10px;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--dream-accent) 10%, transparent);
+  box-shadow: inset 3px 0 var(--dream-accent);
+}
+
+.i2JournalItemNo {
+  padding-top: 2px;
+  color: color-mix(in srgb, var(--muted) 66%, transparent);
+  font: 9px var(--type-mono);
+}
+
+.i2JournalItem strong {
+  display: block;
+  overflow: hidden;
+  font: 400 15px/1.3 var(--type-serif);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.i2JournalItem small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font: 9px var(--type-mono);
+}
+
+.i2JournalBook {
+  position: relative;
+  min-height: min(760px, calc(100dvh - 206px));
+  perspective: 1800px;
+  transform-style: preserve-3d;
+  filter: drop-shadow(0 28px 36px rgba(34, 26, 18, .14));
+}
+
+.i2BookSpine {
+  position: absolute;
+  z-index: 4;
+  left: 18px;
+  top: 18px;
+  bottom: 18px;
+  width: 16px;
+  border-left: 1px solid color-mix(in srgb, var(--dream-accent) 56%, transparent);
+  border-right: 1px solid color-mix(in srgb, var(--line) 62%, transparent);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--dream-accent) 12%, transparent), transparent);
+  pointer-events: none;
+}
+
+.i2BookPageEdge {
+  position: absolute;
+  z-index: 0;
+  top: 11px;
+  right: -8px;
+  bottom: 11px;
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  border-left: 0;
+  border-radius: 2px 10px 10px 2px;
+  background: color-mix(in srgb, var(--paper2) 90%, var(--line) 10%);
+}
+
+.i2BookPageEdgeBack { transform: translate(8px, 4px); opacity: .55; }
+.i2BookPageEdgeFront { transform: translate(15px, 8px); opacity: .28; }
+
+.i2JournalPaper {
+  position: relative;
+  z-index: 2;
+  min-height: min(760px, calc(100dvh - 206px));
+  overflow: hidden;
+  padding: clamp(44px, 6vw, 78px) clamp(34px, 7vw, 88px) clamp(50px, 6vw, 78px) clamp(58px, 7vw, 96px);
+  border: 1px solid color-mix(in srgb, var(--line) 84%, transparent);
+  border-radius: 3px 11px 11px 3px;
+  background:
+    radial-gradient(circle at 13% 10%, rgba(115, 89, 68, .045) 0 1px, transparent 1.5px),
+    repeating-linear-gradient(180deg, transparent 0 32px, color-mix(in srgb, var(--line) 14%, transparent) 32px 33px),
+    color-mix(in srgb, var(--paper2) 96%, var(--dream-accent) 4%);
+  box-shadow: inset 22px 0 34px rgba(61, 44, 28, .055), inset -24px 0 44px rgba(61, 44, 28, .05), 0 3px 0 rgba(255,255,255,.28);
+  transform-origin: left center;
+  backface-visibility: hidden;
+}
+
+.i2JournalPaper::before {
+  content: "";
+  position: absolute;
+  left: 44px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: color-mix(in srgb, var(--dream-accent) 42%, transparent);
+  opacity: .42;
+  pointer-events: none;
+}
+
+.i2JournalPaper::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent 0 88%, rgba(110, 78, 48, .08), transparent 100%);
+  mix-blend-mode: multiply;
+}
+
+.i2BookPageMark {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 62%, transparent);
+  color: var(--muted);
+  font: 10px var(--type-mono);
+  letter-spacing: .08em;
+}
+
+.i2BookPageMark b {
+  color: var(--ink);
+  font-weight: 400;
+}
+
+.i2JournalPaper > h2 {
+  position: relative;
+  z-index: 1;
+  margin: 28px 0 0;
+  color: var(--ink);
+  font: 400 clamp(34px, 5vw, 64px)/1.02 var(--type-serif) !important;
+  letter-spacing: -.045em;
+}
+
+.i2JournalBody {
+  position: relative;
+  z-index: 1;
+  width: min(680px, 100%);
+  margin: 40px 0 0;
+}
+
+.i2ReadingSection {
+  margin-bottom: 40px;
+}
+
+.i2ReadingSection h2 {
+  color: color-mix(in srgb, var(--dream-accent) 68%, var(--muted)) !important;
+  letter-spacing: .16em;
+}
+
+.i2ReadingSection p {
+  color: var(--ink);
+  font-size: 18px !important;
+  line-height: 1.95 !important;
+}
+
+.i2ReadingEmpty {
+  padding: 40px 0;
+  color: var(--muted);
+}
+
+.i2ReadingEmpty h2 {
+  color: var(--ink);
+  font: 400 30px/1.1 var(--type-serif);
+}
+
+.i2BookNav {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 52px;
+  padding-top: 15px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.i2BookNav button {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+  font: 18px var(--type-serif);
+  transition: transform .18s ease, background .18s ease, border-color .18s ease;
+}
+
+.i2BookNav button:hover:not(:disabled) {
+  border-color: var(--dream-accent);
+  background: color-mix(in srgb, var(--dream-accent) 10%, transparent);
+  transform: translateX(2px);
+}
+
+.i2BookNav button:first-child:hover:not(:disabled) { transform: translateX(-2px); }
+.i2BookNav button:disabled { opacity: .28; }
+
+.i2JournalDetails {
+  position: relative;
+  z-index: 1;
+  margin-top: 28px;
+}
+
+.i2JournalBook.turn-next .i2JournalPaper {
+  animation: journalPageTurnNext .72s cubic-bezier(.2, .78, .22, 1) both;
+}
+
+.i2JournalBook.turn-previous .i2JournalPaper {
+  transform-origin: right center;
+  animation: journalPageTurnPrevious .72s cubic-bezier(.2, .78, .22, 1) both;
+}
+
+@keyframes journalPageTurnNext {
+  0% { opacity: .2; transform: rotateY(-76deg) translateX(28px); filter: brightness(1.08); }
+  55% { opacity: 1; transform: rotateY(7deg) translateX(2px); filter: brightness(1); }
+  100% { opacity: 1; transform: none; filter: none; }
+}
+
+@keyframes journalPageTurnPrevious {
+  0% { opacity: .2; transform: rotateY(76deg) translateX(-28px); filter: brightness(1.08); }
+  55% { opacity: 1; transform: rotateY(-7deg) translateX(-2px); filter: brightness(1); }
+  100% { opacity: 1; transform: none; filter: none; }
+}
+
+body.journalFocusMode .i2JournalBookSurface {
+  width: min(1120px, 100%);
+  padding-top: 34px;
+}
+
+body.journalFocusMode .i2JournalBookSurface::before {
+  inset: 0 -24px 34px;
+  opacity: .5;
+}
+
+body.journalFocusMode .i2JournalHead {
+  max-width: 930px;
+  margin: 0 auto;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 56%, transparent);
+}
+
+body.journalFocusMode .i2JournalHead .i2JournalActions .btn:not(#journalFocusToggle),
+body.journalFocusMode .i2JournalHead .i2JournalPageCount {
+  display: none;
+}
+
+body.journalFocusMode .i2JournalHead #journalFocusToggle {
+  display: none;
+}
+
+body.journalFocusMode .i2JournalLayout {
+  display: block;
+  max-width: 930px;
+  margin-inline: auto;
+}
+
+body.journalFocusMode .i2JournalList { display: none; }
+body.journalFocusMode .i2JournalBook { min-height: calc(100dvh - 196px); }
+body.journalFocusMode .i2JournalPaper { min-height: calc(100dvh - 196px); }
+
+@media (max-width: 920px) {
+  .i2JournalBookSurface { padding-inline: 18px; }
+  .i2JournalLayout { grid-template-columns: 1fr; gap: 24px; }
+  .i2JournalList {
+    position: static;
+    max-height: 190px;
+    padding: 0 0 8px;
+    overflow-x: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .i2JournalList::after { top: auto; right: 0; bottom: 0; left: 0; width: auto; height: 1px; }
+  .i2JournalListHead { min-width: 154px; padding: 0 12px 10px 0; border-bottom: 0; }
+  .i2JournalListRule { display: none; }
+  .i2JournalItem { min-width: 148px; border: 1px solid color-mix(in srgb, var(--line) 70%, transparent); padding: 10px; }
+  .i2JournalItem.active { padding-left: 10px; }
+  .i2JournalItem:hover, .i2JournalItem:focus-visible { padding-left: 10px; }
+  .i2JournalBook { min-height: auto; }
+  .i2JournalPaper { min-height: 680px; }
+}
+
+@media (max-width: 620px) {
+  .i2JournalBookSurface { padding: 12px 12px 76px; }
+  .i2JournalBookSurface::before { inset: 18px 0 24px; }
+  .i2JournalHead { display: block; padding: 18px 0 15px; }
+  .i2JournalHeading h1 { font-size: clamp(38px, 13vw, 54px) !important; }
+  .i2JournalActions { justify-content: flex-start; margin-top: 16px; }
+  .i2JournalActions .i2TurnButton { display: none; }
+  .i2JournalPageCount { margin-right: auto; padding-left: 0; }
+  .i2JournalLayout { margin-top: 18px; }
+  .i2JournalList { max-height: 148px; }
+  .i2JournalListHead { min-width: 126px; }
+  .i2JournalListHead span { font-size: 17px; }
+  .i2JournalItem { min-width: 130px; }
+  .i2BookSpine { left: 12px; }
+  .i2JournalPaper { min-height: 620px; padding: 34px 23px 42px 42px; }
+  .i2JournalPaper::before { left: 28px; }
+  .i2JournalPaper > h2 { font-size: clamp(34px, 11vw, 48px) !important; }
+  .i2JournalBody { margin-top: 30px; }
+  .i2ReadingSection p { font-size: 17px !important; line-height: 1.88 !important; }
+  .i2BookPageMark { font-size: 8px; }
+  .i2BookNav { margin-top: 36px; }
+  body.journalFocusMode .i2JournalBookSurface { padding: 18px 12px 70px; }
+  body.journalFocusMode .i2JournalPaper { min-height: calc(100dvh - 154px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .i2JournalBook.turn-next .i2JournalPaper,
+  .i2JournalBook.turn-previous .i2JournalPaper { animation: none; }
+  .i2JournalItem, .i2BookNav button { transition: none; }
+}
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+html,
+body,
+* {
+  scrollbar-color: color-mix(in srgb, var(--dream-accent, #776985) 32%, var(--paper, #f7f0e6)) transparent;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--dream-accent, #776985) 32%, var(--paper, #f7f0e6));
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+
+/* The writing surface is the one place where the user should feel the full
+   width of the desktop window. */
+@media (min-width: 981px) {
+  .app {
+    grid-template-columns: var(--life-nav-width) minmax(0, 1fr) !important;
+  }
+
+  .productDock {
+    padding: 0 !important;
+  }
+
+  .productDockBox,
+  body.writerImmersive .productDockBox {
+    width: 100vw !important;
+    max-width: none !important;
+    height: 100dvh !important;
+    max-height: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  body.writerImmersive #productPanel,
+  body.writerImmersive .i2Desk {
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+  }
+
+  body.writerImmersive .i2Writer.i2Desk {
+    width: 100%;
+    max-width: none;
+    padding-inline: clamp(24px, 4vw, 72px);
+  }
+
+  body.writerImmersive .i2WriterGrid {
+    grid-auto-flow: row dense;
+    margin-top: 12px;
+  }
+}
+
+/* Keep the everyday desk quiet. The state still exists in the DOM for
+   screen readers and debugging, but it is not competing with the page. */
+.i2WriterStageTop {
+  padding-block: 9px !important;
+}
+
+.i2WriterStageTop p,
+.i2ArrangeHint,
+.i2WriterTools > span,
+.i2WriterView > small,
+.i2WriterQuick > span,
+.i2WriterAsideDate > span {
+  display: none !important;
+}
+
+.i2WriterTools {
+  gap: 10px !important;
+}
+
+.i2WriterTools button[data-template="daily"],
+.i2WriterTools #writerDrawerToggle {
+  display: none !important;
+}
+
+/* The visible title is the direct rename affordance in arrange mode; the
+   pencil icon is redundant and makes the grid feel like a settings panel. */
+.i2CellEdit {
+  display: none !important;
+}
+
+.i2WriterCell {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.i2WriterCell .i2CellEditor {
+  min-width: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  font-size: calc(19px * var(--life-font-scale)) !important;
+  line-height: 1.78 !important;
+}
+
+.i2WriterCell .i2CellEditor::-webkit-scrollbar,
+.i2HabitCell::-webkit-scrollbar,
+.i2HabitCell *::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* Habit editing can be taller than its grid track. Keep the title and the
+   edit affordance pinned inside that cell while the rows remain scrollable,
+   so entering edit mode never hides the block's identity. */
+.i2HabitCell.is-habit-editing {
+  scroll-padding-top: 54px;
+}
+.i2HabitCell.is-habit-editing > .i2CellHead {
+  position: sticky !important;
+  top: 0;
+  z-index: 4;
+  background: inherit;
+}
+
+.i2CellHead label,
+.i2CellHead .i2CellTitle,
+.i2CellHead label span[data-cell-title],
+.i2CellHead .i2CellTitle span[data-cell-title] {
+  font-size: calc(19px * var(--life-font-scale)) !important;
+}
+
+.i2HabitCell .i2HabitList label,
+.i2HabitCell .i2HabitNote {
+  font-size: calc(16px * var(--life-font-scale)) !important;
+}
+
+.i2HabitCell .i2HabitList {
+  min-width: 0;
+}
+
+.i2HabitCell .i2HabitList label span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Habit names are user-entered content. A small habit cell must not turn
+   the editor into a two-column strip with unreadably short inputs. */
+.i2HabitEditorRows {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+.i2HabitEditorRow,
+.i2HabitEditorRow .input {
+  min-width: 0;
+  width: 100%;
+}
+
+/* All internal writing scroll belongs to the cell, never to the page. */
+body.writerImmersive .i2WriterGrid .i2CellEditor {
+  touch-action: pan-y;
+}
+
+/* The enhanced desk uses grid display rules; keep semantic hidden panels
+   hidden and out of the flow so the habit cell remains the final surface. */
+body.writerImmersive .i2Desk [hidden]:not(.i2CellFormatBar) {
+  display: none !important;
+}
+
+body.writerImmersive textarea::placeholder,
+body.writerImmersive input::placeholder {
+  color: transparent !important;
+}
+
+/* The four lenses are visually different, not just different labels. */
+.i2WriterGrid[data-view="day"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.i2WriterGrid[data-view="week"] {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.i2WriterGrid[data-view="month"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.i2WriterGrid[data-view="year"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.i2WriterGrid[data-view="week"] .i2WriterCell {
+  min-height: 210px;
+}
+
+.i2WriterGrid[data-view="month"] .i2WriterCell {
+  min-height: 260px;
+}
+
+.i2WriterGrid[data-view="year"] .i2WriterCell {
+  min-height: 340px;
+}
+
+/* Default is intentionally the large reading size. The controls only change
+   this variable, so headings, habits and cell editors move together. */
+body[data-life-font-size="default"] {
+  --life-font-scale: 1.12;
+}
+
+body[data-life-font-size="large"] {
+  --life-font-scale: 1.28;
+}
+
+body[data-life-font-size="xlarge"] {
+  --life-font-scale: 1.45;
+}
+
+body[data-life-font-size="large"] .i2WriterCell .i2CellHead label,
+body[data-life-font-size="large"] .i2WriterCell .i2CellTitle,
+body[data-life-font-size="xlarge"] .i2WriterCell .i2CellHead label,
+body[data-life-font-size="xlarge"] .i2WriterCell .i2CellTitle,
+body[data-life-font-size="large"] .i2WriterCell .i2CellEditor,
+body[data-life-font-size="xlarge"] .i2WriterCell .i2CellEditor,
+body[data-life-font-size="large"] .i2HabitCell .i2HabitList label,
+body[data-life-font-size="xlarge"] .i2HabitCell .i2HabitList label,
+body[data-life-font-size="large"] .i2HabitCell .i2HabitNote,
+body[data-life-font-size="xlarge"] .i2HabitCell .i2HabitNote {
+  line-height: 1.82 !important;
+}
+
+/* Keep the same scale across the surrounding reading surface as well. The
+   writer already uses the variable for its cells; these rules cover the
+   source-first journal, navigation and shared controls that otherwise kept
+   their old fixed pixel sizes. */
+.i2Journal h1 {
+  font-size: clamp(42px, calc(4.8vw * var(--life-font-scale)), calc(58px * var(--life-font-scale))) !important;
+}
+.i2Journal h2 {
+  font-size: calc(20px * var(--life-font-scale)) !important;
+}
+.i2JournalBody,
+.i2JournalBody p,
+.i2JournalBody li {
+  font-size: calc(15px * var(--life-font-scale)) !important;
+  line-height: 1.82 !important;
+}
+.i2JournalListHead,
+.i2JournalItem strong,
+.i2JournalActions .btn,
+.i2BookNav,
+.i2JournalDetails {
+  font-size: calc(12px * var(--life-font-scale)) !important;
+}
+.i2JournalItem small,
+.i2JournalListEmpty,
+.i2JournalHead p,
+.i2BookPageMark,
+.i2JournalDetails div {
+  font-size: calc(10px * var(--life-font-scale)) !important;
+}
+.roomBtn,
+.lifeWindowBrand,
+.lifeWindowPage,
+.topActions button,
+.productTabs button,
+.productAction,
+.btn,
+.input,
+textarea,
+select {
+  font-size: calc(1em * var(--life-font-scale)) !important;
+}
+.kicker,
+.small,
+.muted,
+.mono,
+.fieldLabel,
+.settingCard p,
+.featureStateBanner,
+.freshnessNote {
+  font-size: calc(1em * var(--life-font-scale)) !important;
+}
+
+/* Other is a normal room, so its panel never floats over the page. */
+.v03Other {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: clamp(22px, 5vw, 64px) 0 90px;
+}
+
+.v03OtherHead {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+.v03OtherHead h1 {
+  margin: 7px 0 0;
+  font: 400 clamp(40px, 7vw, 82px)/.95 var(--type-serif);
+  letter-spacing: -.055em;
+}
+
+.v03OtherHead p {
+  max-width: 560px;
+  margin: 14px 0 0;
+  color: var(--muted);
+  font: calc(15px * var(--life-font-scale))/1.75 var(--type-serif);
+}
+
+.v03OtherCount {
+  color: var(--muted);
+  font: calc(10px * var(--life-font-scale)) var(--type-mono);
+  white-space: nowrap;
+}
+
+.v03OtherGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 30px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.v03OtherItem {
+  min-height: 126px;
+  padding: 18px 20px;
+  border: 0;
+  background: var(--paper);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.v03OtherItem:hover,
+.v03OtherItem:focus-visible {
+  background: color-mix(in srgb, var(--dream-accent) 8%, var(--paper));
+  outline: 0;
+}
+
+.v03OtherItem strong {
+  display: block;
+  font: calc(18px * var(--life-font-scale)) var(--type-serif);
+}
+
+.v03OtherItem span {
+  display: block;
+  margin-top: 10px;
+  color: var(--muted);
+  font: calc(10px * var(--life-font-scale))/1.5 var(--type-mono);
+}
+
+@media (max-width: 980px) {
+  .i2WriterGrid[data-view="week"],
+  .i2WriterGrid[data-view="month"],
+  .i2WriterGrid[data-view="year"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .v03OtherGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  /* The desktop dock has an intrinsic panel width. On a narrow window that
+     width must collapse to the viewport instead of being centered and
+     clipped off both sides. */
+  body.writerImmersive .productDock,
+  body.writerImmersive .productDockBox,
+  body.writerImmersive #productPanel,
+  body.writerImmersive .i2Desk,
+  body.writerImmersive .i2WriterStage,
+  body.writerImmersive .i2WriterGrid,
+  body.writerImmersive .i2WriterCell {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  body.writerImmersive .productDockBox {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .i2WriterGrid[data-view="day"],
+  .i2WriterGrid[data-view="week"],
+  .i2WriterGrid[data-view="month"],
+  .i2WriterGrid[data-view="year"] {
+    grid-template-columns: 1fr;
+  }
+
+  .i2WriterGrid[data-view="week"] .i2WriterCell,
+  .i2WriterGrid[data-view="month"] .i2WriterCell,
+  .i2WriterGrid[data-view="year"] .i2WriterCell {
+    min-height: 240px;
+  }
+
+  .v03OtherHead {
+    display: block;
+  }
+
+  .v03OtherCount {
+    display: block;
+    margin-top: 16px;
+  }
+
+  .v03OtherGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Keep the app chrome available while writing. The content drawer starts
+   after the window bar and beside the collapsible archive rail. */
+@media (min-width: 881px) {
+  body.writerImmersive .productDock {
+    inset: var(--life-titlebar-h) 0 0 var(--life-rail-w);
+    padding: 0 !important;
+    background: var(--paper) !important;
+    backdrop-filter: none;
+  }
+
+  body.sidebarCollapsed .productDock {
+    left: 0;
+  }
+
+  body.writerImmersive .productDockBox {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+  }
+}
+
+@media (max-width: 880px) {
+  body.writerImmersive .productDock {
+    inset: calc(var(--life-titlebar-h) + 68px) 0 0 0;
+    padding: 0 !important;
+    background: var(--paper) !important;
+    backdrop-filter: none;
+  }
+
+  body.writerImmersive .productDockBox {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+  }
+}
+
+@media (min-width: 981px) {
+  /* The writer canvas owns the desktop grid with !important; repeat the
+     collapsed state here so the page follows the rail instead of leaving a
+     dead 202px gutter behind. */
+  body.sidebarCollapsed .app {
+    grid-template-columns: 0 minmax(0, 1fr) !important;
+  }
+}
+
+/* The archive rail stays available; the writing surface has no duplicate
+   navigation controls. */
+.i2WriterHeadSpacer {
+  display: block;
+  min-width: 32px;
+  min-height: 1px;
+}
+
+@media (max-width: 760px) {
+  .i2WriterHeadSpacer { min-width: 24px; }
+  .i2DeskHead .i2WriterCommands #writerRead { display: inline-flex !important; padding: 7px 6px !important; }
+}
+
+/* Match the Home page's quieter upper-left start across the reading rooms. */
+.i2JournalBookSurface,
+.i2Search,
+.v03Other {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.i2JournalBookSurface {
+  padding-top: clamp(20px, 2.8vw, 36px);
+}
+
+.i2Search {
+  padding-top: clamp(20px, 2.8vw, 36px);
+}
+
+.v03Other {
+  padding-top: clamp(22px, 3vw, 38px);
+}
+
+/* A selected writing cell keeps its caret/edge cue, without adding a second
+   rounded focus shell around the page. */
+.i2WriterGrid .i2WriterCell:focus,
+.i2WriterGrid .i2WriterCell:focus-visible,
+.i2WriterGrid .i2WriterCell textarea:focus,
+.i2WriterGrid .i2WriterCell textarea:focus-visible,
+.i2WriterGrid .i2CellEditor:focus,
+.productDock input:focus,
+.productDock textarea:focus,
+.productDock [contenteditable="true"]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+.productDock .input:focus {
+  border-radius: 0 !important;
+  border-color: var(--dream-accent) !important;
+}
+
+@media (max-width: 880px) {
+  .page:has(> .module > .i2JournalBookSurface),
+  .page:has(> .module > .i2Search),
+  .page:has(> .module > .v03Other) {
+    padding-top: 0 !important;
+  }
+
+  .page > .module {
+    margin-left: -18px !important;
+    margin-right: -18px !important;
+    width: calc(100% + 36px) !important;
+  }
+
+  .i2JournalBookSurface { padding-top: 12px; }
+  .i2Search { padding-top: 16px; }
+  .v03Other { padding-top: 18px; }
+}
+
+/* Journal is the reading surface itself. It should meet the shell edges
+   instead of sitting inside a second padded page frame. */
+#view:has(> .page > .module > .i2JournalBookSurface),
+#view:has(> .page > .module > .i2Search),
+#view:has(> .page > .module > .v03Other) {
+  padding: 0 !important;
+  max-width: none !important;
+}
+
+#view:has(> .page > .module > .i2JournalBookSurface) > .page,
+#view:has(> .page > .module > .i2Search) > .page,
+#view:has(> .page > .module > .v03Other) > .page {
+  max-width: none !important;
+  padding: 0 !important;
+}
+
+#view:has(> .page > .module > .i2JournalBookSurface) > .page > .module,
+#view:has(> .page > .module > .i2Search) > .page > .module,
+#view:has(> .page > .module > .v03Other) > .page > .module {
+  margin: 0 !important;
+}
+
+/* The third divider in the writer's quiet rail carries a small directional
+   cue, so the collapsible navigation affordance is discoverable without
+   adding another heavy button. */
+.i2WriterAside .i2WriterView + .i2WriterAsideRule {
+  position: relative;
+}
+
+.i2WriterAside .i2WriterView + .i2WriterAsideRule::after {
+  content: '‹';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translateY(-50%);
+  color: var(--dream-accent);
+  font: 18px/18px var(--type-serif);
+  text-align: center;
+  opacity: .78;
+}
+
+@media (max-width: 880px) {
+  #view:has(> .page > .module > .i2JournalBookSurface) > .page > .module,
+  #view:has(> .page > .module > .i2Search) > .page > .module,
+  #view:has(> .page > .module > .v03Other) > .page > .module {
+    width: 100% !important;
+    margin-inline: 0 !important;
+  }
+}

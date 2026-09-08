@@ -381,12 +381,14 @@
 }
 
 /* Inline layout editing and per-cell rich text. */
-.i2CellHead label {
+.i2CellHead label,
+.i2CellHead .i2CellTitle {
   display: flex;
   align-items: baseline;
   min-width: 0;
   gap: 8px;
 }
+.i2CellTitle { cursor: text; }
 .i2CellTitleInput {
   width: min(190px, 48%);
   min-width: 0;

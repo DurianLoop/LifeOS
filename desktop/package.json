@@ -1,8 +1,9 @@
 {
-  "name": "lifeos-living-memory-desktop",
+  "name": "lifeos-v0.2.2-desktop",
   "private": true,
-  "version": "0.2.1",
-  "description": "LifeOS Core X Personal Memory Platform desktop shell",
+  "version": "0.2.2",
+  "author": "LifeOS Contributors",
+  "description": "LifeOS v0.2.2 local-first journal desktop app",
   "main": "main.cjs",
   "scripts": {
     "start": "electron .",
@@ -12,28 +13,35 @@
     "dist:linux": "electron-builder --linux AppImage",
     "dist:all": "electron-builder -mwl"
   },
-  "dependencies": {
-    "electron-updater": "^6.6.2"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "electron": "^37.2.6",
-    "electron-builder": "^26.0.12"
+    "electron": "37.10.3",
+    "electron-builder": "24.13.3"
   },
   "build": {
     "appId": "life.lifeos.desktop",
     "productName": "LifeOS",
-    "asar": false,
+    "electronVersion": "37.10.3",
+    "asar": true,
+    "compression": "maximum",
     "files": [
       "**/*",
-      "!dist{,/**/*}",
-      "!release-output{,/**/*}",
-      "!release-*/**",
-      "!build{,/**/*}"
+      "!node_modules/**",
+      "!dist/**",
+      "!.electron-cache/**",
+      "!.builder-cache/**",
+      "!python-runtime/**",
+      "!server-dist/**",
+      "!build/**"
     ],
     "extraResources": [
       {
         "from": "../app",
-        "to": "app"
+        "to": "app",
+        "filter": [
+          "**/*",
+          "!assets/pet-readme-previews/**"
+        ]
       },
       {
         "from": "../backend",
@@ -64,11 +72,16 @@
         "to": "connectors"
       },
       {
+        "from": "python-runtime",
+        "to": "python"
+      },
+      {
         "from": "../marketplace",
         "to": "marketplace"
       }
     ],
     "win": {
+      "signAndEditExecutable": false,
       "target": [
         "nsis"
       ]
@@ -85,7 +98,6 @@
         "AppImage"
       ],
       "category": "Utility"
-    },
-    "publish": null
+    }
   }
 }

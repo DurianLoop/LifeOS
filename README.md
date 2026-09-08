@@ -1,4 +1,4 @@
-# LifeOS v0.2
+# LifeOS v0.2.2
 
 LifeOS is a local-first journal and personal memory workspace. Write on a
 customizable grid, retain revisions, import past journals, revisit pages as a
@@ -13,6 +13,12 @@ book, and keep your material on your own device.
 - Date jump, inline formatting, theme-consistent scrolling, and a faster
   writing-page transition.
 - The Other room is a first-class page, alongside Today and Journal.
+
+## What is new in v0.2.2
+
+- A lighter desktop companion with click, keyboard, drag, chat, and context-menu interactions.
+- Gallery previews load on demand while installed pet packages remain local and opt-in.
+- The Windows installer uses compressed ASAR packaging and excludes gallery-only preview assets.
 
 ## Privacy
 
