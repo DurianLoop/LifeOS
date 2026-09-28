@@ -1,18 +1,19 @@
 {
   "name": "lifeos-desktop",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "LifeOS local-first private journal with poetry, ambient sounds and memorial pages",
   "author": "LifeOS Contributors",
   "main": "main.cjs",
   "scripts": {
-    "start": "electron .",
-    "test": "node --test startup.test.cjs",
+    "start": "node setup.cjs start",
+    "test": "node --test startup.test.cjs setup.test.cjs",
     "dist": "electron-builder",
     "dist:win": "electron-builder --win nsis",
     "dist:mac": "electron-builder --mac dmg zip",
     "dist:linux": "electron-builder --linux AppImage",
-    "dist:all": "electron-builder -mwl"
+    "dist:all": "electron-builder -mwl",
+    "setup": "node setup.cjs setup --no-launch"
   },
   "dependencies": {
     "electron-updater": "^6.6.2"
@@ -45,17 +46,29 @@
       {
         "from": "../backend",
         "to": "backend",
-        "filter": ["**/*", "!**/__pycache__/**", "!**/*.pyc"]
+        "filter": [
+          "**/*",
+          "!**/__pycache__/**",
+          "!**/*.pyc"
+        ]
       },
       {
         "from": "../engine",
         "to": "engine",
-        "filter": ["**/*", "!**/__pycache__/**", "!**/*.pyc"]
+        "filter": [
+          "**/*",
+          "!**/__pycache__/**",
+          "!**/*.pyc"
+        ]
       },
       {
         "from": "../importers",
         "to": "importers",
-        "filter": ["**/*", "!**/__pycache__/**", "!**/*.pyc"]
+        "filter": [
+          "**/*",
+          "!**/__pycache__/**",
+          "!**/*.pyc"
+        ]
       },
       {
         "from": "../config",
@@ -64,7 +77,11 @@
       {
         "from": "../connectors",
         "to": "connectors",
-        "filter": ["**/*", "!**/__pycache__/**", "!**/*.pyc"]
+        "filter": [
+          "**/*",
+          "!**/__pycache__/**",
+          "!**/*.pyc"
+        ]
       },
       {
         "from": "python-runtime",

@@ -1,4 +1,13 @@
-# LifeOS v0.3.0
+# LifeOS v0.3.1
+
+## v0.3.1 源码安装修复
+
+- Windows/macOS/Linux 安装统一使用项目独立的 `desktop/.venv`，不修改共享 Anaconda 或系统 Python。
+- 源码启动优先使用项目环境，并清除可能污染解释器的 `PYTHONHOME` / `PYTHONPATH`。
+- 检查 Electron 的真实可执行文件，修复下载不完整或缺失 `path.txt` 的安装。
+- 安装失败明确返回错误；支持 `setup_desktop.bat --no-launch` 验证完整安装流程。
+
+## v0.3.0 功能
 
 这一版修复 Windows 桌面启动，并整合今日一诗、白噪音和纪念页 / 二维码。
 

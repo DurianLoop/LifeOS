@@ -1,15 +1,14 @@
 @echo off
 setlocal EnableExtensions
-cd /d "%~dp0desktop" || (echo Cannot find the desktop folder.& pause & exit /b 1)
-title LifeOS v0.3 - Desktop
-if not exist node_modules\electron (echo Desktop dependencies are missing. Run setup_desktop.bat once.& pause & exit /b 1)
-where npm >nul 2>nul || (echo Node.js is missing. Run setup_desktop.bat first.& pause & exit /b 1)
-echo.
-echo   Opening LifeOS v0.3 desktop...
-echo.
-call npm start
+cd /d "%~dp0" || exit /b 1
+title LifeOS - Desktop
+where node >nul 2>nul
 if errorlevel 1 (
-  echo.
-  echo The desktop app could not start. Check the message above.
-  pause
+  echo Node.js LTS is required. Run setup_desktop.bat first.
+  if /i not "%~1"=="--no-launch" pause
+  exit /b 1
 )
+node "%~dp0desktop\setup.cjs" start %*
+set "LIFEOS_START_EXIT=%errorlevel%"
+if not "%LIFEOS_START_EXIT%"=="0" if /i not "%~1"=="--no-launch" pause
+exit /b %LIFEOS_START_EXIT%

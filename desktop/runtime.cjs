@@ -40,8 +40,12 @@ function prepareWorkspace({resourceRoot, dataRoot}) {
 function backendLaunch({resourceRoot, dataRoot, isPackaged, platform = process.platform, env = process.env}) {
   const bundled = path.join(resourceRoot, 'python', platform === 'win32' ? 'python.exe' : 'bin/python3');
   const frozen = path.join(resourceRoot, platform === 'win32' ? 'lifeos-server.exe' : 'lifeos-server');
+  const virtualenv = path.join(resourceRoot, 'desktop', '.venv', platform === 'win32' ? 'Scripts/python.exe' : 'bin/python');
+  // A shell's Conda/other Python environment must not redirect the selected
+  // interpreter's standard library or inject unrelated project modules.
+  const cleanEnv = Object.fromEntries(Object.entries(env).filter(([key]) => !['PYTHONHOME', 'PYTHONPATH'].includes(key.toUpperCase())));
   const backendEnv = {
-    ...env,
+    ...cleanEnv,
     LIFEOS_ROOT: dataRoot,
     LIFEOS_RESOURCE_ROOT: resourceRoot,
     LIFEOS_NO_BROWSER: '1',
@@ -49,15 +53,18 @@ function backendLaunch({resourceRoot, dataRoot, isPackaged, platform = process.p
     PYTHONUNBUFFERED: '1',
     PYTHONUTF8: '1',
     PYTHONDONTWRITEBYTECODE: '1',
-    PYTHONPATH: [resourceRoot, env.PYTHONPATH].filter(Boolean).join(path.delimiter),
+    PYTHONPATH: resourceRoot,
   };
   if (isPackaged && fs.existsSync(frozen)) return {command: frozen, args: [], env: backendEnv};
   let command = env.LIFEOS_PYTHON;
-  if (!command && fs.existsSync(bundled)) {
+  if (!command && !isPackaged && fs.existsSync(virtualenv) && fs.statSync(virtualenv).isFile()) command = virtualenv;
+  if (!command && isPackaged && fs.existsSync(bundled)) {
     command = bundled;
     const pythonRoot = platform === 'win32' ? path.dirname(bundled) : path.resolve(path.dirname(bundled), '..');
     backendEnv.PYTHONHOME = pythonRoot;
-    backendEnv.PATH = [pythonRoot, path.join(pythonRoot, 'DLLs'), path.join(pythonRoot, 'Library', 'bin'), env.PATH || ''].join(path.delimiter);
+    const inheritedPath = Object.entries(env).find(([key]) => key.toUpperCase() === 'PATH')?.[1] || '';
+    for (const key of Object.keys(backendEnv)) if (key.toUpperCase() === 'PATH') delete backendEnv[key];
+    backendEnv.PATH = [pythonRoot, path.join(pythonRoot, 'DLLs'), path.join(pythonRoot, 'Library', 'bin'), inheritedPath].join(path.delimiter);
   }
   if (!command && isPackaged) throw new Error('安装包缺少内置 Python 运行环境，请重新安装完整的 LifeOS 安装包。');
   return {

@@ -9,10 +9,34 @@ const http = require('node:http');
 const {once} = require('node:events');
 const runtime = require('./runtime.cjs');
 
-function workspace(t) {
+function workspace(t, beforeRemove = async () => {}) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'LifeOS 启动测试 '));
-  t.after(() => fs.rmSync(directory, {recursive: true, force: true}));
+  t.after(async () => {
+    // Windows can retain cwd/stdio handles briefly after a child emits exit.
+    // Always stop it and wait for close before retrying directory removal.
+    await beforeRemove();
+    assert.equal(path.dirname(path.resolve(directory)), path.resolve(os.tmpdir()));
+    await fs.promises.rm(directory, {recursive: true, force: true, maxRetries: 6, retryDelay: 150});
+  });
   return directory;
+}
+
+function stopAfterClose(backend) {
+  // Register immediately: failed spawns and short-lived children can close
+  // before test teardown begins. A spawn error still emits close afterwards.
+  const closed = new Promise(resolve => backend.child.once('close', resolve));
+  return async () => {
+    if (backend.child.exitCode === null && backend.child.signalCode === null) backend.stop();
+    let timer;
+    try {
+      await Promise.race([
+        closed,
+        new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('Test backend did not close within 10 seconds')), 10000); }),
+      ]);
+    } finally {
+      clearTimeout(timer);
+    }
+  };
 }
 
 async function server(t, handler) {
@@ -76,6 +100,62 @@ test('packaged startup requires a bundled runtime and selects the external boots
   assert.equal(launch.env.LIFEOS_HOST, '127.0.0.1');
 });
 
+for (const platform of ['win32', 'linux', 'darwin']) {
+  test(`source startup uses setup's local virtualenv on ${platform} and discards inherited Python paths`, t => {
+    const resourceRoot = workspace(t), dataRoot = path.join(resourceRoot, 'user');
+    const virtualenv = path.join(resourceRoot, 'desktop', '.venv', platform === 'win32' ? 'Scripts/python.exe' : 'bin/python');
+    fs.mkdirSync(path.dirname(virtualenv), {recursive: true});
+    fs.writeFileSync(virtualenv, 'fixture');
+    const env = {PATH: 'system-bin', PYTHONHOME: 'unrelated-conda', PYTHONPATH: 'another-project', PyThOnHoMe: 'another-python', LIFEOS_PORT: '1234'};
+    const launch = runtime.backendLaunch({resourceRoot, dataRoot, isPackaged: false, platform, env});
+    assert.equal(launch.command, virtualenv);
+    assert.deepEqual(launch.args, [path.join(resourceRoot, 'desktop', 'server_bootstrap.py')]);
+    assert.equal(launch.env.PYTHONPATH, resourceRoot);
+    assert.equal(Object.keys(launch.env).some(key => key.toUpperCase() === 'PYTHONHOME'), false);
+    assert.equal(launch.env.LIFEOS_PORT, '1234');
+    assert.equal(env.PYTHONHOME, 'unrelated-conda', 'the parent process environment remains untouched');
+  });
+}
+
+test('source startup falls back to system Python until setup creates the virtualenv', t => {
+  const resourceRoot = workspace(t), dataRoot = path.join(resourceRoot, 'user');
+  for (const platform of ['win32', 'linux']) {
+    const launch = runtime.backendLaunch({resourceRoot, dataRoot, isPackaged: false, platform, env: {PYTHONHOME: 'conda', PYTHONPATH: 'conda-packages'}});
+    assert.equal(launch.command, platform === 'win32' ? 'python' : 'python3');
+    assert.equal(launch.env.PYTHONPATH, resourceRoot);
+    assert.equal('PYTHONHOME' in launch.env, false);
+  }
+});
+
+test('an explicit Python executable with spaces overrides a local virtualenv without shell quoting', t => {
+  const resourceRoot = workspace(t), dataRoot = path.join(resourceRoot, 'user');
+  const virtualenv = path.join(resourceRoot, 'desktop', '.venv', 'Scripts', 'python.exe');
+  fs.mkdirSync(path.dirname(virtualenv), {recursive: true});
+  fs.writeFileSync(virtualenv, 'fixture');
+  const explicit = path.join(resourceRoot, 'My Python', 'python.exe');
+  const launch = runtime.backendLaunch({resourceRoot, dataRoot, isPackaged: false, platform: 'win32', env: {LIFEOS_PYTHON: explicit, PYTHONHOME: 'conda'}});
+  assert.equal(launch.command, explicit);
+  assert.equal('PYTHONHOME' in launch.env, false);
+});
+
+test('packaged startup ignores a source virtualenv and replaces inherited Python home and Windows Path casing', t => {
+  const resourceRoot = workspace(t), dataRoot = path.join(resourceRoot, 'user');
+  const virtualenv = path.join(resourceRoot, 'desktop', '.venv', 'Scripts', 'python.exe');
+  fs.mkdirSync(path.dirname(virtualenv), {recursive: true});
+  fs.writeFileSync(virtualenv, 'fixture');
+  const options = {resourceRoot, dataRoot, isPackaged: true, platform: 'win32', env: {PYTHONHOME: 'conda', PYTHONPATH: 'conda-packages', Path: 'system-bin'}};
+  assert.throws(() => runtime.backendLaunch(options), /内置 Python/);
+  const pythonRoot = path.join(resourceRoot, 'python');
+  fs.mkdirSync(pythonRoot);
+  fs.writeFileSync(path.join(pythonRoot, 'python.exe'), 'fixture');
+  const launch = runtime.backendLaunch(options);
+  assert.equal(launch.command, path.join(pythonRoot, 'python.exe'));
+  assert.equal(launch.env.PYTHONHOME, pythonRoot);
+  assert.equal(launch.env.PYTHONPATH, resourceRoot);
+  assert.equal('Path' in launch.env, false);
+  assert.ok(launch.env.PATH.endsWith('system-bin'));
+});
+
 test('a busy configured port is replaced with a free localhost port', async t => {
   const url = await server(t, (_, res) => res.end());
   const busy = Number(new URL(url).port);
@@ -103,36 +183,33 @@ test('hung health requests have a bounded timeout', async t => {
 });
 
 test('a missing interpreter produces a useful error instead of an unhandled spawn error', async t => {
-  const dataRoot = workspace(t);
+  let stop = async () => {};
+  const dataRoot = workspace(t, () => stop());
   const backend = runtime.startBackend({command: path.join(dataRoot, 'missing-python.exe'), args: [], env: process.env}, {dataRoot, logFile: path.join(dataRoot, 'logs', 'desktop.log'), port: 1});
-  t.after(() => backend.stop());
+  stop = stopAfterClose(backend);
   await assert.rejects(runtime.waitForServer('http://127.0.0.1:1/api/health', {timeout: 2000, interval: 10, failure: backend.failure}), /无法启动本地服务/);
   assert.match(fs.readFileSync(path.join(dataRoot, 'logs', 'desktop.log'), 'utf8'), /无法启动本地服务/);
 });
 
 test('backend failures capture stderr and stop readiness immediately', async t => {
-  const dataRoot = workspace(t);
+  let stop = async () => {};
+  const dataRoot = workspace(t, () => stop());
   const backend = runtime.startBackend({command: process.execPath, args: ['-e', 'console.error("fixture import error");process.exit(7)'], env: process.env}, {dataRoot, logFile: path.join(dataRoot, 'desktop.log'), port: 1});
-  t.after(() => backend.stop());
+  stop = stopAfterClose(backend);
   await assert.rejects(runtime.waitForServer('http://127.0.0.1:1/api/health', {timeout: 3000, interval: 10, failure: backend.failure}), /fixture import error/);
 });
 
 test('real backend initializes clean data, serves packaged assets, and preserves a journal across restart', {skip: !process.env.LIFEOS_TEST_PYTHON, timeout: 120000}, async t => {
-  const base = workspace(t);
+  let stop = async () => {};
+  const base = workspace(t, () => stop());
   const paths = {resourceRoot: path.resolve(__dirname, '..'), dataRoot: path.join(base, 'workspace'), logFile: path.join(base, 'logs', 'desktop.log')};
   runtime.prepareWorkspace(paths);
   const launch = runtime.backendLaunch({...paths, isPackaged: false, env: {...process.env, LIFEOS_PYTHON: process.env.LIFEOS_TEST_PYTHON}});
   let backend;
-  const stop = async () => {
-    if (!backend || backend.child.exitCode !== null || backend.child.signalCode !== null) return;
-    const exited = once(backend.child, 'exit');
-    backend.stop();
-    await exited;
-  };
-  t.after(stop);
   const start = async () => {
     const port = await runtime.availablePort();
     backend = runtime.startBackend(launch, {...paths, port});
+    stop = stopAfterClose(backend);
     const url = `http://127.0.0.1:${port}`;
     await runtime.waitForServer(url + '/api/health', {failure: backend.failure});
     return url;

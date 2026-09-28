@@ -26,7 +26,7 @@ import time
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'docs' / 'qa_v03'
-VERSION = '0.3.0'
+VERSION = '0.3.1'
 CODE_DIRECTORIES = ('app', 'backend', 'cloud', 'connectors', 'desktop', 'engine',
                     'importers', 'memorial-site', 'mobile', 'netlify', 'scripts')
 SKIP_DIRECTORIES = {'.git', '.venv', 'node_modules', '__pycache__', 'python-runtime',
@@ -180,8 +180,8 @@ def metadata():
     checked += 1
     try:
         edition = json.loads((ROOT / 'config/edition.json').read_text(encoding='utf-8-sig'))
-        if not re.search(r'\bv0\.3(?:\.0)?\b', edition.get('display_name', ''), re.I):
-            errors.append('config/edition.json: display_name must identify v0.3')
+        if edition.get('display_name') != f'LifeOS v{VERSION}':
+            errors.append(f'config/edition.json: display_name must identify v{VERSION}')
         if edition.get('contains_user_memory') is not False:
             errors.append('config/edition.json: contains_user_memory must be false')
     except (OSError, ValueError) as error:
@@ -205,7 +205,7 @@ def main():
     def save(completed=False):
         summary = {'total': len(results), 'passed': sum(item['ok'] for item in results),
                    'failed': sum(not item['ok'] for item in results)}
-        report = {'ok': completed and len(results) == 11 and summary['failed'] == 0,
+        report = {'ok': completed and len(results) == 12 and summary['failed'] == 0,
                   'status': 'complete' if completed else 'running', 'release': VERSION,
                   'started_at': started, 'updated_at': now(), 'root': str(ROOT),
                   'python': sys.executable, 'backend_python': str(backend_python),
@@ -231,6 +231,7 @@ def main():
             # Running the file directly retains node:test coverage and avoids
             # Node's extra test-runner child process on restricted Windows.
             ('desktop-startup', [node, 'desktop/startup.test.cjs']),
+            ('desktop-setup', [node, 'desktop/setup.test.cjs']),
             ('desktop-backend', [sys.executable, 'scripts/test_desktop_backend.py', '--python', backend_python]),
             ('feature-parity', [sys.executable, 'scripts/feature_parity_audit.py']),
         ]

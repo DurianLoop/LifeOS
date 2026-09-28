@@ -11,7 +11,7 @@ LifeOS is a local-first journal and personal memory workspace, with an editable 
 
 ## Windows download
 
-Download [LifeOS-Setup-0.3.0.exe](https://github.com/DurianLoop/LifeOS/releases/download/v0.3.0/LifeOS-Setup-0.3.0.exe) from the [v0.3.0 release](https://github.com/DurianLoop/LifeOS/releases/tag/v0.3.0). Python is included. This community build is unsigned.
+Download [LifeOS-Setup-0.3.1.exe](https://github.com/DurianLoop/LifeOS/releases/download/v0.3.1/LifeOS-Setup-0.3.1.exe) from the [v0.3.1 release](https://github.com/DurianLoop/LifeOS/releases/tag/v0.3.1). Python is included. This community build is unsigned.
 
 Installed app data is stored under `%APPDATA%/LifeOS/workspace/`; startup diagnostics are under `%APPDATA%/LifeOS/logs/desktop.log`. Back up the workspace folder to preserve journals, revisions and settings. Source runs continue to use the repository folder.
 
@@ -30,6 +30,8 @@ Requirements: Python 3.11+ and Node.js 20+.
 ```powershell
 .\setup_desktop.bat
 ```
+
+Setup creates the isolated `desktop/.venv` environment and checks the real Electron executable before reporting success. It never installs packages into your shared Anaconda/system Python. Run `.\start_desktop.bat` for subsequent launches. For setup without opening a window, use `.\setup_desktop.bat --no-launch`.
 
 On macOS/Linux, run `./setup_desktop.sh`. For browser mode, install `requirements.txt` and run `start.bat` / `start.sh`.
 
