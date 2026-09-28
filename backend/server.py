@@ -9,17 +9,18 @@ except ImportError:
     Image=None
 
 ROOT=Path(os.getenv('LIFEOS_ROOT') or Path(__file__).resolve().parents[1])
-sys.path.insert(0,str(ROOT)) if str(ROOT) not in sys.path else None
+SOURCE_ROOT=Path(os.getenv('LIFEOS_RESOURCE_ROOT') or Path(__file__).resolve().parents[1])
+sys.path.insert(0,str(SOURCE_ROOT)) if str(SOURCE_ROOT) not in sys.path else None
 from engine import product_core as product
 from engine.incremental_index import reindex_paths, run_one_pending_refresh
 from engine.refresh_worker import start_refresh_worker
 from engine import import_pipeline
 from engine import sync_engine
-from engine import p2_core, p2_sync, crypto_vault
+from engine import p2_core, p2_sync, crypto_vault, poetry_engine, memorial
 from connectors import CONNECTORS
 from backend import ai_providers
 from backend.secret_store import set_secret, delete_secret
-APP=ROOT/'app'
+APP=SOURCE_ROOT/'app'
 DB=ROOT/'data/lifeos.db'
 CFG=json.loads((ROOT/'config/taxonomy.json').read_text(encoding='utf-8'))
 
@@ -28,7 +29,7 @@ CFG=json.loads((ROOT/'config/taxonomy.json').read_text(encoding='utf-8'))
 # flow; only publicly listed sprite packages are handled here.
 PET_CATALOG_URL='https://raw.githubusercontent.com/legeling/awesome-codex-pet/main/pets.json'
 PET_RAW_ROOT='https://raw.githubusercontent.com/legeling/awesome-codex-pet/main/pets'
-PET_ASSET_ROOT=APP/'assets'/'pets'
+PET_ASSET_ROOT=ROOT/'app'/'assets'/'pets'
 PET_PREVIEW_ROOT=APP/'assets'/'pet-readme-previews'
 PET_CATALOG_SNAPSHOT=ROOT/'config'/'pet_catalog_cache.json'
 PET_CATALOG_CACHE={'at':0.0,'items':[]}
@@ -961,6 +962,13 @@ def lineage_bundle(con):
 
 class Handler(SimpleHTTPRequestHandler):
     def __init__(self,*a,**kw): super().__init__(*a,directory=str(APP),**kw)
+    def translate_path(self,path):
+        translated=Path(super().translate_path(path))
+        try:
+            pet_path=translated.relative_to(APP/'assets'/'pets')
+        except ValueError:
+            return str(translated)
+        return str(PET_ASSET_ROOT/pet_path)
     def log_message(self,fmt,*args): print('[LifeOS]',fmt%args)
     def end_headers(self):
         # The app shell is deliberately never cached: opening start.bat must
@@ -1023,6 +1031,8 @@ class Handler(SimpleHTTPRequestHandler):
                 return self.send_json({'pet':{'id':item['slug'],'name':item['name'],'version':item['spriteVersionNumber'],'frameMap':item.get('frame_map'),'sprite':str(sprite)}})
             if path=='/api/entries':
                 return self.send_json({'items':product.list_entries(int(q.get('limit',['1000'])[0]),ROOT)})
+            if path=='/api/poetry':
+                return self.send_json(poetry_engine.status(q.get('date',[None])[0],ROOT))
             if path=='/api/entry':
                 item=product.get_entry(entry_id=q.get('entry_id',[None])[0],source_path=q.get('source',[None])[0],root=ROOT)
                 if not item:return self.send_json({'error':'entry not found'},404)
@@ -1063,13 +1073,33 @@ class Handler(SimpleHTTPRequestHandler):
             if path=='/api/notifications':
                 return self.send_json({'items':p2_core.list_notifications(q.get('status',[None])[0],int(q.get('limit',['100'])[0]),ROOT),'preferences':p2_core.notification_preferences(ROOT)})
             if path=='/api/marketplace':
-                catalog_path=ROOT/'marketplace'/'catalog.json';catalog=json.loads(catalog_path.read_text(encoding='utf-8')) if catalog_path.exists() else {'items':[]};return self.send_json({'catalog':catalog,'installed':p2_core.list_addons(ROOT)})
+                catalog_path=SOURCE_ROOT/'marketplace'/'catalog.json';catalog=json.loads(catalog_path.read_text(encoding='utf-8')) if catalog_path.exists() else {'items':[]};return self.send_json({'catalog':catalog,'installed':p2_core.list_addons(ROOT)})
             if path=='/api/encryption/status':
                 return self.send_json(crypto_vault.status(ROOT))
             if path=='/api/subscription':
                 return self.send_json(p2_core.subscription(ROOT))
             if path=='/api/shares':
                 return self.send_json({'items':p2_core.list_shares(ROOT)})
+            if path=='/api/memorial/available':
+                return self.send_json({'items':memorial.available(ROOT)})
+            if path=='/api/memorial/config':
+                return self.send_json(p2_sync.memorial_config(ROOT))
+            if path=='/api/memorial/status':
+                return self.send_json(p2_sync.memorial_status(ROOT))
+            if path=='/api/memorial/qr':
+                url=q.get('url',[''])[0]
+                status=p2_sync.memorial_status(ROOT)
+                if url!=status.get('url') or not status.get('published'):
+                    return self.send_json({'error':'published memorial URL required'},400)
+                try:
+                    import qrcode
+                    from qrcode.image.svg import SvgPathFillImage
+                except ImportError:
+                    return self.send_json({'error':'二维码组件尚未安装；请安装 requirements.txt 后重启 LifeOS'},503)
+                import io
+                out=io.BytesIO();qrcode.make(url,error_correction=qrcode.constants.ERROR_CORRECT_H,
+                    box_size=12,border=4,image_factory=SvgPathFillImage).save(out)
+                return self.send_binary(out.getvalue(),'image/svg+xml','lifeos-memorial-qr.svg',disposition='inline' if q.get('view',['0'])[0]=='1' else 'attachment')
             if path=='/api/attachments':
                 return self.send_json({'items':product.list_attachments(q.get('entry_id',[''])[0],ROOT)})
             if path=='/api/attachment':
@@ -1812,7 +1842,18 @@ class Handler(SimpleHTTPRequestHandler):
                 date=(b.get('journal_date') or '').strip();sections=b.get('sections') or {}
                 out=product.save_entry(journal_date=date,sections=sections,entry_id=b.get('entry_id'),title=b.get('title') or '',tags=b.get('tags') or [],timezone=b.get('timezone') or '',source='writer',note=b.get('note') or '',root=ROOT,raw_markdown=b.get('raw_markdown'))
                 idx=reindex_paths([out['source_path']],root=ROOT,deleted_paths=[out['old_source_path']] if out.get('old_source_path') else []) if (not out.get('unchanged') or out.get('old_source_path')) else {'changed':[]}
-                return self.send_json({'ok':True,'result':out,'index':idx,'core':product.core_status(ROOT)})
+                try: poetry_scheduled=poetry_engine.schedule(date,ROOT)
+                except Exception: poetry_scheduled=False
+                return self.send_json({'ok':True,'result':out,'index':idx,'core':product.core_status(ROOT),'poetry_scheduled':poetry_scheduled})
+            if path=='/api/poetry/settings':
+                enabled=b.get('auto_enabled') is True
+                if enabled and not ai_providers.remote_allowed():
+                    return self.send_json({'error':'请先在隐私 / AI 中启用并配置模型'},400)
+                return self.send_json({'ok':True,'auto_enabled':poetry_engine.set_auto(enabled,ROOT)})
+            if path=='/api/poetry/generate':
+                try: return self.send_json({'ok':True,**poetry_engine.generate(b.get('date'),ROOT)})
+                except poetry_engine.PoetryError as e: return self.send_json({'error':str(e)},400)
+                except Exception: return self.send_json({'error':'荐诗暂时失败，请稍后重试'},502)
             if path=='/api/revisions/restore':
                 out=product.restore_revision(b.get('entry_id',''),b.get('revision_id',''),ROOT);idx=reindex_paths([out['source_path']],root=ROOT)
                 return self.send_json({'ok':True,'result':out,'index':idx})
@@ -1902,6 +1943,13 @@ class Handler(SimpleHTTPRequestHandler):
                 return self.send_json({'ok':True,'result':p2_sync.pull_extras(ROOT)})
             if path=='/api/share/create':
                 return self.send_json(p2_sync.create_share(b.get('entry_id',''),b.get('revision_id'),b.get('expires_in_days',30),b.get('title'),ROOT))
+            if path=='/api/memorial/publish':
+                return self.send_json(p2_sync.publish_memorial(b.get('title',''),b.get('introduction',''),b.get('entry_ids') or [],b.get('story_ids') or [],b.get('ai_enabled',False),ROOT))
+            if path=='/api/memorial/config':
+                try:return self.send_json(p2_sync.set_memorial_config(b.get('url') if 'url' in b else None,b.get('token') if 'token' in b else None,bool(b.get('generate')),ROOT))
+                except ValueError as e:return self.send_json({'error':str(e)},400)
+            if path=='/api/memorial/unpublish':
+                return self.send_json(p2_sync.unpublish_memorial(ROOT))
             if path=='/api/share/revoke':
                 return self.send_json(p2_sync.revoke_share(b.get('share_id',''),ROOT))
             if path=='/api/cloud-ai':

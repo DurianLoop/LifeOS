@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Quiet, memory-native notifications for LifeOS P2."""
 from pathlib import Path
+import os
 import datetime as dt,hashlib,sqlite3
 from engine import p2_core
-ROOT=Path(__file__).resolve().parents[1]
+ROOT=Path(os.getenv('LIFEOS_ROOT') or Path(__file__).resolve().parents[1])
 
 def _nid(kind,key):return 'note_'+hashlib.sha256((kind+'|'+key).encode()).hexdigest()[:32]
 

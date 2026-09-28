@@ -2,11 +2,12 @@
 """Background corpus refresh worker for the local desktop/backend process."""
 from __future__ import annotations
 from pathlib import Path
+import os
 import threading, time
 from engine import product_core as product
 from engine.incremental_index import run_one_pending_refresh
 
-ROOT=Path(__file__).resolve().parents[1]
+ROOT=Path(os.getenv('LIFEOS_ROOT') or Path(__file__).resolve().parents[1])
 
 class RefreshWorker:
     def __init__(self, root:Path=ROOT, poll_seconds=.35):

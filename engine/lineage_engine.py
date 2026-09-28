@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 from pathlib import Path
+import os
 import sqlite3, json, re, collections, datetime, statistics, math
 
-ROOT=Path(__file__).resolve().parents[1]
+ROOT=Path(os.getenv('LIFEOS_ROOT') or Path(__file__).resolve().parents[1])
 try:
     from footprint_engine import ARTIFACTS
 except Exception:

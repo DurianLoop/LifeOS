@@ -1,7 +1,7 @@
 {
   "edition": "public-template",
-  "display_name": "LifeOS v0.2.2 · Public Template",
+  "display_name": "LifeOS v0.3",
   "contains_user_memory": false,
-  "intended_for": "private owner use",
+  "intended_for": "personal local journaling",
   "distribution_warning": "This public release contains an empty Vault. Your journals, local index, attachments, revisions and API credentials stay on your own device."
 }

@@ -791,6 +791,9 @@ html[data-theme="pixel"] .sectionRail button:after,html[data-theme="hotel"] .sec
   <link rel="stylesheet" href="/v012-pet-float.css?v=7">
   <link rel="stylesheet" href="/lifeos-shell.css?v=5">
   <link rel="stylesheet" href="/v03-rebuild.css?v=11">
+  <link rel="stylesheet" href="/poetry.css?v=1">
+  <link rel="stylesheet" href="/memorial.css?v=1">
+  <link rel="stylesheet" href="/white-noise.css?v=2">
 </head>
 <body>
 <a class="skipLink" href="#view">Skip to archive content</a>
@@ -833,7 +836,7 @@ html[data-theme="pixel"] .sectionRail button:after,html[data-theme="hotel"] .sec
 <div class="productDock" id="productDock" role="dialog" aria-modal="true" aria-labelledby="productDockTitle" aria-hidden="true" inert>
   <div class="productDockBox">
     <header class="productDockHead"><div><div class="kicker">CORE X · PERSONAL MEMORY PLATFORM</div><h2 id="productDockTitle">把记忆交给一个不会偷偷覆盖你的系统。</h2><p>写作、导入、版本、备份、同步与隐私都在这里。</p></div><div class="productDockStatus" id="productDockStatus"></div><button class="close iconButton" id="productDockClose" type="button" aria-label="关闭 Living Memory">×</button></header>
-    <div class="productDockBody"><nav class="productTabs" aria-label="LifeOS 档案工作流"><div class="productFlowLabel">日记工作流</div><button data-producttab="import"><span>01</span>导入</button><button data-producttab="writer"><span>02</span>写日记</button><button data-producttab="export"><span>03</span>导出</button><div class="productFlowLabel">保管与设置</div><button data-producttab="versions"><span>04</span>版本</button><button data-producttab="backup"><span>05</span>备份</button><button data-producttab="sync"><span>06</span>同步</button><button data-producttab="privacy"><span>07</span>隐私 / AI</button><button data-producttab="inbox"><span>08</span>收件箱</button><button data-producttab="platform"><span>09</span>P2 / 多端</button></nav><main class="productPanel" id="productPanel"></main></div>
+    <div class="productDockBody"><nav class="productTabs" aria-label="LifeOS 档案工作流"><div class="productFlowLabel">日记工作流</div><button data-producttab="import"><span>01</span>导入</button><button data-producttab="writer"><span>02</span>写日记</button><button data-producttab="export"><span>03</span>导出</button><div class="productFlowLabel">保管与设置</div><button data-producttab="versions"><span>04</span>版本</button><button data-producttab="backup"><span>05</span>备份</button><button data-producttab="sync"><span>06</span>同步</button><button data-producttab="privacy"><span>07</span>隐私 / AI</button><button data-producttab="inbox"><span>08</span>收件箱</button><button data-producttab="platform"><span>09</span>P2 / 多端</button><button data-producttab="memorial"><span>10</span>纪念页 / 二维码</button></nav><main class="productPanel" id="productPanel"></main></div>
   </div>
 </div>
 <div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="LifeOS system palette"><div class="paletteBox"><input id="palInput" placeholder="Search 141 systems by name, room, or purpose…"><div class="paletteResults" id="palResults"></div></div></div>
@@ -849,11 +852,20 @@ html[data-theme="pixel"] .sectionRail button:after,html[data-theme="hotel"] .sec
   <label class="tweakField"><span>视觉世界</span><select id="themeSelect"><optgroup label="熟悉的世界"><option value="moon">月光档案馆</option><option value="candy">蜜桃梦境</option><option value="rain">雨夜录像厅</option><option value="pixel">像素卧室</option></optgroup><optgroup label="Theme Lab · 新世界"><option value="greenhouse">玻璃温室</option><option value="abyss">深海电台</option><option value="post">星际邮局</option><option value="hotel">无尽旅馆</option><option value="oracle">黑猫占星室</option><option value="film">胶片夏日</option></optgroup></select><small class="themeHint" id="themeHint">暖纸、月相与旧墨。适合长期阅读。</small></label>
   <label class="tweakField"><span>动画</span><select id="motionSelect"><option value="alive">会呼吸</option><option value="quiet">安静一点</option><option value="off">不动</option></select></label>
   <label class="tweakField"><span>排版节奏</span><div><select id="typeSelect"><option value="literary">文学 · 默认</option><option value="airy">舒展 · 慢慢读</option><option value="compact">紧凑 · 多看一点</option></select><small class="typeHint" id="typeHint">适中的字距与行宽，适合日常阅读。</small></div></label>
+  <div class="tweakField whiteNoiseField" role="group" aria-labelledby="whiteNoiseTitle">
+    <span id="whiteNoiseTitle">白噪音</span>
+    <div class="whiteNoiseBody">
+      <select id="whiteNoiseKind" aria-label="环境声音"><option value="rain">雨声 · 落窗</option><option value="fire">篝火 · 炉边</option><option value="city">城市 · 街道</option><option value="country">乡村 · 清晨</option><option value="ocean">海浪 · 潮汐</option><option value="forest">森林 · 风叶</option><option value="stream">溪流 · 水声</option><option value="storm">雷雨 · 远雷</option><option value="train">列车 · 远行</option><option value="night">夏夜 · 虫鸣</option></select>
+      <div class="whiteNoiseTransport"><button id="whiteNoiseToggle" type="button" aria-pressed="false">播放</button><input id="whiteNoiseVolume" type="range" min="0" max="100" value="25" aria-label="白噪音音量"><output id="whiteNoiseVolumeText" for="whiteNoiseVolume">25%</output></div>
+      <small id="whiteNoiseStatus" class="whiteNoiseStatus" role="status">本地播放，刷新后暂停。</small>
+    </div>
+  </div>
   <button class="tweakAction" id="atticOpen" type="button">进入「其他」<span aria-hidden="true">→</span></button>
-  <p class="small">视觉偏好只保存在这个浏览器。日记正文与 Vault 不会因此改变。</p>
+  <p class="small">界面与声音偏好只保存在这个浏览器。日记正文与 Vault 不会因此改变。</p>
 </div>
 <div class="mobileMorePanel" id="mobileMorePanel" role="dialog" aria-modal="false" aria-label="更多导航" aria-hidden="true" inert>
   <button type="button" id="mobileWriter"><span data-ui-icon="journal"></span><b>写下这一刻</b><small>新建或继续今天的日记</small></button>
+  <button type="button" data-mobilefeature="Daily Poetry"><span data-ui-icon="journal"></span><b>今日一诗</b><small>从今天的日记里遇见一句诗</small></button>
   <button type="button" data-mobilefeature="Projects"><span data-ui-icon="grow"></span><b>正在生长</b><small>想法、项目与技能</small></button>
   <button type="button" data-mobilefeature="Memory Graph"><span data-ui-icon="world"></span><b>我的世界</b><small>人物、地点与星群</small></button>
   <button type="button" data-mobilefeature="Past Me"><span data-ui-icon="magic"></span><b>时间魔法</b><small>过去、未来与胶囊</small></button>
@@ -959,7 +971,8 @@ const FEATURES=[
 ["Unfinished Lineages","LINEAGE","重新打开重复出现后变安静、且当前没有强作品链支撑的想法/项目；untraced 不等于未完成"],
 ["Release Cadence","LINEAGE","观察提交、发布、分享等向外痕迹在月份和时间间隔上的节奏，不将其变成生产力指标"],
 ["Evidence Chain Builder","LINEAGE","把已存在的 dated source records 组合成 Thought→Artifact→Handoff→Feedback/Validation 审计链，缺失步骤保持缺失"],
-["文言化","BOOK","把选中的现代汉语日记或任意文本转换成可对照的文言文派生稿；原始 Markdown 永不改写"]
+["文言化","BOOK","把选中的现代汉语日记或任意文本转换成可对照的文言文派生稿；原始 Markdown 永不改写"],
+["Daily Poetry","NOW","从今天的日记里遇见一首诗"]
 ].map((x,i)=>({name:x[0],room:x[1],desc:x[2],no:i+1}));
 const ROOMS={
  NOW:{no:"01",desc:"现在发生了什么，以及这一年正在变成什么。",features:["Home","On This Day","Year in Review"]},
@@ -1010,7 +1023,8 @@ const DREAM_META={
  "Thought → Artifact":["念头落地的那一天","从“我想”到“我做了”的证据距离。"],
  "First Proofs":["第一次留下痕迹","最早被日记记录下来的明确产出。"],
  "Evidence Chain Builder":["故事的证据线","每一个故事都必须能够走回原文。"],
- "文言化":["把今天写成旧时光","只换语言，不换掉真正发生过的事。"]
+ "文言化":["把今天写成旧时光","只换语言，不换掉真正发生过的事。"],
+ "Daily Poetry":["今日一诗","一句诗，照见今天。"]
 };
 const USER_NAV=[
  {id:"today",icon:"☀",label:"此刻",feature:"Home"},
@@ -1021,7 +1035,7 @@ const USER_NAV=[
  {id:"magic",icon:"∞",label:"时间魔法",feature:"Past Me"},
  {id:"discover",icon:"?",label:"意外发现",feature:"Serendipity"}
 ];
-const FRONT_FEATURES=new Set(["Home","Journal","On This Day","Universal Search","Deep Read","Quotes","People","Life Map","Memory Graph","Ideas","Projects","Questions","Skill Constellation","Achievements","Past Me","Future Me","Time Capsule","Compare Me","Life Movie","Memory Echoes","Hidden Chapters","Serendipity","Memory Weather","Forgotten Doors","Skill Momentum","Thought → Artifact","文言化"]);
+const FRONT_FEATURES=new Set(["Home","Journal","On This Day","Universal Search","Daily Poetry","Deep Read","Quotes","People","Life Map","Memory Graph","Ideas","Projects","Questions","Skill Constellation","Achievements","Past Me","Future Me","Time Capsule","Compare Me","Life Movie","Memory Echoes","Hidden Chapters","Serendipity","Memory Weather","Forgotten Doors","Skill Momentum","Thought → Artifact","文言化"]);
 function dreamMeta(name){const f=FEATURES.find(x=>x.name===name);const m=DREAM_META[name];return {title:m?.[0]||name,subtitle:m?.[1]||f?.desc||"",canonical:name}}
 function lifeEvent(type,detail={}){window.dispatchEvent(new CustomEvent('lifeos:event',{detail:{type,...detail,at:Date.now()}}));try{if(window.lifeosDesktop?.event)window.lifeosDesktop.event(type,detail)}catch(e){}}
 let STATE={room:"NOW",feature:"Home",journalPath:null,journalKind:"daily",skill:null,bookChapter:null,bookMode:"all",personKind:"role",personName:null,projectTrigger:null,projectStatus:"all",placeName:null,yearReview:null,graphNode:null,onThisDate:null,askPack:null,deepReadQ:"产品",deepReadPeriod:"",searchQ:"",searchKind:"all",searchYear:"",searchSection:"",searchSort:"relevance",compareMode:"normalized",classicalSource:null,sourceOrigin:null};
@@ -1083,6 +1097,7 @@ function uiIcon(name){const icons={
  today:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.3"/><path d="M12 2v2.2M12 19.8V22M2 12h2.2M19.8 12H22M4.9 4.9l1.55 1.55M17.55 17.55l1.55 1.55M19.1 4.9l-1.55 1.55M6.45 17.55 4.9 19.1"/></svg>',
  write:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 19 3.6-.8L19 7.8 16.2 5 5.8 15.4 5 19Z"/><path d="m14.8 6.4 2.8 2.8M4 21h16"/></svg>',
  journal:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h10.5A3.5 3.5 0 0 1 19 8v11H8.5A3.5 3.5 0 0 0 5 22V4.5Z"/><path d="M5 18.5h10.5A3.5 3.5 0 0 1 19 22M9 8h6M9 12h5"/></svg>',
+ poetry:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19.5c3.2-5 6.4-8.6 14-14"/><path d="M8 14c-2.7-.3-4.2-1.7-4-4.4 2.7.1 4.3 1.7 4 4.4ZM12.7 10.2c-.7-2.7.2-4.7 2.7-5.9.9 2.7-.1 4.8-2.7 5.9Z"/><path d="M4 21h16"/></svg>',
  memory:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.2A8.7 8.7 0 1 1 8.8 3.5 7.1 7.1 0 0 0 20.5 15.2Z"/></svg>',
  grow:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V10M12 13c-5 0-7-2.5-7-7 4.5 0 7 2 7 7ZM12 16c5 0 7-2.5 7-7-4.5 0-7 2-7 7Z"/></svg>',
  world:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.4 3.7 5.2 3.7 8.5S14.5 18.1 12 20.5C9.5 18.1 8.3 15.3 8.3 12S9.5 5.9 12 3.5Z"/></svg>',
@@ -1820,5 +1835,8 @@ renderProductImport=async function(){const job=PRODUCT.importJob,foot=job?`<div 
 <script src="/v012-pet-float.js?v=9"></script>
 <script src="/lifeos-shell.js?v=3"></script>
 <script src="/v03-rebuild.js?v=9"></script>
+<script src="/poetry.js?v=1"></script>
+<script src="/memorial.js?v=1"></script>
+<script src="/white-noise.js?v=2"></script>
 </body>
 </html>

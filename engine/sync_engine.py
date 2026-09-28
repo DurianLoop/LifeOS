@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 from pathlib import Path
+import os
 import json, urllib.request, urllib.parse, urllib.error
 from engine import product_core as pc
 from engine.incremental_index import reindex_paths
 from backend.secret_store import get_secret, set_secret
 from engine import crypto_vault
-ROOT=Path(__file__).resolve().parents[1]
+ROOT=Path(os.getenv('LIFEOS_ROOT') or Path(__file__).resolve().parents[1])
 
 def _settings(root=ROOT):return pc.settings_dict(root)
 

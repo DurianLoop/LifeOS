@@ -5,7 +5,7 @@ from pathlib import Path
 import json, os, urllib.request, urllib.error, hashlib, time
 from backend.secret_store import get_secret
 from engine import product_core as pc
-ROOT=Path(__file__).resolve().parents[1]
+ROOT=Path(os.getenv('LIFEOS_ROOT') or Path(__file__).resolve().parents[1])
 
 @dataclass
 class ProviderConfig:

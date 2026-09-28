@@ -16,7 +16,7 @@
   };
   const CLEAR = {
     zh: {
-      nav:{today:'今天',write:'写日记',journal:'日记',search:'搜索',memory:'旧日来信',pet:'灵犀',more:'更多'},
+      nav:{today:'今天',write:'写日记',journal:'日记',search:'搜索',poetry:'今日一诗',memory:'旧日来信',pet:'灵犀',more:'更多'},
       top:{write:'写下来',search:'搜日记',ask:'问过去',tune:'微调'},
       home:{kicker:'LOCAL-FIRST · PRIVATE JOURNAL',titleA:'把今天',titleB:'写下来。',lead:'先把写、存、找、重读做得可靠。分析与 AI 都退到第二层，需要时再出现。',write:'写今天',continue:'继续写',journal:'翻日记',search:'搜一句话',memory:'看看旧日'},
       journey:[['01 · WRITE','写','空白页先出现，结构化模板以后再选。'],['02 · FIND','找','从一句话、一个人、一个地方回到原页。'],['03 · REREAD','重读','按日期翻阅，所有解释都能回到正文。'],['04 · RESURFACE','重逢','同一天的旧页偶尔回来，不制造打卡压力。']],
@@ -25,7 +25,7 @@
       themeLabel:'视觉世界', languageLabel:'语言与文案', languageHint:'中文 / English / 诗文只改变界面文案，不改动日记正文。', advanced:'其他 · 阁楼'
     },
     en: {
-      nav:{today:'Today',write:'Write',journal:'Journal',search:'Search',memory:'On this day',pet:'Companion',more:'More'},
+      nav:{today:'Today',write:'Write',journal:'Journal',search:'Search',poetry:'Daily poem',memory:'On this day',pet:'Companion',more:'More'},
       top:{write:'Write',search:'Search journals',ask:'Ask the past',tune:'Tune'},
       home:{kicker:'LOCAL-FIRST · PRIVATE JOURNAL',titleA:'Write down',titleB:'today.',lead:'Make writing, saving, finding, and rereading reliable first. Analysis and AI stay in the second layer until you ask for them.',write:'Write today',continue:'Continue writing',journal:'Open journal',search:'Find a phrase',memory:'On this day'},
       journey:[['01 · WRITE','Write','Start from a blank page. Templates stay optional.'],['02 · FIND','Find','Return to the source from a phrase, person, place, or year.'],['03 · REREAD','Reread','Browse by date. Every interpretation can return to the original page.'],['04 · RESURFACE','Resurface','Old pages can come back gently, without streak pressure.']],
@@ -51,7 +51,7 @@
     const c = JSON.parse(JSON.stringify(baseCopy()));
     if (state.preset === 'poetic' && state.deck) {
       const home = deckSurface('home'), writer = deckSurface('writer'), journal = deckSurface('journal'), search = deckSurface('search'), on = deckSurface('on_this_day'), ask = deckSurface('ask');
-      c.nav.today = home?.display_name || '今朝'; c.nav.write = writer?.display_name || '落笔'; c.nav.journal = journal?.display_name || '流年'; c.nav.search = search?.display_name || '寻迹'; c.nav.memory = on?.display_name || '旧信';
+      c.nav.today = home?.display_name || '今朝'; c.nav.write = writer?.display_name || '落笔'; c.nav.journal = journal?.display_name || '流年'; c.nav.search = search?.display_name || '寻迹'; c.nav.poetry='今日一诗'; c.nav.memory = on?.display_name || '旧信';
       c.top.write = writer?.display_name || '落笔'; c.top.search = search?.display_name || '寻迹'; c.top.ask = ask?.display_name || '近思'; c.home.kicker='LIFEOS · 浮生书'; c.home.titleA='把今日写下，'; c.home.titleB='让来日重逢。'; c.home.lead=home?.subtitle || state.deck.brand?.body || c.home.lead;
       c.home.write = home?.primary || '落笔 · 写今天'; c.home.journal = '翻一页 · 流年'; c.home.search='寻迹 · 找一句话'; c.home.memory='旧日来信 · 昔日今朝';
       c.writer.kicker='落笔 · WRITE'; c.writer.newTitle=writer?.display_name || '落笔'; c.writer.editTitle='续写这一页。'; c.writer.note=writer?.subtitle || c.writer.note; c.writer.mainPlaceholder=writer?.placeholder || c.writer.mainPlaceholder; c.writer.saveNew=writer?.primary || '收笔 · 保存'; c.writer.saveEdit=writer?.primary || '收笔 · 保存';
@@ -61,7 +61,7 @@
       c.themeLabel='视觉世界';c.languageLabel='语言与文案';c.languageHint='诗意负责情绪，功能词负责无歧义；正文永不被自动改写。';c.advanced='其他 · 阁楼';
     }
     if (state.preset === 'bilingual') {
-      c.nav={today:'今天 / Today',write:'写日记 / Write',journal:'日记 / Journal',search:'搜索 / Search',memory:'旧日 / On this day',pet:'灵犀 / Companion',more:'更多 / More'};
+      c.nav={today:'今天 / Today',write:'写日记 / Write',journal:'日记 / Journal',search:'搜索 / Search',poetry:'今日一诗 / Poem',memory:'旧日 / On this day',pet:'灵犀 / Companion',more:'更多 / More'};
       c.top={write:'写下来 / Write',search:'搜日记 / Search',ask:'问过去 / Ask',tune:'微调 / Tune'};
       c.themeLabel='视觉世界 / Theme';c.languageLabel='语言与文案 / Language';c.languageHint='仅切换界面语言，不会改动日记正文。';c.advanced='其他 / Attic';
     }
@@ -108,7 +108,7 @@
 
   function reprioritizeProductTabs(){
     const nav=$('.productTabs'); if(!nav || $('#v01DeferredTabs')) return;
-    const deferred=['sync','inbox','platform'].map(id=>nav.querySelector(`[data-producttab="${id}"]`)).filter(Boolean);
+    const deferred=['sync','inbox','platform','memorial'].map(id=>nav.querySelector(`[data-producttab="${id}"]`)).filter(Boolean);
     if(!deferred.length)return;
     const details=document.createElement('details');details.id='v01DeferredTabs';details.className='v01DeferredTabs';
     const summary=document.createElement('summary');summary.textContent=state.preset==='en'?'Later / platform':'以后再做 · 多端能力';details.appendChild(summary);
@@ -117,7 +117,7 @@
 
   function rebuildAttic(){
     const grid=$('#atticGrid');if(!grid)return;
-    const core=new Set(['Home','Journal','On This Day','Universal Search']);
+    const core=new Set(['Home','Journal','On This Day','Universal Search','Daily Poetry']);
     const rest=FEATURES.filter(f=>!core.has(f.name));
     grid.innerHTML=rest.map(f=>`<button class="atticItem" data-atticfeature="${esc(f.name)}"><b>${esc(dreamMeta(f.name).title)}</b><span>${String(f.no).padStart(3,'0')} · ${esc(f.name)} · ${esc(f.room)}</span></button>`).join('');
     $$('[data-atticfeature]').forEach(x=>x.onclick=()=>{$('#atticPanel').classList.remove('open');$('#atticPanel').setAttribute('aria-hidden','true');openFeature(x.dataset.atticfeature)});
@@ -128,7 +128,7 @@
     const c=t(); document.documentElement.lang=PRESETS[state.preset].locale;
     const dockTitle=$('#productDockTitle');if(dockTitle)dockTitle.textContent=state.preset==='en'?'Write and keep every version.':state.preset==='poetic'?'文字有安处，从落笔开始。':'先把写作与数据安全做好。';
     const dockNote=$('#productDockTitle')?.parentElement?.querySelector('p');if(dockNote)dockNote.textContent=state.preset==='en'?'Writing, import, revisions, backup and privacy first. Sync and platform work are deferred.':'优先写作、导入、版本、备份与隐私；同步和平台能力继续保留，但放到后面。';
-    const tabLabels={writer:state.preset==='en'?'Write':'写日记',import:state.preset==='en'?'Import':'导入',export:state.preset==='en'?'Export':'导出',versions:state.preset==='en'?'Revisions':'版本',backup:state.preset==='en'?'Backup':'备份',privacy:state.preset==='en'?'Privacy / AI':'隐私 / AI',sync:state.preset==='en'?'Sync':'同步',inbox:state.preset==='en'?'Inbox':'收件箱',platform:state.preset==='en'?'Platform':'P2 / 多端'};
+    const tabLabels={writer:state.preset==='en'?'Write':'写日记',import:state.preset==='en'?'Import':'导入',export:state.preset==='en'?'Export':'导出',versions:state.preset==='en'?'Revisions':'版本',backup:state.preset==='en'?'Backup':'备份',privacy:state.preset==='en'?'Privacy / AI':'隐私 / AI',sync:state.preset==='en'?'Sync':'同步',inbox:state.preset==='en'?'Inbox':'收件箱',platform:state.preset==='en'?'Platform':'P2 / 多端',memorial:state.preset==='en'?'Memorial / QR':'纪念页 / 二维码'};
     $$('[data-producttab]').forEach(b=>{const n=b.querySelector('span')?.outerHTML||'';b.innerHTML=n+esc(tabLabels[b.dataset.producttab]||b.textContent)});
     const w=document.querySelector('#memoryDockOpen');if(w)w.innerHTML=`${esc(c.top.write)} <span aria-hidden="true">＋</span>`;
     const s=document.querySelector('#searchTop');if(s){s.setAttribute('aria-label',c.top.search);s.innerHTML=`<span class="desktopOnly">${esc(c.top.search)}</span><span class="kbd">⌘ K</span>`;}
@@ -158,6 +158,7 @@
       {id:'write',icon:'write',label:c.nav.write,action:'write'},
       {id:'journal',icon:'journal',label:c.nav.journal,feature:'Journal'},
       {id:'search',icon:'search',label:c.nav.search,feature:'Universal Search'},
+      {id:'poetry',icon:'poetry',label:c.nav.poetry,feature:'Daily Poetry'},
       {id:'memory',icon:'memory',label:c.nav.memory,feature:'On This Day'},
       {id:'pet',icon:'magic',label:c.nav.pet,feature:'Pet Shelf',pet:true},
       {id:'attic',icon:'attic',label:c.advanced.split(' · ')[0],action:'attic'}

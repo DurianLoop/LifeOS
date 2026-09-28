@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 from pathlib import Path
+import os
 import sqlite3, json, re, collections, datetime, math
 
-ROOT=Path(__file__).resolve().parents[1]
+ROOT=Path(os.getenv('LIFEOS_ROOT') or Path(__file__).resolve().parents[1])
 
 def js(x): return json.dumps(x,ensure_ascii=False)
 def d(s): return datetime.date.fromisoformat(s)

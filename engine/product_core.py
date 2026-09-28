@@ -10,7 +10,7 @@ from __future__ import annotations
 from pathlib import Path
 import base64, csv, datetime as dt, hashlib, io, json, mimetypes, os, re, shutil, sqlite3, tempfile, threading, uuid, zipfile
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(os.getenv('LIFEOS_ROOT') or Path(__file__).resolve().parents[1])
 LIFE = ROOT / '.lifeos'
 CORE_DB = LIFE / 'core.db'
 VAULT = ROOT / 'vault'
@@ -44,6 +44,7 @@ DEFAULT_SETTINGS = {
     'ai.model': 'deepseek-v4-flash',
     'ai.base_url': 'https://api.deepseek.com',
     'pet.allow_content': 'false',
+    'poetry.auto_enabled': 'false',
     'sync.enabled': 'false',
     'sync.url': '',
     'sync.last_pull_seq': '0',

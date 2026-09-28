@@ -12,7 +12,7 @@ from urllib.parse import urlparse,parse_qs
 import base64,hashlib,hmac,json,os,secrets,sqlite3,time,sys
 ROOT=Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path: sys.path.insert(0,str(ROOT))
-from cloud import p2_services
+from cloud import p2_services,memorial
 WEB=ROOT/'cloud'/'web';DB=Path(os.getenv('LIFEOS_CLOUD_DB',str(ROOT/'cloud'/'dev_cloud.db')));HOST=os.getenv('LIFEOS_CLOUD_HOST','127.0.0.1');PORT=int(os.getenv('LIFEOS_CLOUD_PORT','8790'))
 
 def db():
@@ -22,7 +22,7 @@ def db():
  CREATE TABLE IF NOT EXISTS operations(remote_seq INTEGER PRIMARY KEY AUTOINCREMENT,user_id TEXT NOT NULL,operation_id TEXT NOT NULL,entry_id TEXT NOT NULL,revision_id TEXT,base_revision_id TEXT,op_type TEXT NOT NULL,payload_json TEXT NOT NULL,device_id TEXT,created_at TEXT NOT NULL,UNIQUE(user_id,operation_id));
  CREATE TABLE IF NOT EXISTS cloud_entries(user_id TEXT NOT NULL,entry_id TEXT NOT NULL,current_revision_id TEXT,payload_json TEXT NOT NULL,updated_at TEXT NOT NULL,PRIMARY KEY(user_id,entry_id));
  CREATE TABLE IF NOT EXISTS cloud_attachments(user_id TEXT NOT NULL,attachment_id TEXT NOT NULL,entry_id TEXT NOT NULL,payload_json TEXT NOT NULL,created_at TEXT NOT NULL,PRIMARY KEY(user_id,attachment_id));
- ''');p2_services.ensure_schema(c);c.commit();return c
+ ''');p2_services.ensure_schema(c);memorial.ensure_schema(c);c.commit();return c
 
 def now():return time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime())
 def pw_hash(password,salt):return hashlib.pbkdf2_hmac('sha256',password.encode(),bytes.fromhex(salt),240000).hex()
@@ -41,9 +41,16 @@ class H(SimpleHTTPRequestHandler):
  def body(self):
   n=int(self.headers.get('Content-Length','0') or 0);return json.loads(self.rfile.read(n).decode() or '{}') if n else {}
  def base_url(self):
+  configured=os.getenv('LIFEOS_PUBLIC_BASE_URL','').rstrip('/')
+  if configured:return configured
   proto=self.headers.get('X-Forwarded-Proto') or 'http';host=self.headers.get('Host') or f'{HOST}:{PORT}';return proto+'://'+host
  def do_GET(self):
   u=urlparse(self.path)
+  if u.path=='/v2/public/memorial':
+   c=db()
+   try:
+    status,obj=memorial.public_get(c,parse_qs(u.query).get('id',[''])[0]);return json_response(self,obj,status)
+   finally:c.close()
   if u.path=='/v2/public/share':
    c=db()
    try:
@@ -56,6 +63,8 @@ class H(SimpleHTTPRequestHandler):
    if not uid:return json_response(self,{'error':'unauthorized'},401)
    c=db()
    try:
+    if u.path=='/v2/memorial':
+     status,obj=memorial.owner_get(c,uid,self.base_url());return json_response(self,obj,status)
     status,obj=p2_services.get(c,uid,u.path,parse_qs(u.query));return json_response(self,obj,status)
    finally:c.close()
   if u.path.startswith('/v1/'):
@@ -82,12 +91,20 @@ class H(SimpleHTTPRequestHandler):
   return super().do_GET()
  def do_POST(self):
   u=urlparse(self.path)
+  length=int(self.headers.get('Content-Length','0') or 0)
+  if u.path=='/v2/memorial' and length>22_000_000:return json_response(self,{'error':'memorial upload exceeds 22 MB'},413)
+  if u.path=='/v2/public/memorial/ask' and length>2048:return json_response(self,{'error':'question request too large'},413)
   if u.path=='/v2/billing/webhook':
    n=int(self.headers.get('Content-Length','0') or 0);raw=self.rfile.read(n) if n else b'';c=db()
    try:
     status,obj=p2_services.billing_webhook(c,raw,self.headers.get('Stripe-Signature',''));return json_response(self,obj,status)
    finally:c.close()
   b=self.body()
+  if u.path=='/v2/public/memorial/ask':
+   c=db()
+   try:
+    status,obj=memorial.ask(c,str(b.get('id') or ''),b.get('question'),self.client_address[0]);return json_response(self,obj,status)
+   finally:c.close()
   if u.path=='/v1/register':
    email=str(b.get('email') or '').lower().strip();pw=str(b.get('password') or '')
    if '@' not in email or len(pw)<8:return json_response(self,{'error':'valid email and 8+ character password required'},400)
@@ -108,11 +125,19 @@ class H(SimpleHTTPRequestHandler):
    if confirm!='DELETE MY LIFEOS':return json_response(self,{'error':'type DELETE MY LIFEOS to confirm'},400)
    c=db();r=c.execute('SELECT password_hash,salt FROM users WHERE user_id=?',(uid,)).fetchone()
    if not r or not hmac.compare_digest(pw_hash(password,r['salt']),r['password_hash']):c.close();return json_response(self,{'error':'password re-authentication failed'},401)
-   try:result=p2_services.delete_user_data(c,uid);return json_response(self,result,200)
+   try:
+    public=c.execute('SELECT public_id FROM memorials WHERE user_id=?',(uid,)).fetchone()
+    if public:c.execute('DELETE FROM memorial_questions WHERE public_id=?',(public['public_id'],))
+    c.execute('DELETE FROM memorials WHERE user_id=?',(uid,));c.commit()
+    result=p2_services.delete_user_data(c,uid);return json_response(self,result,200)
    finally:c.close()
   if u.path.startswith('/v2/'):
    c=db()
    try:
+    if u.path=='/v2/memorial':
+     status,obj=memorial.save(c,uid,b,self.base_url());return json_response(self,obj,status)
+    if u.path=='/v2/memorial/unpublish':
+     status,obj=memorial.unpublish(c,uid);return json_response(self,obj,status)
     status,obj=p2_services.post(c,uid,u.path,b,self.base_url());return json_response(self,obj,status)
    finally:c.close()
   if u.path=='/v1/push':

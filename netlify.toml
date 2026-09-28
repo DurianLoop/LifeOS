@@ -1,0 +1,3 @@
+[build]
+  publish = "memorial-site"
+  functions = "netlify/functions"

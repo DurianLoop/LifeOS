@@ -1,19 +1,22 @@
 {
-  "name": "lifeos-v0.2.2-desktop",
+  "name": "lifeos-desktop",
   "private": true,
-  "version": "0.2.2",
+  "version": "0.3.0",
+  "description": "LifeOS local-first private journal with poetry, ambient sounds and memorial pages",
   "author": "LifeOS Contributors",
-  "description": "LifeOS v0.2.2 local-first journal desktop app",
   "main": "main.cjs",
   "scripts": {
     "start": "electron .",
+    "test": "node --test startup.test.cjs",
     "dist": "electron-builder",
     "dist:win": "electron-builder --win nsis",
     "dist:mac": "electron-builder --mac dmg zip",
     "dist:linux": "electron-builder --linux AppImage",
     "dist:all": "electron-builder -mwl"
   },
-  "dependencies": {},
+  "dependencies": {
+    "electron-updater": "^6.6.2"
+  },
   "devDependencies": {
     "electron": "37.10.3",
     "electron-builder": "24.13.3"
@@ -25,14 +28,10 @@
     "asar": true,
     "compression": "maximum",
     "files": [
-      "**/*",
-      "!node_modules/**",
-      "!dist/**",
-      "!.electron-cache/**",
-      "!.builder-cache/**",
-      "!python-runtime/**",
-      "!server-dist/**",
-      "!build/**"
+      "*.cjs",
+      "*.html",
+      "package.json",
+      "!*.test.cjs"
     ],
     "extraResources": [
       {
@@ -45,31 +44,27 @@
       },
       {
         "from": "../backend",
-        "to": "backend"
+        "to": "backend",
+        "filter": ["**/*", "!**/__pycache__/**", "!**/*.pyc"]
       },
       {
         "from": "../engine",
-        "to": "engine"
+        "to": "engine",
+        "filter": ["**/*", "!**/__pycache__/**", "!**/*.pyc"]
       },
       {
         "from": "../importers",
-        "to": "importers"
+        "to": "importers",
+        "filter": ["**/*", "!**/__pycache__/**", "!**/*.pyc"]
       },
       {
         "from": "../config",
         "to": "config"
       },
       {
-        "from": "../vault",
-        "to": "vault"
-      },
-      {
-        "from": "../data",
-        "to": "data"
-      },
-      {
         "from": "../connectors",
-        "to": "connectors"
+        "to": "connectors",
+        "filter": ["**/*", "!**/__pycache__/**", "!**/*.pyc"]
       },
       {
         "from": "python-runtime",
@@ -78,13 +73,28 @@
       {
         "from": "../marketplace",
         "to": "marketplace"
+      },
+      {
+        "from": "server_bootstrap.py",
+        "to": "server_bootstrap.py"
       }
     ],
+    "publish": {
+      "provider": "github",
+      "owner": "DurianLoop",
+      "repo": "LifeOS"
+    },
     "win": {
-      "signAndEditExecutable": false,
       "target": [
         "nsis"
-      ]
+      ],
+      "artifactName": "LifeOS-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false
     },
     "mac": {
       "target": [

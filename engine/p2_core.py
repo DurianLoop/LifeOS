@@ -8,10 +8,11 @@ features.
 """
 from __future__ import annotations
 from pathlib import Path
+import os
 import datetime as dt, hashlib, json, re, uuid
 from engine import product_core as pc
 
-ROOT=Path(__file__).resolve().parents[1]
+ROOT=Path(os.getenv('LIFEOS_ROOT') or Path(__file__).resolve().parents[1])
 
 def utcnow(): return dt.datetime.now(dt.timezone.utc).isoformat(timespec='seconds')
 def new_id(prefix): return f'{prefix}_{uuid.uuid4().hex}'
