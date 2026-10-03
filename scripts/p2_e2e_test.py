@@ -4,12 +4,13 @@ from pathlib import Path
 import base64,hashlib,hmac,json,os,shutil,socket,sqlite3,subprocess,tempfile,time,urllib.request,urllib.error
 
 ROOT=Path(__file__).resolve().parents[1]
-os.environ.setdefault('PYTHON_KEYRING_BACKEND','keyring.backends.fail.Keyring')
 import sys
 sys.path.insert(0,str(ROOT))
 from engine import product_core as pc,p2_core,p2_sync,sync_engine,crypto_vault
 from engine.notification_engine import refresh_due
 from connectors import CONNECTORS
+
+os.environ.setdefault('PYTHON_KEYRING_BACKEND','keyring.backends.null.Keyring')
 
 def free_port():
  s=socket.socket();s.bind(('127.0.0.1',0));p=s.getsockname()[1];s.close();return p
@@ -53,7 +54,7 @@ def main():
   try:p2_core.install_addon({'id':'lifeos.test.bad','version':'1','exec':'rm -rf /'},'connector','test',a);raise AssertionError('executable addon accepted')
   except ValueError:pass
   checks.append('Marketplace manifest install + executable rejection')
-  key=crypto_vault.create_recovery_key(a);env=crypto_vault.encrypt_json({'secret':'只属于我'},{'entry_id':'x'},root=a);assert '只属于我' not in json.dumps(env,ensure_ascii=False);assert crypto_vault.decrypt_json(env,root=a)['secret']=='只属于我';crypto_vault.import_recovery_key(key,b);checks.append('AES-256-GCM recovery-key roundtrip')
+  key=crypto_vault.create_recovery_key(a);env=crypto_vault.encrypt_json({'secret':'只属于我'},{'entry_id':'x'},a);assert '只属于我' not in json.dumps(env,ensure_ascii=False);assert crypto_vault.decrypt_json(env,a)['secret']=='只属于我';crypto_vault.import_recovery_key(key,b);checks.append('AES-256-GCM recovery-key roundtrip')
 
   # Cloud reference server
   port=free_port();cloud_db=tmp/'cloud.db';envp=os.environ.copy();envp.update({'LIFEOS_CLOUD_DB':str(cloud_db),'LIFEOS_CLOUD_PORT':str(port),'LIFEOS_CLOUD_HOST':'127.0.0.1','LIFEOS_DEV_BILLING':'1','LIFEOS_CLOUD_AI_PROVIDER':'mock','LIFEOS_STRIPE_WEBHOOK_SECRET':'whsec_p2_test','PYTHONPATH':str(ROOT)})
@@ -97,10 +98,10 @@ def main():
    except Exception:proc.kill()
 
   # Mobile/PWA and packaging static contracts.
-  pkg=json.loads((ROOT/'mobile/package.json').read_text(encoding='utf-8'));html=(ROOT/'mobile/www/index.html').read_text(encoding='utf-8');assert pkg['dependencies']['@capacitor/core']=='8.5.0';assert html.count('data-tab=')>=5 and 'MediaRecorder' in html and 'encrypted_envelope' in html and 'photoInput' in html;checks.append('Capacitor iOS/Android + photo/voice/mobile E2EE static contract')
-  web=(ROOT/'cloud/web/index.html').read_text(encoding='utf-8');assert 'lifeosWebRecoveryKey' in web and 'encryptPayload' in web and 'decryptEnvelope' in web and 'encrypted_payload' in web;checks.append('Web Companion client-side E2EE contract')
-  # The historical lenses plus the Other room remain available in v0.2.
-  baseline=json.loads((ROOT/'config/features_142_baseline.json').read_text(encoding='utf-8'));assert len(baseline)==142;checks.append('142 memory lenses preserved')
+  pkg=json.loads((ROOT/'mobile/package.json').read_text());html=(ROOT/'mobile/www/index.html').read_text();assert pkg['dependencies']['@capacitor/core']=='8.5.0';assert html.count('data-tab=')>=5 and 'MediaRecorder' in html and 'encrypted_envelope' in html and 'photoInput' in html;checks.append('Capacitor iOS/Android + photo/voice/mobile E2EE static contract')
+  web=(ROOT/'cloud/web/index.html').read_text();assert 'lifeosWebRecoveryKey' in web and 'encryptPayload' in web and 'decryptEnvelope' in web and 'encrypted_payload' in web;checks.append('Web Companion client-side E2EE contract')
+  # Existing 141 features remain untouched.
+  baseline=json.loads((ROOT/'config/features_141_baseline.json').read_text());assert len(baseline)==141;checks.append('141 memory lenses preserved')
   print(json.dumps({'ok':True,'tmp':str(tmp),'checks':checks},ensure_ascii=False,indent=2))
  finally:
   shutil.rmtree(tmp,ignore_errors=True)

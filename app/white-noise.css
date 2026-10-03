@@ -54,6 +54,24 @@
   font: 10px/1.55 var(--serif);
 }
 
+.whiteNoiseCredits {
+  display: inline-block;
+  margin-top: 5px;
+  color: var(--muted);
+  font: 10px/1.55 var(--serif);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.whiteNoiseCredits:hover,
+.whiteNoiseCredits:focus-visible {
+  color: var(--ink);
+}
+
+.whiteNoiseTransport button[aria-busy="true"] {
+  border-style: dashed;
+}
+
 @media (max-width: 760px) {
   .tweaksPanel {
     max-height: calc(100dvh - 156px);

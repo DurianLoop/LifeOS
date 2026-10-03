@@ -1,4 +1,5 @@
 (() => {
+  'use strict';
   const toggle = document.getElementById('whiteNoiseToggle');
   const kindSelect = document.getElementById('whiteNoiseKind');
   const volumeInput = document.getElementById('whiteNoiseVolume');
@@ -7,24 +8,23 @@
   if (!toggle || !kindSelect || !volumeInput || !volumeText || !status) return;
 
   const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  const names = { rain: '雨声', fire: '篝火', ocean: '海浪', forest: '森林鸟鸣', stream: '溪流', night: '夏夜虫鸣' };
   const storageKey = 'lifeos.whiteNoise';
-  const names = {
-    rain: '雨声', fire: '篝火', city: '城市', country: '乡村', ocean: '海浪',
-    forest: '森林', stream: '溪流', storm: '雷雨', train: '列车', night: '夏夜'
-  };
-  const kinds = new Set(Object.keys(names));
   const buffers = new Map();
+  const voices = new Set();
   let saved = {};
   try { saved = JSON.parse(localStorage.getItem(storageKey) || '{}') || {}; } catch (_) {}
-  let kind = kinds.has(saved.kind) ? saved.kind : 'rain';
+  let kind = Object.hasOwn(names, saved.kind) ? saved.kind : 'rain';
   let volume = Number.isFinite(Number(saved.volume)) ? Math.min(100, Math.max(0, Number(saved.volume))) : 25;
   let context = null;
   let master = null;
   let active = null;
-  let playing = false;
-  let busy = false;
+  let requestedPlaying = false;
+  let loading = false;
   let playbackRequest = 0;
   let suspendTimer = null;
+  let pendingFetch = null;
+  let loadQueue = Promise.resolve();
   let errorMessage = '';
 
   kindSelect.value = kind;
@@ -35,244 +35,199 @@
   }
 
   function render() {
-    toggle.textContent = playing ? '暂停' : '播放';
-    toggle.setAttribute('aria-pressed', String(playing));
-    toggle.disabled = busy || !AudioContextClass;
+    toggle.textContent = requestedPlaying ? (active ? '暂停' : '取消') : '播放';
+    toggle.setAttribute('aria-pressed', String(requestedPlaying));
+    toggle.setAttribute('aria-busy', String(loading));
+    toggle.disabled = !AudioContextClass;
     volumeText.value = `${volume}%`;
-    status.textContent = errorMessage || (!AudioContextClass ? '当前浏览器不支持声音播放。' : playing ? `${names[kind]}正在播放，关闭设置后也会继续。` : '本地播放，刷新后暂停。');
-  }
-
-  function makeEvents(scene, channel) {
-    const events = [];
-    if (scene === 'country' || scene === 'forest' || scene === 'stream') {
-      let start = 0.7 + channel * 0.45;
-      while (start < 14) {
-        const bird = scene !== 'stream';
-        events.push({
-          start,
-          duration: bird ? 0.16 + Math.random() * 0.16 : 0.07 + Math.random() * 0.08,
-          frequency: bird ? 1450 + Math.random() * 1350 : 380 + Math.random() * 520,
-          sweep: bird ? 500 + Math.random() * 1200 : -650 - Math.random() * 600,
-          amplitude: bird ? 0.16 : 0.1
-        });
-        start += bird ? 1.15 + Math.random() * 2.25 : 0.35 + Math.random() * 0.75;
-      }
-    } else if (scene === 'city') {
-      events.push(
-        { start: 3.6 + channel * 0.1, duration: 0.38, frequency: 255, sweep: -35, amplitude: 0.06 },
-        { start: 10.5 + channel * 0.15, duration: 0.25, frequency: 310, sweep: 25, amplitude: 0.04 }
-      );
-    }
-    return events;
-  }
-
-  function makeBuffer(selectedKind) {
-    if (buffers.has(selectedKind)) return buffers.get(selectedKind);
-    const sampleRate = context.sampleRate;
-    const frames = Math.floor(sampleRate * 14);
-    const buffer = context.createBuffer(2, frames, sampleRate);
-    for (let channel = 0; channel < 2; channel += 1) {
-      const samples = buffer.getChannelData(channel);
-      const events = makeEvents(selectedKind, channel);
-      let eventIndex = 0;
-      let low = 0;
-      let mid = 0;
-      let transient = 0;
-      let sumSquares = 0;
-      let peak = 0;
-      for (let i = 0; i < frames; i += 1) {
-        const t = i / sampleRate;
-        const random = Math.random() * 2 - 1;
-        low = low * 0.997 + random * 0.003;
-        mid = mid * 0.89 + random * 0.11;
-        const soft = mid - low;
-        const airy = random - mid;
-        while (eventIndex < events.length && t >= events[eventIndex].start + events[eventIndex].duration) eventIndex += 1;
-        let tone = 0;
-        const event = events[eventIndex];
-        if (event && t >= event.start) {
-          const age = t - event.start;
-          const envelope = Math.sin(Math.PI * age / event.duration) ** 2;
-          tone = Math.sin(2 * Math.PI * (event.frequency * age + event.sweep * age * age / 2)) * envelope * event.amplitude;
-        }
-        let sample = 0;
-        switch (selectedKind) {
-          case 'rain':
-            if (Math.random() < 17 / sampleRate) transient += (Math.random() * 2 - 1) * 0.75;
-            transient *= 0.965;
-            sample = soft * 0.56 + airy * 0.18 + transient * 0.38;
-            break;
-          case 'fire':
-            if (Math.random() < 8 / sampleRate) transient += (Math.random() * 2 - 1) * 0.9;
-            transient *= 0.982;
-            sample = soft * 0.14 + low * 0.3 + transient * 0.55;
-            break;
-          case 'city': {
-            const traffic = (1 + Math.sin(t * 0.8 + channel)) / 2;
-            sample = low * (0.8 + traffic * 1.6) + soft * 0.1 + Math.sin(2 * Math.PI * 78 * t) * 0.035 * traffic + tone;
-            break;
-          }
-          case 'country':
-            sample = soft * (0.15 + 0.12 * Math.sin(t * 0.6 + channel)) + low * 0.25 + tone;
-            break;
-          case 'ocean': {
-            const surf = 0.22 + 0.78 * ((1 + Math.sin(2 * Math.PI * t / 5.8 + channel * 0.4)) / 2) ** 2;
-            sample = (soft * 0.42 + airy * 0.2) * surf + low * 0.55;
-            break;
-          }
-          case 'forest': {
-            const wind = 0.4 + 0.4 * Math.sin(t * 0.75 + channel);
-            sample = soft * wind * 0.35 + airy * wind * 0.06 + tone;
-            break;
-          }
-          case 'stream':
-            sample = soft * 0.46 + airy * 0.21 + tone;
-            break;
-          case 'storm': {
-            const age = t > 9.9 ? t - 9.9 : t - 3.9;
-            const thunder = age > 0 ? (1 - Math.exp(-age * 8)) * Math.exp(-age * 1.2) : 0;
-            sample = soft * 0.48 + airy * 0.16 + thunder * (low * 5 + Math.sin(2 * Math.PI * 53 * t) * 0.16);
-            break;
-          }
-          case 'train': {
-            const clack = Math.exp(-(t % 0.52) * 65);
-            sample = low * 1.55 + soft * 0.13 + Math.sin(2 * Math.PI * 82 * t) * 0.05 + clack * (random * 0.38 + 0.08);
-            break;
-          }
-          case 'night': {
-            const pulse = Math.max(0, Math.sin(2 * Math.PI * 12 * t));
-            const chorus = 0.45 + 0.4 * Math.sin(2 * Math.PI * t / 3.2 + channel);
-            sample = soft * 0.1 + Math.sin(2 * Math.PI * (3350 + channel * 430) * t) * pulse * chorus * 0.075;
-            break;
-          }
-        }
-        samples[i] = sample;
-        sumSquares += sample * sample;
-        peak = Math.max(peak, Math.abs(sample));
-      }
-      const rms = Math.sqrt(sumSquares / frames);
-      const scale = Math.min(0.9 / (peak || 1), 0.17 / (rms || 1));
-      const fadeFrames = Math.min(512, Math.floor(frames / 4));
-      for (let i = 0; i < frames; i += 1) {
-        const fade = Math.min(1, i / fadeFrames, (frames - 1 - i) / fadeFrames);
-        samples[i] *= scale * Math.max(0, fade);
-      }
-    }
-    buffers.set(selectedKind, buffer);
-    if (buffers.size > 2) buffers.delete(buffers.keys().next().value);
-    return buffer;
+    status.textContent = errorMessage || (!AudioContextClass ? '当前浏览器不支持声音播放。'
+      : loading ? `正在载入${names[kind]}…${active ? ` ${names[active.kind]}继续播放。` : ''}`
+      : requestedPlaying && active ? `${names[active.kind]}正在播放，关闭设置后也会继续。`
+      : '自然实录，本地播放；刷新后暂停。');
   }
 
   function ensureContext() {
     if (context) return;
-    context = new AudioContextClass();
+    context = new AudioContextClass({ sampleRate: 32000 });
     master = context.createGain();
     master.gain.value = 0;
     master.connect(context.destination);
   }
 
-  function switchSound() {
-    const buffer = makeBuffer(kind);
+  function ramp(parameter, value, duration, now) {
+    if (parameter.cancelAndHoldAtTime) parameter.cancelAndHoldAtTime(now);
+    else {
+      const current = parameter.value;
+      parameter.cancelScheduledValues(now);
+      parameter.setValueAtTime(current, now);
+    }
+    parameter.linearRampToValueAtTime(value, now + duration);
+  }
+
+  function stopVoice(voice, fade = .45) {
+    if (!voice || !context) return;
     const now = context.currentTime;
+    ramp(voice.gain.gain, 0, fade, now);
+    try { voice.source.stop(now + fade + .02); } catch (_) {}
+  }
+
+  function switchSound(buffer, selectedKind) {
+    const now = context.currentTime;
+    // A rapid third switch releases the oldest fading graph promptly.
+    for (const voice of voices) if (voice !== active) stopVoice(voice, .03);
     const source = context.createBufferSource();
     const gain = context.createGain();
+    const voice = { source, gain, kind: selectedKind };
     source.buffer = buffer;
     source.loop = true;
-    source.onended = () => { source.disconnect(); gain.disconnect(); };
+    source.onended = () => {
+      source.disconnect();
+      gain.disconnect();
+      voices.delete(voice);
+    };
     gain.gain.setValueAtTime(0, now);
-    gain.gain.linearRampToValueAtTime(1, now + 0.18);
+    gain.gain.linearRampToValueAtTime(1, now + .45);
     source.connect(gain);
     gain.connect(master);
     source.start();
-    if (active) {
-      active.gain.gain.cancelScheduledValues(now);
-      active.gain.gain.setValueAtTime(active.gain.gain.value, now);
-      active.gain.gain.linearRampToValueAtTime(0, now + 0.18);
-      active.source.stop(now + 0.2);
-    }
-    active = { source, gain, kind };
+    voices.add(voice);
+    stopVoice(active);
+    active = voice;
+    ramp(master.gain, volume / 100, .18, now);
+  }
+
+  function stillCurrent(request, audioContext) {
+    return request === playbackRequest && context === audioContext && requestedPlaying;
+  }
+
+  function loadBuffer(selectedKind, request, audioContext) {
+    // Only one fetch/decode runs at a time. Superseded decodes are discarded;
+    // their data never accumulates in the two-entry decoded-buffer cache.
+    const job = loadQueue.catch(() => {}).then(async () => {
+      if (!stillCurrent(request, audioContext)) return null;
+      if (buffers.has(selectedKind)) {
+        const buffer = buffers.get(selectedKind);
+        buffers.delete(selectedKind);
+        buffers.set(selectedKind, buffer);
+        return buffer;
+      }
+      const controller = new AbortController();
+      pendingFetch = controller;
+      try {
+        const response = await fetch(`/assets/audio/${selectedKind}.ogg?v=1`, { signal: controller.signal, cache: 'force-cache' });
+        if (!response.ok) throw new Error('audio unavailable');
+        const bytes = await response.arrayBuffer();
+        if (!stillCurrent(request, audioContext)) return null;
+        if (!bytes.byteLength || bytes.byteLength > 2 * 1024 * 1024) throw new Error('invalid audio size');
+        const buffer = await audioContext.decodeAudioData(bytes);
+        if (!stillCurrent(request, audioContext)) return null;
+        if (!Number.isFinite(buffer.duration) || buffer.duration < 2 || buffer.duration > 65 || buffer.numberOfChannels > 2) {
+          throw new Error('invalid recording');
+        }
+        buffers.set(selectedKind, buffer);
+        while (buffers.size > 2) buffers.delete(buffers.keys().next().value);
+        return buffer;
+      } finally {
+        if (pendingFetch === controller) pendingFetch = null;
+      }
+    });
+    loadQueue = job;
+    return job;
   }
 
   async function play() {
-    if (busy) return;
     const request = ++playbackRequest;
-    busy = true;
+    const selectedKind = kind;
+    requestedPlaying = true;
+    loading = true;
     errorMessage = '';
-    render();
+    pendingFetch?.abort();
     if (suspendTimer) clearTimeout(suspendTimer);
+    render();
     try {
       ensureContext();
-      const resumedContext = context;
-      await resumedContext.resume();
-      if (request !== playbackRequest || context !== resumedContext) return;
-      if (!active || active.kind !== kind) switchSound();
-      const now = context.currentTime;
-      master.gain.cancelScheduledValues(now);
-      master.gain.setValueAtTime(master.gain.value, now);
-      master.gain.linearRampToValueAtTime(volume / 100 * 0.35, now + 0.15);
-      playing = true;
+      const audioContext = context;
+      await audioContext.resume();
+      if (!stillCurrent(request, audioContext)) {
+        if (context === audioContext && !requestedPlaying) audioContext.suspend().catch(() => {});
+        return;
+      }
+      const buffer = await loadBuffer(selectedKind, request, audioContext);
+      if (!buffer || !stillCurrent(request, audioContext)) return;
+      if (!active || active.kind !== selectedKind) switchSound(buffer, selectedKind);
+      else ramp(master.gain, volume / 100, .18, context.currentTime);
     } catch (_) {
       if (request !== playbackRequest) return;
-      errorMessage = '无法播放声音，请检查浏览器的音频权限。';
-      playing = false;
+      if (active) {
+        kind = active.kind;
+        kindSelect.value = kind;
+        save();
+        errorMessage = '这段录音暂时无法载入，当前声音继续播放；可重新选择后重试。';
+      } else {
+        requestedPlaying = false;
+        errorMessage = '录音暂时无法播放，请重试或选择另一种声音。';
+        context?.suspend().catch(() => {});
+      }
     } finally {
       if (request === playbackRequest) {
-        busy = false;
+        loading = false;
         render();
       }
     }
   }
 
   function pause() {
-    playing = false;
+    const request = ++playbackRequest;
+    requestedPlaying = false;
+    loading = false;
+    errorMessage = '';
+    pendingFetch?.abort();
+    if (suspendTimer) clearTimeout(suspendTimer);
     if (context) {
-      const now = context.currentTime;
-      master.gain.cancelScheduledValues(now);
-      master.gain.setValueAtTime(master.gain.value, now);
-      master.gain.linearRampToValueAtTime(0, now + 0.12);
+      ramp(master.gain, 0, .16, context.currentTime);
+      for (const voice of voices) stopVoice(voice, .16);
+      active = null;
       suspendTimer = setTimeout(() => {
-        if (!playing && context?.state === 'running') context.suspend().catch(() => {});
-      }, 160);
+        if (request === playbackRequest && !requestedPlaying && context?.state === 'running') context.suspend().catch(() => {});
+      }, 210);
     }
     render();
   }
 
-  toggle.addEventListener('click', () => { if (playing) pause(); else play(); });
+  toggle.addEventListener('click', () => { if (requestedPlaying) pause(); else void play(); });
   kindSelect.addEventListener('change', () => {
-    kind = kinds.has(kindSelect.value) ? kindSelect.value : 'rain';
+    kind = Object.hasOwn(names, kindSelect.value) ? kindSelect.value : 'rain';
+    kindSelect.value = kind;
     errorMessage = '';
     save();
-    if (playing) {
-      try { switchSound(); } catch (_) {
-        kind = active.kind;
-        kindSelect.value = kind;
-        save();
-        errorMessage = '切换声音失败，当前声音仍在播放，请重试。';
-      }
-    }
+    if (requestedPlaying) void play();
     render();
   });
   volumeInput.addEventListener('input', () => {
     volume = Math.min(100, Math.max(0, Number(volumeInput.value) || 0));
     save();
-    if (playing && context) {
-      const now = context.currentTime;
-      master.gain.cancelScheduledValues(now);
-      master.gain.setValueAtTime(master.gain.value, now);
-      master.gain.setTargetAtTime(volume / 100 * 0.35, now, 0.025);
-    }
+    if (requestedPlaying && context && master) ramp(master.gain, volume / 100, .08, context.currentTime);
     render();
   });
   window.addEventListener('pagehide', () => {
     playbackRequest += 1;
-    busy = false;
+    pendingFetch?.abort();
+    pendingFetch = null;
     if (suspendTimer) clearTimeout(suspendTimer);
+    for (const voice of voices) {
+      try { voice.source.stop(); } catch (_) {}
+      voice.source.disconnect();
+      voice.gain.disconnect();
+    }
+    voices.clear();
     if (context) context.close().catch(() => {});
     context = null;
     master = null;
     active = null;
+    loadQueue = Promise.resolve();
     buffers.clear();
-    playing = false;
+    requestedPlaying = false;
+    loading = false;
     errorMessage = '';
     render();
   });

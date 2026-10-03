@@ -43,7 +43,7 @@ def main():
     try:
         print('[1] copy/bootstrap',flush=True);a=tmp/'A';copy_state(a)
         pc.seed_feature_dependencies(root=a);boot=pc.bootstrap_existing(a)
-        check(pc.core_status(a)['entries']>=550,'bootstrap entry count dropped below baseline');report['checks'].append('stable IDs / baseline plus personal pages')
+        check(pc.core_status(a)['entries']==550,'bootstrap entry count');report['checks'].append('stable IDs / bootstrap 550')
         check(len(pc.feature_states(a))==141,'feature dependency count');report['checks'].append('feature dependency graph 141')
 
         print('[2] revision/freshness',flush=True);e=next(x for x in pc.list_entries(2000,a) if x['kind']=='daily' and x.get('journal_date'))

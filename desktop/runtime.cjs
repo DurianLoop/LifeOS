@@ -6,6 +6,7 @@ const http = require('node:http');
 const https = require('node:https');
 const net = require('node:net');
 const {spawn} = require('node:child_process');
+const {EventEmitter} = require('node:events');
 
 function runtimePaths({isPackaged, resourcesPath, desktopDir, userData, env = process.env}) {
   const resourceRoot = isPackaged ? resourcesPath : path.resolve(desktopDir, '..');
@@ -139,16 +140,32 @@ function startBackend(launch, {dataRoot, logFile, port, onExit = () => {}}) {
   let failure = null;
   let tail = '';
   let stopping = false;
-  const child = spawn(launch.command, launch.args, {
-    cwd: dataRoot, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'],
-    env: {...launch.env, LIFEOS_PORT: String(port)},
-  });
   const record = chunk => {
     const text = String(chunk);
     tail = (tail + text).slice(-10000);
     try { fs.appendFileSync(logFile, text); } catch { /* Startup still reports the process failure. */ }
     if (process.env.LIFEOS_DESKTOP_DEBUG === '1') process.stderr.write(text);
   };
+  let child;
+  try {
+    child = spawn(launch.command, launch.args, {
+      cwd: dataRoot, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'],
+      env: {...launch.env, LIFEOS_PORT: String(port)},
+    });
+  } catch (error) {
+    // Node can throw synchronously for a missing or blocked interpreter. Turn
+    // that into the same observable startup failure as an asynchronous spawn
+    // error so the desktop can show a useful repair message.
+    child = new EventEmitter();
+    child.stdout = new EventEmitter();
+    child.stderr = new EventEmitter();
+    child.exitCode = 1;
+    child.signalCode = null;
+    child.kill = () => true;
+    failure = new Error(`无法启动本地服务：${error.message}。源码运行请先执行 setup_desktop；安装版请重新安装完整安装包。`);
+    record(`${failure.message}\n`);
+    queueMicrotask(() => {if (!stopping) onExit(failure);child.emit('error', error);child.emit('exit', 1, null);child.emit('close', 1, null);});
+  }
   child.stdout.on('data', record);
   child.stderr.on('data', record);
   child.once('error', error => {

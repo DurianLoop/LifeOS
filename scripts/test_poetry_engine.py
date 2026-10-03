@@ -61,7 +61,7 @@ class DailyPoetryTests(unittest.TestCase):
                                              'reason': '今日虽有倦意，心中希望未灭；此句写向前之意，正与你今日所记相照。'},
                                             ensure_ascii=False)}
 
-            with patch('backend.ai_providers.remote_allowed', return_value=True), patch('backend.ai_providers.chat', side_effect=choose):
+            with patch('backend.ai_providers.availability', return_value={'available':True,'configured':True,'enabled':True,'requires_remote':True,'reason':''}), patch('backend.ai_providers.chat', side_effect=choose):
                 self.assertTrue(poetry_engine.schedule(day, root))
                 self.assertFalse(poetry_engine.schedule(day, root))
                 for _ in range(50):
@@ -97,7 +97,7 @@ class DailyPoetryTests(unittest.TestCase):
             product_core.save_entry(journal_date=day, sections={'日记': '今日与家人相聚。'}, root=root)
             poetry_engine.set_auto(True, root)
             with patch('engine.poetry_engine.threading.Thread') as thread, \
-                    patch('backend.ai_providers.remote_allowed', return_value=True), \
+                    patch('backend.ai_providers.availability', return_value={'available':True,'configured':True,'enabled':True,'requires_remote':True,'reason':''}), \
                     patch('backend.ai_providers.chat') as chat:
                 self.assertTrue(poetry_engine.schedule(day, root))
                 work = thread.call_args.kwargs['target']
@@ -121,7 +121,7 @@ class DailyPoetryTests(unittest.TestCase):
                 return {'text': json.dumps({'poem_id': poem_id, 'reason': '今日与家人相聚，心有所归；此诗可与今日所记相照。'})}
 
             first = poetry_engine.generate(day, root, chat=choose)['current']
-            with patch('backend.ai_providers.remote_allowed', return_value=False), \
+            with patch('backend.ai_providers.availability', return_value={'available':False,'configured':False,'enabled':False,'requires_remote':True,'reason':'AI已关闭'}), \
                     patch('backend.ai_providers.chat') as chat:
                 again = poetry_engine.generate(day, root)
                 state = poetry_engine.status(day, root)

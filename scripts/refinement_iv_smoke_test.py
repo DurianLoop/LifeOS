@@ -44,16 +44,15 @@ try:
 finally:
     con.close()
 
-# v0.2 contract: the historical 141-system baseline plus the explicit Other room
-# must remain intact and in order.
-p=subprocess.run([sys.executable,str(ROOT/'scripts/feature_parity_audit.py')],capture_output=True,text=True,encoding='utf-8',errors='replace')
+# Historical Refinement IV contract: the original 140-system baseline plus the later explicit #141 extension must remain intact.
+p=subprocess.run([sys.executable,str(ROOT/'scripts/feature_parity_audit.py')],capture_output=True,text=True)
 report['feature_parity_stdout']=p.stdout.strip()
 if p.returncode: fail('feature parity failed')
 else:
     try:
         parity=json.loads(p.stdout)
         report['feature_parity']=parity
-        if parity.get('baseline')!=142 or parity.get('current')!=142 or parity.get('added') or parity.get('removed') or parity.get('duplicates') or not parity.get('order_preserved'): fail('feature freeze mismatch')
+        if parity.get('baseline')!=141 or parity.get('current')!=141 or parity.get('added') or parity.get('removed') or parity.get('duplicates') or not parity.get('order_preserved'): fail('feature freeze mismatch')
     except Exception as e: fail('feature parity JSON parse failed: '+str(e))
 
 html=(ROOT/'app/index.html').read_text(encoding='utf-8')
@@ -83,14 +82,14 @@ finally: con.close()
 
 # JavaScript syntax.
 js=html.rsplit('<script>',1)[1].split('</script>',1)[0]
-with tempfile.NamedTemporaryFile('w',suffix='.js',encoding='utf-8',delete=False,dir=ROOT) as f:
+with tempfile.NamedTemporaryFile('w',suffix='.js',encoding='utf-8',delete=False) as f:
     f.write(js); name=f.name
 try:
-    n=subprocess.run(['node','--check',name],capture_output=True,text=True,encoding='utf-8',errors='replace')
+    n=subprocess.run(['node','--check',name],capture_output=True,text=True)
     report['node_check']='PASS' if n.returncode==0 else n.stderr.strip()
     if n.returncode: fail('JS syntax: '+n.stderr.strip())
 finally:
     Path(name).unlink(missing_ok=True)
 
-print(json.dumps({'ok':not errors,'errors':errors,'systems':142,'schema':10,'report':report},ensure_ascii=False,indent=2))
+print(json.dumps({'ok':not errors,'errors':errors,'systems':141,'schema':10,'report':report},ensure_ascii=False,indent=2))
 sys.exit(0 if not errors else 1)

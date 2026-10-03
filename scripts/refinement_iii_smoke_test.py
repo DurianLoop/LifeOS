@@ -15,16 +15,16 @@ try:
     if len(g['nodes'])<10 or len(g['edges'])<10: errors.append('graph too thin')
 finally:
     con.close()
-p=subprocess.run([sys.executable,str(ROOT/'scripts/feature_parity_audit.py')],capture_output=True,text=True,encoding='utf-8',errors='replace')
+p=subprocess.run([sys.executable,str(ROOT/'scripts/feature_parity_audit.py')],capture_output=True,text=True)
 if p.returncode: errors.append('feature parity failed')
 html=(ROOT/'app/index.html').read_text(encoding='utf-8')
 for marker in ['searchWorkspace','dayShelf','candidateWorkspace','placeDossier','yearToolbar','graphDossier','provenanceLedger']:
     if marker not in html: errors.append('missing UI marker '+marker)
 js=html.rsplit('<script>',1)[1].split('</script>',1)[0]
-with tempfile.NamedTemporaryFile('w',suffix='.js',encoding='utf-8',delete=False,dir=ROOT) as f:
+with tempfile.NamedTemporaryFile('w',suffix='.js',encoding='utf-8',delete=False) as f:
     f.write(js);name=f.name
 try:
-    n=subprocess.run(['node','--check',name],capture_output=True,text=True,encoding='utf-8',errors='replace')
+    n=subprocess.run(['node','--check',name],capture_output=True,text=True)
     if n.returncode: errors.append('JS syntax: '+n.stderr.strip())
 finally:
     Path(name).unlink(missing_ok=True)

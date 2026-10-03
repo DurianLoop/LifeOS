@@ -833,8 +833,7 @@ select {
   body.writerImmersive #productPanel,
   body.writerImmersive .i2Desk,
   body.writerImmersive .i2WriterStage,
-  body.writerImmersive .i2WriterGrid,
-  body.writerImmersive .i2WriterCell {
+  body.writerImmersive .i2WriterGrid {
     min-width: 0 !important;
     width: 100% !important;
     max-width: 100% !important;

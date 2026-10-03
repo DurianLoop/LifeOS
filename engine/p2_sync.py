@@ -106,5 +106,8 @@ def _memorial_auth(root):
         raise RuntimeError('请先填写 Netlify 网址，并生成发布密钥')
     return config['url'],token
 
-def cloud_ai(messages,feature='mobile-ask',root=ROOT):
-    base,token=_auth(Path(root));return _request('POST',base+'/v2/ai/generate',token,{'messages':messages,'feature':feature})
+def cloud_ai(messages,feature='mobile-ask',root=ROOT,*,temperature=.2,max_tokens=None):
+    base,token=_auth(Path(root))
+    payload={'messages':messages,'feature':feature,'temperature':temperature}
+    if max_tokens is not None:payload['max_tokens']=max_tokens
+    return _request('POST',base+'/v2/ai/generate',token,payload)

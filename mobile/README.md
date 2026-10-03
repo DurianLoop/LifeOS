@@ -1,7 +1,7 @@
 # LifeOS Mobile · P2
 
 Mobile is intentionally a **capture and companion surface**, not a compressed
-copy of the 142-system desktop laboratory.
+copy of the 141-system desktop laboratory.
 
 Primary surfaces: Today, Write, Memory Inbox, Ask, Me.
 

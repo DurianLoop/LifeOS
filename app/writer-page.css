@@ -1,0 +1,243 @@
+/* The writing page has one date entry and one source of layout controls. */
+.i2Desk .i2DeskHead {
+  display: flex;
+  gap: 16px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  min-height: 68px;
+}
+.i2Desk .i2WriterHeadSpacer { display: none; }
+.i2Desk .i2WriterCommands { margin-left: auto; }
+body.writerImmersive .i2Desk form#writerForm { grid-template-columns: minmax(0, 1fr) !important; }
+.i2Desk .i2WriterStage { padding-left: 0 !important; }
+.i2Desk .i2WriterPageTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 180px;
+  min-width: 0;
+  max-width: 420px;
+  margin: 0;
+  font: 12px var(--type-serif);
+  color: var(--muted);
+}
+.i2WriterPageTitle > span { flex: 0 0 auto; }
+.i2Desk .i2WriterPageTitle .input {
+  width: 100%;
+  min-width: 0;
+  min-height: 30px;
+  height: 30px;
+  padding: 3px 0;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  font: 14px var(--type-serif);
+}
+.i2Desk .i2WriterPageTitle .input:hover { border-bottom-color: var(--line); }
+.i2Desk #writerToolDrawer { background: var(--paper) !important; backdrop-filter: none; }
+.i2Desk #writerToolDrawer .i2ToolDrawerHead { align-items: center; }
+.i2Desk #writerToolDrawer .i2ToolDrawerHead h3 { flex: 1; }
+.i2Desk:not(.i2ChapterOpen) #writerResetCells { display: none; }
+.i2Desk #writerToolDrawer #writerResetCells {
+  padding: 3px 0;
+  color: var(--muted);
+  font: 11px var(--type-serif);
+}
+.i2Desk .i2DateNavigator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.i2Desk .i2WriterDateCommand { min-width: 0; }
+.i2Desk #writerDateJump {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+  min-height: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  text-align: left;
+  color: var(--ink);
+}
+.i2Desk #writerDateJump span {
+  flex: 0 0 auto;
+  color: var(--ink);
+  font: 13px/1.5 var(--type-mono);
+  letter-spacing: .03em;
+}
+.i2Desk #writerDateJump b {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+  font: 400 13px/1.5 var(--type-serif);
+}
+.i2Desk #writerDateJump i {
+  flex: 0 0 auto;
+  align-self: baseline;
+  margin: 0;
+  font: 14px/1 var(--type-serif);
+  color: var(--muted);
+}
+.i2Desk #writerToday,
+.i2Desk #writerPrevDay,
+.i2Desk #writerNextDay {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 26px;
+  height: 32px;
+  margin: 0;
+  padding: 4px;
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+  font: 12px/1.4 var(--type-serif);
+  color: var(--muted);
+}
+.i2Desk #writerToday:hover,
+.i2Desk #writerPrevDay:hover,
+.i2Desk #writerNextDay:hover,
+.i2Desk #writerDateJump:hover b,
+.i2Desk #writerDateJump[aria-expanded="true"] b { color: var(--dream-accent); }
+.i2Desk .i2DateNavigator button:focus-visible {
+  outline: 1px solid var(--dream-accent);
+  outline-offset: 3px;
+}
+.i2Desk .i2WriterStageTop {
+  min-height: 42px;
+  gap: 10px;
+  padding-block: 4px 8px !important;
+  align-items: center;
+}
+.i2Desk .i2WriterTools {
+  display: flex !important;
+  align-items: baseline;
+  align-content: center;
+  flex-wrap: nowrap;
+  min-width: 0;
+  margin: 0 0 0 auto;
+  padding: 0;
+  gap: 8px !important;
+  overflow: visible;
+}
+.i2Desk .i2WriterTools > :is(#writerAddQuick, #writerCustomizeCells, #writerSaveTemplate, #writerDrawerToggle) {
+  position: static !important;
+  inset: auto !important;
+  display: inline-flex !important;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  align-self: baseline !important;
+  box-sizing: border-box;
+  width: auto;
+  min-height: 32px !important;
+  height: 32px !important;
+  margin: 0 !important;
+  padding: 5px 7px !important;
+  transform: none !important;
+  translate: none !important;
+  vertical-align: baseline;
+  line-height: 1.4 !important;
+  white-space: nowrap;
+}
+.i2Desk .i2WriterStageIntro:empty { display: none; }
+.i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) { margin-top: 6px; }
+.i2Desk .i2ArrangeHint { font-size: 10px; color: var(--muted); }
+.i2Desk #writerToolDrawer .i2DeskTemplateArea { margin-top: 0; padding-top: 0; border-top: 0; }
+.i2Desk .i2DeskTemplateHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.i2Desk .i2DeskTemplateHead h3 { margin: 0; font: 400 20px/1.4 var(--type-serif); }
+.i2Desk .i2DeskTemplateHead button {
+  padding: 3px 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: 11px var(--type-serif);
+}
+.i2ChapterPresets {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+.i2ChapterPresets button {
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid var(--line);
+  background: transparent;
+  text-align: left;
+}
+.i2ChapterPresets button[aria-pressed="true"] {
+  border-color: var(--dream-accent);
+  color: var(--dream-accent);
+}
+.i2ChapterPresets button span { display: block; margin-top: 8px; font: 12px var(--type-serif); }
+.i2LayoutThumbnail { display: block; width: 100%; height: 62px; color: var(--dream-accent); }
+.i2LayoutThumbnail rect {
+  fill: color-mix(in srgb, currentColor 8%, transparent);
+  stroke: currentColor;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.i2ChapterCustom { margin-top: 16px; border-block: 1px solid var(--line); padding-block: 12px; }
+.i2ChapterCustom summary { cursor: pointer; font: 13px var(--type-serif); }
+.i2ChapterCells { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.i2ChapterCells label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 5px 8px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font: 12px var(--type-serif);
+  cursor: pointer;
+}
+.i2ChapterCells label:has(:checked) { color: var(--ink); border-color: var(--line-dark); }
+.i2ChapterCells label:has(:disabled) { cursor: default; }
+.i2ChapterCells label span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.i2ChapterCells input { width: 12px; height: 12px; margin: 0; accent-color: var(--dream-accent); }
+.i2Desk .i2DeskTemplateSave { grid-template-columns: minmax(0, 1fr) auto; margin-top: 16px; }
+.i2Desk .i2DeskTemplates { grid-template-columns: 1fr; }
+.i2Desk .i2DeskTemplateCard {
+  grid-template-columns: 60px minmax(0, 1fr) auto auto;
+  gap: 8px;
+  padding: 10px;
+}
+.i2DeskTemplateCard .i2LayoutThumbnail { height: 46px; }
+.i2Desk .i2DeskTemplateCard strong { font-size: 13px; }
+.i2Desk .i2DeskTemplateArea [hidden] { display: none !important; }
+.i2Desk.i2ChapterOpen #writerToolDrawer > :is(.i2WriterLive, .i2WriterQuick, .i2WriterMore, .i2WriterPreviewPanel) {
+  display: none !important;
+}
+.i2Desk.i2ChapterOpen .i2DeskTemplateHead h3 { display: none; }
+.i2Desk.i2ChapterOpen .i2DeskTemplateHead { justify-content: flex-end; }
+@media (max-width: 760px) {
+  .i2Desk .i2DeskHead { gap: 8px; padding-inline: 16px; }
+  .i2Desk .i2WriterHeadSpacer { display: none; }
+  .i2Desk .i2DateNavigator { gap: 5px; }
+  .i2Desk #writerDateJump { gap: 7px; }
+  .i2Desk #writerDateJump :is(span, b) { font-size: 12px; }
+  .i2Desk .i2WriterCommands { gap: 6px; }
+  .i2Desk .i2WriterCommands #writerDraftState { display: none; }
+  .i2Desk .i2WriterCommands #writerRead { display: none !important; }
+  .i2Desk #writerToday { font-size: 11px; }
+  .i2Desk .i2WriterStageTop { flex-wrap: wrap; }
+  .i2Desk .i2WriterPageTitle { flex-basis: 100%; max-width: none; }
+  .i2Desk .i2WriterTools { justify-content: flex-start; margin-left: 0; max-width: 100%; overflow-x: auto; }
+  .i2Desk #writerArrangeHint { display: none; }
+}

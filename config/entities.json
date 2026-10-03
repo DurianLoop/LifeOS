@@ -1,5 +1,5 @@
 {
   "people": [],
   "places": [],
-  "_help": "可手动加入希望被识别的人名/地点。People 页默认只展示角色词，避免 AI 猜名字。示例 people: [{\"name\":\"A\",\"aliases\":[\"A\",\"小A\"]}]"
+  "_help": "Add only names and places you explicitly want LifeOS to recognize in your own local archive."
 }

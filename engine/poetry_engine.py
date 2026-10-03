@@ -97,7 +97,7 @@ def status(day: str | None = None, root: Path = ROOT) -> dict:
     current = next((record for record in records if record['journal_date'] == day), None)
     key = (str(root.resolve()), day)
     from backend import ai_providers
-    ai = ai_providers.privacy_status()
+    ai = ai_providers.availability('今日一诗')
     return {
         'date': day,
         'current': current,
@@ -107,7 +107,9 @@ def status(day: str | None = None, root: Path = ROOT) -> dict:
         'generating': key in _GENERATING,
         'last_error': _ERRORS.get(key, ''),
         'remaining': len(poems) - len({record['poem_id'] for record in records}),
-        'ai': {'configured': ai['configured'], 'enabled': ai['enabled'], 'allow_remote': ai['allow_remote']},
+        'ai': {'configured': ai['configured'], 'enabled': ai['enabled'],
+               'available': ai['available'], 'allow_remote': not ai['requires_remote'] or ai_providers.privacy_status()['allow_remote'],
+               'reason': ai['reason']},
     }
 
 
@@ -165,7 +167,7 @@ def generate(day: str | None = None, root: Path = ROOT, *, chat=None, _reserved=
         if not journal:
             raise PoetryError('这一天还没有可用于荐诗的日记正文')
         from backend import ai_providers
-        if chat is None and not ai_providers.remote_allowed():
+        if chat is None and not ai_providers.availability('今日一诗')['available']:
             raise PoetryError('请先在隐私 / AI 中启用并配置模型')
         con = _connect(root)
         try:

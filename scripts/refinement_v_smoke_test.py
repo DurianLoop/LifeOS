@@ -38,13 +38,13 @@ else:
     report['renderer_parity']={'mapped':len(mapped),'missing':missing}
     if missing: errors.append('missing renderers: '+','.join(missing))
 js=html.rsplit('<script>',1)[1].split('</script>',1)[0]
-with tempfile.NamedTemporaryFile('w',suffix='.js',encoding='utf-8',delete=False,dir=ROOT) as f:f.write(js);name=f.name
+with tempfile.NamedTemporaryFile('w',suffix='.js',encoding='utf-8',delete=False) as f:f.write(js);name=f.name
 try:
-    n=subprocess.run(['node','--check',name],capture_output=True,text=True,encoding='utf-8',errors='replace')
+    n=subprocess.run(['node','--check',name],capture_output=True,text=True)
     if n.returncode: errors.append('JS syntax: '+n.stderr.strip())
 finally: Path(name).unlink(missing_ok=True)
 for script in ['feature_parity_audit.py','self_test.py','refinement_smoke_test.py','refinement_ii_smoke_test.py','refinement_iii_smoke_test.py','refinement_iv_smoke_test.py','verify_vault.py']:
-    p=subprocess.run([sys.executable,str(ROOT/'scripts'/script)],capture_output=True,text=True,encoding='utf-8',errors='replace')
+    p=subprocess.run([sys.executable,str(ROOT/'scripts'/script)],capture_output=True,text=True)
     report[script]=p.returncode
     if p.returncode: errors.append(script+' failed: '+p.stdout[-1000:]+p.stderr[-1000:])
 print(json.dumps({'ok':not errors,'systems':140,'schema':10,'errors':errors,'report':report},ensure_ascii=False,indent=2))

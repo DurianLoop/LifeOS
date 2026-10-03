@@ -23,7 +23,7 @@ if m:
     names = re.findall(r'\["([^"]+)"\s*,\s*"[A-Z]+"', m.group(1))
 else:
     names = []
-checks['feature_registry_142'] = len(names) == 142 and len(set(names)) == 142
+checks['feature_registry_141'] = len(names) == 141 and len(set(names)) == 141
 result = {'ok': all(checks.values()), 'checks': checks, 'feature_count': len(names)}
 print(json.dumps(result, ensure_ascii=False, indent=2))
 sys.exit(0 if result['ok'] else 1)

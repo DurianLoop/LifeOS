@@ -6,8 +6,113 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const http = require('node:http');
-const {once} = require('node:events');
+const {once, EventEmitter} = require('node:events');
+const vm = require('node:vm');
 const runtime = require('./runtime.cjs');
+
+function deferred() {
+  let resolve;
+  const promise = new Promise(done => { resolve = done; });
+  return {promise, resolve};
+}
+
+function mainLifecycle(isPackaged) {
+  // Execute the actual entry point with only inert dependencies. No directories,
+  // credentials, sockets, Python children, or Electron windows are opened.
+  const ready = deferred(), healthy = deferred(), windows = [], failures = [];
+  const handles = new Map(), scheduled = [], backendCalls = [], fileCalls = [];
+  const app = new EventEmitter(), ipcMain = new EventEmitter();
+  const locations = {appData: path.resolve('fixture/application-data')};
+  let quits = 0, stops = 0;
+  Object.assign(app, {
+    isPackaged, setName() {}, setPath(name, value) { locations[name] = value; },
+    getPath: name => locations[name], whenReady: () => ready.promise,
+    requestSingleInstanceLock: () => true, quit() { quits += 1; },
+  });
+  ipcMain.handle = (name, handler) => handles.set(name, handler);
+  class Window extends EventEmitter {
+    constructor(options) {
+      super(); this.options = options; this.shows = 0; this.focuses = 0;
+      this.webContents = {setWindowOpenHandler() {}, send() {}};
+      windows.push(this);
+    }
+    async loadURL(url) { this.url = url; this.emit('ready-to-show'); }
+    isDestroyed() { return false; }
+    isMinimized() { return false; }
+    isMaximized() { return false; }
+    show() { this.shows += 1; }
+    focus() { this.focuses += 1; }
+    static fromWebContents(contents) { return windows.find(window => window.webContents === contents); }
+  }
+  const paths = {resourceRoot: path.resolve('fixture/resources'),
+    dataRoot: path.resolve('fixture/test-data'), logFile: path.resolve('fixture/test-data/desktop.log')};
+  const fakeRuntime = {
+    runtimePaths: () => paths,
+    prepareWorkspace(value) { backendCalls.push(['prepare', value]); },
+    async availablePort() { return 48761; },
+    backendLaunch(value) { backendCalls.push(['launch', value]); return {command: 'fixture-python'}; },
+    startBackend() { backendCalls.push(['start']); return {failure: new Promise(() => {}), stop() { stops += 1; }}; },
+    waitForServer(url) { backendCalls.push(['health', url]); return healthy.promise; },
+  };
+  const updater = new EventEmitter();
+  updater.checkForUpdates = async () => ({updateInfo: {version: 'fixture'}});
+  const modules = {
+    electron: {app, BrowserWindow: Window, ipcMain, shell: {openExternal() {}},
+      Menu: {setApplicationMenu() {}}, dialog: {showErrorBox(...args) { failures.push(args); }}},
+    path,
+    fs: new Proxy({}, {get: (_, method) => (...args) => {
+      fileCalls.push([method, args]); throw new Error('Main lifecycle must not access the filesystem');
+    }}),
+    './runtime.cjs': fakeRuntime,
+    'electron-updater': {autoUpdater: updater},
+  };
+  const context = {
+    __dirname, process: {env: {}, platform: 'win32', resourcesPath: paths.resourceRoot},
+    require(name) { assert.ok(Object.hasOwn(modules, name), `unexpected main dependency: ${name}`); return modules[name]; },
+    setTimeout(callback, delay) { scheduled.push({callback, delay}); return scheduled.length; },
+    setImmediate, console: {error(...args) { failures.push(args); }},
+  };
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, 'main.cjs'), 'utf8'), context, {filename: 'main.cjs'});
+  return {ready, healthy, windows, app, ipcMain, handles, backendCalls, fileCalls, failures, scheduled,
+    get quits() { return quits; }, get stops() { return stops; }};
+}
+
+for (const isPackaged of [false, true]) {
+  test(`${isPackaged ? 'packaged' : 'source'} main lifecycle opens only the application window and has no native pet IPC`, async () => {
+    const lifecycle = mainLifecycle(isPackaged);
+    const flush = () => new Promise(setImmediate);
+    assert.equal(lifecycle.windows.length, 0);
+    lifecycle.ready.resolve();
+    await flush();
+    assert.equal(lifecycle.windows.length, 0, 'no window opens before backend health succeeds');
+    assert.equal(lifecycle.backendCalls.filter(([name]) => name === 'start').length, 1);
+    lifecycle.healthy.resolve({ok: true});
+    await flush();
+    assert.deepEqual(lifecycle.failures, []);
+    assert.equal(lifecycle.windows.length, 1, 'startup creates exactly one native window');
+    const main = lifecycle.windows[0];
+    assert.equal(main.url, 'http://127.0.0.1:48761');
+    assert.equal(main.shows, 1, 'the application is shown when its renderer is ready');
+    assert.notEqual(main.options.transparent, true);
+    assert.notEqual(main.options.alwaysOnTop, true);
+    assert.equal(path.basename(main.options.webPreferences.preload), 'preload.cjs');
+    assert.equal(main.options.webPreferences.contextIsolation, true);
+    assert.equal(main.options.webPreferences.sandbox, true);
+    lifecycle.app.emit('activate');
+    lifecycle.app.emit('second-instance');
+    await flush();
+    assert.equal(lifecycle.windows.length, 1, 'activation and a second launch reuse the application window');
+    assert.equal(main.focuses, 1);
+    const channels = [...lifecycle.ipcMain.eventNames(), ...lifecycle.handles.keys()];
+    assert.deepEqual(channels.filter(channel => /^(?:lifeos:pet(?:-|$)|pet:)/.test(channel)), [],
+      'the native process exposes no independent pet-window controls');
+    assert.ok(lifecycle.handles.has('lifeos:window-control'), 'normal application IPC remains installed');
+    assert.deepEqual(lifecycle.fileCalls, []);
+    assert.equal(lifecycle.quits, 0);
+    lifecycle.app.emit('before-quit');
+    assert.equal(lifecycle.stops, 1, 'quitting still stops the owned backend');
+  });
+}
 
 function workspace(t, beforeRemove = async () => {}) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'LifeOS 启动测试 '));

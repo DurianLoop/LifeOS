@@ -13,7 +13,7 @@ markers=[
 for m in markers:
     if m not in html: errors.append('missing Refinement VII marker '+m)
 
-p=subprocess.run([sys.executable,str(ROOT/'scripts/feature_parity_audit.py')],capture_output=True,text=True,encoding='utf-8',errors='replace')
+p=subprocess.run([sys.executable,str(ROOT/'scripts/feature_parity_audit.py')],capture_output=True,text=True)
 if p.returncode: errors.append('feature parity failed: '+p.stdout[-1000:]+p.stderr[-1000:])
 else: report['feature_parity']=json.loads(p.stdout)
 
@@ -25,14 +25,14 @@ weekly=con.execute("SELECT COUNT(*) FROM memories WHERE kind='weekly'").fetchone
 con.close()
 report['meta']={'engine_version':meta.get('engine_version'),'schema_version':meta.get('schema_version'),'memories':count,'daily':daily,'weekly':weekly}
 if meta.get('schema_version')!='10': errors.append('schema changed')
-if not (count>=550 and daily>=518 and weekly>=32 and count==daily+weekly): errors.append('memory baseline was reduced or became inconsistent')
+if (count,daily,weekly)!=(550,518,32): errors.append('memory counts changed')
 if not re.match(r'^Memory Engine (?:10|11)\.',meta.get('engine_version') or ''): errors.append('engine version is not a compatible historical/Core IX marker')
 
 js=html.rsplit('<script>',1)[1].split('</script>',1)[0]
-with tempfile.NamedTemporaryFile('w',suffix='.js',encoding='utf-8',delete=False,dir=ROOT) as f:
+with tempfile.NamedTemporaryFile('w',suffix='.js',encoding='utf-8',delete=False) as f:
     f.write(js);name=f.name
 try:
-    n=subprocess.run(['node','--check',name],capture_output=True,text=True,encoding='utf-8',errors='replace')
+    n=subprocess.run(['node','--check',name],capture_output=True,text=True)
     if n.returncode: errors.append('JS syntax: '+n.stderr.strip())
 finally:
     Path(name).unlink(missing_ok=True)
@@ -43,9 +43,9 @@ for m in ["name==='Universal Search'","STATE.searchQ=p.get('q')","p.set('q',STAT
     if m not in html: errors.append('search URL state missing: '+m)
 
 for script in ['self_test.py','verify_vault.py']:
-    q=subprocess.run([sys.executable,str(ROOT/'scripts'/script)],capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=120)
+    q=subprocess.run([sys.executable,str(ROOT/'scripts'/script)],capture_output=True,text=True,timeout=120)
     report[script]=q.returncode
     if q.returncode: errors.append(script+' failed: '+q.stdout[-1400:]+q.stderr[-1400:])
 
-print(json.dumps({'ok':not errors,'systems':142,'schema':10,'errors':errors,'report':report},ensure_ascii=False,indent=2))
+print(json.dumps({'ok':not errors,'systems':141,'schema':10,'errors':errors,'report':report},ensure_ascii=False,indent=2))
 sys.exit(0 if not errors else 1)

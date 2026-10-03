@@ -5,9 +5,10 @@ LifeOS is a local-first journal and personal memory workspace, with an editable 
 ## New in v0.3
 
 - **Daily poetry:** choose a poem for the current journal, read the original and explanation, and revisit past selections. Automatic recommendations are opt-in and require your configured AI provider.
-- **White noise:** ten locally generated soundscapes, with playback, switching and saved volume controls. No audio download or account is required.
+- **Ambient recordings:** six real nature recordings bundled for offline playback, with smooth loops, sound switching and saved volume. [Sources and licenses](docs/WHITE_NOISE.md) are included.
 - **Memorial page and QR code:** explicitly select journal pages, preview a public snapshot, highlight stories, publish or update a stable URL, download an SVG QR code, and withdraw the page. The public page supports search and optional AI answers grounded in the selected snapshot.
 - **Desktop startup fixes:** packaged resources resolve correctly, the included Python initializes a clean index, occupied ports are handled, and startup errors include a local diagnostic log. User data lives in a writable folder and survives app updates.
+- **Simple AI settings:** choose your provider and API key; model and endpoint are filled automatically. Supports Qwen, DeepSeek, GLM and other providers, with optional automatic CC Switch/Codex integration. See [AI 设置与 Codex 接入](docs/AI设置与Codex接入.md).
 
 ## Windows download
 

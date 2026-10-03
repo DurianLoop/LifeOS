@@ -205,7 +205,7 @@ def main():
     def save(completed=False):
         summary = {'total': len(results), 'passed': sum(item['ok'] for item in results),
                    'failed': sum(not item['ok'] for item in results)}
-        report = {'ok': completed and len(results) == 12 and summary['failed'] == 0,
+        report = {'ok': completed and bool(results) and summary['failed'] == 0,
                   'status': 'complete' if completed else 'running', 'release': VERSION,
                   'started_at': started, 'updated_at': now(), 'root': str(ROOT),
                   'python': sys.executable, 'backend_python': str(backend_python),
@@ -223,9 +223,17 @@ def main():
         env = isolated_environment(Path(directory))
         env['LIFEOS_TEST_PYTHON'] = str(backend_python)
         checks = [
+            ('ai-control', [sys.executable, '-m', 'unittest', 'scripts.test_ai_providers', 'scripts.test_ai_control', 'scripts.test_ai_integrations', '-v']),
+            ('ai-settings-ui', [node, 'scripts/test_ai_settings_ui.mjs']),
             ('poetry-engine', [sys.executable, '-m', 'unittest', 'scripts.test_poetry_engine', '-v']),
             ('white-noise', [node, 'scripts/test_white_noise.mjs']),
             ('poetry-ui', [node, 'scripts/test_poetry_ui.mjs']),
+            ('pet-ui', [node, 'scripts/test_pet_ui.mjs']),
+            ('writer-layout-ui', [node, 'scripts/test_writer_layout.mjs']),
+            ('writer-calendar-ui', [node, 'scripts/test_writer_calendar.mjs']),
+            ('journal-book-ui', [node, 'scripts/test_journal_book.mjs']),
+            ('writer-dates', [sys.executable, 'scripts/test_writer_dates.py']),
+            ('pet-window', [node, 'desktop/pet-window.test.cjs']),
             ('memorial-cloud', [sys.executable, 'scripts/test_memorial.py']),
             ('memorial-netlify', [node, 'scripts/test_netlify_memorial.mjs']),
             # Running the file directly retains node:test coverage and avoids

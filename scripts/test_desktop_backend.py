@@ -32,7 +32,8 @@ TEST_TEXT = 'Desktop regression: a new local journal survives a complete backend
 def environment(resources: Path, workspace: Path) -> dict:
     env = {key: value for key, value in os.environ.items()
            if not key.startswith('LIFEOS_') and key not in (
-               'OPENAI_API_KEY', 'ANTHROPIC_API_KEY', 'PYTHONHOME', 'PYTHONPATH')}
+               'OPENAI_API_KEY', 'ANTHROPIC_API_KEY', 'DEEPSEEK_API_KEY',
+               'OPENAI_BASE_URL', 'PYTHONHOME', 'PYTHONPATH')}
     search_paths = [resources]
     # Source mode can use the prepared pure-Python QR dependency without
     # installing anything into the host interpreter. Embedded Python loads its
@@ -136,9 +137,9 @@ import json, os, sys
 from pathlib import Path
 root = Path(os.environ['LIFEOS_ROOT']).resolve()
 sys.path.insert(0, os.environ['LIFEOS_RESOURCE_ROOT'])
-from backend import ai_providers, secret_store
+from backend import ai_control, ai_integrations, ai_providers, secret_store
 from engine import product_core, poetry_engine
-modules = (ai_providers, secret_store, product_core, poetry_engine)
+modules = (ai_control, ai_integrations, ai_providers, secret_store, product_core, poetry_engine)
 for module in modules:
     assert module.ROOT.resolve() == root, (module.__name__, str(module.ROOT))
 secret_store._keyring = lambda: None
@@ -178,15 +179,22 @@ def run(resources: Path, python: Path) -> dict:
             checks.append('empty workspace bootstraps both databases and healthy local server')
             assert request(base, '/api/entries')['items'] == []
             for path in ('/api/core/status', '/api/copydeck', '/api/home',
-                         '/api/memorial/config', '/api/memorial/status'):
+                         '/api/memorial/config', '/api/memorial/status',
+                         '/api/ai/control', '/api/ai/integrations'):
                 request(base, path)
+            control = request(base, '/api/ai/control')
+            assert {item['id'] for item in control['features']} == {'ask', 'past_me', 'classical', 'poetry', 'pet'}
+            permissions = {f'ai.features.{item["id"]}': False for item in control['features']}
+            saved_ai = request(base, '/api/ai/settings', {'items': permissions})
+            assert saved_ai['ok'] and all(not item['feature_enabled'] for item in saved_ai['status']['features'].values())
             assert request(base, '/api/memorial/available')['items'] == []
             poetry = request(base, '/api/poetry')
             assert not poetry['auto_enabled'] and not poetry['has_journal']
             assert poetry['history'] == [] and poetry['remaining'] >= 30
-            checks.append('first-run home, core, copydeck, poetry and memorial APIs')
+            checks.append('first-run home, core, copydeck, poetry, memorial and AI control APIs')
             for path in ('/', '/poetry.js', '/poetry.css', '/white-noise.js',
-                         '/white-noise.css', '/memorial.js', '/memorial.css'):
+                         '/white-noise.css', '/memorial.js', '/memorial.css',
+                         '/ai-settings.js', '/ai-settings.css'):
                 assert request(base, path), f'Empty static asset: {path}'
             assert request(base, '/assets/pets/qa-user-pet/pet.json')['id'] == 'qa-user-pet'
             sprite = request(base, '/assets/pets/qa-user-pet/spritesheet.webp')
@@ -215,6 +223,10 @@ def run(resources: Path, python: Path) -> dict:
             ai = request(base, '/api/ai/status')
             assert ai['model'] == 'desktop-regression-model'
             assert not ai['enabled'] and not ai['allow_remote']
+            control = request(base, '/api/ai/control')
+            assert all(not item['enabled'] for item in control['features'])
+            connection_test = request(base, '/api/ai/test', {})
+            assert not connection_test['ok'] and connection_test['status'] == 'unavailable'
             assert request(base, '/assets/pets/qa-user-pet/pet.json')['id'] == 'qa-user-pet'
             checks.append('journal, AI settings and user pet persist after a complete restart')
     return {'ok': True, 'resources': str(resources), 'python': str(python), 'checks': checks}

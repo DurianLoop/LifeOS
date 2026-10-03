@@ -25,7 +25,7 @@
     if (!panel || document.querySelector('#v03FontSize')) return;
     const field = document.createElement('label');
     field.className = 'tweakField v03FontField';
-    field.innerHTML = '<span>字体大小</span><div><select id="v03FontSize" aria-label="字体大小"><option value="default">大 · 默认</option><option value="large">更大</option><option value="xlarge">特大</option></select><small>标题、正文、习惯与格子一起调整。</small></div>';
+    field.innerHTML = '<span>字体大小</span><div><select id="v03FontSize" aria-label="字体大小"><option value="default">大 · 默认</option><option value="large">更大</option><option value="xlarge">特大</option></select></div>';
     const anchor = panel.querySelector('#atticOpen');
     if (anchor) panel.insertBefore(field, anchor);
     else panel.append(field);
@@ -39,13 +39,13 @@
       FEATURES.push({name: 'Other', room: 'OTHER', desc: '高级分析、证据、治理与实验工具', no: FEATURES.length + 1});
     }
     if (typeof ROOMS !== 'undefined' && !ROOMS.OTHER) {
-      ROOMS.OTHER = {no: '16', desc: '不常打开，但值得保留的工具。', features: ['Other']};
+      ROOMS.OTHER = {no: '16', desc: '', features: ['Other']};
     }
     if (typeof FRONT_FEATURES !== 'undefined') FRONT_FEATURES.add('Other');
     if (typeof DREAM_META !== 'undefined') DREAM_META.Other = ['其他', '高级分析与证据工具'];
     RENDERERS.Other = async () => {
       const items = FEATURES.filter(item => !FRONT_FEATURES.has(item.name) && item.name !== 'Other');
-      return pageWrap(`<section class="v03Other"><header class="v03OtherHead"><div><span class="kicker">LIFEOS / OTHER</span><h1>其他</h1><p>高级分析与证据工具。保留完整能力，但把入口收成一间安静的房间。</p></div><span class="v03OtherCount">${items.length} 个工具</span></header><div class="v03OtherGrid">${items.map(item => `<button type="button" class="v03OtherItem" data-v03-other="${esc(item.name)}"><strong>${esc(dreamMeta(item.name).title)}</strong><span>${String(item.no).padStart(3, '0')} · ${esc(item.room)} · ${esc(dreamMeta(item.name).subtitle || item.desc || '')}</span></button>`).join('')}</div></section>`);
+      return pageWrap(`<section class="v03Other"><header class="v03OtherHead"><div><h1>其他</h1></div><span class="v03OtherCount">${items.length} 个工具</span></header><div class="v03OtherGrid">${items.map(item => `<button type="button" class="v03OtherItem" data-v03-other="${esc(item.name)}"><strong>${esc(dreamMeta(item.name).title)}</strong><span>${String(item.no).padStart(3, '0')} · ${esc(item.room)} · ${esc(dreamMeta(item.name).subtitle || item.desc || '')}</span></button>`).join('')}</div></section>`);
     };
   }
 
@@ -78,47 +78,7 @@
       [...writerTitle.childNodes].filter(node => node.nodeType === Node.TEXT_NODE).forEach(node => node.remove());
     }
     document.querySelectorAll('.i2WriterGrid [data-cell-helper]').forEach(node => { node.hidden = true; node.textContent = ''; });
-    if (!document.body.dataset.v03TitleGuard) {
-      document.body.dataset.v03TitleGuard = '1';
-      document.addEventListener('click', event => {
-        const title = event.target.closest?.('[data-cell-title]');
-        const desk = document.querySelector('.i2Desk');
-        if (!title || !desk?.classList.contains('i2DeskInlineEdit')) return;
-        const cell = title.closest('.i2WriterCell');
-        const input = cell?.querySelector('[data-cell-title-input]');
-        if (!input) return;
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        input.hidden = false;
-        cell.classList.add('is-renaming');
-        input.focus();
-        input.select();
-      }, true);
-    }
-    document.querySelectorAll('.i2CellTitle').forEach(title => {
-      if (title.dataset.v03TitleBound) return;
-      title.dataset.v03TitleBound = '1';
-      const beginRename = event => {
-        const desk = document.querySelector('.i2Desk');
-        if (!desk?.classList.contains('i2DeskInlineEdit')) return;
-        const cell = title.closest('.i2WriterCell');
-        const input = cell?.querySelector('[data-cell-title-input]');
-        if (!input) return;
-        event.preventDefault();
-        event.stopPropagation();
-        input.hidden = false;
-        cell.classList.add('is-renaming');
-        input.focus();
-        input.select();
-      };
-      ['pointerdown', 'mousedown', 'click'].forEach(type => title.addEventListener(type, beginRename, true));
-      title.addEventListener('keydown', event => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          title.querySelector('[data-cell-title]')?.click();
-        }
-      });
-    });
+    if (form.querySelector('.i2FreeLayout')) return;
   }
 
   function safeRichExcerpt(value) {
