@@ -26,7 +26,7 @@ import time
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'docs' / 'qa_v03'
-VERSION = '0.3.1'
+VERSION = '0.3.2'
 CODE_DIRECTORIES = ('app', 'backend', 'cloud', 'connectors', 'desktop', 'engine',
                     'importers', 'memorial-site', 'mobile', 'netlify', 'scripts')
 SKIP_DIRECTORIES = {'.git', '.venv', 'node_modules', '__pycache__', 'python-runtime',

@@ -12,7 +12,7 @@ LifeOS is a local-first journal and personal memory workspace, with an editable 
 
 ## Windows download
 
-Download [LifeOS-Setup-0.3.1.exe](https://github.com/DurianLoop/LifeOS/releases/download/v0.3.1/LifeOS-Setup-0.3.1.exe) from the [v0.3.1 release](https://github.com/DurianLoop/LifeOS/releases/tag/v0.3.1). Python is included. This community build is unsigned.
+Download [LifeOS-Setup-0.3.2.exe](https://github.com/DurianLoop/LifeOS/releases/download/v0.3.2/LifeOS-Setup-0.3.2.exe) from the [v0.3.2 release](https://github.com/DurianLoop/LifeOS/releases/tag/v0.3.2). Python is included. This community build is unsigned.
 
 Installed app data is stored under `%APPDATA%/LifeOS/workspace/`; startup diagnostics are under `%APPDATA%/LifeOS/logs/desktop.log`. Back up the workspace folder to preserve journals, revisions and settings. Source runs continue to use the repository folder.
 

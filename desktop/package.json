@@ -1,7 +1,7 @@
 {
   "name": "lifeos-desktop",
   "private": true,
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "LifeOS local-first private journal with poetry, ambient sounds and memorial pages",
   "author": "LifeOS Contributors",
   "main": "main.cjs",

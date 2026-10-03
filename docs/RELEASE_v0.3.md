@@ -1,6 +1,6 @@
-# LifeOS v0.3.1
+# LifeOS v0.3.2
 
-## v0.3.1 源码安装修复
+## v0.3.2 源码安装修复
 
 - Windows/macOS/Linux 安装统一使用项目独立的 `desktop/.venv`，不修改共享 Anaconda 或系统 Python。
 - 源码启动优先使用项目环境，并清除可能污染解释器的 `PYTHONHOME` / `PYTHONPATH`。
