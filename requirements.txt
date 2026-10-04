@@ -3,3 +3,9 @@ keyring>=25.0,<27
 
 # P2 optional end-to-end sync encryption.
 cryptography>=46.0,<47
+
+# Printable SVG QR code for an explicitly published memorial URL.
+qrcode>=8.0,<9
+
+# Read the current Codex / CC Switch TOML config on Python 3.10.
+tomli>=2.0,<3; python_version < "3.11"

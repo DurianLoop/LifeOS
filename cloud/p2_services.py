@@ -14,6 +14,8 @@ from cloud import billing
 
 ROOT=Path(__file__).resolve().parents[1]
 CATALOG=ROOT/'marketplace'/'catalog.json'
+CLOUD_AI_DEFAULT_MAX_TOKENS=4096
+CLOUD_AI_MAX_TOKENS=16384
 
 PLANS={
  'free':{'sync':True,'memory_inbox':True,'mobile':True,'shares_max':3,'cloud_ai':False,'marketplace':True,'notifications':True},
@@ -208,13 +210,20 @@ def _cloud_ai(c,uid,b):
  if not isinstance(messages,list) or not messages:return 400,{'error':'messages required'}
  chars=sum(len(str(x.get('content') or '')) for x in messages if isinstance(x,dict))
  if chars>60000:return 400,{'error':'cloud AI request too large'}
+ temperature=b.get('temperature',0.2)
+ max_tokens=b.get('max_tokens')
+ if max_tokens is None:max_tokens=CLOUD_AI_DEFAULT_MAX_TOKENS
+ if isinstance(temperature,bool) or not isinstance(temperature,(int,float)) or not 0<=temperature<=2:
+  return 400,{'error':'temperature must be a number between 0 and 2'}
+ if isinstance(max_tokens,bool) or not isinstance(max_tokens,int) or not 1<=max_tokens<=CLOUD_AI_MAX_TOKENS:
+  return 400,{'error':f'max_tokens must be an integer between 1 and {CLOUD_AI_MAX_TOKENS}'}
  provider=os.getenv('LIFEOS_CLOUD_AI_PROVIDER','mock');model=os.getenv('LIFEOS_CLOUD_AI_MODEL','lifeos-mock');rid=new_id('caireq');ts=now()
  try:
   if provider=='mock': text='[Cloud AI test] '+str(messages[-1].get('content') or '')[:500]
   else:
    base=os.getenv('LIFEOS_CLOUD_AI_BASE_URL','').rstrip('/');key=os.getenv('LIFEOS_CLOUD_AI_API_KEY','')
    if not (base and key):return 503,{'error':'cloud AI provider is not configured'}
-   payload={'model':model,'messages':messages,'temperature':float(b.get('temperature',0.2))};raw=json.dumps(payload,ensure_ascii=False).encode();req=request.Request(base+'/chat/completions',data=raw,headers={'Authorization':'Bearer '+key,'Content-Type':'application/json'},method='POST')
+   payload={'model':model,'messages':messages,'temperature':float(temperature),'max_tokens':max_tokens};raw=json.dumps(payload,ensure_ascii=False).encode();req=request.Request(base+'/chat/completions',data=raw,headers={'Authorization':'Bearer '+key,'Content-Type':'application/json'},method='POST')
    with request.urlopen(req,timeout=90) as resp:data=json.loads(resp.read().decode());text=data['choices'][0]['message']['content']
   c.execute('INSERT INTO ai_requests(request_id,user_id,provider,model,input_chars,output_chars,status,created_at) VALUES(?,?,?,?,?,?,?,?)',(rid,uid,provider,model,chars,len(text),'ok',ts));period=ts[:7];c.execute('INSERT INTO usage_counters(user_id,metric,period,value) VALUES(?,?,?,1) ON CONFLICT(user_id,metric,period) DO UPDATE SET value=value+1',(uid,'cloud_ai_requests',period));c.commit();return 200,{'text':text,'provider':provider,'model':model,'request_id':rid,'privacy':'Only the messages explicitly supplied to this request were processed.'}
  except Exception as e:

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 from pathlib import Path
+import os
 import sqlite3, json, re, math, datetime, collections, itertools, statistics
 
-ROOT=Path(__file__).resolve().parents[1]
+ROOT=Path(os.getenv('LIFEOS_ROOT') or Path(__file__).resolve().parents[1])
 DB=ROOT/'data/lifeos.db'
 CFG=json.loads((ROOT/'config/taxonomy.json').read_text(encoding='utf-8'))
 TODAY=datetime.date(2026,8,13)

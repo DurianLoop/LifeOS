@@ -10,7 +10,7 @@ from __future__ import annotations
 from pathlib import Path
 import base64, csv, datetime as dt, hashlib, io, json, mimetypes, os, re, shutil, sqlite3, tempfile, threading, uuid, zipfile
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(os.getenv('LIFEOS_ROOT') or Path(__file__).resolve().parents[1])
 LIFE = ROOT / '.lifeos'
 CORE_DB = LIFE / 'core.db'
 VAULT = ROOT / 'vault'
@@ -41,9 +41,20 @@ DEFAULT_SETTINGS = {
     'ai.payload_preview': 'true',
     'ai.cache': 'true',
     'ai.provider': 'deepseek',
-    'ai.model': 'deepseek-v4-flash',
+    'ai.model': 'deepseek-chat',
     'ai.base_url': 'https://api.deepseek.com',
+    'ai.wire_api': 'chat_completions',
+    'ai.codex_model': '',
+    'ai.features.ask': 'true',
+    'ai.features.past_me': 'true',
+    'ai.features.classical': 'true',
+    'ai.features.poetry': 'true',
+    'ai.features.pet': 'true',
     'pet.allow_content': 'false',
+    'poetry.auto_enabled': 'false',
+    'classical.style': 'qingjian',
+    'classical.strength': 'medium',
+    'classical.engine': 'local',
     'sync.enabled': 'false',
     'sync.url': '',
     'sync.last_pull_seq': '0',
@@ -61,7 +72,8 @@ FEATURE_STRATEGIES = {
     'Home':'immediate','Journal':'immediate','Timeline':'immediate','On This Day':'immediate',
     'Universal Search':'index','Deep Read':'index','Quotes':'index','People':'index','Life Map':'index',
     'Memory Graph':'derived','Ideas':'index','Projects':'index','Questions':'index','Achievements':'index',
-    'Ask My Life':'ai','Past Me':'ai','Roundtable':'ai','Future Me':'ai','Contradictions':'ai',
+    'Ask My Life':'ai','Past Me':'ai','Roundtable':'index','Future Me':'index','Contradictions':'index',
+    'AI Settings':'immediate',
     'Year in Review':'derived','Memory Echoes':'derived','Hidden Chapters':'derived','Serendipity':'derived',
     'Memory Weather':'derived','Forgotten Doors':'derived','Skill Momentum':'derived','Thought → Artifact':'derived',
     '文言化':'ai',
@@ -578,6 +590,44 @@ def list_entries(limit=1000, root: Path = ROOT):
             d=dict(r);d['tags']=json.loads(d.pop('tags_json') or '[]');out.append(d)
         return out
     finally: con.close()
+
+def list_daily_dates(root: Path = ROOT, date_from=None, date_to=None, check_content=False):
+    """Small date index for the writer, including entries beyond the recent-page list."""
+    con = connect(root)
+    try:
+        conditions = ["deleted_at IS NULL", "kind='daily'", "journal_date IS NOT NULL"]
+        parameters = []
+        if date_from:
+            conditions.append('journal_date>=?'); parameters.append(date_from)
+        if date_to:
+            conditions.append('journal_date<=?'); parameters.append(date_to)
+        rows = con.execute('SELECT journal_date AS date, source_path, title, entry_id FROM entries WHERE '
+                           + ' AND '.join(conditions)
+                           + ' ORDER BY journal_date DESC, updated_at DESC, entry_id DESC', parameters)
+        dates = {}
+        for row in rows:
+            value = row['date']
+            if not re.fullmatch(r'\d{4}-\d{2}-\d{2}', value or ''):
+                continue
+            if value not in dates:
+                has_content = True
+                if check_content:
+                    import html
+                    try:
+                        text = (root / 'vault' / row['source_path']).read_text(encoding='utf-8')
+                    except OSError:
+                        text = ''
+                    text = re.sub(r'\A---\r?\n.*?\r?\n---(?:\r?\n|$)', '', text, count=1, flags=re.S)
+                    text = re.sub(r'(?m)^### .*(?:\n|$)', '', text)
+                    text = html.unescape(re.sub(r'<[^>]*>', '', text)).strip()
+                    has_content = bool(text or (row['title'] or '').strip()
+                                       or con.execute('SELECT 1 FROM attachments WHERE entry_id=? LIMIT 1',
+                                                      (row['entry_id'],)).fetchone())
+                dates[value] = {'date': value, 'source_path': row['source_path'], 'saved': has_content}
+        return list(dates.values())
+    finally:
+        con.close()
+
 
 def export_entries(*, export_format: str='markdown', date_from: str='', date_to: str='', entry_ids=None,
                    include_attachments: bool=False, root: Path = ROOT):

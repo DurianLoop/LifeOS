@@ -1,0 +1,79 @@
+.tweaksPanel {
+  z-index: 550;
+  max-height: calc(100dvh - 92px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.whiteNoiseBody {
+  min-width: 0;
+}
+
+.whiteNoiseTransport {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 8px;
+}
+
+.whiteNoiseTransport button {
+  min-width: 58px;
+  min-height: 44px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  background: var(--paper2);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.whiteNoiseTransport button:hover,
+.whiteNoiseTransport button[aria-pressed="true"] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.whiteNoiseTransport input {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--ink);
+}
+
+.whiteNoiseTransport output {
+  min-width: 34px;
+  text-align: right;
+  color: var(--ink);
+  font-size: 11px;
+}
+
+.whiteNoiseStatus {
+  display: block;
+  margin-top: 7px;
+  color: var(--muted);
+  font: 10px/1.55 var(--serif);
+}
+
+.whiteNoiseCredits {
+  display: inline-block;
+  margin-top: 5px;
+  color: var(--muted);
+  font: 10px/1.55 var(--serif);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.whiteNoiseCredits:hover,
+.whiteNoiseCredits:focus-visible {
+  color: var(--ink);
+}
+
+.whiteNoiseTransport button[aria-busy="true"] {
+  border-style: dashed;
+}
+
+@media (max-width: 760px) {
+  .tweaksPanel {
+    max-height: calc(100dvh - 156px);
+  }
+}

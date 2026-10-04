@@ -1,0 +1,481 @@
+/* Free writing canvas. Load after the legacy desk and typography styles. */
+body.writerImmersive .productPanel:has(.i2WriterGrid.i2FreeLayout) {
+  height: 100%;
+}
+
+body.writerImmersive .i2Desk:has(.i2WriterGrid.i2FreeLayout) {
+  height: 100%;
+  max-height: 100%;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) {
+  position: relative;
+  display: block !important;
+  flex: 0 0 auto !important;
+  width: 100%;
+  height: var(--writer-canvas-height, auto);
+  min-width: 0;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin-top: 16px;
+  padding: 0;
+  border: 0;
+  overflow: visible !important;
+  contain: none !important;
+  isolation: isolate;
+  grid-template: none !important;
+  grid-auto-flow: initial !important;
+  grid-auto-rows: auto !important;
+  gap: 0;
+  transition: none !important;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) > .i2WriterCell {
+  position: absolute;
+  display: flex !important;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0;
+  grid-column: auto !important;
+  grid-row: auto !important;
+  overflow: hidden !important;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  cursor: text;
+  animation: none !important;
+  transform: none !important;
+  transition: border-color .15s ease, box-shadow .15s ease !important;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout > .i2WriterCell {
+  --writer-paper-fill: color-mix(in srgb, var(--paper) 95%, var(--dream-accent) 5%);
+  background-color: var(--writer-paper-fill) !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+.i2Desk .i2WriterGrid.i2FreeLayout {
+  filter: none !important;
+}
+.i2Desk .i2WriterGrid.i2FreeLayout .i2CellEditor,
+.i2Desk .i2WriterGrid.i2FreeLayout textarea:not([hidden]) {
+  opacity: 1 !important;
+  background-color: transparent !important;
+}
+.i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell):not(.is-layout-editing) > .i2WriterCell {
+  cursor: pointer;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) > .i2WriterCell.i2Hidden {
+  display: none !important;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) > .i2WriterCell:hover {
+  box-shadow: none;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) > .i2WriterCell:focus-within {
+  border-color: color-mix(in srgb, var(--dream-accent) 55%, var(--line));
+  box-shadow: none;
+}
+
+/* A compact fixed head leaves the rest of every saved rectangle writable. */
+.i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) .i2CellHead {
+  position: relative !important;
+  inset: auto;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-width: 0;
+  min-height: 0 !important;
+  gap: 8px;
+  padding: 10px 13px 7px !important;
+  cursor: default !important;
+  touch-action: auto;
+  background: inherit;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) .i2CellHead :is(label, .i2CellTitle) {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  line-height: 1.25 !important;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) .i2CellHead [data-cell-title] {
+  display: block;
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+  line-height: 1.25 !important;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) .is-renaming [data-cell-title] {
+  display: none;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) .i2CellTitleInput {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  height: 30px;
+  min-height: 0 !important;
+  margin: 0;
+  padding: 2px 3px;
+  line-height: 1.25 !important;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) .i2CellActions {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) .i2CellEditor,
+.i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) textarea:not([hidden]) {
+  display: block;
+  flex: 1 1 0;
+  width: 100%;
+  height: auto !important;
+  min-width: 0;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0;
+  padding: 4px 13px 14px !important;
+  overflow-x: hidden;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  overflow-wrap: anywhere;
+  pointer-events: auto !important;
+  opacity: 1 !important;
+  cursor: text;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) .i2HabitList {
+  flex: 0 1 auto;
+  min-height: 0;
+  gap: 7px;
+  padding: 6px 13px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) .i2HabitList label {
+  min-width: 0;
+  line-height: 1.45 !important;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) .i2HabitCell .i2HabitNote {
+  flex: 1 1 32px !important;
+  min-height: 0 !important;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout .i2HabitCell.is-habit-editing .i2HabitList,
+.i2Desk .i2WriterGrid.i2FreeLayout .i2HabitCell.is-habit-editing .i2HabitNote {
+  display: none !important;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) .i2HabitEditor {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0 13px 12px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.i2Desk:has(.i2WriterGrid.i2FreeLayout) .i2WriterTools #writerAddQuick {
+  display: inline-flex !important;
+}
+.i2Desk .i2WriterGrid.i2FreeLayout .i2CellActions [data-cell-focus],
+.i2FreeLayout [data-cell-remove]:disabled {
+  display: none !important;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout:is(.is-arranging, .is-layout-editing):not(.is-layout-narrow) .i2CellHead {
+  cursor: grab !important;
+  touch-action: none;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout [data-writer-move],
+.i2Desk .i2WriterGrid.i2FreeLayout [data-writer-resize] {
+  display: none;
+  appearance: none;
+  box-sizing: border-box;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--dream-accent);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout:is(.is-arranging, .is-layout-editing):not(.is-focused-cell) [data-writer-move] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 26px;
+  width: 26px;
+  height: 26px;
+  margin: 0;
+  font: 18px/1 var(--type-mono);
+  cursor: grab;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout [data-writer-move]:active {
+  cursor: grabbing;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout [data-writer-move]:focus-visible,
+.i2Desk .i2WriterGrid.i2FreeLayout [data-writer-resize]:focus-visible {
+  outline: 1px solid var(--dream-accent);
+  outline-offset: -2px;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout:is(.is-arranging, .is-layout-editing):not(.is-focused-cell) [data-writer-resize] {
+  position: absolute;
+  z-index: 8;
+  display: block;
+  min-width: 0;
+  min-height: 0;
+  font-size: 0;
+}
+
+.i2Desk .i2WriterGrid.i2FreeLayout [data-writer-move][hidden],
+.i2Desk .i2WriterGrid.i2FreeLayout [data-writer-resize][hidden],
+.i2Desk .i2WriterGrid.i2FreeLayout.is-layout-narrow [data-writer-move],
+.i2Desk .i2WriterGrid.i2FreeLayout.is-layout-narrow [data-writer-resize] {
+  display: none !important;
+}
+
+.i2FreeLayout [data-writer-resize="n"],
+.i2FreeLayout [data-writer-resize="s"] {
+  left: 16px;
+  right: 16px;
+  height: 8px;
+  cursor: ns-resize;
+}
+.i2FreeLayout [data-writer-resize="n"] { top: 0; }
+.i2FreeLayout [data-writer-resize="s"] { bottom: 0; }
+.i2FreeLayout [data-writer-resize="e"],
+.i2FreeLayout [data-writer-resize="w"] {
+  top: 16px;
+  bottom: 16px;
+  width: 8px;
+  cursor: ew-resize;
+}
+.i2FreeLayout [data-writer-resize="e"] { right: 0; }
+.i2FreeLayout [data-writer-resize="w"] { left: 0; }
+.i2FreeLayout [data-writer-resize="ne"],
+.i2FreeLayout [data-writer-resize="se"],
+.i2FreeLayout [data-writer-resize="sw"],
+.i2FreeLayout [data-writer-resize="nw"] {
+  width: 16px;
+  height: 16px;
+}
+.i2FreeLayout [data-writer-resize="ne"] { top: 0; right: 0; cursor: nesw-resize; }
+.i2FreeLayout [data-writer-resize="se"] { bottom: 0; right: 0; cursor: nwse-resize; }
+.i2FreeLayout [data-writer-resize="sw"] { bottom: 0; left: 0; cursor: nesw-resize; }
+.i2FreeLayout [data-writer-resize="nw"] { top: 0; left: 0; cursor: nwse-resize; }
+
+.i2FreeLayout [data-writer-resize="ne"]::after,
+.i2FreeLayout [data-writer-resize="se"]::after,
+.i2FreeLayout [data-writer-resize="sw"]::after,
+.i2FreeLayout [data-writer-resize="nw"]::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border: solid var(--dream-accent);
+  opacity: .72;
+}
+.i2FreeLayout [data-writer-resize="ne"]::after { top: 3px; right: 3px; border-width: 1px 1px 0 0; }
+.i2FreeLayout [data-writer-resize="se"]::after { bottom: 3px; right: 3px; border-width: 0 1px 1px 0; }
+.i2FreeLayout [data-writer-resize="sw"]::after { bottom: 3px; left: 3px; border-width: 0 0 1px 1px; }
+.i2FreeLayout [data-writer-resize="nw"]::after { top: 3px; left: 3px; border-width: 1px 0 0 1px; }
+
+.i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) > .i2WriterCell:is(.is-moving, .is-resizing) {
+  z-index: 12;
+  border-color: var(--dream-accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--dream-accent) 45%, transparent), 0 8px 24px color-mix(in srgb, var(--ink) 10%, transparent);
+  transition: none !important;
+}
+
+.i2WriterGrid.i2FreeLayout > .i2WriterGuide {
+  position: absolute;
+  z-index: 20;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--dream-accent) 78%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--paper) 55%, transparent);
+}
+.i2WriterGrid.i2FreeLayout > .i2WriterGuide[hidden] { display: none !important; }
+.i2WriterGrid.i2FreeLayout > .i2WriterGuide--x { top: 0; bottom: 0; width: 1px; }
+.i2WriterGrid.i2FreeLayout > .i2WriterGuide--y { left: 0; right: 0; height: 1px; }
+
+.i2FreeLayout:is(.is-moving, .is-resizing),
+.i2FreeLayout .i2WriterCell:is(.is-moving, .is-resizing) {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Focus keeps the original full-page editor; geometry is cleared by JS. */
+.i2Desk .i2WriterGrid.i2FreeLayout.is-focused-cell {
+  position: relative;
+  display: flex !important;
+  flex-direction: column;
+  flex: 1 1 0 !important;
+  min-width: 0;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  margin-top: 6px;
+  border: 0;
+  overflow: hidden !important;
+  contain: none !important;
+}
+.i2Desk .i2WriterGrid.i2FreeLayout.is-focused-cell > .i2WriterCell:not(.is-active-cell) {
+  display: none !important;
+}
+.i2Desk .i2WriterGrid.i2FreeLayout.is-focused-cell > .i2WriterCell.is-active-cell {
+  position: relative;
+  display: flex !important;
+  flex-direction: column;
+  flex: 1 1 0;
+  box-sizing: border-box;
+  left: auto;
+  top: auto;
+  width: auto;
+  min-width: 0;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+  transform: none !important;
+}
+.i2Desk .i2WriterGrid.i2FreeLayout.is-focused-cell .i2CellEditor,
+.i2Desk .i2WriterGrid.i2FreeLayout.is-focused-cell textarea:not([hidden]) {
+  display: block !important;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  border-inline-start: 0;
+  box-shadow: none;
+  pointer-events: auto !important;
+}
+.i2WriterGrid.i2FreeLayout.is-focused-cell [data-writer-move],
+.i2WriterGrid.i2FreeLayout.is-focused-cell [data-writer-resize] {
+  display: none !important;
+}
+
+@media (min-width: 981px) {
+  body.writerImmersive .productDockBox:has(.i2WriterGrid.i2FreeLayout.is-focused-cell) {
+    grid-template-rows: minmax(0, 1fr);
+  }
+  body.writerImmersive .productDockBody:has(.i2WriterGrid.i2FreeLayout.is-focused-cell),
+  body.writerImmersive .productPanel:has(.i2WriterGrid.i2FreeLayout.is-focused-cell) {
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+  body.writerImmersive .i2Desk:has(.i2WriterGrid.i2FreeLayout.is-focused-cell) {
+    height: calc(100dvh - var(--life-titlebar-h, 0px));
+    max-height: calc(100dvh - var(--life-titlebar-h, 0px));
+  }
+  .i2Desk:has(.i2WriterGrid.i2FreeLayout.is-focused-cell) form#writerForm {
+    display: flex !important;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .i2Desk:has(.i2WriterGrid.i2FreeLayout.is-focused-cell) .i2WriterStage {
+    display: flex !important;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-height: 0;
+    height: auto !important;
+    max-height: none;
+    overflow: hidden !important;
+  }
+  .i2Desk:has(.i2WriterGrid.i2FreeLayout.is-focused-cell) .i2WriterStageTop,
+  .i2Desk:has(.i2WriterGrid.i2FreeLayout.is-focused-cell) .i2FocusToolbar {
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 980px) {
+  .i2Desk .i2WriterGrid.i2FreeLayout.is-focused-cell {
+    min-height: min(62dvh, 660px) !important;
+  }
+  .i2Desk .i2WriterGrid.i2FreeLayout.is-focused-cell > .i2WriterCell.is-active-cell {
+    min-height: inherit !important;
+    height: auto;
+  }
+  .i2Desk .i2WriterGrid.i2FreeLayout.is-focused-cell .i2CellEditor,
+  .i2Desk .i2WriterGrid.i2FreeLayout.is-focused-cell textarea:not([hidden]) {
+    min-height: min(46dvh, 500px) !important;
+  }
+}
+
+@media (min-width: 761px) {
+  .i2Desk:has(.i2WriterGrid.i2FreeLayout:not(.is-focused-cell)) .i2WriterStage {
+    display: block !important;
+    min-height: 0;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    padding-bottom: 28px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-dark) transparent;
+    scroll-padding-top: 70px;
+  }
+  .i2Desk:has(.i2WriterGrid.i2FreeLayout:not(.is-focused-cell)) .i2WriterStageTop {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: var(--paper);
+  }
+}
+
+@media (max-width: 600px) {
+  .i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) {
+    margin-top: 12px;
+  }
+  .i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) .i2CellHead {
+    padding: 10px 12px 7px !important;
+  }
+  .i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) .i2CellEditor {
+    padding-inline: 12px !important;
+  }
+  .i2Desk .i2WriterGrid.i2FreeLayout:is(.is-arranging, .is-layout-editing):not(.is-focused-cell) [data-writer-move] {
+    width: 32px;
+    height: 30px;
+    flex-basis: 32px;
+  }
+  .i2Desk .i2WriterGrid.i2FreeLayout:is(.is-arranging, .is-layout-editing):not(.is-focused-cell) [data-writer-resize="n"],
+  .i2Desk .i2WriterGrid.i2FreeLayout:is(.is-arranging, .is-layout-editing):not(.is-focused-cell) [data-writer-resize="s"] {
+    height: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .i2Desk .i2WriterGrid.i2FreeLayout > .i2WriterCell { transition: none !important; }
+}

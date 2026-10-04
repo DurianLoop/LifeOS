@@ -11,12 +11,27 @@
 
 # Build and local tool output.
 /desktop/node_modules/
+/desktop/.venv/
+/desktop/.electron-cache/
+/desktop/.builder-cache/
+/desktop/release-*/
+/mobile/node_modules/
+/mobile/ios/
+/mobile/android/
+/node_modules/
+/.npm-cache/
+/.netlify-cli/
+/.netlify/
 /desktop/dist/
 /desktop/server-dist/
 /desktop/python-runtime/
 /desktop/build/
 /desktop/*.spec
 /docs/qa_*/
+/artifacts/
 __pycache__/
 *.pyc
 .DS_Store
+
+# Gallery previews are fetched on demand; installed bundled pets retain attribution.
+/app/assets/pet-readme-previews/

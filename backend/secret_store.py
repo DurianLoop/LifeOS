@@ -2,7 +2,7 @@
 from __future__ import annotations
 from pathlib import Path
 import json, os, stat
-ROOT=Path(__file__).resolve().parents[1]
+ROOT=Path(os.getenv('LIFEOS_ROOT') or Path(__file__).resolve().parents[1])
 SERVICE='LifeOS'
 
 def _keyring():

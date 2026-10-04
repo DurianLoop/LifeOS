@@ -1,0 +1,93 @@
+.i2WriterCalendar {
+  position: fixed;
+  z-index: 1200;
+  box-sizing: border-box;
+  width: 308px;
+  padding: 15px;
+  overflow: auto;
+  color: var(--ink, #332f2b);
+  background: var(--paper, #f8f4ec);
+  border: 1px solid var(--line, #d7cec1);
+  border-radius: 10px;
+  box-shadow: 0 12px 44px rgb(40 31 23 / 13%), 0 2px 8px rgb(40 31 23 / 5%);
+  font-family: var(--type-serif, Georgia, serif);
+}
+.i2WriterCalendar[hidden] { display: none; }
+.i2WriterCalendar button,
+.i2WriterCalendar input,
+.i2WriterCalendar select { font: inherit; color: inherit; }
+.i2CalendarHead { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.i2WriterCalendar button { cursor: pointer; }
+.i2WriterCalendar button:disabled,
+.i2WriterCalendar input:disabled,
+.i2WriterCalendar select:disabled { cursor: default; opacity: .45; }
+.i2CalendarMonthStep {
+  width: 31px;
+  height: 31px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  font-size: 26px !important;
+  line-height: 1;
+}
+.i2CalendarJump { display: flex; align-items: center; gap: 3px; }
+.i2CalendarYear,
+.i2CalendarMonth {
+  max-width: 88px;
+  border: 0;
+  border-radius: 3px;
+  padding: 4px;
+  background: transparent;
+  font-size: 16px !important;
+}
+.i2CalendarYear { width: 72px; text-align: center; appearance: textfield; }
+.i2CalendarYear::-webkit-outer-spin-button,
+.i2CalendarYear::-webkit-inner-spin-button { margin: 0; appearance: none; }
+.i2CalendarMonth { cursor: pointer; }
+.i2CalendarMonth option { background: var(--paper, #f8f4ec); }
+.i2CalendarWeekdays,
+.i2CalendarWeek { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
+.i2CalendarDays { display: grid; gap: 3px; }
+.i2CalendarWeekdays { margin: 12px 0 7px; color: var(--muted, #877e72); font: 10px var(--type-mono, monospace); }
+.i2CalendarWeekdays span { text-align: center; }
+.i2CalendarDay {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  min-width: 0;
+  padding: 0 0 2px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  font-size: 14px !important;
+  font-variant-numeric: tabular-nums;
+}
+.i2CalendarDay.is-adjacent { color: var(--muted, #877e72); opacity: .5; }
+.i2CalendarDay.has-content { background: color-mix(in srgb, var(--dream-accent, #776985) 13%, transparent); opacity: 1; }
+.i2CalendarDay.has-content::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: calc(50% - 1.5px);
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--dream-accent, #776985);
+}
+.i2CalendarDay.has-draft::after { border: 1px solid currentColor; background: transparent; box-sizing: border-box; width: 4px; height: 4px; }
+.i2CalendarDay.is-today { border-color: color-mix(in srgb, var(--dream-accent, #776985) 54%, transparent); }
+.i2CalendarDay.is-selected { color: var(--paper, #f8f4ec); background: var(--ink, #332f2b); opacity: 1; }
+.i2CalendarDay.is-selected::after { background: currentColor; }
+.i2CalendarDay.has-draft.is-selected::after { background: transparent; }
+.i2CalendarDay:hover:not(:disabled):not(.is-selected),
+.i2CalendarMonthStep:hover:not(:disabled) { background: color-mix(in srgb, var(--dream-accent, #776985) 22%, transparent); opacity: 1; }
+.i2WriterCalendar :focus-visible { outline: 2px solid var(--dream-accent, #776985); outline-offset: 2px; }
+.i2CalendarFoot { display: flex; justify-content: space-between; gap: 12px; margin-top: 10px; border-top: 1px solid var(--line, #d7cec1); padding-top: 10px; }
+.i2CalendarFoot button,
+.i2CalendarStatus button { padding: 3px 0; border: 0; background: transparent; font: 11px var(--type-mono, monospace) !important; }
+.i2CalendarClose { color: var(--muted, #877e72) !important; }
+.i2CalendarStatus { text-align: center; padding-top: 7px; }
+.i2CalendarStatus[hidden] { display: none; }

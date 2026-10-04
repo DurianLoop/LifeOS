@@ -10,8 +10,8 @@ from __future__ import annotations
 from pathlib import Path
 import datetime, json, os, shutil, sqlite3, sys, tempfile, threading, time, uuid
 
-ROOT=Path(__file__).resolve().parents[1]
-ENGINE_DIR=ROOT/'engine'
+ROOT=Path(os.getenv('LIFEOS_ROOT') or Path(__file__).resolve().parents[1])
+ENGINE_DIR=Path(__file__).resolve().parent
 if str(ENGINE_DIR) not in sys.path: sys.path.insert(0,str(ENGINE_DIR))
 
 import engine.rebuild_memory_engine as rebuild_engine

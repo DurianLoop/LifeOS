@@ -18,6 +18,7 @@ finally:
 removed=[x for x in base if x not in cur]
 added=[x for x in cur if x not in base]
 dupes=sorted({x for x in cur if cur.count(x)>1})
-ok=(cur==base and not removed and not added and not dupes)
-print(json.dumps({'ok':ok,'baseline':len(base),'current':len(cur),'removed':removed,'added':added,'duplicates':dupes,'order_preserved':cur==base},ensure_ascii=False,indent=2))
+order_preserved=cur[:len(base)]==base
+ok=(order_preserved and not removed and added==['Daily Poetry'] and not dupes)
+print(json.dumps({'ok':ok,'baseline':len(base),'current':len(cur),'removed':removed,'added':added,'duplicates':dupes,'order_preserved':order_preserved},ensure_ascii=False,indent=2))
 sys.exit(0 if ok else 1)

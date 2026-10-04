@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 from pathlib import Path
+import os
 import sqlite3, json, re, datetime, collections, math
 from timefold_engine import anchors, display_anchors, split_sentences
 
-ROOT=Path(__file__).resolve().parents[1]
+ROOT=Path(os.getenv('LIFEOS_ROOT') or Path(__file__).resolve().parents[1])
 DB=ROOT/'data/lifeos.db'
 CFG=json.loads((ROOT/'config/taxonomy.json').read_text(encoding='utf-8'))
 

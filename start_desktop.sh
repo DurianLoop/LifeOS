@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-set -e
-cd "$(dirname "$0")/desktop"
-if [ ! -d node_modules/electron ]; then echo "Desktop dependencies missing. Run ./setup_desktop.sh once."; exit 1; fi
-npm start
+set -euo pipefail
+cd "$(dirname "$0")"
+if ! command -v node >/dev/null 2>&1; then
+  echo "Node.js LTS is required. Run ./setup_desktop.sh first." >&2
+  exit 1
+fi
+exec node desktop/setup.cjs start "$@"

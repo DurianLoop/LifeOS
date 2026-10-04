@@ -9,17 +9,18 @@ except ImportError:
     Image=None
 
 ROOT=Path(os.getenv('LIFEOS_ROOT') or Path(__file__).resolve().parents[1])
-sys.path.insert(0,str(ROOT)) if str(ROOT) not in sys.path else None
+SOURCE_ROOT=Path(os.getenv('LIFEOS_RESOURCE_ROOT') or Path(__file__).resolve().parents[1])
+sys.path.insert(0,str(SOURCE_ROOT)) if str(SOURCE_ROOT) not in sys.path else None
 from engine import product_core as product
 from engine.incremental_index import reindex_paths, run_one_pending_refresh
 from engine.refresh_worker import start_refresh_worker
 from engine import import_pipeline
 from engine import sync_engine
-from engine import p2_core, p2_sync, crypto_vault
+from engine import p2_core, p2_sync, crypto_vault, poetry_engine, memorial
 from connectors import CONNECTORS
-from backend import ai_providers
+from backend import ai_providers, ai_control
 from backend.secret_store import set_secret, delete_secret
-APP=ROOT/'app'
+APP=SOURCE_ROOT/'app'
 DB=ROOT/'data/lifeos.db'
 CFG=json.loads((ROOT/'config/taxonomy.json').read_text(encoding='utf-8'))
 
@@ -28,7 +29,7 @@ CFG=json.loads((ROOT/'config/taxonomy.json').read_text(encoding='utf-8'))
 # flow; only publicly listed sprite packages are handled here.
 PET_CATALOG_URL='https://raw.githubusercontent.com/legeling/awesome-codex-pet/main/pets.json'
 PET_RAW_ROOT='https://raw.githubusercontent.com/legeling/awesome-codex-pet/main/pets'
-PET_ASSET_ROOT=APP/'assets'/'pets'
+PET_ASSET_ROOT=ROOT/'app'/'assets'/'pets'
 PET_PREVIEW_ROOT=APP/'assets'/'pet-readme-previews'
 PET_CATALOG_SNAPSHOT=ROOT/'config'/'pet_catalog_cache.json'
 PET_CATALOG_CACHE={'at':0.0,'items':[]}
@@ -89,7 +90,9 @@ def pet_catalog(force=False):
         if not PET_SLUG.fullmatch(slug) or not pet_license_allowed(item.get('license')): continue
         record={key:item.get(key) for key in ('slug','name','localized_names','author','author_handle','author_url','primary_category','collections','license','description','spriteVersionNumber')}
         preview=PET_PREVIEW_ROOT/slug/'idle.webp'
-        record['preview_url']=f'/assets/pet-readme-previews/{quote(slug)}/idle.webp' if preview.exists() else ''
+        # Gallery previews stay remote in packaged builds; the local spritesheet is
+        # still downloaded only after the user explicitly installs a pet.
+        record['preview_url']=f'/assets/pet-readme-previews/{quote(slug)}/idle.webp' if preview.exists() else f'https://codexpet.top/assets/previews/{quote(slug)}/webp/idle.webp'
         items.append(record)
     PET_CATALOG_CACHE.update({'at':now,'items':items})
     return items
@@ -734,9 +737,6 @@ def graph_data(con,limit=45):
     return {'nodes':nodes[:limit],'edges':edges}
 
 def product_ai_chat(messages,temperature=.2,feature='generic'):
-    mode=product.get_setting('ai.mode','byok',ROOT)
-    if mode=='disabled' or product.get_setting('ai.enabled','true',ROOT)!='true': return None
-    if mode=='cloud': return p2_sync.cloud_ai(messages,feature,ROOT)
     return ai_providers.chat(messages,temperature=temperature,feature=feature)
 
 def pet_companion_chat(history):
@@ -761,7 +761,7 @@ def pet_companion_chat(history):
     # Casual private conversation should not become a reusable AI cache entry.
     return ai_providers.chat([{'role':'system','content':system},*turns],temperature=.65,max_tokens=420,feature='Pet Companion',use_cache=False)
 
-def call_llm(question,evidence):
+def call_llm(question,evidence,feature='Ask My Life'):
     ev='\n\n'.join(f"[{e['evidence_id']}] {e['date']} · {e['section']} · {e['source_path']}\n{e['excerpt']}" for e in evidence)
     system="""You are the grounded reasoning layer of a private personal diary system.
 Only use the evidence supplied by the system. Never invent missing events, motives, dates, people, or causal explanations.
@@ -770,7 +770,7 @@ Every factual or interpretive claim must cite one or more evidence IDs such as [
 Prefer chronological structure for change-over-time questions.
 Do not treat AI summaries as the user's original words."""
     try:
-        return product_ai_chat([{'role':'system','content':system},{'role':'user','content':f"Question: {question}\n\nEvidence:\n{ev}"}],temperature=0.2,feature='Ask My Life')
+        return product_ai_chat([{'role':'system','content':system},{'role':'user','content':f"Question: {question}\n\nEvidence:\n{ev}"}],temperature=0.2,feature=feature)
     except Exception as e:
         return {'error':str(e)}
 
@@ -959,6 +959,13 @@ def lineage_bundle(con):
 
 class Handler(SimpleHTTPRequestHandler):
     def __init__(self,*a,**kw): super().__init__(*a,directory=str(APP),**kw)
+    def translate_path(self,path):
+        translated=Path(super().translate_path(path))
+        try:
+            pet_path=translated.relative_to(APP/'assets'/'pets')
+        except ValueError:
+            return str(translated)
+        return str(PET_ASSET_ROOT/pet_path)
     def log_message(self,fmt,*args): print('[LifeOS]',fmt%args)
     def end_headers(self):
         # The app shell is deliberately never cached: opening start.bat must
@@ -1021,6 +1028,12 @@ class Handler(SimpleHTTPRequestHandler):
                 return self.send_json({'pet':{'id':item['slug'],'name':item['name'],'version':item['spriteVersionNumber'],'frameMap':item.get('frame_map'),'sprite':str(sprite)}})
             if path=='/api/entries':
                 return self.send_json({'items':product.list_entries(int(q.get('limit',['1000'])[0]),ROOT)})
+            if path=='/api/writer/dates':
+                return self.send_json({'items':product.list_daily_dates(ROOT,
+                    date_from=q.get('from',[None])[0], date_to=q.get('to',[None])[0],
+                    check_content=q.get('content',['0'])[0]=='1')})
+            if path=='/api/poetry':
+                return self.send_json(poetry_engine.status(q.get('date',[None])[0],ROOT))
             if path=='/api/entry':
                 item=product.get_entry(entry_id=q.get('entry_id',[None])[0],source_path=q.get('source',[None])[0],root=ROOT)
                 if not item:return self.send_json({'error':'entry not found'},404)
@@ -1052,6 +1065,10 @@ class Handler(SimpleHTTPRequestHandler):
                 return self.send_json({'items':product.feature_states(ROOT),'artifact':product.artifact_status(q.get('feature',[None])[0],ROOT)})
             if path=='/api/ai/status':
                 out=ai_providers.privacy_status();out['usage']=product.ai_usage_summary(ROOT);return self.send_json(out)
+            if path=='/api/ai/control':
+                return self.send_json(ai_control.control_status(ROOT))
+            if path=='/api/ai/integrations':
+                return self.send_json(ai_control.integrations_status(ROOT))
             if path=='/api/sync/status':
                 out=sync_engine.status(ROOT);out['items']=product.list_sync_conflicts(ROOT);return self.send_json(out)
             if path=='/api/p2/status':
@@ -1061,13 +1078,33 @@ class Handler(SimpleHTTPRequestHandler):
             if path=='/api/notifications':
                 return self.send_json({'items':p2_core.list_notifications(q.get('status',[None])[0],int(q.get('limit',['100'])[0]),ROOT),'preferences':p2_core.notification_preferences(ROOT)})
             if path=='/api/marketplace':
-                catalog_path=ROOT/'marketplace'/'catalog.json';catalog=json.loads(catalog_path.read_text(encoding='utf-8')) if catalog_path.exists() else {'items':[]};return self.send_json({'catalog':catalog,'installed':p2_core.list_addons(ROOT)})
+                catalog_path=SOURCE_ROOT/'marketplace'/'catalog.json';catalog=json.loads(catalog_path.read_text(encoding='utf-8')) if catalog_path.exists() else {'items':[]};return self.send_json({'catalog':catalog,'installed':p2_core.list_addons(ROOT)})
             if path=='/api/encryption/status':
                 return self.send_json(crypto_vault.status(ROOT))
             if path=='/api/subscription':
                 return self.send_json(p2_core.subscription(ROOT))
             if path=='/api/shares':
                 return self.send_json({'items':p2_core.list_shares(ROOT)})
+            if path=='/api/memorial/available':
+                return self.send_json({'items':memorial.available(ROOT)})
+            if path=='/api/memorial/config':
+                return self.send_json(p2_sync.memorial_config(ROOT))
+            if path=='/api/memorial/status':
+                return self.send_json(p2_sync.memorial_status(ROOT))
+            if path=='/api/memorial/qr':
+                url=q.get('url',[''])[0]
+                status=p2_sync.memorial_status(ROOT)
+                if url!=status.get('url') or not status.get('published'):
+                    return self.send_json({'error':'published memorial URL required'},400)
+                try:
+                    import qrcode
+                    from qrcode.image.svg import SvgPathFillImage
+                except ImportError:
+                    return self.send_json({'error':'二维码组件尚未安装；请安装 requirements.txt 后重启 LifeOS'},503)
+                import io
+                out=io.BytesIO();qrcode.make(url,error_correction=qrcode.constants.ERROR_CORRECT_H,
+                    box_size=12,border=4,image_factory=SvgPathFillImage).save(out)
+                return self.send_binary(out.getvalue(),'image/svg+xml','lifeos-memorial-qr.svg',disposition='inline' if q.get('view',['0'])[0]=='1' else 'attachment')
             if path=='/api/attachments':
                 return self.send_json({'items':product.list_attachments(q.get('entry_id',[''])[0],ROOT)})
             if path=='/api/attachment':
@@ -1810,7 +1847,18 @@ class Handler(SimpleHTTPRequestHandler):
                 date=(b.get('journal_date') or '').strip();sections=b.get('sections') or {}
                 out=product.save_entry(journal_date=date,sections=sections,entry_id=b.get('entry_id'),title=b.get('title') or '',tags=b.get('tags') or [],timezone=b.get('timezone') or '',source='writer',note=b.get('note') or '',root=ROOT,raw_markdown=b.get('raw_markdown'))
                 idx=reindex_paths([out['source_path']],root=ROOT,deleted_paths=[out['old_source_path']] if out.get('old_source_path') else []) if (not out.get('unchanged') or out.get('old_source_path')) else {'changed':[]}
-                return self.send_json({'ok':True,'result':out,'index':idx,'core':product.core_status(ROOT)})
+                try: poetry_scheduled=poetry_engine.schedule(date,ROOT)
+                except Exception: poetry_scheduled=False
+                return self.send_json({'ok':True,'result':out,'index':idx,'core':product.core_status(ROOT),'poetry_scheduled':poetry_scheduled})
+            if path=='/api/poetry/settings':
+                enabled=b.get('auto_enabled') is True
+                if enabled and not ai_providers.availability('今日一诗')['available']:
+                    return self.send_json({'error':'请先在隐私 / AI 中启用并配置模型'},400)
+                return self.send_json({'ok':True,'auto_enabled':poetry_engine.set_auto(enabled,ROOT)})
+            if path=='/api/poetry/generate':
+                try: return self.send_json({'ok':True,**poetry_engine.generate(b.get('date'),ROOT)})
+                except poetry_engine.PoetryError as e: return self.send_json({'error':str(e)},400)
+                except Exception: return self.send_json({'error':'荐诗暂时失败，请稍后重试'},502)
             if path=='/api/revisions/restore':
                 out=product.restore_revision(b.get('entry_id',''),b.get('revision_id',''),ROOT);idx=reindex_paths([out['source_path']],root=ROOT)
                 return self.send_json({'ok':True,'result':out,'index':idx})
@@ -1843,8 +1891,8 @@ class Handler(SimpleHTTPRequestHandler):
                 try:
                     result=pet_companion_chat(b.get('messages') or [])
                     if result is None:
-                        return self.send_json({'error':'桌宠对话尚未启用。请在隐私设置中确认 DeepSeek 已配置并允许远端请求。'},409)
-                    return self.send_json({'ok':True,'reply':str(result.get('text') or '').strip(),'provider':result.get('provider'),'model':result.get('model'),'remote':True,'note':'仅发送本次对话文字；不会读取、检索或写入日记。'})
+                        return self.send_json({'error':ai_providers.availability('Pet Companion')['reason'] or '请在 AI 设置中配置并启用桌宠聊天'},409)
+                    return self.send_json({'ok':True,'reply':str(result.get('text') or '').strip(),'provider':result.get('provider'),'model':result.get('model'),'remote':ai_providers.availability('Pet Companion')['requires_remote'],'note':'仅使用本次对话文字；不会读取、检索或写入日记。'})
                 except ValueError as e:
                     return self.send_json({'error':str(e)},400)
                 except Exception:
@@ -1855,11 +1903,19 @@ class Handler(SimpleHTTPRequestHandler):
                     return self.send_json(run_one_pending_refresh(ROOT))
                 return self.send_json({'ok':True,'status':product.derived_refresh_status(ROOT)})
             if path=='/api/ai/settings':
-                allowed={'ai.mode','ai.enabled','ai.allow_remote','ai.payload_preview','ai.cache','ai.provider','ai.model','ai.base_url','ai.embed_model'};items={k:v for k,v in (b.get('items') or {}).items() if k in allowed};product.set_settings(items,ROOT);return self.send_json({'ok':True,'status':ai_providers.privacy_status()})
+                try:return self.send_json(ai_control.save_settings(b,ROOT))
+                except ValueError as e:return self.send_json({'error':str(e)},400)
             if path=='/api/ai/key':
                 provider=(b.get('provider') or product.get_setting('ai.provider','deepseek',ROOT)).strip();key=(b.get('key') or '').strip()
                 if not key:return self.send_json({'error':'key required'},400)
-                result=set_secret(f'ai.{provider}.api_key',key,ROOT);return self.send_json({'ok':True,'storage':result.get('storage'),'status':ai_providers.privacy_status()})
+                try:return self.send_json(ai_control.save_settings({'items':{'ai.provider':provider},'key':key},ROOT))
+                except ValueError as e:return self.send_json({'error':str(e)},400)
+            if path=='/api/ai/test':
+                return self.send_json(ai_control.test_connection(ROOT))
+            if path=='/api/ai/import-cc-switch':
+                try:return self.send_json(ai_control.import_cc_switch(ROOT))
+                except ValueError as e:return self.send_json({'error':str(e)},400)
+                except Exception:return self.send_json({'error':'导入失败，请检查当前 Codex 连接配置'},400)
             if path=='/api/sync/register':
                 return self.send_json(sync_engine.register_account(b.get('url') or '',b.get('email') or '',b.get('password') or '',ROOT))
             if path=='/api/sync/login':
@@ -1900,10 +1956,20 @@ class Handler(SimpleHTTPRequestHandler):
                 return self.send_json({'ok':True,'result':p2_sync.pull_extras(ROOT)})
             if path=='/api/share/create':
                 return self.send_json(p2_sync.create_share(b.get('entry_id',''),b.get('revision_id'),b.get('expires_in_days',30),b.get('title'),ROOT))
+            if path=='/api/memorial/publish':
+                return self.send_json(p2_sync.publish_memorial(b.get('title',''),b.get('introduction',''),b.get('entry_ids') or [],b.get('story_ids') or [],b.get('ai_enabled',False),ROOT))
+            if path=='/api/memorial/config':
+                try:return self.send_json(p2_sync.set_memorial_config(b.get('url') if 'url' in b else None,b.get('token') if 'token' in b else None,bool(b.get('generate')),ROOT))
+                except ValueError as e:return self.send_json({'error':str(e)},400)
+            if path=='/api/memorial/unpublish':
+                return self.send_json(p2_sync.unpublish_memorial(ROOT))
             if path=='/api/share/revoke':
                 return self.send_json(p2_sync.revoke_share(b.get('share_id',''),ROOT))
             if path=='/api/cloud-ai':
-                return self.send_json(p2_sync.cloud_ai(b.get('messages') or [],b.get('feature') or 'desktop-cloud-ai',ROOT))
+                if product.get_setting('ai.mode','byok',ROOT)!='cloud':
+                    return self.send_json({'error':'请先在 AI 设置中选择 LifeOS Cloud 模式'},409)
+                result=ai_providers.chat(b.get('messages') or [],feature=b.get('feature') or 'desktop-cloud-ai',use_cache=False)
+                return self.send_json(result or {'error':'AI 已关闭或不允许远端请求'},200 if result else 409)
             if path=='/api/classical-chinese':
                 text=(b.get('text') or '').strip()
                 if not text: return self.send_json({'error':'text required'},400)
@@ -1924,10 +1990,10 @@ class Handler(SimpleHTTPRequestHandler):
                         note='没有文本被发送到外部模型。以下仅为本地机械草译。'
                     else:
                         output=(result.get('text') or '').strip()
-                        remote=True
-                        mode='remote_model'
+                        remote=ai_providers.availability('文言化')['requires_remote']
+                        mode='remote_model' if remote else 'local_model'
                         mode_label='AI 文言化'
-                        note=f"仅本次输入文本被发送给 {result.get('provider')} / {result.get('model')}；转换结果不会写回 Vault。"
+                        note=f"仅本次输入文本由 {result.get('provider')} / {result.get('model')} 处理；转换结果不会写回 Vault。"
                 else:
                     output=local_classical_draft(text,style,strength)
                     mode='local_draft'
@@ -1939,6 +2005,9 @@ class Handler(SimpleHTTPRequestHandler):
                 ret=retrieve(con,q,int(b.get('limit',12)),b.get('cutoff'))
                 ret=filter_selected_evidence(ret,b.get('selected_keys') or [])
                 health=evidence_health(ret); ret['evidence_health']=health
+                ret['payload_preview_enabled']=product.get_setting('ai.payload_preview','true',ROOT)=='true'
+                preview=ai_providers.payload_preview(ret['evidence'])
+                if ret['payload_preview_enabled']:ret['remote_payload']=preview
                 stage=b.get('stage') or 'answer'
                 if stage=='retrieve':
                     answer={'mode':'evidence_review','text':'Evidence pack ready for review. Nothing has been interpreted yet.'}
@@ -1946,8 +2015,8 @@ class Handler(SimpleHTTPRequestHandler):
                 if health['status'] in ('insufficient','thin') and not b.get('force_limited'):
                     answer={'mode':'insufficient_evidence','text':'当前证据包过薄，LifeOS 暂不调用模型生成解释。你可以调整问题、补充/选择证据，或明确选择“仍然谨慎解释”。'}
                     return self.send_json({'answer':answer,**ret})
-                model=call_llm(q,ret['evidence'])
-                preview=ai_providers.payload_preview(ret['evidence'])
+                ai_feature='Past Me' if b.get('cutoff') else 'Ask My Life'
+                model=call_llm(q,ret['evidence'],feature=ai_feature)
                 if model is None:
                     answer={'mode':'retrieval_only','text':f"已保留 {ret['count']} 条你确认过的本地证据。当前 AI 未启用、禁止远程或未配置，因此 LifeOS 不发送内容，也不生成未经验证的解释。"}
                 elif isinstance(model,dict) and model.get('error'):
@@ -1962,9 +2031,9 @@ class Handler(SimpleHTTPRequestHandler):
                     for ev in ret['evidence']:
                         pe=product.get_entry(source_path=ev.get('source_path'),root=ROOT)
                         if pe and pe.get('current_revision_id'):inputs.append((pe['entry_id'],pe['current_revision_id']))
-                    artifact_id=product.record_ai_artifact('Ask My Life',{'question':q,'answer':model_text,'citation_status':'verified' if valid and not invalid else 'missing_or_invalid'},inputs,model.get('provider','unknown'),model.get('model','unknown'),'ask-v2',ROOT) if inputs else None
+                    artifact_id=product.record_ai_artifact(ai_feature,{'question':q,'answer':model_text,'citation_status':'verified' if valid and not invalid else 'missing_or_invalid'},inputs,model.get('provider','unknown'),model.get('model','unknown'),'ask-v2',ROOT) if inputs else None
                     answer={'mode':'grounded_llm','text':model_text,'valid_citations':valid,'invalid_citations':invalid,'citation_status':'verified' if valid and not invalid else 'missing_or_invalid','provider':model.get('provider'),'model':model.get('model'),'artifact_id':artifact_id}
-                return self.send_json({'answer':answer,'remote_payload':preview,**ret})
+                return self.send_json({'answer':answer,**ret})
             if path=='/api/roundtable':
                 q=(b.get('question') or '').strip()
                 cutoffs=b.get('cutoffs') or ['2025-06-30','2025-12-31','2026-08-13']
