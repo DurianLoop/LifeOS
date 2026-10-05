@@ -15,6 +15,9 @@ class EntryDraft:
     original_metadata:dict=field(default_factory=dict)
     confidence:str='high'
     note:str=''
+    kind:str='daily'
+    week_year:int|None=None
+    week:int|None=None
     def asdict(self): return asdict(self)
 
 class Importer:
@@ -28,7 +31,9 @@ def guess_date(name:str,text:str='',metadata=None):
         v=metadata.get(key)
         if not v: continue
         m=re.search(r'(20\d{2})[-/](\d{1,2})[-/](\d{1,2})',str(v))
-        if m: return f'{int(m.group(1)):04d}-{int(m.group(2)):02d}-{int(m.group(3)):02d}'
+        if m:
+            try:return dt.date(int(m.group(1)),int(m.group(2)),int(m.group(3))).isoformat()
+            except ValueError:continue
         try:
             s=str(v).replace('Z','+00:00'); return dt.datetime.fromisoformat(s).date().isoformat()
         except Exception: pass
@@ -37,6 +42,22 @@ def guess_date(name:str,text:str='',metadata=None):
         if m:
             try:return dt.date(int(m.group(1)),int(m.group(2)),int(m.group(3))).isoformat()
             except ValueError: pass
+    return None
+
+def guess_week(name:str,metadata=None):
+    """Recognize archive week numbers without inventing an ISO calendar date.
+
+    Older journals use calendar-year weeks, including week 53 in 2025.
+    Their existing year/week identity must remain intact.
+    """
+    metadata=metadata or {}
+    for candidate in (metadata.get('source_path') or '',name):
+        stem=Path(str(candidate).replace('\\','/')).stem
+        if re.match(r'^20\d{2}[-_.]\d{1,2}[-_.]\d{1,2}(?:$|\D)',stem):
+            continue
+        match=re.match(r'^(20\d{2})[_-](?:[Ww])?(\d{1,2})(?:$|[ -])',stem)
+        if match and 1<=int(match[2])<=53:
+            return int(match[1]),int(match[2])
     return None
 
 def strip_html(raw:str):

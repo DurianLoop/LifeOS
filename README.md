@@ -1,8 +1,17 @@
-# LifeOS v0.4.0
+# LifeOS v0.4.1
 
 LifeOS is a local-first journal and personal memory workspace, with an editable writing desk, journal book, and desktop companion.
 
-## New in v0.4
+## New in v0.4.1
+
+- **Attic workspace:** overview, review, organization and observation share a continuous reading layout, filters and source previews. Writing statistics, skill evidence and word evolution charts now render correctly.
+- **Diary import and export:** more reliable Markdown and weekly journal recognition, preserved line breaks, export/import round trips and clearing workflows.
+- **Grounded AI:** review the selected evidence before sending, keep citations linked to the original source, retry failed requests, and reject stale results when journals change. Named subjects, exact dates and past-self cutoffs retrieve the intended records.
+- **Memorial answers:** public AI uses only the selected snapshot, with citation validation, request limits and clearer failures.
+
+[Release notes](docs/RELEASE_v0.4.1.md) · [AI quality evaluation](docs/AI_QUALITY_ACCEPTANCE.md)
+
+## Included from v0.4
 
 - **Daily poetry:** choose a poem for the current journal, read the original and explanation, and revisit past selections. Automatic recommendations are opt-in and require your configured AI provider.
 - **Ambient recordings:** six real nature recordings bundled for offline playback, with smooth loops, sound switching and saved volume. [Sources and licenses](docs/WHITE_NOISE.md) are included.
@@ -15,7 +24,7 @@ LifeOS is a local-first journal and personal memory workspace, with an editable 
 
 ## Windows download
 
-Download [LifeOS-Setup-0.4.0.exe](https://github.com/DurianLoop/LifeOS/releases/download/v0.4.0/LifeOS-Setup-0.4.0.exe) from the [v0.4.0 release](https://github.com/DurianLoop/LifeOS/releases/tag/v0.4.0). Python is included. This community build is unsigned.
+Download [LifeOS-Setup-0.4.1.exe](https://github.com/DurianLoop/LifeOS/releases/download/v0.4.1/LifeOS-Setup-0.4.1.exe) from the [v0.4.1 release](https://github.com/DurianLoop/LifeOS/releases/tag/v0.4.1). Python is included. This community build is unsigned.
 
 Installed app data is stored under `%APPDATA%/LifeOS/workspace/`; startup diagnostics are under `%APPDATA%/LifeOS/logs/desktop.log`. Back up the workspace folder to preserve journals, revisions and settings. Source runs continue to use the repository folder.
 

@@ -26,7 +26,7 @@ import time
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'docs' / 'qa_v04'
-VERSION = '0.4.0'
+VERSION = '0.4.1'
 CODE_DIRECTORIES = ('app', 'backend', 'cloud', 'connectors', 'desktop', 'engine',
                     'importers', 'memorial-site', 'mobile', 'netlify', 'scripts')
 SKIP_DIRECTORIES = {'.git', '.venv', 'node_modules', '__pycache__', 'python-runtime',
@@ -225,11 +225,20 @@ def main():
         checks = [
             ('ai-control', [sys.executable, '-m', 'unittest', 'scripts.test_ai_providers', 'scripts.test_ai_control', 'scripts.test_ai_integrations', '-v']),
             ('ai-settings-ui', [node, 'scripts/test_ai_settings_ui.mjs']),
+            ('ai-workflows', [sys.executable, 'scripts/test_ai_workflows.py']),
+            ('ai-retrieval', [sys.executable, '-m', 'unittest', 'scripts.test_ai_retrieval', '-v']),
+            ('ai-workflows-ui', [node, 'scripts/test_ai_workflows_ui.mjs']),
+            ('cloud-ai-errors', [sys.executable, '-m', 'unittest', 'scripts.test_cloud_ai', '-v']),
             ('poetry-engine', [sys.executable, '-m', 'unittest', 'scripts.test_poetry_engine', '-v']),
+            ('import-clear', [sys.executable, 'scripts/test_import_clear.py']),
+            ('import-roundtrip', [sys.executable, 'scripts/test_import_roundtrip.py']),
+            ('attic-serving', [sys.executable, 'scripts/test_attic.py']),
+            ('archive-charts-ui', [node, 'scripts/test_archive_charts.mjs']),
             ('white-noise', [node, 'scripts/test_white_noise.mjs']),
             ('poetry-ui', [node, 'scripts/test_poetry_ui.mjs']),
             ('pet-ui', [node, 'scripts/test_pet_ui.mjs']),
             ('writer-layout-ui', [node, 'scripts/test_writer_layout.mjs']),
+            ('writer-workflows-ui', [node, 'scripts/test_writer_workflows.mjs']),
             ('writer-calendar-ui', [node, 'scripts/test_writer_calendar.mjs']),
             ('journal-book-ui', [node, 'scripts/test_journal_book.mjs']),
             ('writer-dates', [sys.executable, 'scripts/test_writer_dates.py']),

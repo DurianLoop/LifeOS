@@ -673,8 +673,8 @@ def export_entries(*, export_format: str='markdown', date_from: str='', date_to:
         return {'filename':f'LifeOS-日记导出-{stamp}.json','content_type':'application/json; charset=utf-8',
                 'data':json.dumps({'manifest':manifest,'entries':public},ensure_ascii=False,indent=2).encode('utf-8'),'count':len(entries)}
     if export_format=='csv':
-        out=io.StringIO(newline=''); writer=csv.writer(out);writer.writerow(['date','title','tags','entry_id','updated_at','markdown'])
-        for e in entries: writer.writerow([e.get('journal_date') or '',e.get('title') or '',' | '.join(e.get('tags') or []),e.get('entry_id') or '',e.get('updated_at') or '',e.get('content') or ''])
+        out=io.StringIO(newline=''); writer=csv.writer(out);writer.writerow(['date','title','tags','entry_id','updated_at','markdown','kind','source_path'])
+        for e in entries: writer.writerow([e.get('journal_date') or '',e.get('title') or '',' | '.join(e.get('tags') or []),e.get('entry_id') or '',e.get('updated_at') or '',e.get('content') or '',e.get('kind') or 'daily',e.get('source_path') or ''])
         return {'filename':f'LifeOS-日记目录-{stamp}.csv','content_type':'text/csv; charset=utf-8',
                 'data':('\ufeff'+out.getvalue()).encode('utf-8'),'count':len(entries)}
     buffer=io.BytesIO()
@@ -684,7 +684,8 @@ def export_entries(*, export_format: str='markdown', date_from: str='', date_to:
         used=set()
         for index,e in enumerate(entries,1):
             stem=re.sub(r'[^\w\- ]+','_',e.get('title') or '').strip()[:54] or '日记'
-            base=f"{e.get('journal_date') or '未标日期'}-{stem}"
+            identity=Path(e.get('source_path') or '').stem if e.get('kind')=='weekly' else e.get('journal_date')
+            base=f"{identity or '未标日期'}-{stem}"
             name=base;serial=2
             while name in used: name=f'{base}-{serial}';serial+=1
             used.add(name); z.writestr(f'entries/{name}.md',e.get('content') or '')
@@ -734,16 +735,24 @@ def _enqueue_sync(con,entry,revision,op_type='upsert'):
     }
     con.execute('INSERT INTO sync_operations(operation_id,entry_id,revision_id,base_revision_id,op_type,payload_json,device_id,created_at) VALUES(?,?,?,?,?,?,?,?)',(new_id('op'),entry['entry_id'],revision.get('revision_id'),revision.get('parent_revision_id'),op_type,json.dumps(payload,ensure_ascii=False),_device_id(con),utcnow()))
 
-def save_entry(*, journal_date: str, sections: dict, entry_id: str|None=None, title: str='', tags=None, timezone: str='', source='writer', note='', root: Path = ROOT, raw_markdown: str|None=None, source_path: str|None=None, enqueue_sync=True):
-    if not re.fullmatch(r'20\d{2}-\d{2}-\d{2}',journal_date or ''): raise ValueError('journal_date must be YYYY-MM-DD')
+def save_entry(*, journal_date: str|None, sections: dict, entry_id: str|None=None, title: str='', tags=None, timezone: str='', source='writer', note='', root: Path = ROOT, raw_markdown: str|None=None, source_path: str|None=None, enqueue_sync=True, kind: str='daily'):
+    if kind not in ('daily','weekly'):raise ValueError('entry kind must be daily or weekly')
+    if kind=='daily':
+        if not re.fullmatch(r'20\d{2}-\d{2}-\d{2}',journal_date or ''): raise ValueError('journal_date must be YYYY-MM-DD')
+        try:dt.date.fromisoformat(journal_date)
+        except ValueError:raise ValueError('journal_date must be a valid calendar date')
+    else:journal_date=None
     tags=tags or []; con=connect(root)
     with _LOCK:
         try:
             existing=None
             if entry_id: existing=con.execute('SELECT * FROM entries WHERE entry_id=?',(entry_id,)).fetchone()
-            if not existing:
+            if not existing and kind=='weekly' and source_path:
+                existing=con.execute("SELECT * FROM entries WHERE kind='weekly' AND source_path=? AND deleted_at IS NULL",(source_path,)).fetchone()
+            if not existing and kind=='daily':
                 existing=con.execute("SELECT * FROM entries WHERE kind='daily' AND journal_date=? AND deleted_at IS NULL ORDER BY updated_at DESC LIMIT 1",(journal_date,)).fetchone()
             old_rel=existing['source_path'] if existing else None
+            if existing and existing['kind']!=kind:raise ValueError('an existing entry cannot change between daily and weekly')
             if existing:
                 eid=existing['entry_id']; parent=existing['current_revision_id']
                 if source_path:
@@ -753,10 +762,16 @@ def save_entry(*, journal_date: str, sections: dict, entry_id: str|None=None, ti
                 else:
                     rel=existing['source_path']
             else:
-                eid=entry_id or new_id('entry'); rel=source_path or f'memories/daily/{journal_date[:4]}/{journal_date}.md'; parent=None
+                eid=entry_id or new_id('entry'); rel=source_path or (f'memories/daily/{journal_date[:4]}/{journal_date}.md' if kind=='daily' else ''); parent=None
+            if kind=='weekly':
+                weekly=re.fullmatch(r'memories/weekly/(20\d{2})/\1_(\d{1,2})\.md',rel)
+                if not weekly or not 1<=int(weekly[2])<=53:raise ValueError('weekly entry needs a valid year/week source path')
             occupied=con.execute('SELECT entry_id FROM entries WHERE source_path=? AND entry_id<>? AND deleted_at IS NULL',(rel,eid)).fetchone()
             if occupied: raise ValueError(f'target journal path already belongs to another entry: {rel}')
             text=raw_markdown if raw_markdown is not None else build_daily_markdown(eid,title,tags,timezone,sections)
+            # Canonical LF avoids Windows translating an existing CRLF into
+            # CRCRLF and adding blank lines on each save/import/export cycle.
+            text=text.replace('\r\n','\n').replace('\r','\n')
             h=sha_text(text)
             current=con.execute('SELECT content_hash FROM revisions WHERE revision_id=?',(parent,)).fetchone() if parent else None
             if current and current['content_hash']==h:
@@ -772,9 +787,9 @@ def save_entry(*, journal_date: str, sections: dict, entry_id: str|None=None, ti
             # Atomic current-file replacement.
             tmp=target.with_suffix(target.suffix+'.tmp');tmp.write_text(text,encoding='utf-8');os.replace(tmp,target)
             if existing:
-                con.execute('UPDATE entries SET kind=?,journal_date=?,timezone=?,title=?,tags_json=?,source_path=?,source_format=?,current_revision_id=?,updated_at=?,deleted_at=NULL WHERE entry_id=?',('daily',journal_date,timezone,title,json.dumps(tags,ensure_ascii=False),rel,'markdown',rid,now,eid))
+                con.execute('UPDATE entries SET kind=?,journal_date=?,timezone=?,title=?,tags_json=?,source_path=?,source_format=?,current_revision_id=?,updated_at=?,deleted_at=NULL WHERE entry_id=?',(kind,journal_date,timezone,title,json.dumps(tags,ensure_ascii=False),rel,'markdown',rid,now,eid))
             else:
-                con.execute('INSERT INTO entries(entry_id,kind,journal_date,timezone,title,tags_json,source_path,source_format,current_revision_id,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)',(eid,'daily',journal_date,timezone,title,json.dumps(tags,ensure_ascii=False),rel,'markdown',rid,now,now))
+                con.execute('INSERT INTO entries(entry_id,kind,journal_date,timezone,title,tags_json,source_path,source_format,current_revision_id,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)',(eid,kind,journal_date,timezone,title,json.dumps(tags,ensure_ascii=False),rel,'markdown',rid,now,now))
             con.execute('INSERT INTO revisions(revision_id,entry_id,parent_revision_id,content_hash,bytes,revision_file,source,note,base_revision_id,device_id,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)',(rid,eid,parent,h,len(text.encode('utf-8')),revfile,source,note,parent,_device_id(con),now))
             mark_stale_in_connection(con,eid,f'{source}: {rel}')
             if enqueue_sync:
@@ -791,7 +806,7 @@ def restore_revision(entry_id: str, revision_id: str, root: Path = ROOT):
     e=get_entry(entry_id=entry_id,root=root)
     if not e: raise ValueError('entry not found')
     # restoring creates a NEW revision, preserving the whole history.
-    return save_entry(journal_date=e['journal_date'],sections={},entry_id=entry_id,title=e.get('title') or '',tags=e.get('tags') or [],timezone=e.get('timezone') or '',raw_markdown=old['content'],source='restore',note=f"restored from {revision_id}",root=root)
+    return save_entry(journal_date=e['journal_date'],sections={},entry_id=entry_id,title=e.get('title') or '',tags=e.get('tags') or [],timezone=e.get('timezone') or '',raw_markdown=old['content'],kind=e['kind'],source_path=e['source_path'],source='restore',note=f"restored from {revision_id}",root=root)
 
 
 def add_attachment(entry_id: str, name: str, data: bytes, mime_type=None, revision_id=None, root: Path = ROOT):
@@ -849,7 +864,7 @@ def ai_usage_summary(root: Path = ROOT):
     finally:con.close()
 
 def record_ai_artifact(feature_id: str, content, inputs: list[tuple[str,str]], provider: str, model: str, prompt_version='1', root: Path = ROOT):
-    normalized=sorted((str(a),str(b)) for a,b in inputs); ih=hashlib.sha256(json.dumps(normalized,ensure_ascii=False).encode()).hexdigest(); aid=new_id('art'); con=connect(root)
+    normalized=sorted({(str(a),str(b)) for a,b in inputs}); ih=hashlib.sha256(json.dumps(normalized,ensure_ascii=False).encode()).hexdigest(); aid=new_id('art'); con=connect(root)
     try:
         con.execute('INSERT INTO ai_artifacts(artifact_id,feature_id,input_hash,provider,model,prompt_version,content_json,status,generated_at) VALUES(?,?,?,?,?,?,?,?,?)',(aid,feature_id,ih,provider,model,prompt_version,json.dumps(content,ensure_ascii=False),'fresh',utcnow()))
         con.executemany('INSERT INTO ai_artifact_inputs(artifact_id,entry_id,revision_id) VALUES(?,?,?)',[(aid,e,r) for e,r in normalized]);con.execute("UPDATE feature_state SET status='fresh',dirty_since=NULL,last_refresh_at=?,reason=NULL WHERE feature_id=?",(utcnow(),feature_id));con.commit()
@@ -1049,7 +1064,7 @@ def resolve_sync_conflict(conflict_id: str, choice: str, root: Path = ROOT):
         op=json.loads(r['remote_payload_json']);eid=r['entry_id']
         # Explicit user choice authorizes a new local revision based on remote content.
         payload=op.get('payload') or {};content=payload.get('content') or '';e=get_entry(entry_id=eid,root=root);ep=payload.get('entry') or {}
-        out=save_entry(journal_date=ep.get('journal_date') or e['journal_date'],sections={},entry_id=eid,title=ep.get('title') or e.get('title') or '',tags=json.loads(ep.get('tags_json') or '[]') if isinstance(ep.get('tags_json'),str) else ep.get('tags_json') or e.get('tags') or [],timezone=ep.get('timezone') or e.get('timezone') or '',raw_markdown=content,source='conflict-resolution',note=f'use remote {r["remote_revision_id"]}',root=root)
+        out=save_entry(journal_date=ep.get('journal_date') or e['journal_date'],sections={},entry_id=eid,title=ep.get('title') or e.get('title') or '',tags=json.loads(ep.get('tags_json') or '[]') if isinstance(ep.get('tags_json'),str) else ep.get('tags_json') or e.get('tags') or [],timezone=ep.get('timezone') or e.get('timezone') or '',raw_markdown=content,kind=ep.get('kind') or e.get('kind','daily'),source_path=ep.get('source_path') or e['source_path'],source='conflict-resolution',note=f'use remote {r["remote_revision_id"]}',root=root)
         con=connect(root)
         try:con.execute("UPDATE sync_conflicts SET status='resolved_remote',resolved_at=? WHERE conflict_id=?",(utcnow(),conflict_id));con.commit()
         finally:con.close()

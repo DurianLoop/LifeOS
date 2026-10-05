@@ -1,10 +1,12 @@
 from __future__ import annotations
 import csv, io, json
-from .base import Importer,EntryDraft,guess_date,strip_html
+from .base import Importer,EntryDraft,guess_date,guess_week,strip_html
 
 class MarkdownImporter(Importer):
     name='markdown';extensions=('.md','.markdown')
-    def parse(self,name,content,meta=None): return [EntryDraft(name,'markdown',guess_date(name,content,meta),content,original_metadata=meta or {})]
+    def parse(self,name,content,meta=None):
+        week=guess_week(name,meta)
+        return [EntryDraft(name,'markdown-weekly' if week else 'markdown',None if week else guess_date(name,content,meta),content,original_metadata=meta or {},kind='weekly' if week else 'daily',week_year=week[0] if week else None,week=week[1] if week else None)]
 
 class TextImporter(Importer):
     name='text';extensions=('.txt',)
@@ -31,24 +33,26 @@ class JSONImporter(Importer):
             tags=x.get('tags') or []
             if isinstance(tags,str): tags=[t.strip() for t in tags.split(',') if t.strip()]
             fmt='dayone-json' if 'creationDate' in x or ('entries' in data if isinstance(data,dict) else False) else 'json'
-            out.append(EntryDraft(f'{name}#{i+1}',fmt,date,text,title,tags if isinstance(tags,list) else [],str(x.get('timeZone') or x.get('timezone') or ''),x,'high' if date else 'low'))
+            week=guess_week('',x) if x.get('kind')=='weekly' else None
+            out.append(EntryDraft(f'{name}#{i+1}',fmt+'-weekly' if week else fmt,None if week else date,text,title,tags if isinstance(tags,list) else [],str(x.get('timeZone') or x.get('timezone') or ''),x,'high' if date or week else 'low',kind='weekly' if week else 'daily',week_year=week[0] if week else None,week=week[1] if week else None))
         return out
 
 class CSVImporter(Importer):
     name='csv';extensions=('.csv',)
     def parse(self,name,content,meta=None):
         sample=content[:4096]
-        try: dialect=csv.Sniffer().sniff(sample)
+        try: dialect=csv.excel if content.lstrip('\ufeff').startswith('date,title,tags,entry_id,updated_at,markdown') else csv.Sniffer().sniff(sample,delimiters=',;\t|')
         except Exception: dialect=csv.excel
         reader=csv.DictReader(io.StringIO(content),dialect=dialect);out=[]
         for i,row in enumerate(reader):
             lower={str(k).lower():v for k,v in row.items()}
-            text=next((lower[k] for k in ('content','text','body','journal','entry','日记','正文') if lower.get(k)), '')
+            text=next((lower[k] for k in ('content','text','body','journal','entry','markdown','日记','正文') if lower.get(k)), '')
             title=next((lower[k] for k in ('title','标题') if lower.get(k)), '')
             dateval=next((lower[k] for k in ('date','journal_date','created_at','created','日期') if lower.get(k)), '')
             tags=next((lower[k] for k in ('tags','tag','标签') if lower.get(k)), '')
             date=guess_date(f'{name}#{i+1}',text,{'date':dateval})
-            out.append(EntryDraft(f'{name}#{i+1}','csv',date,text,title,[x.strip() for x in str(tags).split(',') if x.strip()],original_metadata=row,confidence='high' if date else 'low'))
+            week=guess_week('',lower) if lower.get('kind')=='weekly' else None
+            out.append(EntryDraft(f'{name}#{i+1}','csv-weekly' if week else 'csv',None if week else date,text,title,[x.strip() for x in str(tags).replace(' | ',',').split(',') if x.strip()],original_metadata=row,confidence='high' if date or week else 'low',kind='weekly' if week else 'daily',week_year=week[0] if week else None,week=week[1] if week else None))
         return out
 
 IMPORTERS=[MarkdownImporter(),TextImporter(),HTMLImporter(),JSONImporter(),CSVImporter()]

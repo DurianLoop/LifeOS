@@ -466,6 +466,20 @@
     // finished assigning its compatibility renderers.
     renderProductWriter=renderWriterExpanded;RENDERERS['Journal']=renderJournalI2;RENDERERS['Universal Search']=renderSearchI2;
     bindSpecific=function(){saved.bindSpecific();bindI2()};
+    const previousProductTab=renderProductTab;
+    renderProductTab=async function(tab,...args){
+      if(tab!=='writer'){
+        I2.flushDraft?.();I2.flushDraft=null;
+        I2.layout?.destroy();I2.layout=null;I2.calendar?.destroy();I2.calendar=null;
+        I2.renderSequence=(I2.renderSequence||0)+1;I2.editing=false;I2.chapterOpen=false;
+      }
+      const updateWriterMode=()=>{
+        document.body.classList.toggle('writerImmersive',PRODUCT.tab==='writer'&&$('#productDock')?.classList.contains('open'));
+        if(typeof buildRail==='function')buildRail();
+      };
+      PRODUCT.tab=tab;updateWriterMode();
+      try{return await previousProductTab(tab,...args)}finally{updateWriterMode()}
+    };
     const previousRender=render;render=async function(){I2.journalBook?.destroy();I2.journalBook=null;I2.journalSequence=(I2.journalSequence||0)+1;await previousRender();updateLanguageControl()};
     if($('#productDock')?.classList.contains('open')&&PRODUCT.tab==='writer')renderProductWriter();
     window.dispatchEvent(new Event('lifeos:i2-ready'));

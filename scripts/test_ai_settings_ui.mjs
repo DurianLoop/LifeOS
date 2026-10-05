@@ -112,9 +112,9 @@ test('AI Settings direct links hydrate while their optional script loads',async(
 });
 
 test('payload preview counts only selected evidence while enabled',()=>{
-  const start=index.indexOf('function syncAskSelection(){'),end=index.indexOf('\nasync function retrieveAskEvidence()',start),count={textContent:''};
+  const start=index.indexOf('function askControls('),end=index.indexOf('\nfunction renderAskEvidenceReview(',start),count={textContent:''};
   const rows=[{checked:true,dataset:{evchars:'23'}},{checked:false,dataset:{evchars:'99'}},{checked:true,dataset:{evchars:'41'}}];
-  const context={STATE:{askPack:{payload_preview_enabled:true}},fmt:String,$:selector=>selector==='#askSelectionCount'?count:undefined,$$:selector=>selector==='.askEvidenceCheck'?rows:[]};
-  vm.runInNewContext(index.slice(start,end),context);context.syncAskSelection();assert.match(count.textContent,/64 字证据/);rows[1].checked=true;context.syncAskSelection();assert.match(count.textContent,/163 字证据/);
-  context.STATE.askPack.payload_preview_enabled=false;context.syncAskSelection();assert.doesNotMatch(count.textContent,/字证据/);
+  const context={STATE:{askPack:{payload_preview_enabled:true}},fmt:String,$:selector=>selector==='#askAnswer .askSelectionCount'?count:undefined,$$:selector=>selector==='#askAnswer .askEvidenceCheck'?rows:[]};
+  vm.runInNewContext(index.slice(start,end),context);context.syncAskSelection();assert.match(count.textContent,/64 字/);rows[1].checked=true;context.syncAskSelection();assert.match(count.textContent,/163 字/);
+  context.STATE.askPack.payload_preview_enabled=false;context.syncAskSelection();assert.doesNotMatch(count.textContent,/ 字/);
 });

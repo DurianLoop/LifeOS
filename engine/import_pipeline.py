@@ -2,7 +2,7 @@
 from __future__ import annotations
 from pathlib import Path
 import os
-import base64, io, json, re, zipfile
+import base64, io, json, re, shutil, zipfile
 from importers import parse_file, choose_importer
 from engine import product_core as pc
 from engine.incremental_index import reindex_paths
@@ -26,8 +26,13 @@ def expand_payload(files):
         name,text,raw,mime=_decode_file(f)
         if name.lower().endswith('.zip'):
             with zipfile.ZipFile(io.BytesIO(raw)) as z:
+                portable=False
+                if 'manifest.json' in z.namelist():
+                    try: portable=json.loads(z.read('manifest.json')).get('format')=='lifeos-portable-export-v1'
+                    except (ValueError,AttributeError):pass
                 for info in z.infolist():
                     if info.is_dir() or info.file_size>20_000_000: continue
+                    if portable and not info.filename.startswith('entries/'):continue
                     inner=Path(info.filename).name
                     if not choose_importer(inner): continue
                     b=z.read(info)
@@ -40,11 +45,15 @@ def expand_payload(files):
 def _lifeos_raw(text):
     return '### 日记' in text or '### 日程' in text or 'lifeos_entry_id:' in text[:1000]
 
-def _duplicate(existing, draft, root):
+def _duplicate(existing, draft, root, con=None):
     if not existing: return False
-    cur=pc.read_revision(existing['current_revision_id'],root)
+    if con is not None:
+        cur=con.execute('SELECT revision_file FROM revisions WHERE revision_id=?',(existing['current_revision_id'],)).fetchone()
+        cur={'content':(root/cur['revision_file']).read_text(encoding='utf-8')} if cur and (root/cur['revision_file']).is_file() else None
+    else:cur=pc.read_revision(existing['current_revision_id'],root)
     if not cur: return False
-    current=(cur.get('content') or '').strip(); incoming=(draft.content or '').strip()
+    normalize=lambda value:value.replace('\r\n','\n').replace('\r','\n').strip()
+    current=normalize(cur.get('content') or ''); incoming=normalize(draft.content or '')
     if current==incoming: return True
     if incoming and incoming in current: return True
     return False
@@ -60,22 +69,24 @@ def preview_import(files, source_name='browser import', root:Path=ROOT):
             importer,drafts=parse_file(f['name'],f['content'],f.get('mime',''),{'container':f.get('container')})
             for draft in drafts:
                 ordinal+=1;date=draft.journal_date;existing=None;action='new';note=''
-                if not date:
+                weekly=draft.kind=='weekly' and draft.week_year and draft.week
+                proposed_path=f'memories/weekly/{draft.week_year}/{draft.week_year}_{draft.week}.md' if weekly else (f'memories/daily/{date[:4]}/{date}.md' if date else None)
+                if not date and not weekly:
                     action='needs_date';note='Could not confidently detect a journal date.'
                 else:
-                    existing=con.execute("SELECT * FROM entries WHERE kind='daily' AND journal_date=? AND deleted_at IS NULL ORDER BY updated_at DESC LIMIT 1",(date,)).fetchone()
-                    if date in seen_dates:
-                        action='needs_review';note=f"Another imported item already targets {date}."
+                    existing=con.execute("SELECT * FROM entries WHERE source_path=? AND deleted_at IS NULL",(proposed_path,)).fetchone() if weekly else con.execute("SELECT * FROM entries WHERE kind='daily' AND journal_date=? AND deleted_at IS NULL ORDER BY updated_at DESC LIMIT 1",(date,)).fetchone()
+                    if proposed_path in seen_dates:
+                        action='needs_review';note=f"Another imported item already targets {proposed_path}."
                     elif existing:
                         ed=dict(existing)
-                        action='duplicate' if _duplicate(ed,draft,root) else 'update'
-                    seen_dates[date]=seen_dates.get(date,0)+1
-                target_path=(existing['source_path'] if existing else (f'memories/daily/{date[:4]}/{date}.md' if date else None))
+                        action='duplicate' if _duplicate(ed,draft,root,con) else 'update'
+                    seen_dates[proposed_path]=seen_dates.get(proposed_path,0)+1
+                target_path=existing['source_path'] if existing else proposed_path
                 item_id=pc.new_id('item');h=pc.sha_text(draft.content)
                 con.execute('''INSERT INTO import_items(item_id,job_id,ordinal,source_name,source_format,journal_date,title,tags_json,content,content_hash,action,target_entry_id,target_source_path,note)
                                VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',(item_id,job_id,ordinal,draft.source_name,draft.source_format,date,draft.title,json.dumps(draft.tags,ensure_ascii=False),draft.content,h,action,existing['entry_id'] if existing else None,target_path,note or draft.note))
                 stats[action]=stats.get(action,0)+1;stats['total']+=1
-                items.append({'item_id':item_id,'ordinal':ordinal,'source_name':draft.source_name,'source_format':draft.source_format,'journal_date':date,'title':draft.title,'tags':draft.tags,'action':action,'target_entry_id':existing['entry_id'] if existing else None,'target_source_path':target_path,'note':note or draft.note,'chars':len(draft.content),'preview':draft.content[:360]})
+                items.append({'item_id':item_id,'ordinal':ordinal,'source_name':draft.source_name,'source_format':draft.source_format,'kind':draft.kind,'journal_date':date,'title':draft.title,'tags':draft.tags,'action':action,'target_entry_id':existing['entry_id'] if existing else None,'target_source_path':target_path,'note':note or draft.note,'chars':len(draft.content),'preview':draft.content[:360]})
         con.execute('UPDATE import_jobs SET importer=?,stats_json=? WHERE job_id=?',('mixed' if len(set(x['source_format'] for x in items))>1 else (items[0]['source_format'] if items else 'none'),json.dumps(stats,ensure_ascii=False),job_id));con.commit()
     except Exception:
         con.rollback();raise
@@ -113,17 +124,19 @@ def commit_import(job_id, overrides=None, root:Path=ROOT):
         for item in job['items']:
             ov=overrides.get(item['item_id'],{}) if isinstance(overrides,dict) else {}
             action=ov.get('action',item['action']);date=ov.get('journal_date',item['journal_date'])
+            kind='weekly' if item['source_format'].endswith('-weekly') else 'daily'
             if action=='duplicate' or action=='skip':
                 results.append({'item_id':item['item_id'],'status':'skipped','reason':action});continue
-            if action in ('needs_date','needs_review') and not re.fullmatch(r'20\d{2}-\d{2}-\d{2}',date or ''):
+            if action in ('needs_date','needs_review') and kind!='weekly' and not re.fullmatch(r'20\d{2}-\d{2}-\d{2}',date or ''):
                 raise ValueError(f"{item['source_name']} needs a confirmed date")
             title=ov.get('title',item['title'] or '');tags=ov.get('tags',item.get('tags') or [])
             existing=pc.get_entry(entry_id=item.get('target_entry_id'),root=root) if item.get('target_entry_id') else None
+            if not existing and kind=='weekly':existing=pc.get_entry(source_path=item['target_source_path'],root=root)
             if not existing and date:
                 # Date may have been supplied as an override.
                 existing=next((x for x in pc.list_entries(5000,root) if x.get('kind')=='daily' and x.get('journal_date')==date),None)
-            if _lifeos_raw(item['content']):
-                result=pc.save_entry(journal_date=date,sections={},entry_id=existing['entry_id'] if existing else None,title=title,tags=tags,timezone='',raw_markdown=item['content'],source='import',note=f"import job {job_id}: {item['source_name']}",root=root)
+            if _lifeos_raw(item['content']) or kind=='weekly':
+                result=pc.save_entry(journal_date=date,sections={},entry_id=existing['entry_id'] if existing else None,title=title,tags=tags,timezone='',raw_markdown=item['content'],kind=kind,source_path=item['target_source_path'] if kind=='weekly' else None,source='import',note=f"import job {job_id}: {item['source_name']}",root=root)
             else:
                 result=pc.save_entry(journal_date=date,sections={'日记':item['content']},entry_id=existing['entry_id'] if existing else None,title=title,tags=tags,timezone='',source='import',note=f"import job {job_id}: {item['source_name']}",root=root)
             changed.append(result['source_path']);results.append({'item_id':item['item_id'],'status':'saved',**result})
@@ -151,6 +164,48 @@ def rollback_import(job_id,root:Path=ROOT):
     try:con.execute("UPDATE import_jobs SET status='rolled_back',rolled_back_at=? WHERE job_id=?",(pc.utcnow(),job_id));con.commit()
     finally:con.close()
     return {'ok':True,'job_id':job_id,'restore':out}
+
+def clear_import(job_id, root:Path=ROOT):
+    """Remove one import test job and its staged payload safely.
+
+    A committed job is restored from the pre-import snapshot before its job
+    rows are removed.  The snapshot archive itself is retained as a normal
+    backup so a user can still recover it later.  The job id is deliberately
+    constrained to a single path component; callers can never provide an
+    arbitrary filesystem path here.
+    """
+    job_id=str(job_id or '').strip()
+    if not re.fullmatch(r'[A-Za-z0-9_-]{1,128}', job_id):
+        raise ValueError('invalid import job id')
+    payload_dir=(root/'.lifeos'/'imports'/job_id).resolve()
+    imports_dir=(root/'.lifeos'/'imports').resolve()
+    if payload_dir.parent != imports_dir:
+        raise ValueError('invalid import payload location')
+    job=get_job(job_id,root)
+    if not job: raise ValueError('import job not found')
+
+    restored=False
+    status=job.get('status')
+    snapshot=job.get('snapshot_dir')
+    if status in ('committed','committing','failed') and not snapshot:
+        raise ValueError('committed import has no pre-import snapshot; cannot safely clear')
+    # A rolled-back job is already at its pre-import state. Re-restoring it
+    # could discard legitimate edits made after the user clicked rollback.
+    if snapshot and status in ('committed','committing','failed'):
+        pc.restore_backup(snapshot,root)
+        restored=True
+
+    con=pc.connect(root)
+    try:
+        con.execute('DELETE FROM import_jobs WHERE job_id=?',(job_id,))
+        con.commit()
+    finally:
+        con.close()
+
+    removed_payload=payload_dir.exists()
+    if removed_payload:
+        shutil.rmtree(payload_dir)
+    return {'ok':True,'job_id':job_id,'restored':restored,'removed_payload':removed_payload}
 
 if __name__=='__main__':
     import argparse

@@ -61,6 +61,7 @@ let modelCalls = 0;
 globalThis.fetch = async (url, options) => {
   modelCalls++;
   assert.equal(url, 'https://gateway.example.test/v1/chat/completions');
+  assert(options.signal instanceof AbortSignal);
   const request = JSON.parse(options.body);
   assert.match(request.messages[1].content, /今天到达了。/);
   assert(!request.messages[1].content.includes('今天出发了。'));
@@ -78,6 +79,33 @@ for (let i = 0; i < 5; i++) {
 }
 assert.equal((await call('POST', '/v2/public/memorial/ask', { id, question: '何时到达？' }))[0], 429);
 assert.equal(modelCalls, 5);
+// Failure paths return usable errors, keep citation numbering and recover on
+// the next allowed request. All snapshots here are synthetic.
+const counters = buckets.get('lifeos-memorial-questions');
+body.entries.push({entry_id:'day-2',date:'2030-01-03',title:'第二次',content:'今天又到达了。'});
+await call('POST','/v2/memorial',body,true);
+for (const content of [' ', {}, ['unexpected'], '未知出处[99]']) {
+  counters.clear();
+  globalThis.fetch = async () => Response.json({choices:[{message:{content}}]});
+  assert.equal((await call('POST','/v2/public/memorial/ask',{id,question:'何时到达？'}))[0],502);
+}
+counters.clear();
+globalThis.fetch=async()=>Response.json({choices:[{message:{content:'第二天也到达了。[2]'}}]});
+const subset=await call('POST','/v2/public/memorial/ask',{id,question:'何时到达？'});
+assert.equal(subset[0],200);
+assert.equal(subset[1].citation_status,'verified');
+assert.deepEqual(subset[1].citations.map(c=>[c.citation_id,c.entry_id]),[[2,'day-2']]);
+counters.clear();
+globalThis.fetch=async()=>Response.json({choices:[{message:{content:'无法确定'}}]});
+const uncited=await call('POST','/v2/public/memorial/ask',{id,question:'何时到达？'});
+assert.equal(uncited[1].citation_status,'missing');assert.deepEqual(uncited[1].citations,[]);
+counters.clear();
+globalThis.fetch=async()=>{throw new DOMException('fixture-secret','TimeoutError')};
+const timeout=await call('POST','/v2/public/memorial/ask',{id,question:'何时到达？'});
+assert([502,503].includes(timeout[0]));assert(!JSON.stringify(timeout[1]).includes('fixture-secret'));
+counters.clear();
+globalThis.fetch=async()=>Response.json({choices:[{message:{content:'已到达[1]'}}]});
+assert.equal((await call('POST','/v2/public/memorial/ask',{id,question:'何时到达？'}))[0],200);
 assert.equal((await call('POST', '/v2/memorial/unpublish', {}, true))[0], 200);
 assert.equal((await call('GET', `/v2/public/memorial?id=${id}`))[0], 410);
 assert.equal((await call('POST', '/v2/public/memorial/ask', { id, question: '何时到达？' }))[0], 404);

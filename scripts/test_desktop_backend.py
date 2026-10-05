@@ -180,8 +180,13 @@ def run(resources: Path, python: Path) -> dict:
             assert request(base, '/api/entries')['items'] == []
             for path in ('/api/core/status', '/api/copydeck', '/api/home',
                          '/api/memorial/config', '/api/memorial/status',
-                         '/api/ai/control', '/api/ai/integrations'):
+                         '/api/ai/control', '/api/ai/integrations',
+                         '/api/attic/overview', '/api/attic/review', '/api/attic/ledger',
+                         '/api/attic/month?month=2026-01'):
                 request(base, path)
+            empty_attic = request(base, '/api/attic/overview')
+            assert empty_attic['pages'] == 0 and empty_attic['recorded_days'] == 0
+            assert len(empty_attic['months']) == 12
             control = request(base, '/api/ai/control')
             assert {item['id'] for item in control['features']} == {'ask', 'past_me', 'classical', 'poetry', 'pet'}
             permissions = {f'ai.features.{item["id"]}': False for item in control['features']}
@@ -194,7 +199,8 @@ def run(resources: Path, python: Path) -> dict:
             checks.append('first-run home, core, copydeck, poetry, memorial and AI control APIs')
             for path in ('/', '/poetry.js', '/poetry.css', '/white-noise.js',
                          '/white-noise.css', '/memorial.js', '/memorial.css',
-                         '/ai-settings.js', '/ai-settings.css'):
+                         '/ai-settings.js', '/ai-settings.css', '/attic.js', '/attic.css',
+                         '/charts.js', '/charts.css'):
                 assert request(base, path), f'Empty static asset: {path}'
             assert request(base, '/assets/pets/qa-user-pet/pet.json')['id'] == 'qa-user-pet'
             sprite = request(base, '/assets/pets/qa-user-pet/spritesheet.webp')
@@ -212,6 +218,11 @@ def run(resources: Path, python: Path) -> dict:
             assert request(base, '/api/poetry')['has_journal'] is True
             assert request(base, '/api/memorial/available')['items'][0]['entry_id'] == entry_id
             assert (workspace / 'vault' / saved['result']['source_path']).is_file()
+            attic = request(base, '/api/attic/overview')
+            assert attic['pages'] == 1 and attic['recorded_days'] == 1, attic
+            monthly = request(base, '/api/attic/month?month=' + day[:7])
+            assert monthly['total'] == 1 and TEST_TEXT in monthly['items'][0]['excerpt'], monthly
+            assert request(base, '/api/attic/review?year=' + day[:4])['total'] == 1
             checks.append('write a synthetic journal and read it through core, poetry and memorial')
         modules = check_module_roots(python, env, workspace)
         checks.append('ROOT and default storage arguments: ' + ', '.join(modules))
@@ -220,6 +231,7 @@ def run(resources: Path, python: Path) -> dict:
             assert TEST_TEXT in entry['current']['content']
             assert entry['entry']['entry_id'] == entry_id
             assert len(request(base, '/api/entries')['items']) == 1
+            assert request(base, '/api/attic/overview')['pages'] == 1
             ai = request(base, '/api/ai/status')
             assert ai['model'] == 'desktop-regression-model'
             assert not ai['enabled'] and not ai['allow_remote']
@@ -229,6 +241,22 @@ def run(resources: Path, python: Path) -> dict:
             assert not connection_test['ok'] and connection_test['status'] == 'unavailable'
             assert request(base, '/assets/pets/qa-user-pet/pet.json')['id'] == 'qa-user-pet'
             checks.append('journal, AI settings and user pet persist after a complete restart')
+            weekly = request(base, '/api/import/preview', {'files': [{
+                'name': '2099_1.md', 'content': '### 本周总结\nDesktop regression future review.\n',
+            }]})
+            assert weekly['stats']['new'] == 1 and weekly['stats']['needs_date'] == 0
+            request(base, '/api/import/commit', {'job_id': weekly['job_id']})
+            journals = request(base, '/api/journals?kind=weekly')['items']
+            assert len(journals) == 1 and journals[0]['year'] == 2099
+            historical = request(base, '/api/ask', {
+                'question': 'Desktop regression', 'cutoff': day, 'stage': 'retrieve', 'limit': 20,
+            })
+            assert historical['evidence']
+            assert all(e['provenance_type'] == 'daily_raw' and e['date'] <= day
+                       for e in historical['evidence']), 'future or undated weekly review leaked into Past Me'
+            unbounded = request(base, '/api/retrieve?q=Desktop%20regression&limit=20')
+            assert any(e['provenance_type'] == 'weekly_review' for e in unbounded['evidence'])
+            checks.append('weekly imports keep their identity; historical evidence excludes undated future reviews')
     return {'ok': True, 'resources': str(resources), 'python': str(python), 'checks': checks}
 
 

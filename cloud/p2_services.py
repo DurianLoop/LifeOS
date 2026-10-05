@@ -208,6 +208,9 @@ def _cloud_ai(c,uid,b):
  if not sub['entitlements'].get('cloud_ai'):return 403,{'error':'cloud AI is not enabled for this plan','plan':sub['plan']}
  messages=b.get('messages') or []
  if not isinstance(messages,list) or not messages:return 400,{'error':'messages required'}
+ if any(not isinstance(x,dict) or x.get('role') not in ('system','developer','user','assistant') or not isinstance(x.get('content'),str) for x in messages):
+  return 400,{'error':'invalid message format'}
+ messages=[{'role':x['role'],'content':x['content']} for x in messages]
  chars=sum(len(str(x.get('content') or '')) for x in messages if isinstance(x,dict))
  if chars>60000:return 400,{'error':'cloud AI request too large'}
  temperature=b.get('temperature',0.2)
@@ -225,6 +228,7 @@ def _cloud_ai(c,uid,b):
    if not (base and key):return 503,{'error':'cloud AI provider is not configured'}
    payload={'model':model,'messages':messages,'temperature':float(temperature),'max_tokens':max_tokens};raw=json.dumps(payload,ensure_ascii=False).encode();req=request.Request(base+'/chat/completions',data=raw,headers={'Authorization':'Bearer '+key,'Content-Type':'application/json'},method='POST')
    with request.urlopen(req,timeout=90) as resp:data=json.loads(resp.read().decode());text=data['choices'][0]['message']['content']
+  if not isinstance(text,str) or not text.strip():raise ValueError('invalid model response')
   c.execute('INSERT INTO ai_requests(request_id,user_id,provider,model,input_chars,output_chars,status,created_at) VALUES(?,?,?,?,?,?,?,?)',(rid,uid,provider,model,chars,len(text),'ok',ts));period=ts[:7];c.execute('INSERT INTO usage_counters(user_id,metric,period,value) VALUES(?,?,?,1) ON CONFLICT(user_id,metric,period) DO UPDATE SET value=value+1',(uid,'cloud_ai_requests',period));c.commit();return 200,{'text':text,'provider':provider,'model':model,'request_id':rid,'privacy':'Only the messages explicitly supplied to this request were processed.'}
  except Exception as e:
-  c.execute('INSERT INTO ai_requests(request_id,user_id,provider,model,input_chars,output_chars,status,created_at) VALUES(?,?,?,?,?,?,?,?)',(rid,uid,provider,model,chars,0,'error',ts));c.commit();return 502,{'error':str(e)}
+  c.execute('INSERT INTO ai_requests(request_id,user_id,provider,model,input_chars,output_chars,status,created_at) VALUES(?,?,?,?,?,?,?,?)',(rid,uid,provider,model,chars,0,'error',ts));c.commit();return 502,{'error':'cloud AI is temporarily unavailable; please retry'}
