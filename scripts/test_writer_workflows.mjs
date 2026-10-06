@@ -34,6 +34,13 @@ test('leaving the writer flushes its draft and restores workflow navigation',asy
   assert.equal(f.classes.has('writerImmersive'),true);
 });
 
+test('a failed durable draft write keeps the writer open for recovery',async()=>{
+  const f=fixture();f.state.flushDraft=()=>false;f.calls.length=0;
+  await f.context.renderProductTab('backup');
+  assert.equal(f.context.PRODUCT.tab,'writer');assert.equal(f.classes.has('writerImmersive'),true);
+  assert.equal(f.state.renderSequence,7);assert.ok(f.state.layout);assert.deepEqual(f.calls,[]);
+});
+
 test('an export failure still leaves the close button and navigation available',async()=>{
   const f=fixture();
   // Install another isolated surface whose underlying tool renderer rejects.

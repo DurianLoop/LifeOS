@@ -26,7 +26,7 @@ import time
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'docs' / 'qa_v04'
-VERSION = '0.4.1'
+VERSION = '0.4.2'
 CODE_DIRECTORIES = ('app', 'backend', 'cloud', 'connectors', 'desktop', 'engine',
                     'importers', 'memorial-site', 'mobile', 'netlify', 'scripts')
 SKIP_DIRECTORIES = {'.git', '.venv', 'node_modules', '__pycache__', 'python-runtime',
@@ -248,6 +248,8 @@ def main():
             # Running the file directly retains node:test coverage and avoids
             # Node's extra test-runner child process on restricted Windows.
             ('desktop-startup', [node, 'desktop/startup.test.cjs']),
+            ('desktop-reliability', [node, 'desktop/reliability.test.cjs']),
+            ('recovery-reliability', [sys.executable, 'scripts/test_v042_reliability.py']),
             ('desktop-setup', [node, 'desktop/setup.test.cjs']),
             ('desktop-backend', [sys.executable, 'scripts/test_desktop_backend.py', '--python', backend_python]),
             ('feature-parity', [sys.executable, 'scripts/feature_parity_audit.py']),

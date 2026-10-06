@@ -5,5 +5,8 @@ contextBridge.exposeInMainWorld('lifeosDesktop',{
   checkForUpdates:()=>ipcRenderer.invoke('lifeos:update-check'),
   downloadUpdate:()=>ipcRenderer.invoke('lifeos:update-download'),
   installUpdate:()=>ipcRenderer.invoke('lifeos:update-install'),
+  cancelUpdate:()=>ipcRenderer.invoke('lifeos:update-cancel'),
+  updateStatus:()=>ipcRenderer.invoke('lifeos:update-status'),
+  storage:command=>ipcRenderer.sendSync('lifeos:storage',command),
   platform:process.platform
 });

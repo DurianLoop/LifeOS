@@ -9,6 +9,7 @@ stable entry IDs or revision history.
 from __future__ import annotations
 from pathlib import Path
 import base64, csv, datetime as dt, hashlib, io, json, mimetypes, os, re, shutil, sqlite3, tempfile, threading, uuid, zipfile
+from engine import durable_io
 
 ROOT = Path(os.getenv('LIFEOS_ROOT') or Path(__file__).resolve().parents[1])
 LIFE = ROOT / '.lifeos'
@@ -540,7 +541,10 @@ def complete_derived_refresh(target_generation: int, *, root: Path = ROOT, error
 
 def bootstrap_existing(root: Path = ROOT, copy_revision_files=True) -> dict:
     """Register Vault files without rewriting them. Safe to run repeatedly."""
-    ensure_dirs(root); con=connect(root); created=0; updated=0; unchanged=0
+    ensure_dirs(root)
+    durable_io.recover_restore(root)
+    durable_io.recover_entry_writes(root)
+    con=connect(root); created=0; updated=0; unchanged=0
     try:
         _device_id(con)
         paths=sorted((root/'vault').glob('memories/daily/*/*.md'))+sorted((root/'vault').glob('memories/weekly/*/*.md'))
@@ -742,9 +746,10 @@ def save_entry(*, journal_date: str|None, sections: dict, entry_id: str|None=Non
         try:dt.date.fromisoformat(journal_date)
         except ValueError:raise ValueError('journal_date must be a valid calendar date')
     else:journal_date=None
-    tags=tags or []; con=connect(root)
+    tags=tags or []; con=connect(root); journal=None
     with _LOCK:
         try:
+            durable_io.recover_entry_writes(root)
             existing=None
             if entry_id: existing=con.execute('SELECT * FROM entries WHERE entry_id=?',(entry_id,)).fetchone()
             if not existing and kind=='weekly' and source_path:
@@ -768,6 +773,7 @@ def save_entry(*, journal_date: str|None, sections: dict, entry_id: str|None=Non
                 if not weekly or not 1<=int(weekly[2])<=53:raise ValueError('weekly entry needs a valid year/week source path')
             occupied=con.execute('SELECT entry_id FROM entries WHERE source_path=? AND entry_id<>? AND deleted_at IS NULL',(rel,eid)).fetchone()
             if occupied: raise ValueError(f'target journal path already belongs to another entry: {rel}')
+            durable_io.inside(root/'vault',rel)
             text=raw_markdown if raw_markdown is not None else build_daily_markdown(eid,title,tags,timezone,sections)
             # Canonical LF avoids Windows translating an existing CRLF into
             # CRCRLF and adding blank lines on each save/import/export cycle.
@@ -777,15 +783,14 @@ def save_entry(*, journal_date: str|None, sections: dict, entry_id: str|None=Non
             if current and current['content_hash']==h:
                 rid=parent
                 if old_rel!=rel:
-                    target=root/'vault'/rel;target.parent.mkdir(parents=True,exist_ok=True);tmp=target.with_suffix(target.suffix+'.tmp');tmp.write_text(text,encoding='utf-8');os.replace(tmp,target)
-                    oldp=root/'vault'/old_rel
-                    if oldp.exists() and oldp!=target: oldp.unlink()
+                    journal=durable_io.prepare_entry_write(root,eid,rid,rel,old_rel)
+                    durable_io.atomic_bytes(root/'vault'/rel,text.encode('utf-8'))
                 con.execute('UPDATE entries SET journal_date=?,title=?,tags_json=?,timezone=?,source_path=?,current_revision_id=?,updated_at=?,deleted_at=NULL WHERE entry_id=?',(journal_date,title,json.dumps(tags,ensure_ascii=False),timezone,rel,rid,utcnow(),eid));con.commit()
+                if journal:durable_io.finish_entry_write(root,journal,con);journal=None
                 return {'entry_id':eid,'revision_id':rid,'source_path':rel,'old_source_path':old_rel if old_rel!=rel else None,'unchanged':True,'content_hash':h}
             now=utcnow(); rid=new_id('rev'); revfile=_write_revision_file(root,eid,rid,text)
-            target=root/'vault'/rel; target.parent.mkdir(parents=True,exist_ok=True)
-            # Atomic current-file replacement.
-            tmp=target.with_suffix(target.suffix+'.tmp');tmp.write_text(text,encoding='utf-8');os.replace(tmp,target)
+            journal=durable_io.prepare_entry_write(root,eid,rid,rel,old_rel,revfile)
+            durable_io.atomic_bytes(root/'vault'/rel,text.encode('utf-8'))
             if existing:
                 con.execute('UPDATE entries SET kind=?,journal_date=?,timezone=?,title=?,tags_json=?,source_path=?,source_format=?,current_revision_id=?,updated_at=?,deleted_at=NULL WHERE entry_id=?',(kind,journal_date,timezone,title,json.dumps(tags,ensure_ascii=False),rel,'markdown',rid,now,eid))
             else:
@@ -795,9 +800,12 @@ def save_entry(*, journal_date: str|None, sections: dict, entry_id: str|None=Non
             if enqueue_sync:
                 er=dict(con.execute('SELECT * FROM entries WHERE entry_id=?',(eid,)).fetchone());rv=dict(con.execute('SELECT * FROM revisions WHERE revision_id=?',(rid,)).fetchone());rv['content']=text;_enqueue_sync(con,er,rv)
             con.commit()
+            durable_io.finish_entry_write(root,journal,con);journal=None
             return {'entry_id':eid,'revision_id':rid,'source_path':rel,'old_source_path':old_rel if old_rel!=rel else None,'unchanged':False,'content_hash':h,'parent_revision_id':parent}
         except Exception:
-            con.rollback(); raise
+            con.rollback()
+            if journal:durable_io.finish_entry_write(root,journal,con)
+            raise
         finally: con.close()
 
 def restore_revision(entry_id: str, revision_id: str, root: Path = ROOT):
@@ -809,10 +817,10 @@ def restore_revision(entry_id: str, revision_id: str, root: Path = ROOT):
     return save_entry(journal_date=e['journal_date'],sections={},entry_id=entry_id,title=e.get('title') or '',tags=e.get('tags') or [],timezone=e.get('timezone') or '',raw_markdown=old['content'],kind=e['kind'],source_path=e['source_path'],source='restore',note=f"restored from {revision_id}",root=root)
 
 
-def add_attachment(entry_id: str, name: str, data: bytes, mime_type=None, revision_id=None, root: Path = ROOT):
+def add_attachment(entry_id: str, name: str, data: bytes, mime_type=None, revision_id=None, root: Path = ROOT, *, attachment_id=None):
     e=get_entry(entry_id=entry_id,root=root)
     if not e: raise ValueError('entry not found')
-    aid=new_id('att'); safe=re.sub(r'[^\w.\- ()\[\]]+','_',Path(name).name)[:120] or 'attachment'; rel=Path('.lifeos')/'attachments'/entry_id/f'{aid}_{safe}'; p=root/rel;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(data)
+    aid=attachment_id or new_id('att'); safe=re.sub(r'[^\w.\- ()\[\]]+','_',Path(name).name)[:120] or 'attachment'; rel=Path('.lifeos')/'attachments'/entry_id/f'{aid}_{safe}'; p=root/rel;p.parent.mkdir(parents=True,exist_ok=True);durable_io.atomic_bytes(p,data)
     con=connect(root)
     try:
         mime=mime_type or mimetypes.guess_type(name)[0] or 'application/octet-stream';created=utcnow();rid=revision_id or e['current_revision_id'];h=hashlib.sha256(data).hexdigest()
@@ -888,66 +896,82 @@ def feature_states(root: Path = ROOT):
 
 
 def create_backup(reason='manual', root: Path = ROOT, include_derived=False):
-    ensure_dirs(root); bid=new_id('backup'); stamp=dt.datetime.now().strftime('%Y%m%d-%H%M%S'); out=root/'.lifeos'/'backups'/f'LifeOS-{stamp}-{bid[-8:]}.zip';tmpdb=None
+    ensure_dirs(root); bid=new_id('backup'); stamp=dt.datetime.now().strftime('%Y%m%d-%H%M%S')
+    out=root/'.lifeos'/'backups'/f'LifeOS-{stamp}-{bid[-8:]}.zip'; temporary=out.with_suffix('.partial')
     with _LOCK:
-        # Consistent SQLite copy using backup API.
+        durable_io.recover_entry_writes(root)
         tmpdir=Path(tempfile.mkdtemp(prefix='lifeos-backup-'))
         try:
-            tmpdb=tmpdir/'core.db'; src=connect(root); dst=sqlite3.connect(tmpdb); src.backup(dst);dst.close();src.close()
-            with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED) as z:
-                for p in (root/'vault').rglob('*'):
-                    if p.is_file(): z.write(p,p.relative_to(root))
-                z.write(tmpdb,Path('.lifeos')/'core.db')
-                for folder in ('revisions','attachments'):
-                    base=root/'.lifeos'/folder
-                    if base.exists():
-                        for p in base.rglob('*'):
-                            if p.is_file(): z.write(p,p.relative_to(root))
-                if include_derived and (root/'data/lifeos.db').exists(): z.write(root/'data/lifeos.db',Path('data/lifeos.db'))
-                manifest={'created_at':utcnow(),'reason':reason,'format':'lifeos-backup-v1','include_derived':include_derived}
-                z.writestr('backup_manifest.json',json.dumps(manifest,ensure_ascii=False,indent=2))
-        finally: shutil.rmtree(tmpdir,ignore_errors=True)
-    size=out.stat().st_size; con=connect(root)
-    try: con.execute('INSERT INTO backups(backup_id,filename,reason,bytes,created_at) VALUES(?,?,?,?,?)',(bid,out.name,reason,size,utcnow()));con.commit()
-    finally: con.close()
+            tmpdb=tmpdir/'core.db'
+            src=connect(root); dst=sqlite3.connect(tmpdb)
+            try:src.backup(dst)
+            finally:dst.close();src.close()
+            files={'.lifeos/core.db':tmpdb}
+            for relative in ('vault','.lifeos/revisions','.lifeos/attachments','.lifeos/draft-attachments','.lifeos/recovered-browser-state'):
+                base=root/relative
+                if base.exists():
+                    for p in base.rglob('*'):
+                        if p.is_file():files[p.relative_to(root).as_posix()]=p
+            for name in ('ui-state.json','ui-state.json.previous'):
+                p=root/'.lifeos'/name
+                if p.exists():files['.lifeos/'+name]=p
+            if include_derived and (root/'data/lifeos.db').exists():
+                src=sqlite3.connect(root/'data/lifeos.db');dst=sqlite3.connect(tmpdir/'derived.db')
+                try:src.backup(dst)
+                finally:dst.close();src.close()
+                files['data/lifeos.db']=tmpdir/'derived.db'
+            hashes={}
+            with zipfile.ZipFile(temporary,'w',zipfile.ZIP_DEFLATED) as z:
+                for name,p in files.items():
+                    data=p.read_bytes();hashes[name]=hashlib.sha256(data).hexdigest();z.writestr(name,data)
+                z.writestr('backup_manifest.json',json.dumps({'backup_id':bid,'created_at':utcnow(),'reason':reason,'format':'lifeos-backup-v1','include_derived':include_derived,'sha256':hashes},ensure_ascii=False))
+            with zipfile.ZipFile(temporary) as z:
+                if z.testzip():raise ValueError('备份校验失败')
+            os.replace(temporary,out)
+        finally:
+            temporary.unlink(missing_ok=True);shutil.rmtree(tmpdir,ignore_errors=True)
+        size=out.stat().st_size; con=connect(root)
+        try:con.execute('INSERT INTO backups(backup_id,filename,reason,bytes,created_at) VALUES(?,?,?,?,?)',(bid,out.name,reason,size,utcnow()));con.commit()
+        finally:con.close()
     return {'backup_id':bid,'filename':out.name,'bytes':size,'reason':reason}
+
 
 def list_backups(root: Path = ROOT):
     con=connect(root)
-    try: return [dict(r) for r in con.execute('SELECT * FROM backups ORDER BY created_at DESC')]
+    try:
+        # Archives survive restoring an older core.db. Keep safety backups discoverable.
+        known={row[0] for row in con.execute('SELECT filename FROM backups')}
+        for archive in (root/'.lifeos/backups').glob('*.zip'):
+            if archive.name in known:continue
+            try:
+                with zipfile.ZipFile(archive) as zipped:manifest=json.loads(zipped.read('backup_manifest.json'))
+                if manifest.get('format')!='lifeos-backup-v1':continue
+                bid=manifest.get('backup_id') or 'backup_recovered_'+hashlib.sha256(archive.name.encode()).hexdigest()[:32]
+                con.execute('INSERT OR IGNORE INTO backups(backup_id,filename,reason,bytes,created_at) VALUES(?,?,?,?,?)',(bid,archive.name,manifest.get('reason') or 'recovered backup',archive.stat().st_size,manifest.get('created_at') or utcnow()))
+            except (OSError,ValueError,KeyError,zipfile.BadZipFile):continue
+        con.commit()
+        return [dict(r) for r in con.execute('SELECT * FROM backups ORDER BY created_at DESC')]
     finally: con.close()
 
-def restore_backup(backup_id: str, root: Path = ROOT):
-    con=connect(root)
-    try: r=con.execute('SELECT * FROM backups WHERE backup_id=?',(backup_id,)).fetchone()
-    finally: con.close()
-    if not r: raise ValueError('backup not found')
-    p=root/'.lifeos'/'backups'/r['filename']
-    if not p.exists(): raise ValueError('backup file missing')
-    if get_setting('backup.auto_before_restore','true',root)=='true': create_backup('pre-restore safety backup',root)
-    tmp=Path(tempfile.mkdtemp(prefix='lifeos-restore-'))
-    try:
-        with zipfile.ZipFile(p) as z:
-            names=z.namelist()
-            if 'backup_manifest.json' not in names or '.lifeos/core.db' not in names: raise ValueError('not a LifeOS backup')
-            z.extractall(tmp)
-        # Replace product-controlled content. Backups folder itself is intentionally retained.
-        for name in ('vault',):
-            src=tmp/name
-            if src.exists():
-                dst=root/name; old=root/f'.{name}.restore-old';shutil.rmtree(old,ignore_errors=True)
-                if dst.exists(): os.replace(dst,old)
-                shutil.copytree(src,dst);shutil.rmtree(old,ignore_errors=True)
-        for name in ('revisions','attachments'):
-            src=tmp/'.lifeos'/name
-            if src.exists():
-                dst=root/'.lifeos'/name;shutil.rmtree(dst,ignore_errors=True);shutil.copytree(src,dst)
-        shutil.copy2(tmp/'.lifeos'/'core.db',root/'.lifeos'/'core.db')
-        derived=tmp/'data'/'lifeos.db'
-        if derived.exists():
-            (root/'data').mkdir(parents=True,exist_ok=True);shutil.copy2(derived,root/'data'/'lifeos.db')
-    finally: shutil.rmtree(tmp,ignore_errors=True)
-    return {'ok':True,'restart_required':True,'backup':dict(r)}
+def restore_backup(backup_id: str, root: Path = ROOT, *, defer=False):
+    with _LOCK:
+        pending=root/'.lifeos'/'pending-restore.json'
+        if pending.exists():raise ValueError('已有待恢复备份，请先重启')
+        con=connect(root)
+        try:r=con.execute('SELECT * FROM backups WHERE backup_id=?',(backup_id,)).fetchone()
+        finally:con.close()
+        if not r:raise ValueError('backup not found')
+        p=durable_io.inside(root/'.lifeos'/'backups',r['filename'])
+        if not p.exists():raise ValueError('backup file missing')
+        job=root/'.lifeos'/'restore-jobs'/uuid.uuid4().hex
+        try:
+            durable_io.validate_backup(p,job/'new')
+            if get_setting('backup.auto_before_restore','true',root)=='true':create_backup('pre-restore safety backup',root)
+            durable_io.atomic_json(pending,{'phase':'prepared','job':job.relative_to(root).as_posix()})
+            if not defer:durable_io.recover_restore(root)
+        except Exception:
+            shutil.rmtree(job,ignore_errors=True);raise
+        return {'ok':True,'restart_required':True,'backup':dict(r)}
 
 
 def export_entry(entry_id: str, root: Path = ROOT):

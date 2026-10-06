@@ -1,11 +1,17 @@
 const {app,BrowserWindow,ipcMain,shell,Menu,dialog}=require('electron');
 const path=require('path');const fs=require('fs');
 const runtime=require('./runtime.cjs');
+const {createStore}=require('./workspace-store.cjs');
+const {recoverLegacyStorage}=require('./storage-migration.cjs');
+const {createCloseGuard}=require('./close-guard.cjs');
+const {createUpdateController}=require('./update-controller.cjs');
+const {CancellationToken}=require('builder-util-runtime');
+const http=require('node:http');
 let autoUpdater=null;try{autoUpdater=require('electron-updater').autoUpdater}catch{}
 app.setName('LifeOS');
 app.setPath('userData',path.join(app.getPath('appData'),'LifeOS'));
 const paths=runtime.runtimePaths({isPackaged:app.isPackaged,resourcesPath:process.resourcesPath,desktopDir:__dirname,userData:app.getPath('userData')});
-let backend=null,mainWindow=null,quitting=false,creating=null;
+let backend=null,mainWindow=null,quitting=false,creating=null,store=null,updates=null,closeGuard=null;
 let BACKEND_URL=process.env.LIFEOS_BACKEND_URL||'http://127.0.0.1:8787';
 
 function startupFailure(error){
@@ -25,16 +31,17 @@ async function startBackend(){
   backend=runtime.startBackend(launch,{...paths,port,onExit:error=>{if(error&&!quitting&&mainWindow&&!mainWindow.isDestroyed())startupFailure(error)}});
   await runtime.waitForServer(BACKEND_URL+'/api/health',{failure:backend.failure});
 }
-async function createMainWindow(){mainWindow=new BrowserWindow({width:1320,height:880,minWidth:900,minHeight:650,title:'LifeOS · Private Journal',backgroundColor:'#eee8ed',frame:false,show:false,webPreferences:{preload:path.join(__dirname,'preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true}});mainWindow.once('ready-to-show',()=>mainWindow?.show());mainWindow.on('closed',()=>{mainWindow=null;if(!quitting)app.quit()});mainWindow.webContents.setWindowOpenHandler(({url})=>{if(/^https?:/.test(url))shell.openExternal(url);return {action:'deny'}});await mainWindow.loadURL(BACKEND_URL);}
-function setupAutoUpdate(){if(!autoUpdater||!app.isPackaged)return;autoUpdater.autoDownload=false;autoUpdater.on('checking-for-update',()=>mainWindow?.webContents.send('lifeos:update',{status:'checking'}));autoUpdater.on('update-available',info=>mainWindow?.webContents.send('lifeos:update',{status:'available',version:info.version}));autoUpdater.on('update-not-available',()=>mainWindow?.webContents.send('lifeos:update',{status:'current'}));autoUpdater.on('download-progress',p=>mainWindow?.webContents.send('lifeos:update',{status:'downloading',percent:Math.round(p.percent||0)}));autoUpdater.on('update-downloaded',info=>mainWindow?.webContents.send('lifeos:update',{status:'ready',version:info.version}));autoUpdater.on('error',e=>mainWindow?.webContents.send('lifeos:update',{status:'error',message:String(e.message||e)}));setTimeout(()=>autoUpdater.checkForUpdates().catch(()=>{}),3500);}
-function create(){if(creating)return creating;creating=(async()=>{await startBackend();await createMainWindow();setupAutoUpdate()})();creating.finally(()=>{creating=null}).catch(()=>{});return creating;}
+async function createMainWindow(){mainWindow=new BrowserWindow({width:1320,height:880,minWidth:900,minHeight:650,title:'LifeOS · Private Journal',backgroundColor:'#eee8ed',frame:false,show:false,webPreferences:{preload:path.join(__dirname,'preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true}});closeGuard=createCloseGuard({window:mainWindow,dialog});mainWindow.on('close',closeGuard.onClose);mainWindow.once('ready-to-show',()=>mainWindow?.show());mainWindow.on('closed',()=>{mainWindow=null;if(!quitting)app.quit()});mainWindow.webContents.setWindowOpenHandler(({url})=>{if(/^https?:/.test(url))shell.openExternal(url);return {action:'deny'}});await mainWindow.loadURL(BACKEND_URL);}
+function safetyBackup(){return new Promise((resolve,reject)=>{const body=JSON.stringify({reason:'pre-update safety backup',include_derived:false});const req=http.request(BACKEND_URL+'/api/backups/create',{method:'POST',headers:{'Content-Type':'application/json','Content-Length':Buffer.byteLength(body)}},res=>{let text='';res.on('data',chunk=>{text+=chunk});res.on('end',()=>{try{const value=JSON.parse(text);if(res.statusCode!==200||!value.backup_id)throw new Error();resolve(value)}catch{reject(new Error('安全备份未完成'))}});res.on('error',reject)});req.setTimeout(60000,()=>req.destroy(new Error('安全备份超时')));req.on('error',reject);req.end(body)})}
+function setupAutoUpdate(){updates=createUpdateController({updater:autoUpdater,isPackaged:app.isPackaged,send:value=>mainWindow?.webContents.send('lifeos:update',value),prepare:()=>closeGuard.prepare(),backup:safetyBackup,lock:()=>mainWindow.webContents.executeJavaScript('document.body.inert=true'),unlock:()=>mainWindow.webContents.executeJavaScript('document.body.inert=false'),install:()=>{closeGuard.allow();setImmediate(()=>autoUpdater.quitAndInstall(false,true))},CancellationToken});if(autoUpdater&&app.isPackaged)setTimeout(()=>updates.check(),3500);}
+function create(){if(creating)return creating;creating=(async()=>{store=createStore(paths.dataRoot);await recoverLegacyStorage({userData:app.getPath('userData'),store,BrowserWindow});await startBackend();await createMainWindow();setupAutoUpdate()})();creating.finally(()=>{creating=null}).catch(()=>{});return creating;}
 
 const gotLock=app.requestSingleInstanceLock();if(!gotLock){app.quit()}else{app.on('second-instance',()=>{if(mainWindow){if(mainWindow.isMinimized())mainWindow.restore();mainWindow.show();mainWindow.focus()}});app.whenReady().then(()=>{Menu.setApplicationMenu(null);return create()}).catch(startupFailure);}
 
 ipcMain.handle('lifeos:window-control',(event,action)=>{const target=BrowserWindow.fromWebContents(event.sender);if(!target||target!==mainWindow)return {ok:false};if(action==='minimize')target.minimize();if(action==='toggle-maximize'){target.isMaximized()?target.unmaximize():target.maximize()}if(action==='close')target.close();return {ok:true,maximized:target.isMaximized()};});
-ipcMain.handle('lifeos:update-check',async()=>{if(!autoUpdater||!app.isPackaged)return {ok:false,reason:'updates only run in packaged builds'};try{const r=await autoUpdater.checkForUpdates();return {ok:true,version:r?.updateInfo?.version}}catch(e){return {ok:false,error:String(e.message||e)}}});
-ipcMain.handle('lifeos:update-download',async()=>{if(!autoUpdater)return {ok:false};try{await autoUpdater.downloadUpdate();return {ok:true}}catch(e){return {ok:false,error:String(e.message||e)}}});
-ipcMain.handle('lifeos:update-install',async()=>{if(!autoUpdater)return {ok:false};setImmediate(()=>autoUpdater.quitAndInstall(false,true));return {ok:true}});
+const trusted=event=>mainWindow&&!mainWindow.isDestroyed()&&event.sender===mainWindow.webContents;
+ipcMain.on('lifeos:storage',(event,command)=>{try{if(!trusted(event)||!store)throw new Error('存储不可用');event.returnValue={ok:true,value:store.operation(command)}}catch(error){event.returnValue={ok:false,error:String(error.message||'本地存储不可用')}}});
+for(const [channel,method] of [['check','check'],['download','download'],['cancel','cancel'],['install','install'],['status','snapshot']])ipcMain.handle('lifeos:update-'+channel,async event=>trusted(event)&&updates?updates[method]():{ok:false,error:'更新服务未就绪'});
 app.on('activate',()=>{if(!mainWindow)create().catch(startupFailure);else mainWindow.show()});
-app.on('window-all-closed',()=>{if(process.platform!=='darwin')app.quit()});
-app.on('before-quit',()=>{quitting=true;try{backend?.stop()}catch{}});
+app.on('window-all-closed',()=>{if(!creating&&process.platform!=='darwin')app.quit()});
+app.on('before-quit',event=>{if(event&&mainWindow&&!mainWindow.isDestroyed()&&!closeGuard?.isAllowed()){event.preventDefault();mainWindow.close();return}quitting=true;try{backend?.stop()}catch{}});

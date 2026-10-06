@@ -13,6 +13,9 @@ sys.path.insert(0, str(SOURCE_ROOT))
 sys.path.insert(0, str(SOURCE_ROOT / 'engine'))
 ROOT.mkdir(parents=True, exist_ok=True)
 os.chdir(ROOT)
+from engine import durable_io
+durable_io.recover_restore(ROOT)
+durable_io.recover_entry_writes(ROOT)
 
 if not (ROOT / 'data' / 'lifeos.db').exists():
     from engine.rebuild_memory_engine import main as rebuild

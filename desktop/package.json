@@ -1,13 +1,13 @@
 {
   "name": "lifeos-desktop",
   "private": true,
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "LifeOS local-first private journal with poetry, ambient sounds and memorial pages",
   "author": "LifeOS Contributors",
   "main": "main.cjs",
   "scripts": {
     "start": "node setup.cjs start",
-    "test": "node --test startup.test.cjs setup.test.cjs pet-window.test.cjs",
+    "test": "node --test startup.test.cjs setup.test.cjs pet-window.test.cjs reliability.test.cjs",
     "dist": "electron-builder",
     "dist:win": "electron-builder --win nsis",
     "dist:mac": "electron-builder --mac dmg zip",

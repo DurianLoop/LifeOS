@@ -39,7 +39,7 @@
   function bilingual(){return preset()==='bilingual'}
   function c(zh,enText,poem){return en()?enText:(poetic()?(poem||zh):(bilingual()&&enText?`${zh} / ${enText}`:zh))}
   function sectionName(k){return en()?(SECTION_EN[k]||k):k}
-  function stateText(name){return ({clean:c('尚未改动','No changes yet'),drafting:c('草稿已留在这台设备','Draft saved on this device'),saving:c('正在落定新版本…','Saving a new revision…'),saved:c('已保存 · Revision 已落定','Saved · revision committed'),offline:c('服务暂不可用 · 草稿仍安全','Service unavailable · draft is safe'),error:c('未保存 · 草稿仍在本机','Not saved · local draft is safe')})[name]||name}
+  function stateText(name){return ({clean:c('尚未改动','No changes yet'),pending:c('正在保存草稿','Saving draft'),drafting:c('草稿已保存','Draft saved'),saving:c('正在保存','Saving'),saved:c('已保存','Saved'),offline:c('服务暂不可用，请重试','Service unavailable; retry'),error:c('保存未完成，请重试','Save incomplete; retry')})[name]||name}
   function copy(){return {
     write:c('写下今天','Write today','落笔'),
     continue:c('继续这一页','Continue this page','续写此页'),
@@ -47,16 +47,16 @@
     searchPlaceholder:c('一句话、一个人、一个地方，或某一年…','A phrase, person, place, or year…','一句旧话、一个人、一个地方…')
   }}
   function draftKey(date){return `lifeos.writer.draft.${date||localDateISO()}`}
-  function readDraft(date){try{return JSON.parse(localStorage.getItem(draftKey(date))||'null')}catch(_){return null}}
+  function readDraft(date){try{return JSON.parse(localStorage.getItem(draftKey(date))||'null')}catch(error){toast(c('草稿读取失败，请保留工作区并恢复备份','Draft unavailable; preserve the workspace and restore a backup'));throw error}}
   function writerDraftRecord(form=$('#writerForm'),session=I2.session){
     if(!form)return null;
     const scope=form.closest('.i2Writer')||form,sections={...(session?.preservedSections||{})};
     form.querySelectorAll('[data-wsec]').forEach(field=>sections[field.dataset.wsec]=field.value);
-    return {date:session?.date||scope.querySelector('#writerDate')?.value||localDateISO(),title:scope.querySelector('#writerTitle')?.value||'',tags:scope.querySelector('#writerTags')?.value||'',template:form.dataset.template||'blank',sections};
+    return {date:session?.date||scope.querySelector('#writerDate')?.value||localDateISO(),title:scope.querySelector('#writerTitle')?.value||'',tags:scope.querySelector('#writerTags')?.value||'',template:form.dataset.template||'blank',sections,attachments:[...(session?.attachments||[])]};
   }
   function draftContentHash(record){
     if(!record)return '';
-    return JSON.stringify([record.date||'',record.title||'',record.tags||'',record.template||'blank',Object.entries(record.sections||{}).sort(([a],[b])=>a.localeCompare(b))]);
+    return JSON.stringify([record.date||'',record.title||'',record.tags||'',record.template||'blank',Object.entries(record.sections||{}).sort(([a],[b])=>a.localeCompare(b)),(record.attachments||[]).map(item=>item.id)]);
   }
   function draftHash(form=$('#writerForm'),session=I2.session){
     if(!form)return '';
@@ -65,11 +65,11 @@
   }
   function setWriterState(name,text){const el=$('#writerDraftState');if(el){el.dataset.state=name;el.textContent=text||stateText(name)}}
   function saveDraft(){
-    const form=$('#writerForm'),rec=writerDraftRecord(form);if(!rec)return;
-    if(!I2.session?.restoredDraft&&['clean','saved'].includes(I2.session?.saveState)&&draftHash(form)===I2.session?.persistedHash)return;
+    const form=$('#writerForm'),rec=writerDraftRecord(form);if(!rec)return true;
+    if(!I2.session?.restoredDraft&&['clean','saved'].includes(I2.session?.saveState)&&draftHash(form)===I2.session?.persistedHash)return true;
     rec.savedAt=new Date().toISOString();
     I2.session={...(I2.session||{}),preservedSections:{...rec.sections},saveState:'drafting'};
-    try{localStorage.setItem(draftKey(rec.date),JSON.stringify(rec));setWriterState('drafting',`${stateText('drafting')} · ${new Intl.DateTimeFormat(PRESETS[preset()].locale,{hour:'2-digit',minute:'2-digit'}).format(new Date())}`)}catch(_){}
+    try{localStorage.setItem(draftKey(rec.date),JSON.stringify(rec));setWriterState('drafting');return true}catch(error){setWriterState('error',c('草稿未保存，请检查磁盘空间','Draft not saved; check disk space'));return false}
   }
   function clearCommittedDraft(record){
     if(draftContentHash(readDraft(record.date))===draftContentHash(record))localStorage.removeItem(draftKey(record.date));
@@ -104,7 +104,7 @@
     I2.session={entryId:existing?.entry_id||null,revisionId:existing?.current_revision_id||null,sourcePath:existing?.source_path||PRODUCT.context.path||null,openedFrom:PRODUCT.context.openedFrom||'home',returnContext:PRODUCT.context.returnContext||null,persistedHash:'',saveState:existing?'clean':'drafting'};
     $('#productPanel').innerHTML=`<div class="i2Writer" data-session="${esc(existing?.entry_id||'new')}"><header class="i2WriterHead"><button id="writerBack" type="button" class="i2Back">← ${esc(c('返回','Back','归页'))}</button><div class="i2WriterIdentity"><b>${esc(existing?cp.continue:cp.write)}</b></div><div class="i2WriterCommands"><span id="writerDraftState" class="i2WriterState" data-state="${existing?'clean':'drafting'}" aria-live="polite">${esc(existing?stateText('clean'):stateText('drafting'))}</span><button class="productAction" id="writerRead" type="button" ${existing?'':'hidden'}>${esc(c('读这一页','Read this page','读此页'))}</button><button class="productAction primary" id="writerSave" type="submit" form="writerForm">${esc(existing?c('保存为新版本','Save new revision','收笔 · 保存'):c('留下这一页','Save this page','收笔 · 留页'))}</button></div></header><form id="writerForm" data-entry-id="${esc(existing?.entry_id||'')}" data-source="${esc(existing?.source_path||'')}" data-template="${esc(template)}"><div class="i2WriterMeta"><label>${esc(c('日期','Date','日期'))}<input id="writerDate" class="input" type="date" value="${esc(date)}" required></label><label>${esc(c('标题 · 可选','Title · optional','题名 · 可选'))}<input id="writerTitle" class="input" value="${esc(existing?.title||draft?.title||'')}"></label></div><main class="i2WriterCanvas">${SECTIONS.map(key=>`<section class="i2WriterSection ${key==='日记'?'main':''}" data-key="${esc(key)}"><label for="w-${esc(key)}">${esc(sectionName(key))}</label><textarea id="w-${esc(key)}" data-wsec="${esc(key)}" aria-label="${esc(sectionName(key))}">${esc(sections[key])}</textarea></section>`).join('')}</main><details class="i2WriterMore"><summary>${esc(c('更多','More','更多'))}<small>${esc(c('标签、模板、附件与版本','Tags, templates, attachments & versions','题签、章法、附件与旧版'))}</small></summary><div class="i2MoreBody"><label>${esc(c('标签 · 逗号分隔','Tags · comma separated','题签 · 以逗号分隔'))}<input class="input" id="writerTags" value="${esc((existing?.tags||[]).join(', ')||draft?.tags||'')}"></label><div class="i2TemplateRow"><span>${esc(c('模板','Template','章法'))}</span>${[['blank',c('空白页','Blank','空白')],['daily',c('六段式','Six-part','六段')],['review',c('周复盘','Weekly review','周省')],['custom',c('自定义','Custom','自定')]].map(([id,label])=>`<button type="button" data-template="${id}">${esc(label)}</button>`).join('')}</div><div id="writerCustomChooser" hidden class="i2SectionChoices">${SECTIONS.filter(x=>x!=='日记').map(x=>`<label><input type="checkbox" data-section-choice value="${esc(x)}" ${sections[x].trim()?'checked':''}> ${esc(sectionName(x))}</label>`).join('')}</div><div class="i2MoreGrid"><section><h4>${esc(c('照片与附件','Attachments','附件'))}</h4>${(j?.attachments||[]).map(a=>`<a class="attachmentChip" href="/api/attachment?attachment_id=${encodeURIComponent(a.attachment_id)}" target="_blank" rel="noopener">${esc(a.original_name)}</a>`).join('')}<input id="writerAttachments" class="input" type="file" multiple></section><section><h4>${esc(c('历史版本','Revision history','旧版'))}</h4><p>${esc(c(`${revCount} 个可见版本；恢复旧版会新建 Revision。`,`${revCount} visible revisions; restoring one adds another revision.`,`已有 ${revCount} 版；复旧亦会添一新痕。`))}</p>${existing?`<button type="button" class="productAction" id="writerVersions">${esc(c('查看历史版本','Open revisions','看旧版'))}</button>`:''}</section></div><button id="writerClearDraft" type="button" class="i2QuietDanger">${esc(c('清除本地草稿','Clear local draft','清除本地草稿'))}</button></div></details></form></div>`;
     installWriterChrome(); applyTemplate(template,true); I2.session.persistedHash=draftHash();
-    let timer;const changed=()=>{clearTimeout(timer);setWriterState('drafting');timer=setTimeout(saveDraft,420)};
+    let timer;const changed=()=>{clearTimeout(timer);setWriterState('pending');timer=setTimeout(saveDraft,420)};
     $('#writerForm').addEventListener('input',changed);$('#writerDate').onchange=changed;
     $$('[data-template]').forEach(x=>x.onclick=()=>{applyTemplate(x.dataset.template,true);changed()});$$('[data-section-choice]').forEach(x=>x.onchange=()=>{applyTemplate('custom',true);changed()});
     $('#writerClearDraft').onclick=()=>{localStorage.removeItem(draftKey($('#writerDate').value));if(!I2.session.entryId){$$('[data-wsec]').forEach(x=>x.value='');$('#writerTitle').value='';$('#writerTags').value=''}setWriterState('clean',c('本地草稿已清除','Local draft cleared'))};
@@ -117,6 +117,15 @@
 
   function writerReturn(){const finish=()=>{saveDraft();const target=I2.session?.returnContext?.sourcePath||I2.session?.sourcePath;if(I2.session?.openedFrom==='journal'&&target){setProductDock(false);openJournal(target);return}setProductDock(false);if(typeof buildRail==='function')buildRail()};if(typeof window.lifeosWriterLeave==='function'&&window.lifeosWriterIsDirty?.()){window.lifeosWriterLeave(finish);return}finish()}
   window.lifeosWriterSaveDraft=saveDraft;
+  window.lifeosPrepareToClose=async()=>{
+    if(I2.attachmentTask)await I2.attachmentTask;
+    const deadline=Date.now()+12000;
+    while(I2.pendingSaves?.size&&Date.now()<deadline)await new Promise(resolve=>setTimeout(resolve,50));
+    if(I2.pendingSaves?.size||I2.attachmentError)return false;
+    return I2.flushDraft?I2.flushDraft():saveDraft();
+  };
+  window.addEventListener('beforeunload',()=>I2.flushDraft?.());
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)I2.flushDraft?.()});
 
   // Expanded desktop writer: a structured page remains a single ordinary
   // daily entry, so its save path keeps the established append-only revision
@@ -217,12 +226,12 @@
     const renderSequence=I2.renderSequence=(I2.renderSequence||0)+1;
     const requestedDate=PRODUCT.context.date||localDateISO(),j=await loadWriterForDate(requestedDate);
     if(renderSequence!==I2.renderSequence||PRODUCT.tab!=='writer'||!$('#productDock')?.classList.contains('open'))return;
-    I2.flushDraft?.();I2.flushDraft=null;
+    if(I2.flushDraft?.()===false)return;I2.flushDraft=null;
     I2.layout?.destroy();I2.layout=null;I2.calendar?.destroy();I2.calendar=null;
     const existing=j?.product_entry||null,date=existing?.journal_date||j?.memory?.date||requestedDate,draft=readDraft(date),sections={},deskCells=loadDeskCells(),writerHabits=loadWriterHabits();
     for(const key of new Set([...SECTIONS,...deskCells.map(cell=>cell.key),...Object.keys(j?.sections||{}),...Object.keys(draft?.sections||{})]))sections[key]=draft?.sections?.[key]??j?.sections?.[key]??'';
     const template=localStorage.getItem('lifeos.writer.template')||draft?.template||'daily',revCount=(j?.revisions||[]).length,cp=copy(),habitSource=sections['习惯打卡'];
-    I2.session={date,entryId:existing?.entry_id||null,revisionId:existing?.current_revision_id||null,sourcePath:existing?.source_path||PRODUCT.context.path||null,openedFrom:PRODUCT.context.openedFrom||'writer',returnContext:PRODUCT.context.returnContext||null,preservedSections:{...sections},habits:writerHabits,persistedHash:'',restoredDraft:!!draft,saveState:existing?'clean':'drafting'};
+    I2.session={date,entryId:existing?.entry_id||null,revisionId:existing?.current_revision_id||null,sourcePath:existing?.source_path||PRODUCT.context.path||null,openedFrom:PRODUCT.context.openedFrom||'writer',returnContext:PRODUCT.context.returnContext||null,preservedSections:{...sections},attachments:draft?.attachments||[],habits:writerHabits,persistedHash:'',restoredDraft:!!draft,saveState:existing?'clean':'drafting'};
     const card=key=>deskGridCellMarkup(deskCells.find(item=>item.key===key)||DEFAULT_DESK_CELLS.find(item=>item.key===key),sections,writerHabits,habitSource);
     if(window.lifeosWriterDrawerHandler)document.removeEventListener('click',window.lifeosWriterDrawerHandler,true);
     window.lifeosWriterDrawerHandler=null;
@@ -348,12 +357,37 @@
     $('#writerHabitAdd')?.addEventListener('click',()=>{$('#writerHabitEditorRows')?.insertAdjacentHTML('beforeend',habitEditorRow(c('新习惯','New habit','新习惯')));$('#writerHabitEditorRows input:last-of-type')?.focus()});
     $('#writerHabitEditor')?.addEventListener('click',event=>{const remove=event.target.closest('[data-habit-remove]');if(remove){const rows=$$('#writerHabitEditorRows [data-habit-name]');if(rows.length>1)remove.closest('.i2HabitEditorRow')?.remove()}});
     $('#writerHabitSave')?.addEventListener('click',()=>{const next=saveWriterHabits($$('#writerHabitEditorRows [data-habit-name]').map(input=>input.value));if(!next.length)return;const button=$('#writerHabitSave');button?.classList.add('is-confirmed');if(button)button.textContent=c('已更新','Updated','已更新');saveDraft();I2.session.habits=next;setTimeout(()=>renderProductWriter(),160)});
-    let timer;I2.flushDraft=()=>{clearTimeout(timer);saveDraft()};const changed=()=>{updateWriterLiveStats();clearTimeout(timer);setWriterState('drafting');timer=setTimeout(saveDraft,420)};
+    let timer;I2.flushDraft=()=>{clearTimeout(timer);return saveDraft()};const changed=()=>{updateWriterLiveStats();clearTimeout(timer);setWriterState('pending');timer=setTimeout(saveDraft,420)};
     $('#writerForm').addEventListener('input',changed);$$('[data-template]').forEach(button=>button.onclick=()=>{applyTemplate(button.dataset.template,true);changed()});$$('[data-section-choice]').forEach(box=>box.onchange=()=>{applyTemplate('custom',true);changed()});$$('[data-writer-habit]').forEach(box=>box.onchange=()=>{syncWriterHabits();changed()});$('#writerHabitNote')?.addEventListener('input',()=>{syncWriterHabits();changed()});
+    const attachmentInput=$('#writerAttachments'),attachmentSession=I2.session;
+    const attachmentList=document.createElement('div');attachmentList.className='attachmentList';attachmentInput.before(attachmentList);
+    const drawAttachments=()=>{attachmentList.replaceChildren();for(const item of attachmentSession.attachments){const chip=document.createElement('button');chip.type='button';chip.className='attachmentChip';chip.textContent=item.name+' ×';chip.onclick=()=>{attachmentSession.attachments=attachmentSession.attachments.filter(value=>value.id!==item.id);I2.session.attachments=attachmentSession.attachments;saveDraft();drawAttachments()};attachmentList.append(chip)}};
+    drawAttachments();I2.attachmentError=false;
+    const stagedFiles=new Map();
+    attachmentInput.addEventListener('change',()=>{
+      const files=[...attachmentInput.files],form=$('#writerForm');
+      const previousAttachmentTask=I2.attachmentTask;
+      I2.attachmentTask=(async()=>{
+        if(previousAttachmentTask)await previousAttachmentTask;
+        I2.attachmentError=false;setWriterState('pending',c('正在保存附件','Saving attachments'));
+        try{
+          for(const file of files){
+            const key=JSON.stringify([file.name,file.size,file.lastModified]);
+            if(stagedFiles.has(key))continue;
+            if(file.size>25_000_000)throw new Error(c('附件超过 25MB','Attachment exceeds 25MB'));
+            const out=await post('/api/drafts/attachment',{name:file.name,mime_type:file.type,data_base64:await fileToBase64(file)});
+            stagedFiles.set(key,out.attachment);attachmentSession.attachments.push(out.attachment);
+            const record=writerDraftRecord(form,attachmentSession);record.savedAt=new Date().toISOString();
+            localStorage.setItem(draftKey(record.date),JSON.stringify(record));
+          }
+          attachmentInput.value='';drawAttachments();if(I2.session?.date===attachmentSession.date)saveDraft();
+        }catch(error){I2.attachmentError=true;if(I2.session?.date===attachmentSession.date){setWriterState('error',c('附件未保存，请重新选择','Attachment not saved; select again'));toast(error.message)}}
+      })();
+    });
     let changingDay=false;
     const changeDay=async next=>{
       if(changingDay||!/^\d{4}-\d{2}-\d{2}$/.test(next)||next===date)return;
-      changingDay=true;clearTimeout(timer);$('#writerDate').value=date;saveDraft();
+      changingDay=true;clearTimeout(timer);$('#writerDate').value=date;if(!await window.lifeosPrepareToClose()){changingDay=false;throw new Error('草稿尚未保存')}
       const previousContext=PRODUCT.context;PRODUCT.context={date:next,openedFrom:'writer'};
       try{await renderProductWriter()}catch(error){PRODUCT.context=previousContext;changingDay=false;throw error}
     };
@@ -362,7 +396,7 @@
     I2.calendar=window.lifeosWriterCalendar?.mount({anchor:$('#writerDateJump'),input:$('#writerDate'),locale:PRESETS[preset()].locale,today:localDateISO(),dates:async range=>{clearTimeout(timer);saveDraft();return writerDates(range)},onSelect:changeDay});
     $$('[data-writer-view]').forEach(button=>button.onclick=()=>{$$('[data-writer-view]').forEach(item=>{const active=item===button;item.classList.toggle('active',active);item.setAttribute('aria-pressed',String(active))});document.querySelector('.i2WriterGrid')?.setAttribute('data-view',button.dataset.writerView)});
     $('#writerFocus').onclick=()=>{const desk=document.querySelector('.i2Desk');const focused=desk?.classList.toggle('i2DeskFocus');if(focused)document.querySelector('#productPanel')?.scrollTo({top:0,behavior:'smooth'})};$('#writerPreview').onclick=()=>{const panel=$('#writerPreviewPanel');refreshWriterPreview();panel.hidden=!panel.hidden;document.querySelector('.i2Desk')?.classList.toggle('i2DeskPreview',!panel.hidden)};$('#writerAttachTrigger').onclick=()=>$('#writerAttachments')?.click();const closeDrawer=()=>{const drawer=$('#writerToolDrawer');if(drawer){drawer.hidden=true;document.querySelector('.i2Desk')?.classList.remove('i2DrawerOpen')}toggleTemplateArea(false)};$('#writerDrawerToggle').onclick=()=>{const chapterOpen=I2.chapterOpen;toggleTemplateArea(false);const drawer=$('#writerToolDrawer');if(drawer){const open=drawer.hidden||chapterOpen;drawer.hidden=!open;document.querySelector('.i2Desk')?.classList.toggle('i2DrawerOpen',open);if(open)$('#writerDrawerClose')?.focus()}};$('#writerDrawerClose').onclick=closeDrawer;
-    $('#writerClearDraft').onclick=()=>{clearTimeout(timer);localStorage.removeItem(draftKey($('#writerDate').value));if(!I2.session.entryId){$$('[data-wsec]').forEach(item=>{item.value='';const editor=document.querySelector(`[data-rich-wsec="${CSS.escape(item.dataset.wsec)}"]`);if(editor)editor.innerHTML=''});$('#writerTitle').value='';$('#writerTags').value='';$$('[data-writer-habit]').forEach(item=>item.checked=false);if($('#writerHabitNote'))$('#writerHabitNote').innerHTML=''}I2.session={...I2.session,persistedHash:draftHash(),restoredDraft:false,saveState:'clean'};setWriterState('clean',c('本地草稿已清除','Local draft cleared'))};$('#writerVersions')?.addEventListener('click',()=>renderProductTab('versions'));$('#writerBack').onclick=()=>writerReturn();$('#writerRead').onclick=()=>I2.session.sourcePath&&openJournal(I2.session.sourcePath);
+    $('#writerClearDraft').onclick=()=>{if(I2.attachmentTask&&attachmentInput.files.length)return toast('附件正在保存');clearTimeout(timer);I2.attachmentError=false;I2.session.attachments=[];attachmentSession.attachments=[];attachmentInput.value='';drawAttachments();localStorage.removeItem(draftKey($('#writerDate').value));if(!I2.session.entryId){$$('[data-wsec]').forEach(item=>{item.value='';const editor=document.querySelector(`[data-rich-wsec="${CSS.escape(item.dataset.wsec)}"]`);if(editor)editor.innerHTML=''});$('#writerTitle').value='';$('#writerTags').value='';$$('[data-writer-habit]').forEach(item=>item.checked=false);if($('#writerHabitNote'))$('#writerHabitNote').innerHTML=''}I2.session={...I2.session,persistedHash:draftHash(),restoredDraft:false,saveState:'clean'};setWriterState('clean',c('本地草稿已清除','Local draft cleared'))};$('#writerVersions')?.addEventListener('click',()=>renderProductTab('versions'));$('#writerBack').onclick=()=>writerReturn();$('#writerRead').onclick=()=>I2.session.sourcePath&&openJournal(I2.session.sourcePath);
     const form=$('#writerForm');form.addEventListener('keydown',event=>{if((event.ctrlKey||event.metaKey)&&(event.key.toLowerCase()==='s'||event.key==='Enter')){event.preventDefault();form.requestSubmit()}if(event.key==='Escape'&&!event.defaultPrevented){if(writerGrid?.dataset.layoutGesture)return;if(document.querySelector('.i2DeskInlineEdit')){event.preventDefault();setDeskInlineMode(false);return}saveDraft();writerReturn()}});
     form.onsubmit=async event=>{
       event.preventDefault();
@@ -374,14 +408,14 @@
       const sessionSnapshot={...I2.session},sequenceSnapshot=renderSequence;
       const isCurrent=()=>I2.renderSequence===sequenceSnapshot&&$('#writerForm')===form&&form.isConnected&&PRODUCT.tab==='writer'&&$('#productDock')?.classList.contains('open')&&I2.session?.date===sessionSnapshot.date;
       try{
-        syncWriterHabits();clearTimeout(timer);saveDraft();
+        syncWriterHabits();clearTimeout(timer);if(I2.attachmentTask)await I2.attachmentTask;if(I2.attachmentError||(isCurrent()&&!saveDraft()))throw new Error('草稿尚未保存');sessionSnapshot.attachments=[...(sessionSnapshot.attachments||[])];
         const snapshot=writerDraftRecord(form,sessionSnapshot),submittedHash=draftHash(form,sessionSnapshot);
         const files=[...(form.closest('.i2Writer')?.querySelector('#writerAttachments')?.files||[])];
         for(const file of files)if(file.size>25_000_000)throw new Error(`${file.name} ${c('超过 25MB','is over 25MB')}`);
         const payload={entry_id:form.dataset.entryId||null,journal_date:snapshot.date,title:snapshot.title.trim(),tags:snapshot.tags.split(/[,，]/).map(item=>item.trim()).filter(Boolean),timezone:Intl.DateTimeFormat().resolvedOptions().timeZone||'',sections:{...snapshot.sections}};
-        setWriterState('saving');
+        if(isCurrent())setWriterState('saving');
         const out=await post('/api/entries/save',payload),result=out.result;
-        for(const file of files)await post('/api/attachments',{entry_id:result.entry_id,revision_id:result.revision_id,name:file.name,mime_type:file.type||'application/octet-stream',data_base64:await fileToBase64(file)});
+        for(const attachment of snapshot.attachments)await post('/api/drafts/attachment/commit',{entry_id:result.entry_id,revision_id:result.revision_id,id:attachment.id});
         clearCommittedDraft(snapshot);
         lifeEvent(wasExisting?'entry-updated':'entry-created',{date:payload.journal_date,status:'saved'});
         if(!isCurrent())return;
@@ -459,7 +493,7 @@
 
   openJournal=async function(path){if(STATE.feature==='Universal Search'){captureSearch();I2.search.selectedSourcePath=path;try{sessionStorage.setItem('lifeos.i2.search',JSON.stringify(I2.search))}catch(_){}}return saved.openJournal(path)};
   openProductDock=async function(tab='writer',context={}){const result=await saved.openProductDock(tab,context);document.body.classList.toggle('writerImmersive',PRODUCT.tab==='writer'&&$('#productDock')?.classList.contains('open'));if(typeof buildRail==='function')buildRail();return result};
-  setProductDock=function(open){if(!open){I2.flushDraft?.();I2.flushDraft=null}saved.setProductDock(open);if(!open){I2.layout?.destroy();I2.layout=null;I2.calendar?.destroy();I2.calendar=null;I2.renderSequence=(I2.renderSequence||0)+1;I2.editing=false;I2.chapterOpen=false;document.body.classList.remove('writerImmersive')};if(typeof buildRail==='function')buildRail()};
+  setProductDock=function(open){if(!open){if(I2.flushDraft?.()===false)return;I2.flushDraft=null}saved.setProductDock(open);if(!open){I2.layout?.destroy();I2.layout=null;I2.calendar?.destroy();I2.calendar=null;I2.renderSequence=(I2.renderSequence||0)+1;I2.editing=false;I2.chapterOpen=false;document.body.classList.remove('writerImmersive')};if(typeof buildRail==='function')buildRail()};
   function installI2Surface(){
     if(I2.installed)return;I2.installed=true;
     // v01 boot loads its copydeck asynchronously, so install after it has
@@ -469,7 +503,7 @@
     const previousProductTab=renderProductTab;
     renderProductTab=async function(tab,...args){
       if(tab!=='writer'){
-        I2.flushDraft?.();I2.flushDraft=null;
+        if(I2.flushDraft?.()===false){PRODUCT.tab='writer';return}I2.flushDraft=null;
         I2.layout?.destroy();I2.layout=null;I2.calendar?.destroy();I2.calendar=null;
         I2.renderSequence=(I2.renderSequence||0)+1;I2.editing=false;I2.chapterOpen=false;
       }

@@ -64,6 +64,12 @@ function mainLifecycle(isPackaged) {
       fileCalls.push([method, args]); throw new Error('Main lifecycle must not access the filesystem');
     }}),
     './runtime.cjs': fakeRuntime,
+    './workspace-store.cjs': {createStore:()=>({operation:()=>null})},
+    './storage-migration.cjs': {recoverLegacyStorage:async()=>{}},
+    './close-guard.cjs': {createCloseGuard:()=>({prepare:async()=>true,onClose(){},allow(){},isAllowed:()=>true})},
+    './update-controller.cjs': {createUpdateController:()=>({check:async()=>({ok:true}),snapshot:()=>({status:'idle'})})},
+    'builder-util-runtime': {CancellationToken:class {}},
+    'node:http': {},
     'electron-updater': {autoUpdater: updater},
   };
   const context = {

@@ -1939,6 +1939,13 @@ class Handler(SimpleHTTPRequestHandler):
             if path=='/api/revisions/restore':
                 out=product.restore_revision(b.get('entry_id',''),b.get('revision_id',''),ROOT);idx=reindex_paths([out['source_path']],root=ROOT)
                 return self.send_json({'ok':True,'result':out,'index':idx})
+            if path=='/api/drafts/attachment':
+                from engine import draft_attachments
+                raw=base64.b64decode(b.get('data_base64') or '',validate=True)
+                return self.send_json({'ok':True,'attachment':draft_attachments.stage(ROOT,b.get('name') or 'attachment',raw,b.get('mime_type'))})
+            if path=='/api/drafts/attachment/commit':
+                from engine import draft_attachments
+                return self.send_json({'ok':True,'attachment':draft_attachments.commit(ROOT,b.get('id'),b.get('entry_id',''),b.get('revision_id'))})
             if path=='/api/attachments':
                 raw=base64.b64decode(b.get('data_base64') or '')
                 out=product.add_attachment(b.get('entry_id',''),b.get('name') or 'attachment',raw,b.get('mime_type'),b.get('revision_id'),ROOT)
@@ -1954,7 +1961,7 @@ class Handler(SimpleHTTPRequestHandler):
             if path=='/api/backups/create':
                 return self.send_json(product.create_backup(b.get('reason') or 'manual',ROOT,bool(b.get('include_derived'))))
             if path=='/api/backups/restore':
-                return self.send_json(product.restore_backup(b.get('backup_id',''),ROOT))
+                return self.send_json(product.restore_backup(b.get('backup_id',''),ROOT,defer=True))
             if path=='/api/product/settings':
                 product.set_settings(b.get('items') or {},ROOT);return self.send_json({'ok':True,'items':product.settings_dict(ROOT)})
             if path=='/api/pets/install':
