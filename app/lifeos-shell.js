@@ -3,6 +3,7 @@
   const button=document.querySelector('#lifeSidebarToggle');
   const desktop=window.lifeosDesktop&&typeof window.lifeosDesktop.windowControl==='function';
   document.body.classList.toggle('lifeosDesktop',!!desktop);
+  window.lifeosPageScroller=()=>document.body.classList.contains('writerImmersive')?window:document.querySelector('.shell')||window;
 
   const applySidebar=(collapsed,{persist=true}={})=>{
     document.body.classList.toggle('sidebarCollapsed',collapsed);

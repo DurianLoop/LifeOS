@@ -2,8 +2,27 @@
   'use strict';
   const NAME='Time Capsule', PREFIX='lifeos.bottle.draft.', themes={moon:'月海',dawn:'晨雾',dusk:'暮色'};
   const kindNames={text:'文字',audio:'声音',video:'视频'}, tabs={all:'全部',sealed:'在途中',arrived:'已抵达',draft:'草稿',opened:'已开启'};
+  const prompts=[
+    ['等一个春天','写下一个你正在期待的小小愿望\n等这封信抵达时，它会是什么模样？'],
+    ['此刻，值得记住','今天有没有一个瞬间，让你舍不得忘记？\n把声音、气味和心情，都留给未来的自己'],
+    ['给正在赶路的你','此刻的你，正在为哪件事努力？\n写下为什么开始，也留一句想对未来说的话'],
+    ['愿你依然','有什么是你希望未来的自己依然保有的？\n一份好奇、一个习惯，或是认真生活的勇气'],
+    ['当我们再见','想象一下重逢的那天\n你会在哪里，和谁在一起，过着怎样的日子？'],
+    ['把这一刻留下','给未来的自己介绍一下今天的你\n最近喜欢的歌、常走的路，还有心里惦记的人'],
+    ['风会带来答案','留一个现在还没有答案的问题\n等时间过去，再看看那时的你会怎么回答'],
+    ['见字如面','如果未来的你偶尔感到疲惫\n你想用什么话，轻轻接住那时的自己？']
+  ];
+  const promptFor=id=>{let hash=0;for(const char of id)hash=(hash*31+char.charCodeAt(0))>>>0;return prompts[hash%prompts.length]};
+  const calm=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches||(typeof pref==='function'&&pref('motion','alive')!=='alive');
+  function changeScene(scene,theme){
+    if(!scene||scene.dataset.theme===theme)return;
+    const previous=getComputedStyle(scene).backgroundImage;scene.dataset.theme=theme;
+    if(calm())return;
+    scene.querySelector('.bottleSceneFade')?.remove();const veil=document.createElement('span');veil.className='bottleSceneFade';veil.setAttribute('aria-hidden','true');veil.style.backgroundImage=previous;scene.append(veil);
+    veil.animate([{opacity:1},{opacity:0}],{duration:650,easing:'ease-out'}).finished.then(()=>veil.remove()).catch(()=>veil.remove());
+  }
   const page={tab:'all',theme:localStorage.getItem('lifeos.bottle.scene')||'moon',items:[],arrival:null};
-  let session=null,dialog=null,installed=false,chain=Promise.resolve(),saveTimer=null,recordTimer=null,polling=false;
+  let session=null,dialog=null,installed=false,chain=Promise.resolve(),saveTimer=null,recordTimer=null,polling=false,openEpoch=0;
   const $b=s=>document.querySelector(s), e=value=>esc(String(value??''));
   const date=value=>value?new Intl.DateTimeFormat('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(value*1000)):'未约定时间';
   const toInput=value=>{const d=new Date(value*1000);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}T${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};
@@ -61,7 +80,7 @@
     if(session?.recordError)return false;
     return persist();
   }
-  async function close(refresh=true){if(!await prepare())return false;release();session=null;dialog?.close();dialog?.replaceChildren();if(refresh&&STATE.feature===NAME)await render();return true}
+  async function close(refresh=true,invalidate=true){if(invalidate)++openEpoch;if(!await prepare())return false;release();session=null;dialog?.close();dialog?.replaceChildren();if(refresh&&STATE.feature===NAME)await render();return true}
   function themeControls(theme){return Object.entries(themes).map(([key,label])=>`<button type="button" data-bottle-theme="${key}" aria-pressed="${key===theme}">${label}</button>`).join('')}
   async function renderPage(){
     let error='';try{page.items=(await request('/api/bottles')).items}catch(err){error=err.message}
@@ -75,7 +94,7 @@
       <div class="bottleGrid" role="tabpanel">${items.map(x=>`<button type="button" class="bottleCard" data-bottle-id="${e(x.id)}"><div class="bottleCardImage bottleScene" data-theme="${e(x.theme)}"><span>${e(tabs[x.state])}</span><img src="/assets/bottles/bottle.svg" alt=""></div><div class="bottleCardInfo"><h3>${e(x.title||'给未来的自己')}</h3><div class="bottleCardFooter"><time>${e(date(x.unlock_at))}</time><span>${e(kindNames[x.kind])}</span></div></div></button>`).join('')||`<div class="bottleEmpty"><p>${page.tab==='arrived'?'风还在路上':page.tab==='opened'?'等待一次重逢':page.tab==='draft'?'下一封信，从此刻开始':'还没有寄出的漂流瓶'}</p></div>`}</div></div>`;
   }
   async function open(bid){
-    if(session&&!await close(false))return;
+    const epoch=++openEpoch;if(session&&!await close(false,false))return;
     try{
       const cached=shadows().find(x=>x.id===bid);let value;
       if(!bid){value=await request('/api/bottles/draft',{kind:'text',theme:page.theme,unlock_at:tomorrow()})}
@@ -89,28 +108,34 @@
           }
         }
       }
-      session={value,draft:value.state==='draft',uploadBlob:null};ensureDialog();drawDialog();dialog.showModal();
+      if(epoch!==openEpoch)return;
+      session={value,draft:value.state==='draft',uploadBlob:null,prompt:promptFor(value.id)};ensureDialog();drawDialog();dialog.showModal();
     }catch(err){toast(err.message)}
   }
   function drawDialog(){
     const value=session.value;dialog.setAttribute('aria-label',session.draft?'写给未来的自己':value.title||'漂流瓶');
     if(value.state==='sealed'||value.state==='arrived'){
-      const due=value.state==='arrived';dialog.innerHTML=`<section class="bottleLock bottleScene" data-theme="${e(value.theme)}"><button class="bottleClose" data-bottle-close aria-label="关闭">×</button><img src="/assets/bottles/bottle.svg" alt="封存的漂流瓶"><h2>${e(value.title||'给未来的自己')}</h2><time>${e(date(value.unlock_at))}</time><p>${due?'时间到了，过去的你在等你':'这一刻，还在时间的海上'}</p>${due?'<button class="bottleAction" id="bottleUnseal">开启漂流瓶</button>':'<span id="bottleRemaining"></span>'}<button class="bottleDelete" id="bottleDelete">删除漂流瓶</button><div id="bottleDialogError" role="alert"></div></section>`;
+      const due=value.state==='arrived';dialog.innerHTML=`<section class="bottleLockFrame bottleScene" data-theme="${e(value.theme)}"><header class="bottleLockHead"><span>${due?'A LETTER HAS ARRIVED':'SAILING THROUGH TIME'}</span><button class="bottleClose" data-bottle-close aria-label="关闭">×</button></header><div class="bottleLock" data-arrived="${due}"><div class="bottleHalo" aria-hidden="true"></div><img src="/assets/bottles/bottle.svg" alt="封存的漂流瓶"><h2>${e(value.title||'给未来的自己')}</h2><time>${e(date(value.unlock_at))}</time><p>${due?'时间到了，过去的你在等你':'这一刻，还在时间的海上'}</p>${due?'<button class="bottleAction" id="bottleUnseal">开启漂流瓶</button>':'<span id="bottleRemaining"></span>'}<button class="bottleDelete" id="bottleDelete">删除漂流瓶</button><div id="bottleDialogError" role="alert"></div></div></section>`;
     }else{
       dialog.innerHTML=`<div class="bottleCompose"><aside class="bottleDialogScene bottleScene" data-theme="${e(value.theme)}"><span class="bottleStamp">${session.draft?'TO THE DAYS AHEAD':'FROM THE DAYS BEFORE'}</span><h2>${session.draft?'把今天<br>交给时间':'久别<br>重逢'}</h2><img src="/assets/bottles/bottle.svg" alt=""><p>${session.draft?'山海有期<br>此刻有回声':e(date(value.sealed_at))+'<br>从这一天，漂流而来'}</p>${session.draft?`<div class="bottleThemes">${themeControls(value.theme)}</div>`:''}</aside><section class="bottlePaper"><header><span>${session.draft?'写给未来的自己':'一封来自过去的信'}</span><button class="bottleClose" data-bottle-close aria-label="关闭">×</button></header>
-      ${session.draft?`<div class="bottleModes" aria-label="内容类型">${Object.entries(kindNames).map(([key,label])=>`<button type="button" data-bottle-mode="${key}" aria-pressed="${key===value.kind}">${label}</button>`).join('')}</div><input id="bottleTitle" class="bottleTitle" maxlength="100" placeholder="给未来的自己" value="${e(value.title)}" aria-label="漂流瓶标题">
-        ${value.kind==='text'?`<textarea id="bottleBody" class="bottleBody" maxlength="20000" placeholder="等你读到这里的时候……" aria-label="给未来的文字">${e(value.body)}</textarea>`:`<div class="bottleRecord" id="bottleRecord"></div><input class="bottleCaption" id="bottleBody" maxlength="20000" placeholder="再留一句话 · 可选" aria-label="媒体附言" value="${e(value.body)}">`}
+      <div class="bottlePaperScroll">${session.draft?`<div class="bottleModes" aria-label="内容类型">${Object.entries(kindNames).map(([key,label])=>`<button type="button" data-bottle-mode="${key}" aria-pressed="${key===value.kind}">${label}</button>`).join('')}<button type="button" class="bottleInspire" id="bottleInspire" aria-label="换一个写信提示" title="换个灵感">↻</button></div><input id="bottleTitle" class="bottleTitle" maxlength="100" placeholder="${e(session.prompt[0])}" value="${e(value.title)}" aria-label="漂流瓶标题">
+        ${value.kind==='text'?`<textarea id="bottleBody" class="bottleBody" maxlength="20000" placeholder="${e(session.prompt[1])}" aria-label="给未来的文字">${e(value.body)}</textarea>`:`<div class="bottleRecord" id="bottleRecord"></div><input class="bottleCaption" id="bottleBody" maxlength="20000" placeholder="再留一句话 · 可选" aria-label="媒体附言" value="${e(value.body)}">`}
         <div class="bottleSaveLine" aria-live="polite"><span id="bottleSaveState">草稿已保存</span><button type="button" id="bottleRetrySave" hidden>重试保存</button><span id="bottleWordCount"></span></div>
         <div class="bottleSchedule"><label for="bottleDate">约定开启时间<input type="datetime-local" id="bottleDate" value="${e(value.unlock_at?toInput(value.unlock_at):'')}" min="${toInput(Date.now()/1000)}" required></label><div class="bottleShortcuts"><button type="button" data-bottle-days="7">一周后</button><button type="button" data-bottle-months="1">一个月后</button><button type="button" data-bottle-years="1">一年后</button></div></div>
         <div id="bottleSealConfirm"></div><footer class="bottleFoot"><button class="bottleDelete" id="bottleDelete">删除草稿</button><p>封存后，到约定的时间才能开启<br>应用运行时提醒，关闭期间的来信会在下次打开时抵达</p><button class="bottleAction primary" id="bottleSeal">封存漂流瓶</button></footer>`:
         `<div class="bottleLetterDates">寄出 ${e(date(value.sealed_at))}<br>约定 ${e(date(value.unlock_at))}</div><h2 class="bottleOpenedTitle">${e(value.title||'给未来的自己')}</h2>${value.media_url?`<${value.kind} class="bottleOpenedMedia" controls preload="metadata" src="${e(value.media_url)}"></${value.kind}>`:''}<div class="bottleLetter">${e(value.body)}</div><footer class="bottleFoot"><button class="bottleDelete" id="bottleDelete">删除漂流瓶</button><button class="bottleAction" data-bottle-close>收好这封信</button></footer>`}
-      </section></div>`;
+      </div></section></div>`;
     }
     bindDialog();if(session.draft&&value.kind!=='text')drawRecord();updateCount();
   }
   function bindDialog(){
     dialog.querySelectorAll('[data-bottle-close]').forEach(b=>b.onclick=()=>close());
-    dialog.querySelectorAll('[data-bottle-theme]').forEach(b=>b.onclick=()=>{session.value.theme=b.dataset.bottleTheme;dialog.querySelector('.bottleDialogScene').dataset.theme=session.value.theme;dialog.querySelectorAll('[data-bottle-theme]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));changed()});
+    const inspire=$b('#bottleInspire');if(inspire)inspire.onclick=()=>{
+      const choices=prompts.filter(p=>p!==session.prompt);session.prompt=choices[Math.floor(Math.random()*choices.length)];
+      $b('#bottleTitle').placeholder=session.prompt[0];if(session.value.kind==='text')$b('#bottleBody').placeholder=session.prompt[1];
+      if(!calm())inspire.animate([{transform:'rotate(0)'},{transform:'rotate(180deg)'}],{duration:400,easing:'ease-out'});
+    };
+    dialog.querySelectorAll('[data-bottle-theme]').forEach(b=>b.onclick=()=>{session.value.theme=b.dataset.bottleTheme;changeScene(dialog.querySelector('.bottleDialogScene'),session.value.theme);dialog.querySelectorAll('[data-bottle-theme]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));changed()});
     dialog.querySelectorAll('[data-bottle-mode]').forEach(b=>b.onclick=async()=>{
       if(b.dataset.bottleMode===session.value.kind)return;
       if(session.value.has_media||session.uploadBlob||session.recorder?.state==='recording'){
@@ -132,13 +157,21 @@
       if(!session.value.body.trim()&&!session.value.has_media){status('先留下一段文字、录音或视频',true);return}
       if(session.value.kind!=='text'&&!session.value.has_media){status('请先录制或选择媒体',true);return}
       showConfirm(`约定 ${date(session.value.unlock_at)} 重逢\n封存后无法修改，也无法提前开启`,'确认封存',async()=>{
-        busy(true);try{const out=await request('/api/bottles/'+session.value.id+'/seal',{revision:session.value.revision});localStorage.removeItem(PREFIX+session.value.id);release();session={value:out,draft:false};drawDialog();toast('已寄向未来');await render()}catch(err){status(err.message,true);busy(false);throw err}
+        busy(true);const owner=session;try{const out=await request('/api/bottles/'+owner.value.id+'/seal',{revision:owner.value.revision});localStorage.removeItem(PREFIX+owner.value.id);if(session!==owner)return;release();session={value:out,draft:false};const sealed=session;drawDialog();await moment('seal');if(session===sealed&&STATE.feature===NAME)await render()}catch(err){status(err.message,true);busy(false);throw err}
       });
     };
-    const unseal=$b('#bottleUnseal');if(unseal)unseal.onclick=async()=>{unseal.disabled=true;try{const out=await request('/api/bottles/'+session.value.id+'/open',{});session.value=out;drawDialog();await render();poll()}catch(err){$b('#bottleDialogError').textContent=err.message;unseal.disabled=false}};
+    const unseal=$b('#bottleUnseal');if(unseal)unseal.onclick=async()=>{unseal.disabled=true;const owner=session;try{const out=await request('/api/bottles/'+owner.value.id+'/open',{});if(session!==owner)return;session.value=out;await moment('open');if(session===owner){drawDialog();if(!calm())dialog.querySelector('.bottleLetter')?.classList.add('bottleLetterReveal');await render();poll()}}catch(err){const error=$b('#bottleDialogError');if(error)error.textContent=err.message;unseal.disabled=false}};
     const del=$b('#bottleDelete');if(del)del.onclick=()=>showConfirm('删除后无法找回这份内容','确认删除',async()=>{
       await stopRecord();await chain.catch(()=>{});const id=session.value.id;await request('/api/bottles/'+id+'/delete',{});localStorage.removeItem(PREFIX+id);release();session=null;dialog.close();dialog.replaceChildren();await render();poll();
     });
+  }
+  async function moment(kind){
+    const owner=session,node=document.createElement('div');node.className='bottleMoment bottleScene';node.dataset.theme=owner.value.theme;node.dataset.moment=kind;
+    node.setAttribute('role','status');node.setAttribute('aria-live','polite');
+    node.innerHTML=`<div class="bottleMomentRings" aria-hidden="true"><i></i><i></i><i></i></div><div class="bottleMomentArt" aria-hidden="true"><div class="bottleEnvelope"><i></i><span>时</span></div><img src="/assets/bottles/bottle.svg" alt=""></div><div class="bottleMomentCopy"><span>${kind==='seal'?'BON VOYAGE':'WELCOME BACK'}</span><h2>${kind==='seal'?'此刻，已寄向未来':'见字如面'}</h2><p>${kind==='seal'?e(date(owner.value.unlock_at))+' · 重逢': '时间把这封信，交还给你'}</p></div><button class="bottleClose" data-moment-close aria-label="关闭">×</button>`;
+    dialog.append(node);node.querySelector('button').onclick=()=>close();node.querySelector('button').focus({preventScroll:true});
+    // These ceremonies follow durable success; closing them never cancels a saved letter.
+    await new Promise(resolve=>{const timer=setTimeout(finish,calm()?120:kind==='seal'?1900:1500);const observer=new MutationObserver(()=>{if(!node.isConnected||session!==owner)finish()});function finish(){clearTimeout(timer);observer.disconnect();node.remove();resolve()}observer.observe(dialog,{childList:true})});
   }
   function showConfirm(message,label,action){
     let box=$b('#bottleSealConfirm');if(!box){box=document.createElement('div');box.id='bottleSealConfirm';dialog.querySelector('.bottleLock')?.append(box)}
@@ -211,7 +244,7 @@
     $b('#bottleNew')?.addEventListener('click',()=>open());$b('#bottleReload')?.addEventListener('click',()=>render());
     document.querySelectorAll('.bottlePage [data-bottle-id]').forEach(b=>b.onclick=()=>open(b.dataset.bottleId));
     document.querySelectorAll('.bottlePage [data-bottle-tab]').forEach(b=>b.onclick=()=>{page.tab=b.dataset.bottleTab;render()});
-    document.querySelectorAll('.bottlePage [data-bottle-theme]').forEach(b=>b.onclick=()=>{page.theme=b.dataset.bottleTheme;localStorage.setItem('lifeos.bottle.scene',page.theme);const hero=$b('.bottleHero');hero.dataset.theme=page.theme;hero.setAttribute('aria-label',themes[page.theme]+'海面');document.querySelectorAll('.bottlePage [data-bottle-theme]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)))});
+    document.querySelectorAll('.bottlePage [data-bottle-theme]').forEach(b=>b.onclick=()=>{page.theme=b.dataset.bottleTheme;localStorage.setItem('lifeos.bottle.scene',page.theme);const hero=$b('.bottleHero');changeScene(hero,page.theme);hero.setAttribute('aria-label',themes[page.theme]+'海面');document.querySelectorAll('.bottlePage [data-bottle-theme]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)))});
     $b('#bottleArrived')?.addEventListener('click',()=>{page.tab='arrived';render()});
   }
   function badge(count){const nav=$b('[data-nav-id="bottle"]');if(!nav)return;let node=nav.querySelector('.bottleBadge');if(!count){node?.remove();return}if(!node){node=document.createElement('span');node.className='bottleBadge';nav.append(node)}node.textContent=count>99?'99+':count;node.setAttribute('aria-label',count+' 只漂流瓶已抵达')}
