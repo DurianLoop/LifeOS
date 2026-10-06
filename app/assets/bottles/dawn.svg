@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 580" preserveAspectRatio="xMidYMid slice">
+<defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#9cbbb7"/><stop offset="1" stop-color="#e0ded0"/></linearGradient><linearGradient id="sea" x2="0" y2="1"><stop stop-color="#729d9f"/><stop offset="1" stop-color="#9cbbb7"/></linearGradient><linearGradient id="glow" x2="0" y2="1"><stop stop-color="#fff3c8" stop-opacity=".25"/><stop offset="1" stop-color="#fff3c8" stop-opacity="0"/></linearGradient><filter id="mist"><feGaussianBlur stdDeviation="12"/></filter><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".78" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter></defs>
+<path fill="url(#sky)" d="M0 0h1440v580H0Z"/><circle cx="1050" cy="116" r="42" fill="#fff3c8" opacity=".86"/><ellipse cx="1060" cy="168" rx="130" ry="28" fill="#e0ded0" opacity=".35" filter="url(#mist)"/>
+<path d="M0 267Q360 247 730 270T1440 258V580H0Z" fill="url(#sea)"/><path d="m1045 276-100 220h225l-105-220Z" fill="url(#glow)" filter="url(#mist)"/>
+<path d="M0 286Q290 278 630 291T1440 282M0 330Q240 319 585 333T1440 324M0 386Q335 371 750 390T1440 382M0 463Q300 443 700 465T1440 450M0 552Q420 526 750 552T1440 530" stroke="#9ab3ae" stroke-width="2" fill="none" opacity=".55"/>
+<path d="m943 310 180-2m-205 39 213-3m-224 29 250-1m-304 33 347 1" stroke="#fff3c8" opacity=".13"/>
+<path d="M0 484q50-18 109-5t130-7q-35 37-117 55T0 554Z" fill="#9cbbb7" opacity=".7"/>
+<path d="M1300 220q12-7 23 0m8-15q8-5 16 0" stroke="#fff3c8" opacity=".4" fill="none"/>
+<path fill="white" opacity=".035" filter="url(#grain)" d="M0 0h1440v580H0Z"/>
+</svg>

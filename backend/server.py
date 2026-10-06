@@ -20,6 +20,7 @@ from engine import p2_core, p2_sync, crypto_vault, poetry_engine, memorial
 from connectors import CONNECTORS
 from backend import ai_providers, ai_control, attic
 from backend.secret_store import set_secret, delete_secret
+from backend.bottles import BottleAPI
 APP=SOURCE_ROOT/'app'
 DB=ROOT/'data/lifeos.db'
 CFG=json.loads((ROOT/'config/taxonomy.json').read_text(encoding='utf-8'))
@@ -1020,7 +1021,7 @@ def lineage_bundle(con):
     return {**vals,'top_thought_artifact':trails,'first_proof_samples':proofs,'feedback_loop_samples':loops,'top_cross_pollination':cross,'top_evidence_chains':chains,
             'note':'Lineage Layer composes dated thoughts, project-like traces, artifacts, handoffs, feedback and revisions into reviewable source chains. A lineage is a documented sequence/proximity structure, not proof of causality, fulfillment, authorship, or impact.'}
 
-class Handler(SimpleHTTPRequestHandler):
+class Handler(BottleAPI, SimpleHTTPRequestHandler):
     def __init__(self,*a,**kw): super().__init__(*a,directory=str(APP),**kw)
     def translate_path(self,path):
         translated=Path(super().translate_path(path))
@@ -1056,6 +1057,8 @@ class Handler(SimpleHTTPRequestHandler):
         return json.loads(self.rfile.read(n).decode('utf-8') or '{}') if n else {}
     def do_GET(self):
         u=urlparse(self.path)
+        if u.path.startswith('/api/bottles') or u.path=='/api/capsules':
+            return self.bottle_request(u.path,ROOT)
         if u.path.startswith('/api/'):
             try: return self.api_get(u.path,parse_qs(u.query))
             except Exception as e:
@@ -1064,6 +1067,8 @@ class Handler(SimpleHTTPRequestHandler):
         return super().do_GET()
     def do_POST(self):
         u=urlparse(self.path)
+        if u.path.startswith('/api/bottles') or u.path=='/api/capsules':
+            return self.bottle_request(u.path,ROOT,post=True)
         if u.path.startswith('/api/'):
             try: return self.api_post(u.path,self.body_json())
             except ValueError as e:
@@ -1072,6 +1077,11 @@ class Handler(SimpleHTTPRequestHandler):
                 import traceback; traceback.print_exc()
                 return self.send_json({'error':str(e)},500)
         return self.send_json({'error':'POST not supported'},405)
+    def do_HEAD(self):
+        u=urlparse(self.path)
+        if u.path.startswith('/api/bottles/') and u.path.endswith('/media'):
+            return self.bottle_request(u.path,ROOT,head=True)
+        return super().do_HEAD()
     def api_get(self,path,q):
         con=db()
         try:
@@ -1434,10 +1444,6 @@ class Handler(SimpleHTTPRequestHandler):
                 if scope not in REVIEW_SCOPES: return self.send_json({'error':'unknown review scope'},400)
                 return self.send_json({'scope':scope,'items':get_review_map(con,scope),
                                        'note':'Manual review metadata lives in local app_settings and never rewrites raw Markdown or deterministic derived tables.'})
-            if path=='/api/capsules':
-                now=datetime.date.today().isoformat()
-                con.execute("UPDATE capsules SET status='open' WHERE unlock_date IS NOT NULL AND unlock_date<=?",(now,)); con.commit()
-                return self.send_json({'items':rows(con.execute("SELECT * FROM capsules ORDER BY id DESC"))})
             if path=='/api/curiosities':
                 return self.send_json(curiosity_bundle(con))
             if path=='/api/echoes':
@@ -2149,12 +2155,6 @@ class Handler(SimpleHTTPRequestHandler):
                 if verdict not in ('correct','partial','wrong'): return self.send_json({'error':'bad verdict'},400)
                 cur=con.execute("INSERT INTO corrections(inference_id,verdict,correction,context_json) VALUES(?,?,?,?)",
                                 (b.get('inference_id'),verdict,b.get('correction',''),json.dumps(b.get('context',{}),ensure_ascii=False)))
-                con.commit(); return self.send_json({'ok':True,'id':cur.lastrowid})
-            if path=='/api/capsules':
-                title=(b.get('title') or '').strip(); body=(b.get('body') or '').strip()
-                if not title or not body: return self.send_json({'error':'title and body required'},400)
-                cur=con.execute("INSERT INTO capsules(title,body,unlock_date,status) VALUES(?,?,?,?)",
-                                (title,body,b.get('unlock_date'),'locked'))
                 con.commit(); return self.send_json({'ok':True,'id':cur.lastrowid})
             if path=='/api/timefold':
                 return self.send_json(timefold_bundle(con))

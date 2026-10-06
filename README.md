@@ -1,6 +1,14 @@
-# LifeOS v0.4.2
+# LifeOS v0.4.3
 
 LifeOS is a local-first journal and personal memory workspace, with an editable writing desk, journal book, and desktop companion.
+
+## New in v0.4.3
+
+**Drift Bottle:** write a letter, record audio or video, and seal it until a chosen future time. Offline sea backgrounds, durable drafts, timed opening, in-app arrivals and native desktop reminders make the reunion feel personal. Bottles stay outside journal retrieval and AI, and their media is included in workspace backups.
+
+This version is in local acceptance. The published stable download remains v0.4.2.
+
+[Local acceptance notes](docs/RELEASE_v0.4.3.md)
 
 ## New in v0.4.2
 

@@ -803,6 +803,7 @@ html[data-theme="pixel"] .sectionRail button:after,html[data-theme="hotel"] .sec
   <link rel="stylesheet" href="/charts.css?v=1">
   <script src="/workspace-storage.js?v=1"></script>
   <script src="/charts.js?v=1"></script>
+<link rel="stylesheet" href="/bottles.css?v=1">
 </head>
 <body>
 <a class="skipLink" href="#view">Skip to archive content</a>
@@ -1106,6 +1107,7 @@ function bindCommon(){
  $$("[data-source]").forEach(e=>e.onclick=()=>openJournal(e.dataset.source));
 }
 function uiIcon(name){const icons={
+ bottle:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 3 4 2-1.5 3 .5 3-6 9a3 3 0 0 1-4.2.8l-2-1.3A3 3 0 0 1 4 15.3l6-9 3-.8L14 3Z"/><path d="m11 7 5 3M7 13l5 3M14 3l4 2"/></svg>',
  overview:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>',
  today:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.3"/><path d="M12 2v2.2M12 19.8V22M2 12h2.2M19.8 12H22M4.9 4.9l1.55 1.55M17.55 17.55l1.55 1.55M19.1 4.9l-1.55 1.55M6.45 17.55 4.9 19.1"/></svg>',
  write:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 19 3.6-.8L19 7.8 16.2 5 5.8 15.4 5 19Z"/><path d="m14.8 6.4 2.8 2.8M4 21h16"/></svg>',
@@ -1920,5 +1922,6 @@ renderProductImport=async function(){const job=PRODUCT.importJob,foot=job?`<div 
 <script src="/white-noise.js?v=3"></script>
 <script src="/ai-settings.js?v=2"></script>
 <script src="/attic.js?v=1"></script>
+<script src="/bottles.js?v=1"></script>
 </body>
 </html>

@@ -67,7 +67,7 @@ def recover_entry_writes(root):
 
 
 RESTORE_TARGETS = ('vault', '.lifeos/revisions', '.lifeos/attachments',
-                   '.lifeos/draft-attachments', '.lifeos/recovered-browser-state',
+                   '.lifeos/draft-attachments', '.lifeos/bottles', '.lifeos/recovered-browser-state',
                    '.lifeos/ui-state.json', '.lifeos/ui-state.json.previous',
                    '.lifeos/core.db', '.lifeos/core.db-wal', '.lifeos/core.db-shm',
                    'data/lifeos.db', 'data/lifeos.db-wal', 'data/lifeos.db-shm')

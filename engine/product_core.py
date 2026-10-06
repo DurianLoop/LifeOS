@@ -907,7 +907,7 @@ def create_backup(reason='manual', root: Path = ROOT, include_derived=False):
             try:src.backup(dst)
             finally:dst.close();src.close()
             files={'.lifeos/core.db':tmpdb}
-            for relative in ('vault','.lifeos/revisions','.lifeos/attachments','.lifeos/draft-attachments','.lifeos/recovered-browser-state'):
+            for relative in ('vault','.lifeos/revisions','.lifeos/attachments','.lifeos/draft-attachments','.lifeos/bottles','.lifeos/recovered-browser-state'):
                 base=root/relative
                 if base.exists():
                     for p in base.rglob('*'):

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 390" fill="none">
+<defs>
+ <linearGradient id="glass" x1="45" y1="190" x2="210" y2="245" gradientUnits="userSpaceOnUse"><stop stop-color="#edf7ef" stop-opacity=".52"/><stop offset=".35" stop-color="#c8ede7" stop-opacity=".07"/><stop offset=".78" stop-color="#d9f3e4" stop-opacity=".13"/><stop offset="1" stop-color="#e6f6ed" stop-opacity=".45"/></linearGradient>
+ <linearGradient id="paper" x1="93" y1="155" x2="170" y2="280" gradientUnits="userSpaceOnUse"><stop stop-color="#f7ead2"/><stop offset="1" stop-color="#c8b18a"/></linearGradient>
+ <linearGradient id="cork" x1="108" y1="34" x2="148" y2="65" gradientUnits="userSpaceOnUse"><stop stop-color="#b49a71"/><stop offset="1" stop-color="#71604b"/></linearGradient>
+ <filter id="shadow"><feGaussianBlur stdDeviation="6"/></filter>
+</defs>
+<ellipse cx="135" cy="352" rx="68" ry="7" fill="#071d24" opacity=".24" filter="url(#shadow)"/>
+<g transform="rotate(16 130 195)">
+ <path d="M108 41q20-7 40 0l-1 27h-38Z" fill="url(#cork)"/><path d="m115 44 2 20m12-23 1 20m10-18-1 23" stroke="#e5cba4" opacity=".2"/>
+ <path d="M103 68q27-6 54 0v64c0 14 45 19 45 52v124q0 22-24 26H81q-24-4-24-26V184c0-33 46-38 46-52Z" fill="url(#glass)" stroke="#dbebe2" stroke-opacity=".62" stroke-width="1.5"/>
+ <path d="M94 167q20-8 68-3l6 135q-22 7-66 1Z" fill="url(#paper)" opacity=".91"/>
+ <path d="M94 168q27 11 68-4l-2-9q-38-9-66 2Z" fill="#c3aa83"/><ellipse cx="129" cy="157" rx="34" ry="7" fill="#f4e7d1"/><ellipse cx="129" cy="157" rx="19" ry="3" fill="#b39b77"/>
+ <path d="M109 196h37m-36 13h34m-34 13h36m-35 13h25" stroke="#887c65" opacity=".44" stroke-width="1.4"/>
+ <path d="m95 250 73-3" stroke="#a26e56" stroke-width="3"/>
+ <circle cx="134" cy="249" r="8" fill="#974c3c"/><path d="m131 247 5 5m0-5-5 5" stroke="#d39b76" stroke-width=".7"/>
+ <path d="M112 85v44c0 27-41 29-41 62v108q0 17 15 20" stroke="#f7ffff" stroke-opacity=".5" stroke-width="3"/>
+ <path d="M186 195v102" stroke="#e1f5e7" stroke-opacity=".38" stroke-width="2"/>
+ <path d="M98 68q33 8 64 0m-63 10q33 8 61 0M70 324q63 13 120-1" stroke="#dcece4" stroke-opacity=".56" stroke-width="2"/>
+ <path d="M103 103q27 6 54 0" stroke="#aa8b64" stroke-width="3" opacity=".8"/>
+</g>
+</svg>

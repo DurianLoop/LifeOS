@@ -457,6 +457,11 @@ def build_defaults(con):
     con.executemany("INSERT INTO app_settings(key,value) VALUES(?,?)",defaults.items())
 
 def main():
+    import sys
+    source_root=str(Path(__file__).resolve().parents[1])
+    if source_root not in sys.path: sys.path.insert(0,source_root)
+    from engine import drift_bottles
+    drift_bottles.migrate_legacy(ROOT)
     DB.parent.mkdir(parents=True,exist_ok=True)
     preserved_settings={}
     if DB.exists():

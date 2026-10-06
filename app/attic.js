@@ -135,7 +135,7 @@
     观察:new Set(['Analytics','Habits','Life Rhythms','Skill Evidence','Skill Evolution','Skill Momentum','Skill Constellation','Month Portraits','Attention Portfolio','Word Evolution']),
   };
   function toolCatalog() {
-    const excluded=new Set(['Home','Journal','Other','Daily Poetry','Pets','Pet Shelf','AI Settings',...NAMES]);
+    const excluded=new Set(['Home','Journal','Other','Daily Poetry','Pets','Pet Shelf','Time Capsule','AI Settings',...NAMES]);
     return FEATURES.filter(f=>!excluded.has(f.name)).map(f=>({...f,title:TOOL_LABELS[f.name]||dreamMeta(f.name).title,group:Object.keys(GROUPS).find(g=>GROUPS[g].has(f.name))||'深入'}));
   }
   function dialog() {

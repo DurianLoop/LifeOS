@@ -68,11 +68,13 @@ function mainLifecycle(isPackaged) {
     './storage-migration.cjs': {recoverLegacyStorage:async()=>{}},
     './close-guard.cjs': {createCloseGuard:()=>({prepare:async()=>true,onClose(){},allow(){},isAllowed:()=>true})},
     './update-controller.cjs': {createUpdateController:()=>({check:async()=>({ok:true}),snapshot:()=>({status:'idle'})})},
+    './bottle-reminders.cjs': {startBottleReminders:()=>({stop(){}})},
     'builder-util-runtime': {CancellationToken:class {}},
     'node:http': {},
     'electron-updater': {autoUpdater: updater},
   };
   const context = {
+    URL,
     __dirname, process: {env: {}, platform: 'win32', resourcesPath: paths.resourceRoot},
     require(name) { assert.ok(Object.hasOwn(modules, name), `unexpected main dependency: ${name}`); return modules[name]; },
     setTimeout(callback, delay) { scheduled.push({callback, delay}); return scheduled.length; },

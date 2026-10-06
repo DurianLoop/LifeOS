@@ -1,0 +1,65 @@
+.page.bottlePage{padding:28px 36px 44px;max-width:1520px;margin:auto;color:var(--ink)}
+#view:has(>.bottlePage){padding:0;max-width:none;margin:0}
+#view:has(>.bottlePage):before,.bottlePage:before{display:none}
+.bottlePage button,.bottleDialog button{font:inherit;cursor:pointer}
+.bottleHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.bottleHead h1{font:400 29px var(--serif);margin:0;letter-spacing:.08em}
+.bottleAction{border:1px solid var(--line);background:transparent;padding:10px 18px;color:inherit;border-radius:3px;font-size:12px!important;min-height:42px}
+.bottleAction:hover{background:var(--paper2)}.bottleAction:disabled{opacity:.45;cursor:default}
+.bottleAction.primary{background:#35555a;color:#f6f1e6;border-color:#35555a}
+.bottleScene{background:#203b45 url('/assets/bottles/moon.svg') center/cover;color:#f6f1e6;position:relative;isolation:isolate;overflow:hidden}
+.bottleScene[data-theme="dawn"]{background-image:url('/assets/bottles/dawn.svg')}.bottleScene[data-theme="dusk"]{background-image:url('/assets/bottles/dusk.svg')}
+.bottleHero{min-height:342px;display:grid;grid-template-columns:1.2fr 1fr;border-radius:5px;align-items:center;padding:38px 7%;box-shadow:0 10px 35px #25393d16}
+.bottleHero:after,.bottleDialogScene:after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#0d273248,transparent 70%)}
+.bottleHeroCopy{z-index:1}.bottleHeroCopy>span{font:10px var(--mono);letter-spacing:.28em;opacity:.7}
+.bottleHero h2{font:400 clamp(30px,3.5vw,46px)/1.5 var(--serif);letter-spacing:.15em;margin:16px 0 17px}
+.bottleHero p{font:13px/2 var(--serif);letter-spacing:.1em;opacity:.8;margin:0}
+.bottleHeroArt{position:absolute;right:13%;top:10px;width:220px;height:330px;filter:drop-shadow(0 20px 18px #0c242522);animation:bottleFloat 9s ease-in-out infinite}
+@keyframes bottleFloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-8px) rotate(1deg)}}
+.bottleScenery{position:absolute;right:20px;bottom:18px;display:flex;gap:10px;align-items:center}
+.bottleScenery button{background:transparent;border:1px solid #e0e9db50;color:#f7f0df;padding:6px 11px;border-radius:20px;font-size:10px;letter-spacing:.08em;min-height:30px}
+.bottleScenery button[aria-pressed="true"]{background:#e9e8da26;border-color:#f8f6e7a0}
+.bottleShelfHead{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:28px 0 0;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.bottleTabs{display:flex;gap:25px;flex-wrap:wrap}.bottleTabs button{border:0;padding:6px 0;background:transparent;color:var(--muted);font-size:12px;position:relative}
+.bottleTabs button[aria-selected="true"]{color:var(--ink)}.bottleTabs button[aria-selected="true"]:after{content:'';position:absolute;height:2px;background:#718b85;left:0;right:0;bottom:-13px}
+.bottleTabs small{margin-left:7px;color:var(--muted);font:10px var(--mono)}
+.bottleCount{font:10px var(--mono);color:var(--muted);white-space:nowrap}
+.bottleGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;padding-top:22px}
+.bottleCard{border:1px solid var(--line);border-radius:4px;padding:0!important;background:var(--paper);text-align:left;overflow:hidden;color:inherit;transition:transform .2s,box-shadow .2s}
+.bottleCard:hover{transform:translateY(-3px);box-shadow:0 10px 30px #24343512}
+.bottleCardImage{height:108px;display:flex;align-items:center;justify-content:space-between;padding:16px 22px}.bottleCardImage img{width:55px;height:90px;object-fit:contain;transform:rotate(-12deg)}
+.bottleCardImage span{font:11px var(--serif);letter-spacing:.15em;opacity:.85}.bottleCardInfo{padding:18px 20px 20px}.bottleCard h3{font:400 19px var(--serif);margin:0 0 15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bottleCardFooter{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:10px;gap:8px}.bottleCardFooter time{font:10px var(--mono)}
+.bottleEmpty{grid-column:1/-1;min-height:135px;display:grid;place-content:center;text-align:center;color:var(--muted);font:15px/2 var(--serif);letter-spacing:.12em}.bottleEmpty p{margin:0}
+.bottleArrival{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 18px;margin-top:20px;background:#7a958319;border:1px solid #7a958333;border-radius:4px;font:14px var(--serif)}
+.bottleBadge{margin-left:auto;margin-right:0!important;background:#779489;color:white!important;border-radius:12px;min-width:16px;text-align:center;font:9px/16px var(--mono)!important;padding:0 3px}.bottleArrivalToast{position:fixed;bottom:25px;right:25px;z-index:95;background:var(--paper);border:1px solid var(--line);box-shadow:0 12px 50px #1d393026;padding:18px 22px;border-radius:5px;display:flex;gap:20px;align-items:center;font:14px var(--serif)}
+.bottleArrivalToast button{background:transparent;border:0;font:12px var(--serif);color:var(--ink);cursor:pointer}.bottleArrivalToast button:last-child{font-size:18px;color:var(--muted)}
+.bottleDialog{padding:0;border:1px solid #f0ebe060;border-radius:6px;width:min(1020px,calc(100vw - 56px));max-height:calc(100vh - 70px);color:#343e3c;background:#f5f0e6;box-shadow:0 35px 140px #091d3260;overflow:auto}
+.bottleDialog::backdrop{background:#12252b70;backdrop-filter:blur(7px)}
+.bottleCompose{display:grid;grid-template-columns:32% minmax(0,1fr);min-height:580px}
+.bottleDialogScene{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 20px;min-height:100%;text-align:center;position:relative}
+.bottleDialogScene>img{width:170px;height:255px;margin:22px 0}.bottleDialogScene h2{font:400 28px/1.7 var(--serif);letter-spacing:.15em;margin:0}.bottleDialogScene p{font:12px/2.2 var(--serif);opacity:.8;letter-spacing:.06em;margin:0}
+.bottleStamp{font:9px var(--mono);letter-spacing:.18em;opacity:.6;margin-bottom:26px}.bottleThemes{display:flex;gap:10px;margin-top:20px}.bottleThemes button{border:1px solid #f8f4df70;background:transparent;color:#fff4dc;border-radius:20px;min-height:30px;padding:5px 10px;font-size:10px}
+.bottleThemes button[aria-pressed="true"]{background:#faf3db24;border-color:#fff6e7}
+.bottlePaper{padding:27px 34px 28px;position:relative;background:#f5f0e6 url('/assets/bottles/paper.svg');min-width:0;display:flex;flex-direction:column}
+.bottlePaper header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #454f3826;padding-bottom:15px;margin-bottom:22px}
+.bottlePaper header span{font:11px var(--serif);letter-spacing:.1em;color:#68736c}.bottleClose{border:0;background:transparent;color:#5b6c64;font:24px var(--serif)!important;width:32px;height:32px}
+.bottleModes{display:flex;gap:22px;margin-bottom:18px}.bottleModes button{border:0;border-bottom:1px solid transparent;background:transparent;color:#7f867c;padding:6px 0;font-size:12px;min-height:32px}
+.bottleModes button[aria-pressed="true"]{border-bottom-color:#416761;color:#35574f}
+.bottleTitle{font:400 24px/1.6 var(--serif);border:0;background:transparent;color:#343e3c;padding:0;width:100%;outline-offset:4px;margin:0 0 12px;border-radius:0!important}
+.bottleBody{display:block;font:15px/2.25 var(--serif);color:#3d4840;width:100%;border:0;border-radius:0!important;padding:0;resize:vertical;background:repeating-linear-gradient(transparent 0 33px,#6d776118 33px 34px);min-height:176px;max-height:320px;outline-offset:4px}
+.bottleTitle::placeholder,.bottleBody::placeholder{color:#9b9e90}.bottleSaveLine{display:flex;align-items:center;justify-content:space-between;font-size:10px;color:#87907e;margin:11px 0 20px;gap:8px;min-height:16px}.bottleSaveLine button{font-size:10px;border:0;background:transparent;color:#607c70;text-decoration:underline;padding:0}
+.bottleSchedule{margin-top:auto;border-top:1px solid #454f3826;padding-top:18px}.bottleSchedule label{display:flex;align-items:center;justify-content:space-between;gap:12px;font:12px var(--serif);margin-bottom:13px}
+.bottleSchedule input{width:auto;min-width:218px;background:#ede8dd80;border:1px solid #64786b35;border-radius:3px;padding:8px;font:12px var(--mono);color:#374c43;min-height:38px}
+.bottleShortcuts{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}.bottleShortcuts button{font-size:10px;color:#617970;border:1px solid #627c6730;background:transparent;border-radius:3px;padding:6px 10px;min-height:28px}
+.bottleFoot{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:18px}.bottleFoot p{font-size:10px;color:#818679;margin:0;max-width:255px;line-height:1.8}.bottleDialog .bottleAction{border-color:#5a6e6738;white-space:nowrap}.bottleDialog .bottleAction:hover{background:#e7e3d8}.bottleDialog .bottleAction.primary:hover{background:#2a484d}
+.bottleRecord{min-height:176px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#e7e8df70;border:1px solid #6d826a20;padding:18px 16px;text-align:center;gap:12px;border-radius:3px}
+.bottleRecord video{max-height:195px;width:100%;border-radius:3px;background:#193533}.bottleRecord audio{width:100%;height:38px}.bottleRecord canvas{height:34px;max-width:100%;width:250px}
+.bottleRecordControls{display:flex;align-items:center;gap:12px}.bottleRecordControls button{border:1px solid #657e6e60;border-radius:30px;padding:9px 19px;min-height:40px;background:#f5f0e6;color:#3b655a;font-size:12px}.bottleRecordControls button.is-recording{color:#8b4139;border-color:#bc7d6b}.bottleRecord small{color:#7c887d;font-size:10px}.bottleMediaError{color:#964f40!important;line-height:1.7;max-width:390px}
+.bottleUpload{background:transparent!important;border:0!important;padding:4px!important;font-size:11px!important;min-height:26px!important;text-decoration:underline}
+.bottleCaption{font:12px var(--serif);border:0;border-bottom:1px solid #5f786c26;background:transparent;width:100%;padding:13px 0;color:#4b6156;margin-top:5px}
+.bottleConfirm{text-align:center;padding:32px 20px;border-top:1px solid #667e6226;margin-top:18px}.bottleConfirm p{font:15px/2 var(--serif);margin:0 0 14px}.bottleConfirm div{display:flex;justify-content:center;gap:12px}
+.bottleLetter{white-space:pre-wrap;overflow-wrap:anywhere;font:16px/2.3 var(--serif);padding-bottom:25px;min-height:210px}.bottleOpenedTitle{font:400 28px/1.6 var(--serif);margin:0 0 18px;overflow-wrap:anywhere}.bottleOpenedMedia{width:100%;max-height:340px;margin-bottom:18px}.bottleLetterDates{font:10px/2 var(--mono);color:#75816f;margin-bottom:20px}.bottleLock{min-height:580px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;position:relative}.bottleLock h2{font:400 30px var(--serif);margin:15px 0;max-width:100%;overflow-wrap:anywhere}.bottleLock>img{height:235px;width:156px;animation:bottleFloat 9s ease-in-out infinite}.bottleLock time{font:12px var(--mono);opacity:.85}.bottleLock p{font:14px/2 var(--serif);margin:14px 0 24px;opacity:.85}.bottleLock .bottleAction{color:#faf2dd;border-color:#f8edcf77;background:#ffffff10}.bottleLock>.bottleClose{position:absolute;right:18px;top:15px;color:#f0ebdf}.bottleDelete{border:0;background:transparent;color:#8c897f;font-size:10px!important;padding:10px 0;text-decoration:underline}.bottleLock .bottleDelete{color:#e5e8d7;opacity:.55;margin-top:20px}.bottleDialog button:focus-visible,.bottlePage button:focus-visible{outline:2px solid #839e8b;outline-offset:4px}
+@media(max-width:1100px){.page.bottlePage{padding:26px 24px 40px}.bottleHeroArt{right:7%}.bottleGrid{gap:14px}.bottleCompose{grid-template-columns:28% minmax(0,1fr)}.bottlePaper{padding:25px}.bottleDialogScene h2{font-size:25px}}
+@media(max-width:760px){.page.bottlePage{padding:20px 16px 36px}.bottleHero{min-height:300px;padding:30px 7%;grid-template-columns:1fr}.bottleHero h2{font-size:28px}.bottleHero p{font-size:11px;max-width:180px}.bottleHeroArt{width:135px;height:220px;top:65px;right:2%;opacity:.75}.bottleScenery{right:13px;bottom:13px}.bottleGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.bottleShelfHead{display:block}.bottleCount{display:none}.bottleTabs{gap:20px}.bottleDialog{width:calc(100vw - 20px);max-height:calc(100dvh - 30px)}.bottleCompose{grid-template-columns:1fr}.bottleDialogScene{display:none}.bottlePaper{padding:20px}.bottleSchedule label{align-items:flex-start;flex-direction:column}.bottleSchedule input{width:100%;min-width:0}.bottleFoot{flex-wrap:wrap}.bottleLock{min-height:540px;padding:25px}.bottleArrivalToast{left:15px;right:15px;bottom:85px}.bottleCardInfo{padding:14px}.bottleCard h3{font-size:16px}.bottleCardFooter{flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){.bottleHeroArt,.bottleLock>img{animation:none}.bottleCard{transition:none}}
