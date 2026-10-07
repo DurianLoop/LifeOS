@@ -5,29 +5,31 @@
   const actions=window.lifeosPetActions,columnsKey='lifeos.pet.columns',previews=new Map(),actionFrames=new Map();
   DREAM_META[FEATURE]=['灵犀',''];
   let savedColumns;try{savedColumns=Number(localStorage.getItem(columnsKey))}catch{}
-  const pet={catalog:[],installed:[],active:'',state:'idle',frame:0,motion:localStorage.getItem('lifeos.pet.motion')!=='false',query:'',category:'all',limit:48,timer:null,columns:[1,2,4].includes(savedColumns)?savedColumns:2};
+  const pet={catalog:[],installed:[],active:'',state:'idle',stateStart:0,frame:0,motion:localStorage.getItem('lifeos.pet.motion')!=='false',query:'',category:'all',limit:48,timer:null,columns:[1,2,4].includes(savedColumns)?savedColumns:2};
   const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const get=async path=>{const r=await fetch(path,{cache:'no-store'}),d=await r.json();if(!r.ok)throw new Error(d.error||'桌宠服务暂不可用');return d};
   const send=async(path,body)=>{const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}),d=await r.json();if(!r.ok)throw new Error(d.error||'操作未完成');return d};
   const current=()=>pet.installed.find(x=>x.slug===pet.active)||pet.installed[0]||null;
   const resource=slug=>pet.installed.find(x=>x.slug===slug)||previews.get(slug);
-  const selectedState=item=>actions.selected(item?.slug)||(item?.slug===pet.active?pet.state:'idle');
+  const selectedState=item=>actionFrames.get(item?.slug)?.action||(item?.slug===pet.active?pet.state:'idle');
   const mood=()=>({idle:'安静地陪在这里','running-right':'向右跑起来','running-left':'向左跑起来',waving:'向你挥挥手',jumping:'呀，跳一下',failed:'刚才没有做好，缓一缓',waiting:'在这里等你',running:'正在专心忙碌',review:'我也在读这一页'})[selectedState(current())]||'我在这里';
   function preloadSprites(items){return Promise.all(items.map(async(item,index)=>{items[index]=await (window.lifeosPetRenderers?.prepare(item)||window.lifeosPetSprites.prepare(item))}))}
   function configureSprite(el,item,rows){const key=`${item.asset_url}|${rows}`;if(el.dataset.spriteAsset===key)return;if(el.textContent)el.textContent='';el.style.backgroundImage=`url("${item.asset_url}")`;el.style.backgroundSize=`800% ${rows*100}%`;el.dataset.spriteAsset=key}
   function paint(el,item=current()){
     if(!el)return;if(!item){el.textContent='✦';el.style.backgroundImage='';return}
     if(item.renderer==='vivi-gif'){window.lifeosPetRenderers.paint(el,item,{mode:'preview',motion:pet.motion});return;}window.lifeosPetRenderers?.release(el);
-    const count=Number(item.spriteVersionNumber)===2?11:9,state=selectedState(item),requested=ROWS[state]??0,row=item.frame_map?.[requested]?.length===0?Math.max(0,item.frame_map.findIndex(cells=>cells.length)):requested,cells=item.frame_map?.[row]?.length?item.frame_map[row]:[0,1,2,3,4,5,6,7],frame=Math.max(0,pet.frame-(actionFrames.get(item.slug)||0)),column=cells[frame%cells.length];
+    const count=Number(item.spriteVersionNumber)===2?11:9,once=actionFrames.get(item.slug);let state=selectedState(item),requested=ROWS[state]??0,row=item.frame_map?.[requested]?.length===0?Math.max(0,item.frame_map.findIndex(cells=>cells.length)):requested,cells=item.frame_map?.[row]?.length?item.frame_map[row]:[0,1,2,3,4,5,6,7],frame=Math.max(0,pet.frame-(once?.startFrame||0));
+    if(once&&frame>=cells.length){actionFrames.delete(item.slug);actions.finish(item.slug,once.requestId);state=item.slug===pet.active?pet.state:'idle';requested=ROWS[state]??0;row=item.frame_map?.[requested]?.length===0?Math.max(0,item.frame_map.findIndex(cells=>cells.length)):requested;cells=item.frame_map?.[row]?.length?item.frame_map[row]:[0,1,2,3,4,5,6,7];frame=pet.frame;}
+    const column=cells[frame%cells.length];
     configureSprite(el,item,count);el.style.backgroundPosition=`${column/7*100}% ${row/Math.max(1,count-1)*100}%`;el.dataset.petAction=state;
   }
   function paintAll(){paint($('#petPageSprite'));$$('[data-pet-mini]').forEach(el=>paint(el,resource(el.dataset.petMini)));$$('[data-pet-catalog-mini]').forEach(el=>paint(el,resource(el.dataset.petCatalogMini)));const out=$('#petPageMood');if(out)out.textContent=mood()}
   function setState(next,{broadcast=true}={}){
-    pet.state=ROWS[next]===undefined?'idle':next;pet.frame=0;actionFrames.clear();paintAll();
+    if(!actionFrames.size){pet.state=ROWS[next]===undefined?'idle':next;pet.stateStart=pet.frame;paintAll();}
     if(broadcast){const detail={type:'pet-action',detail:{state:pet.state,slug:pet.active}};window.dispatchEvent(new CustomEvent('lifeos:event',{detail}));}
   }
-  function runFrames(){clearTimeout(pet.timer);const tick=()=>{if(STATE.feature!==FEATURE){pet.timer=null;return}if(pet.motion&&!document.hidden){pet.frame+=1;paintAll()}pet.timer=setTimeout(tick,pet.state==='waiting'?240:155)};pet.timer=setTimeout(tick,pet.state==='waiting'?240:155)}
+  function runFrames(){clearTimeout(pet.timer);const tick=()=>{if(STATE.feature!==FEATURE){pet.timer=null;return}if(pet.motion&&!document.hidden){pet.frame+=1;if(pet.state!=='idle'){const row=ROWS[pet.state],count=current()?.frame_map?.[row]?.length||8;if(pet.frame-pet.stateStart>=count)pet.state='idle';}paintAll()}pet.timer=setTimeout(tick,pet.state==='waiting'?240:155)};pet.timer=setTimeout(tick,pet.state==='waiting'?240:155)}
   function absorb(data){pet.catalog=data.catalog||[];pet.installed=data.installed||[];pet.active=data.active_slug||pet.installed[0]?.slug||'';pet.catalog.filter(item=>item.renderer==='vivi-gif').forEach(item=>actions.register(item.slug,item.actions.map(action=>[action.id,action.label])));}
   const targetAttrs=(item)=>`data-pet-target="${esc(item.slug)}" tabindex="0" role="button" aria-haspopup="menu" aria-label="${esc(item.localized_names?.zh||item.name||item.slug)}，选择动作" title="右键选择动作"`;
   function installedHTML(){return pet.installed.map(item=>`<article class="petPageInstalled ${item.slug===pet.active?'active':''}"><span class="petPageMini" data-pet-mini="${esc(item.slug)}" ${targetAttrs(item)}></span><div><b>${esc(item.name)}</b><small>${esc(item.author)} · ${esc(item.license)}</small></div><div><button data-pet-activate="${esc(item.slug)}" type="button">${item.slug===pet.active?'正在陪伴':'使用'}</button><button class="quiet" data-pet-uninstall="${esc(item.slug)}" type="button">移除</button></div></article>`).join('')||'<p class="petPageEmpty">还没有可用桌宠</p>'}
@@ -45,6 +47,7 @@
   }
   function paintCatalog(){
     $('#petPageCatalog').innerHTML=catalogHTML();
+    const clear=$('#petPageSearchClear');if(clear)clear.hidden=!pet.query&&pet.category==='all';
     $$('#petPageCatalog img').forEach(image=>{
       const failed=()=>{const figure=image.closest('figure');if(!figure||figure.querySelector('.petPreviewFallback'))return;image.hidden=true;figure.classList.add('previewUnavailable');const fallback=document.createElement('span');fallback.className='petPreviewFallback';fallback.setAttribute('aria-hidden','true');fallback.innerHTML=typeof uiIcon==='function'?uiIcon('cat'):'✦';figure.append(fallback);};
       image.addEventListener('error',failed,{once:true});if(image.complete&&!image.naturalWidth)failed();
@@ -62,7 +65,7 @@
         <div class="petPageControlBody"><p id="petPageMood" role="status">${esc(mood())}</p><div class="petPageButtons"><button id="petPageSurprise" type="button">一起随机翻页</button><label><input id="petPageMotion" type="checkbox" ${pet.motion?'checked':''}> 播放动效</label></div></div>
       </section>
       <section class="petPageSection"><div class="petPageSectionHead"><h2>已安装</h2></div><div id="petPageInstalled">${installedHTML()}</div></section>
-      <section class="petPageLibrary"><header><h2>宠物库</h2><div class="petPageLibraryTools"><div class="petPageColumns" role="group" aria-label="宠物库列数">${[1,2,4].map(count=>`<button data-pet-columns="${count}" type="button" aria-label="${count} 列展示" title="${count} 列展示" aria-pressed="${count===pet.columns}">${columnsIcon(count)}</button>`).join('')}</div><button id="petPageRefresh" type="button" aria-live="polite">更新目录</button></div></header><div class="petPageFilters"><input id="petPageSearch" placeholder="搜索名称、作者或主题"><select id="petPageCategory"></select></div><small id="petPageCount" role="status"></small><div id="petPageCatalog"></div></section>
+      <section class="petPageLibrary"><header><h2>宠物库</h2><div class="petPageLibraryTools"><div class="petPageColumns" role="group" aria-label="宠物库列数">${[1,2,4].map(count=>`<button data-pet-columns="${count}" type="button" aria-label="${count} 列展示" title="${count} 列展示" aria-pressed="${count===pet.columns}">${columnsIcon(count)}</button>`).join('')}</div><button id="petPageRefresh" type="button" aria-live="polite">更新目录</button></div></header><div class="petPageFilters"><div class="petPageSearchField"><input id="petPageSearch" type="search" value="${esc(pet.query)}" placeholder="搜索名称、作者或主题" aria-label="搜索桌宠"><button id="petPageSearchClear" type="button" aria-label="清除搜索和筛选" title="清除搜索和筛选" ${!pet.query&&pet.category==='all'?'hidden':''}><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="m4 4 8 8M12 4l-8 8"/></svg></button></div><select id="petPageCategory" aria-label="桌宠分类"></select></div><small id="petPageCount" role="status"></small><div id="petPageCatalog"></div></section>
     </section>`)
   }
   function openPage(){try{saveCurrentJournalProgress();setJournalFocus(false,{silent:true});closeMobileMore()}catch(_){}STATE.room='NOW';STATE.feature=FEATURE;STATE.sourceOrigin=null;rememberContext();lifeEvent('navigate',{feature:FEATURE,title:'灵犀'});syncHistory('push');render()}
@@ -84,10 +87,13 @@
       }});
   }
   function bindPetPage(){
-    if(STATE.feature!==FEATURE)return;refreshPieces();setState(pet.state,{broadcast:false});runFrames();
+    if(STATE.feature!==FEATURE)return;refreshPieces();runFrames();
     $('#petPageSurprise').onclick=()=>{$('#surpriseRail')?.click();setState('running')};
     $('#petPageMotion').onchange=e=>{pet.motion=e.target.checked;localStorage.setItem('lifeos.pet.motion',String(pet.motion));window.dispatchEvent(new CustomEvent('lifeos:pet-motion',{detail:{enabled:pet.motion}}));runFrames()};
     $('#petPageSearch').oninput=e=>{actions.close();pet.query=e.target.value;pet.limit=48;paintCatalog()};
+    const resetSearch=()=>{actions.close();pet.query='';pet.category='all';pet.limit=48;$('#petPageSearch').value='';paintCatalog();$('#petPageSearch').focus({preventScroll:true});};
+    $('#petPageSearchClear').onclick=resetSearch;
+    $('#petPageSearch').onkeydown=event=>{if(event.key==='Escape'){event.preventDefault();resetSearch();}};
     $('#petPageCategory').onchange=e=>{actions.close();pet.category=e.target.value;pet.limit=48;paintCatalog()};
     $('#petPageRefresh').onclick=async e=>{
       const button=e.currentTarget;button.disabled=true;button.textContent='更新中…';
@@ -114,7 +120,7 @@
       }catch(error){button.disabled=false;if(install)button.textContent='下载到本机';alert(error.message)}
     };
   }
-  actions.subscribe((slug)=>{actionFrames.set(slug,pet.frame);if(STATE.feature===FEATURE)paintAll()});
+  actions.subscribe((slug,action,meta)=>{if(meta?.completed)return;if(action)actionFrames.set(slug,{action,requestId:meta?.requestId,startFrame:pet.frame});else actionFrames.delete(slug);if(STATE.feature===FEATURE){paintAll();runFrames();}});
   window.addEventListener('lifeos:pet-settings',event=>{if(typeof event.detail?.motion==='boolean'){pet.motion=event.detail.motion;runFrames();}});
   let installed=false;
   function install(){if(installed)return;installed=true;RENDERERS[FEATURE]=renderPetPage;const prior=bindSpecific;bindSpecific=function(){prior();bindPetPage()}}

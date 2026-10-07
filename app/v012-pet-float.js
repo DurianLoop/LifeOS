@@ -4,7 +4,7 @@
   const key='lifeos.pet.float.position',visibleKey='lifeos.pet.float.visible',spriteW=144,spriteH=156;
   const actions=window.lifeosPetActions;
   const ROWS={idle:0,'running-right':1,'running-left':2,waving:3,jumping:4,failed:5,waiting:6,running:7,review:8};
-  let pet=null,frame=0,timer=null,state='idle',stateUntil=0,look=-1,drag=null,loadedAsset='',refreshSequence=0,chatHistory=[],chatBusy=false,chatWelcomed=false,visibleWanted=false,preferredPosition=null,touchHold=null,motion=localStorage.getItem('lifeos.pet.motion')!=='false',placement='in_app',scale=1;
+  let pet=null,frame=0,timer=null,state='idle',stateUntil=0,look=-1,drag=null,oneShot=null,loadedAsset='',refreshSequence=0,chatHistory=[],chatBusy=false,chatWelcomed=false,visibleWanted=false,preferredPosition=null,touchHold=null,motion=localStorage.getItem('lifeos.pet.motion')!=='false',placement='in_app',scale=1;
   const $=(s,r=document)=>r.querySelector(s),isV2=()=>Number(pet?.spriteVersionNumber)===2,isDesktop=()=>Boolean(window.lifeosDesktop);
   const viewportWidth=()=>document.documentElement?.clientWidth||innerWidth,viewportHeight=()=>document.documentElement?.clientHeight||innerHeight;
   async function current(){const r=await fetch('/api/pets/catalog',{cache:'no-store'});if(r.ok===false)throw new Error('桌宠目录暂不可用');const d=await r.json();return(d.installed||[]).find(x=>x.slug===d.active_slug)||(d.installed||[])[0]||null}
@@ -38,23 +38,25 @@
   function paint(){
     const element=$('#lifePetFloatSprite');if(pet?.renderer==='vivi-gif'){
       window.lifeosPetRenderers.paint(element,pet,{mode:'companion',width:element.clientWidth||spriteW*scale,height:element.clientHeight||spriteH*scale,motion,visible:visibleWanted&&placement==='in_app',position:preferredPosition||undefined,positionElement:$('#lifePetFloat'),bounds:()=>({width:viewportWidth(),height:viewportHeight()}),settings:{...window.lifeosViViSettings?.get(),scale:1},onReady:position,onPosition:()=>{if(!drag)placePetPanels();}});return;
-    }window.lifeosPetRenderers?.release(element);const sprite=prepareSprite();if(!sprite)return;const {el,rows,cellW,cellH}=sprite,usingLook=isV2()&&look>=0&&!actions.selected(pet?.slug),requested=usingLook?9+Math.floor(look/8):ROWS[state],row=pet?.frame_map?.[requested]?.length===0?Math.max(0,pet.frame_map.findIndex(cells=>cells.length)):requested,cells=pet?.frame_map?.[row]?.length?pet.frame_map[row]:[0,1,2,3,4,5,6,7],column=usingLook&&row===requested?look%8:cells[frame%cells.length];el.style.backgroundPosition='-'+(column*cellW)+'px -'+(row*cellH)+'px';el.dataset.petAction=state}
-  function setState(next,ms=0,{force=false}={}){if(pet?.renderer==='vivi-gif'){paint();if(!actions.selected(pet.slug))window.lifeosPetRenderers.get($('#lifePetFloatSprite'))?.playOnce(next,{duration:ms}).catch(()=>{});return;}const loop=actions.selected(pet?.slug);if(loop&&!force){next=loop;ms=0}state=ROWS[next]===undefined?'idle':next;frame=0;look=-1;stateUntil=ms?Date.now()+ms:0;paint()}
+    }window.lifeosPetRenderers?.release(element);const sprite=prepareSprite();if(!sprite)return;const {el,rows,cellW,cellH}=sprite,usingLook=isV2()&&look>=0&&!oneShot,requested=usingLook?9+Math.floor(look/8):ROWS[state],row=pet?.frame_map?.[requested]?.length===0?Math.max(0,pet.frame_map.findIndex(cells=>cells.length)):requested,cells=pet?.frame_map?.[row]?.length?pet.frame_map[row]:[0,1,2,3,4,5,6,7],column=usingLook&&row===requested?look%8:cells[frame%cells.length];el.style.backgroundPosition='-'+(column*cellW)+'px -'+(row*cellH)+'px';el.dataset.petAction=state}
+  function setState(next,ms=0,{force=false}={}){if(pet?.renderer==='vivi-gif'){paint();if(!actions.selected(pet.slug))window.lifeosPetRenderers.get($('#lifePetFloatSprite'))?.playOnce(next,{duration:ms}).catch(()=>{});return;}if(oneShot&&!force)return;state=ROWS[next]===undefined?'idle':next;frame=0;look=-1;stateUntil=ms?Date.now()+ms:0;paint()}
   function stop(){clearTimeout(timer);timer=null}
-  function animate(){stop();if(pet?.renderer==='vivi-gif')return;const tick=()=>{if(!$('#lifePetFloat')||$('#lifePetFloat').hidden||!motion||document.hidden)return;if(!drag&&stateUntil&&Date.now()>=stateUntil)setState('idle');if(!isV2()||look<0||actions.selected(pet?.slug))frame+=1;paint();timer=setTimeout(tick,state==='waiting'?240:140)};tick()}
+  function animate(){stop();if(pet?.renderer==='vivi-gif')return;const tick=()=>{timer=null;if(!$('#lifePetFloat')||$('#lifePetFloat').hidden||!motion||document.hidden)return;if(!drag&&oneShot){if(frame+1>=oneShot.cells){const id=oneShot.requestId;oneShot=null;setState('idle',0,{force:true});actions.finish(pet.slug,id);}else frame+=1;}else{if(!drag&&stateUntil&&Date.now()>=stateUntil)setState('idle');if(!isV2()||look<0)frame+=1;}paint();timer=setTimeout(tick,state==='waiting'&&!oneShot?240:140)};timer=setTimeout(tick,state==='waiting'&&!oneShot?240:140)}
+  function perform(action,meta={}){if(pet?.renderer==='vivi-gif'){paint();return;}oneShot=null;setState(action||'idle',0,{force:true});if(action){const requested=ROWS[state],row=pet?.frame_map?.[requested]?.length===0?Math.max(0,pet.frame_map.findIndex(cells=>cells.length)):requested;oneShot={action:state,requestId:meta.requestId,cells:pet?.frame_map?.[row]?.length||8};}if(motion&&!document.hidden&&visibleWanted&&placement==='in_app')animate();}
+  function resumeAtlasAction(resume){if(oneShot){state=oneShot.action;frame=resume?.requestId===oneShot.requestId?resume.frame:0;look=-1;paint();if(motion)animate();return true;}return false;}
   async function refresh(){
     const sequence=++refreshSequence;
     try{
       const item=await current(),next=item?.asset_url?await (window.lifeosPetRenderers?.prepare(item)||window.lifeosPetSprites.prepare(item)):null;
       if(sequence!==refreshSequence)return;
       const changed=pet?.asset_url!==next?.asset_url;pet=next;
-      if(changed){frame=0;look=-1;state=actions.selected(next?.slug)||'idle';stateUntil=0}
+      if(changed){oneShot=null;frame=0;look=-1;state='idle';stateUntil=0}
       if(!next){loadedAsset='';window.lifeosPetRenderers?.release($('#lifePetFloatSprite'));$('#lifePetFloatSprite')?.style.removeProperty('background-image');}
-      paint();position();
+      paint();position();if(changed){const command=actions.command(next?.slug);if(command?.active)perform(command.action,command);}
     }catch(error){if(sequence===refreshSequence)position()}
   }
   function setVisible(show){const el=$('#lifePetFloat');if(!el)return;visibleWanted=Boolean(show);localStorage.setItem(visibleKey,String(visibleWanted));position();if(!visibleWanted)closeChat();const b=$('#petFloatToggle');if(b)b.textContent=visibleWanted?'收起悬浮桌宠':'显示悬浮桌宠'}
-  function lookAt(event){if(!isV2()||drag||actions.selected(pet?.slug))return;const el=$('#lifePetFloat'),r=el?.getBoundingClientRect();if(!r)return;const dx=event.clientX-r.left-r.width/2,dy=event.clientY-r.top-r.height/2;look=Math.hypot(dx,dy)<12?-1:Math.round((Math.atan2(dx,-dy)*180/Math.PI+360)%360/22.5)%16;paint()}
+  function lookAt(event){if(!isV2()||drag||oneShot)return;const el=$('#lifePetFloat'),r=el?.getBoundingClientRect();if(!r)return;const dx=event.clientX-r.left-r.width/2,dy=event.clientY-r.top-r.height/2;look=Math.hypot(dx,dy)<12?-1:Math.round((Math.atan2(dx,-dy)*180/Math.PI+360)%360/22.5)%16;paint()}
   function chatLine(role,text){const feed=$('#petChatFeed');if(!feed)return;const line=document.createElement('p');line.className=`petChatLine ${role}`;line.textContent=text;feed.append(line);feed.scrollTop=feed.scrollHeight}
   function chatSources(data){
     const feed=$('#petChatFeed'),sources=Array.isArray(data.knowledge?.sources)?data.knowledge.sources.slice(0,4):[];if(!feed||(!sources.length&&data.mode!=='local_guide'))return;
@@ -111,8 +113,8 @@
     sprite.addEventListener('pointerdown',event=>{
       if(pet?.renderer==='vivi-gif'){if(event.button!==0||el.hidden||!readySprite())return;closeMenu();const runtime=window.lifeosPetRenderers.get(sprite);if(runtime?.beginDrag({x:event.clientX,y:event.clientY})){drag={vivi:true};sprite.setPointerCapture?.(event.pointerId);event.preventDefault();}return;}
       if(event.button!==0||el.hidden||!readySprite())return;closeMenu();sprite.setPointerCapture?.(event.pointerId);
-      drag={dx:event.clientX-el.offsetLeft,dy:event.clientY-el.offsetTop,lastX:event.clientX,moved:false,position:null};setState('running-right',0,{force:true});el.classList.add('dragging');event.preventDefault();
-      if(event.pointerType==='touch')touchHold=setTimeout(()=>{if(drag&&!drag.moved){drag=null;el.classList.remove('dragging');setState('idle');openMenu()}touchHold=null},520);
+      drag={dx:event.clientX-el.offsetLeft,dy:event.clientY-el.offsetTop,lastX:event.clientX,moved:false,position:null,resume:oneShot?{requestId:oneShot.requestId,frame}:null};setState('running-right',0,{force:true});el.classList.add('dragging');event.preventDefault();
+      if(event.pointerType==='touch')touchHold=setTimeout(()=>{if(drag&&!drag.moved){const resume=drag.resume;drag=null;el.classList.remove('dragging');if(!resumeAtlasAction(resume))setState('idle');openMenu()}touchHold=null},520);
     });
     sprite.addEventListener('pointermove',event=>{
       if(drag?.vivi){window.lifeosPetRenderers.get(sprite)?.moveDrag({x:event.clientX,y:event.clientY});placePetPanels();event.preventDefault();return;}
@@ -120,8 +122,8 @@
       if(dx){const next=dx<0?'running-left':'running-right';if(state!==next)setState(next,0,{force:true});drag.lastX=event.clientX}
       const p=clamp(event.clientX-drag.dx,event.clientY-drag.dy);drag.position=p;el.style.left=p.x+'px';el.style.top=p.y+'px';placePetPanels();event.preventDefault();
     });
-    sprite.addEventListener('pointerup',event=>{cancelHold();if(drag?.vivi){const runtime=window.lifeosPetRenderers.get(sprite);runtime?.endDrag({x:event.clientX,y:event.clientY});const value=runtime?.getState();if(value){preferredPosition={x:value.x,y:value.y};localStorage.setItem(key,JSON.stringify(preferredPosition));}drag=null;placePetPanels();return;}if(!drag)return;const wasClick=!drag.moved,next=drag.position;drag=null;el.classList.remove('dragging');if(!wasClick&&next){preferredPosition=next;localStorage.setItem(key,JSON.stringify(next))}position();setState(wasClick?'waving':'idle',wasClick?900:0)});
-    sprite.addEventListener('pointercancel',()=>{cancelHold();if(drag?.vivi)window.lifeosPetRenderers.get(sprite)?.cancelDrag();drag=null;el.classList.remove('dragging');position();setState('idle')});
+    sprite.addEventListener('pointerup',event=>{cancelHold();if(drag?.vivi){const runtime=window.lifeosPetRenderers.get(sprite);runtime?.endDrag({x:event.clientX,y:event.clientY});const value=runtime?.getState();if(value){preferredPosition={x:value.x,y:value.y};localStorage.setItem(key,JSON.stringify(preferredPosition));}drag=null;el.classList.remove('dragging');placePetPanels();return;}if(!drag)return;const wasClick=!drag.moved,next=drag.position,resume=drag.resume;drag=null;el.classList.remove('dragging');if(!wasClick&&next){preferredPosition=next;localStorage.setItem(key,JSON.stringify(next))}position();if(!resumeAtlasAction(resume))setState(wasClick?'waving':'idle',wasClick?900:0)});
+    sprite.addEventListener('pointercancel',()=>{cancelHold();const resume=drag?.resume;if(drag?.vivi)window.lifeosPetRenderers.get(sprite)?.cancelDrag();drag=null;el.classList.remove('dragging');position();if(!resumeAtlasAction(resume))setState('idle')});
     sprite.addEventListener('contextmenu',event=>{event.preventDefault();cancelHold();openMenu()});
     sprite.addEventListener('keydown',event=>{if(event.key==='ContextMenu'||(event.shiftKey&&event.key==='F10')||event.key==='Enter'||event.key===' '){event.preventDefault();openMenu()}});
     sprite.addEventListener('pointermove',lookAt);sprite.addEventListener('pointerleave',()=>{if(!drag){look=-1;paint()}});
@@ -136,10 +138,21 @@
   }
   const eventState={navigate:['running',850],'journal-open':['review',1200],'journal-focus-enter':['review',0],'journal-focus-exit':['idle',0],'journal-section':['review',700],'journal-complete':['waving',1100],theme:['jumping',900],typography:['review',700],'pet-click':['waving',900],'entry-created':['waving',1000],'entry-updated':['review',850],'lifeos:backend-exit':['failed',0]};
   window.addEventListener('lifeos:event',e=>{if(drag)return;const event=e.detail||{};if(['navigate','journal-open','journal-focus-enter','journal-focus-exit'].includes(event.type))requestAnimationFrame(()=>position());if(event.type==='pet-action'){if(event.detail?.slug&&event.detail.slug!==pet?.slug)return;return setState(event.detail?.state,1000)}const next=eventState[event.type];if(next)setState(next[0],next[1])});
-  actions.subscribe((slug,action)=>{if(slug===pet?.slug&&!drag)setState(action||'idle')});
+  actions.subscribe((slug,action,meta)=>{if(slug===pet?.slug&&!meta?.completed&&!drag)perform(action,meta)});
   window.addEventListener('lifeos:pet-motion',event=>{motion=event.detail?.enabled!==false;if(motion)position();else stop()});
-  function applySize(){const el=$('#lifePetFloatSprite');if(!el)return;el.style.width=Math.round(spriteW*scale)+'px';el.style.height=Math.round(spriteH*scale)+'px';window.lifeosPetRenderers?.get(el)?.resize(spriteW*scale,spriteH*scale);loadedAsset='';paint();}
-  window.addEventListener('lifeos:pet-settings',event=>{const settings=event.detail||{},previous=placement;placement=settings.mode||'in_app';scale=settings.scale||1;if(typeof settings.motion==='boolean'){motion=settings.motion;localStorage.setItem('lifeos.pet.motion',String(motion));}applySize();window.lifeosPetRenderers?.get($('#lifePetFloatSprite'))?.setSettings({...settings.vivi,scale:1});setVisible(settings.visible!==false);if(previous!==placement&&placement==='desktop')closeChat();});
+  function applySize(){const el=$('#lifePetFloatSprite');if(!el)return;const width=Math.round(spriteW*scale),height=Math.round(spriteH*scale);if(el.style.width===width+'px'&&el.style.height===height+'px')return;const host=$('#lifePetFloat');if(host){host.style.width=width+'px';host.style.height=height+'px';}el.style.width=width+'px';el.style.height=height+'px';const runtime=window.lifeosPetRenderers?.get(el);if(runtime)runtime.resize(width,height);else{loadedAsset='';paint();}}
+  window.addEventListener('lifeos:pet-settings',event=>{
+    const settings=event.detail||{},previous=placement,previousScale=scale,previousMotion=motion,previousVisible=visibleWanted;
+    placement=settings.mode||'in_app';scale=settings.scale||1;
+    if(typeof settings.motion==='boolean'&&settings.motion!==motion){motion=settings.motion;localStorage.setItem('lifeos.pet.motion',String(motion));}
+    if(scale!==previousScale)applySize();
+    const runtime=window.lifeosPetRenderers?.get($('#lifePetFloatSprite'));runtime?.setSettings({...settings.vivi,scale:1});
+    const show=settings.visible!==false;
+    if(previous!==placement||show!==previousVisible)setVisible(show);
+    else if(runtime){runtime.setMotion(motion);if(scale!==previousScale)requestAnimationFrame(placePetPanels);}
+    else if(scale!==previousScale||motion!==previousMotion)position();
+    if(previous!==placement&&placement==='desktop')closeChat();
+  });
   function bind(){mount();if(!drag)position()}
   window.addEventListener('lifeos:pets-changed',()=>refresh().catch(()=>{}));
   let installed=false;

@@ -13,8 +13,8 @@ ROOT = Path(os.getenv('LIFEOS_ROOT') or Path(__file__).resolve().parents[1])
 FEATURE_KEYS = ('ask', 'past_me', 'classical', 'poetry', 'pet')
 FEATURE_ALIASES = {'Ask My Life':'ask', 'Past Me':'past_me', '文言化':'classical',
                    '今日一诗':'poetry', 'Daily Poetry':'poetry', 'Pet Companion':'pet'}
-MODES = {'disabled', 'byok', 'local', 'cloud', 'codex'}
-PROVIDERS = set(PROVIDER_PRESETS) | {'custom', 'local'}
+MODES = {'disabled', 'byok', 'local', 'cloud', 'codex', 'ollama'}
+PROVIDERS = set(PROVIDER_PRESETS) | {'custom', 'local', 'ollama'}
 WIRE_APIS = {'chat_completions', 'responses', 'anthropic'}
 REASONS = {
     'ready':'', 'disabled':'AI 已关闭。', 'feature_disabled':'此功能的 AI 已关闭。',
@@ -26,6 +26,11 @@ REASONS = {
     'codex_unavailable':'未检测到可用的 Codex CLI。', 'codex_unauthenticated':'请先在本机完成 Codex 登录或模型鉴权。',
     'invalid_messages':'模型消息格式无效。', 'invalid_response':'模型返回了无法读取的结果，请重试。',
     'request_failed':'模型请求失败，请检查连接、鉴权和模型配置后重试。',
+    'ollama_unavailable':'请启动本机 Ollama，再重试',
+    'ollama_model_missing':'本机未找到所选模型，请刷新模型列表后重选',
+    'ollama_no_models':'Ollama 中还没有模型，请先在 Ollama 下载一个模型，再刷新',
+    'ollama_failed':'本地模型未能完成，请检查 Ollama 和可用内存后重试',
+    'ollama_local_model_only':'请选择本机下载的模型，暂不支持 Ollama 云模型',
 }
 
 @dataclass
@@ -60,6 +65,12 @@ def feature_key(feature='generic'):
 
 def config() -> ProviderConfig:
     mode = _setting('ai.mode', 'byok')
+    if mode == 'ollama':
+        # Separate fields preserve API/Codex preferences and cannot inherit a
+        # remote environment URL or key when the user chooses a local model.
+        return ProviderConfig('ollama', str(_setting('ai.ollama_model', '')).strip(),
+            str(_setting('ai.ollama_base_url', 'http://localhost:11434')).strip().rstrip('/'),
+            '', 'not-required', '', 'ollama', mode)
     settings_first = _setting('ai.config_source', 'environment') == 'settings'
     def value(setting, environment, default=''):
         if not settings_first and os.getenv(environment): return os.environ[environment]
@@ -115,7 +126,7 @@ def _availability(c, feature='generic', connection=None):
     enabled, allow_remote = _boolean('ai.enabled'), _boolean('ai.allow_remote')
     key = feature_key(feature)
     feature_enabled = key is None or _boolean(f'ai.features.{key}')
-    local = c.mode == 'local' or (c.mode == 'byok' and c.provider == 'local')
+    local = c.mode in ('local', 'ollama') or (c.mode == 'byok' and c.provider == 'local')
     reason, base, model = 'ready', c.base_url, c.model
     if c.mode not in MODES: reason = 'invalid_mode'
     elif c.mode == 'cloud':
@@ -126,10 +137,13 @@ def _availability(c, feature='generic', connection=None):
         model = c.model or state.get('model') or ''
         if not state.get('available'): reason = 'codex_unavailable'
         elif not state.get('authenticated'): reason = 'codex_unauthenticated'
-    elif c.provider not in PROVIDERS: reason = 'invalid_provider'
+    elif c.provider not in PROVIDERS or (c.provider == 'ollama' and c.mode != 'ollama'): reason = 'invalid_provider'
     elif not valid_base_url(base): reason = 'invalid_url'
     elif local and not is_loopback_url(base): reason = 'local_only'
-    elif not model: reason = 'missing_model'
+    elif not model: reason = 'ollama_model_missing' if c.mode == 'ollama' else 'missing_model'
+    elif c.mode == 'ollama' and not ollama_local_model(model): reason = 'ollama_local_model_only'
+    elif c.mode == 'ollama' and c.wire_api != 'ollama': reason = 'invalid_wire_api'
+    elif c.mode == 'ollama': pass
     elif c.wire_api not in WIRE_APIS or (c.wire_api == 'anthropic' and c.provider != 'anthropic'): reason = 'invalid_wire_api'
     elif not local and not c.api_key: reason = 'missing_key'
     configured = reason == 'ready'
@@ -155,7 +169,7 @@ def privacy_status():
         'payload_preview':_boolean('ai.payload_preview'), 'cache':_boolean('ai.cache'),
         'key_source':c.key_source, 'embed_model':c.embed_model, 'codex_model':_setting('ai.codex_model',''),
         'config_source':_setting('ai.config_source','environment'),
-        'environment_override':_setting('ai.config_source','environment') != 'settings' and any(
+        'environment_override':c.mode != 'ollama' and _setting('ai.config_source','environment') != 'settings' and any(
             os.getenv(name) for name in ('LIFEOS_AI_PROVIDER','LIFEOS_LLM_MODEL','LIFEOS_LLM_BASE_URL','LIFEOS_WIRE_API')),
         'features':{key:_availability(c,key,connection) for key in FEATURE_KEYS},
         'policy':'Only the selected evidence/input for the current action is sent; the entire Vault is never attached automatically.',
@@ -169,6 +183,7 @@ def remote_allowed(feature='generic'):
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         # Never redirect selected diary text or credentials to a different host.
+        if fp is not None: fp.close()
         raise AIError('request_failed', code)
 
 def _json_request(url, payload, headers, timeout=90):
@@ -178,7 +193,9 @@ def _json_request(url, payload, headers, timeout=90):
         if is_loopback_url(url): handlers.append(urllib.request.ProxyHandler({}))
         opener = urllib.request.build_opener(*handlers)
         with opener.open(request,timeout=timeout) as response: return json.loads(response.read().decode('utf-8'))
-    except urllib.error.HTTPError as error: raise AIError('request_failed',error.code) from None
+    except urllib.error.HTTPError as error:
+        error.close()
+        raise AIError('request_failed',error.code) from None
     except AIError: raise
     except Exception: raise AIError('request_failed') from None
 
@@ -186,6 +203,57 @@ def _endpoint(c, suffix):
     base = c.base_url.rstrip('/')
     if c.provider in ('openai','anthropic') and not urllib.parse.urlsplit(base).path.strip('/'): base += '/v1'
     return base + '/' + suffix
+
+def ollama_local_model(name, metadata=None):
+    """Ollama Cloud descriptors are not downloaded local inference models."""
+    if not isinstance(name, str) or name.lower().endswith((':cloud', '-cloud')): return False
+    metadata = metadata or {}
+    details = metadata.get('details') or {}
+    return not any(metadata.get(key) or (details.get(key) if isinstance(details, dict) else None)
+                   for key in ('remote_host', 'remote_model', 'cloud'))
+
+def ollama_models(base_url='http://localhost:11434'):
+    """Read only model names from a local Ollama; no generation or download."""
+    if not is_loopback_url(base_url): raise AIError('local_only')
+    try:
+        request = urllib.request.Request(base_url.rstrip('/') + '/api/tags',
+            headers={'Accept':'application/json'}, method='GET')
+        opener = urllib.request.build_opener(_NoRedirect(), urllib.request.ProxyHandler({}))
+        with opener.open(request, timeout=4) as response:
+            raw = response.read(1024 * 1024 + 1)
+        if len(raw) > 1024 * 1024: raise AIError('invalid_response')
+        data = json.loads(raw.decode('utf-8'))
+        if not isinstance(data, dict) or not isinstance(data.get('models'), list): raise AIError('invalid_response')
+        names = []
+        for item in data['models']:
+            if not isinstance(item, dict): continue
+            name = item.get('name') or item.get('model')
+            if isinstance(name, str) and name.strip() and len(name) <= 160 and not any(c in name for c in '\r\n\x00') and ollama_local_model(name, item):
+                names.append(name.strip())
+        return sorted(set(names), key=str.casefold)
+    except AIError: raise
+    except urllib.error.HTTPError as error:
+        error.close()
+        raise AIError('ollama_failed', error.code) from None
+    except (urllib.error.URLError, TimeoutError, OSError): raise AIError('ollama_unavailable') from None
+    except Exception: raise AIError('invalid_response') from None
+
+def _ollama_chat(c, messages, temperature, max_tokens):
+    payload = {'model':c.model, 'messages':[
+        {'role':'system' if m['role'] == 'developer' else m['role'], 'content':m['content']} for m in messages
+    ], 'stream':False, 'think':False, 'options':{'temperature':temperature}}
+    if max_tokens: payload['options']['num_predict'] = max_tokens
+    try:
+        data = _json_request(_endpoint(c, 'api/chat'), payload, {'Content-Type':'application/json'}, timeout=180)
+    except AIError as error:
+        if error.http_status == 404: raise AIError('ollama_model_missing') from None
+        if error.http_status: raise AIError('ollama_failed', error.http_status) from None
+        raise AIError('ollama_unavailable') from None
+    if not isinstance(data, dict) or data.get('error'): raise AIError('ollama_failed')
+    text = (data.get('message') or {}).get('content')
+    if not isinstance(text, str) or not text.strip(): raise AIError('invalid_response')
+    return {'text':text, 'provider':'ollama', 'model':c.model,
+            'usage':{'prompt_tokens':data.get('prompt_eval_count'), 'completion_tokens':data.get('eval_count')}}
 
 def _provider_chat(c, messages, temperature, max_tokens):
     headers = {'Content-Type':'application/json'}
@@ -270,6 +338,7 @@ def chat(messages, temperature=.2, max_tokens=None, feature='generic', use_cache
     try:
         if c.mode == 'cloud': response = _cloud_chat(messages,feature,temperature=temperature,max_tokens=max_tokens)
         elif c.mode == 'codex': response = _codex_chat(messages,temperature,max_tokens,feature)
+        elif c.mode == 'ollama': response = _ollama_chat(c,messages,temperature,max_tokens)
         else: response = _provider_chat(c,messages,temperature,max_tokens)
         if not isinstance(response,dict) or not isinstance(response.get('text'),str) or not response['text'].strip():
             raise AIError('invalid_response')
@@ -287,7 +356,7 @@ def chat(messages, temperature=.2, max_tokens=None, feature='generic', use_cache
 
 def embeddings(texts:list[str]):
     c = config(); status = _availability(c,'ask')
-    if not status['available'] or not c.embed_model or c.provider == 'anthropic' or c.mode in ('cloud','codex'): return None
+    if not status['available'] or not c.embed_model or c.provider == 'anthropic' or c.mode in ('cloud','codex','ollama'): return None
     headers = {'Content-Type':'application/json'}
     if c.api_key: headers['Authorization'] = 'Bearer ' + c.api_key
     try:

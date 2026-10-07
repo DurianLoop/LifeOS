@@ -19,14 +19,14 @@ FEATURES = (
     ('poetry', '个性化荐诗', '今日一诗', '当日日记最多 6,000 字符与候选诗词；自动荐诗仍须单独开启'),
     ('pet', '桌宠聊天', 'Pet Companion', '当前聊天文字，不读取日记'),
 )
-MODES = {'disabled', 'byok', 'local', 'cloud', 'codex'}
+MODES = {'disabled', 'byok', 'local', 'cloud', 'codex', 'ollama'}
 PROVIDERS = set(PROVIDER_PRESETS) | {'custom', 'local'}
 WIRE_APIS = {'chat_completions', 'responses', 'anthropic'}
 BOOLEAN_KEYS = {'ai.enabled', 'ai.allow_remote', 'ai.payload_preview', 'ai.cache'} | {
     f'ai.features.{item[0]}' for item in FEATURES
 }
 STRING_KEYS = {'ai.mode', 'ai.provider', 'ai.model', 'ai.base_url', 'ai.embed_model',
-               'ai.wire_api', 'ai.codex_model'}
+               'ai.wire_api', 'ai.codex_model', 'ai.ollama_model', 'ai.ollama_base_url'}
 
 
 def _boolean(value):
@@ -38,6 +38,8 @@ def _boolean(value):
 
 
 def _base_url(value, *, local=False):
+    if not ai_providers.valid_base_url(value):
+        raise ValueError('请输入有效的模型服务网址')
     parsed = urlparse(value)
     try:
         parsed.port
@@ -115,6 +117,16 @@ def save_settings(payload, root=ROOT):
     wire_api = merged.get('ai.wire_api', 'chat_completions')
     if wire_api not in WIRE_APIS:
         raise ValueError('不支持的模型接口类型')
+    if 'ai.ollama_base_url' in items:
+        items['ai.ollama_base_url'] = _base_url(items['ai.ollama_base_url'], local=True)
+    if len(merged.get('ai.ollama_model', '')) > 160:
+        raise ValueError('本地模型名称过长')
+    if mode == 'ollama':
+        _base_url(merged.get('ai.ollama_base_url', 'http://localhost:11434'), local=True)
+        if not merged.get('ai.ollama_model'):
+            raise ValueError('请先选择本机已下载的模型')
+        if not ai_providers.ollama_local_model(merged['ai.ollama_model']):
+            raise ValueError(ai_providers.REASONS['ollama_local_model_only'])
     if mode in ('byok', 'local'):
         effective_provider = 'local' if mode == 'local' else provider
         if wire_api == 'anthropic' and effective_provider != 'anthropic':
@@ -137,7 +149,7 @@ def save_settings(payload, root=ROOT):
         items['ai.config_source'] = 'settings'
     storage = None
     if key:
-        if mode == 'local' or provider == 'local':
+        if mode in ('local', 'ollama') or provider == 'local':
             raise ValueError('本地模式不需要保存云 API 密钥')
         storage = set_secret(f'ai.{provider}.api_key', key, root).get('storage')
     if items:
@@ -174,9 +186,29 @@ def control_status(root=ROOT):
     return {'ai': ai, 'features': features, 'integrations': integrations_status(root),
             'providers': public_presets(),
             'saved_connection': saved_connection,
+            'ollama': {'base_url': _ollama_base(root),
+                       'model': str(product.get_setting('ai.ollama_model', '', root) or ''), 'demo': True},
             'memorial': {'configured': memorial['configured'], 'url': memorial['url'],
                          'independent': True, 'provider': 'Netlify AI Gateway', 'model': 'gpt-5-mini',
                          'message': '公开分身使用独立的服务端配置；在纪念页中开启并发布生效。'}}
+
+
+def _ollama_base(root=ROOT):
+    value = str(product.get_setting('ai.ollama_base_url', 'http://localhost:11434', root) or '')
+    return value if ai_providers.is_loopback_url(value) else 'http://localhost:11434'
+
+
+def ollama_models(base_url=None, root=ROOT):
+    """Discovery is an explicit read-only settings action, not a mode change."""
+    try:
+        base = _base_url(base_url or _ollama_base(root), local=True)
+        names = ai_providers.ollama_models(base)
+        return {'ok': True, 'models': names, 'base_url': base,
+                'message': '' if names else ai_providers.REASONS['ollama_no_models']}
+    except ValueError:
+        return {'ok': False, 'models': [], 'message': ai_providers.REASONS['local_only']}
+    except ai_providers.AIError as error:
+        return {'ok': False, 'models': [], 'message': str(error)}
 
 
 def test_connection(root=ROOT):

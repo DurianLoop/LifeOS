@@ -42,7 +42,7 @@ class AIProviderTests(unittest.TestCase):
         self.codex.assert_not_called()
 
     def test_global_switches_block_every_route_before_cache(self):
-        for mode in ('byok', 'local', 'cloud', 'codex', 'disabled'):
+        for mode in ('byok', 'local', 'cloud', 'codex', 'ollama', 'disabled'):
             for setting in ('ai.enabled', 'ai.mode'):
                 with self.subTest(mode=mode, switch=setting):
                     self.settings.update({'ai.enabled': 'true', 'ai.mode': mode})
@@ -54,7 +54,7 @@ class AIProviderTests(unittest.TestCase):
 
     def test_each_feature_switch_blocks_all_modes_and_aliases(self):
         for name, key in ai.FEATURE_ALIASES.items():
-            for mode in ('byok', 'local', 'cloud', 'codex'):
+            for mode in ('byok', 'local', 'cloud', 'codex', 'ollama'):
                 with self.subTest(feature=name, mode=mode):
                     self.settings.update({'ai.mode': mode, 'ai.base_url': 'http://localhost:11434/v1', f'ai.features.{key}': 'false'})
                     self.assertFalse(ai.availability(name)['feature_enabled'])
@@ -323,8 +323,10 @@ class CloudGenerationBudgetTests(unittest.TestCase):
 
 class AITransportTests(unittest.TestCase):
     def test_http_failure_omits_body_url_and_headers(self):
+        body = io.BytesIO(b'fixture-secret fixture-private-text')
+        body.read = Mock(wraps=body.read)
         error = urllib.error.HTTPError('https://secret.invalid?key=fixture-secret', 401, 'fixture-private-text',
-                                       {'Authorization': 'fixture-secret'}, io.BytesIO(b'fixture-secret fixture-private-text'))
+                                       {'Authorization': 'fixture-secret'}, body)
         opener = Mock()
         opener.open.side_effect = error
         with patch.object(ai.urllib.request, 'build_opener', return_value=opener):
@@ -332,7 +334,8 @@ class AITransportTests(unittest.TestCase):
                 ai._json_request('https://example.invalid/v1/chat/completions', {'messages': []}, {})
         self.assertIn('401', str(caught.exception))
         self.assertNotIn('fixture', str(caught.exception))
-        self.assertEqual(error.fp.tell(), 0)
+        body.read.assert_not_called()
+        self.assertTrue(body.closed)
 
     def test_local_transport_ignores_proxy_and_forbids_redirect(self):
         response = Mock()

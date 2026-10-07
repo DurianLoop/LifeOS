@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the v0.4 release regressions against synthetic, temporary user data.
+"""Run the current release regressions against synthetic, temporary user data.
 
 Usage: python scripts/run_v04_release_checks.py
        python scripts/run_v04_release_checks.py --backend-python desktop/python-runtime/python.exe
@@ -25,8 +25,8 @@ import time
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / 'docs' / 'qa_v04'
-VERSION = '0.5.0'
+OUT = ROOT / 'docs' / 'qa_v051'
+VERSION = '0.5.1'
 CODE_DIRECTORIES = ('app', 'backend', 'cloud', 'connectors', 'desktop', 'engine',
                     'importers', 'memorial-site', 'mobile', 'netlify', 'scripts')
 SKIP_DIRECTORIES = {'.git', '.venv', 'node_modules', '__pycache__', 'python-runtime',
@@ -49,7 +49,7 @@ def code_files():
 
 def isolated_environment(workspace):
     env = {key: value for key, value in os.environ.items()
-           if not key.startswith('LIFEOS_') and key not in {
+           if not key.startswith('LIFEOS_') and not key.endswith('_API_KEY') and key not in {
                'PYTHONHOME', 'PYTHONPATH', 'OPENAI_API_KEY', 'ANTHROPIC_API_KEY',
                'DEEPSEEK_API_KEY', 'OPENAI_BASE_URL', 'MEMORIAL_PUBLISH_TOKEN',
            }}
@@ -72,8 +72,22 @@ def decoded(value):
 
 def run_command(name, command, env, timeout=120):
     started = time.perf_counter()
+    command = list(map(str, command))
+    actual_command = command
+    if Path(command[0]).resolve() == Path(sys.executable).resolve():
+        # Embedded Windows Python ignores PYTHONPATH through python312._pth.
+        # Add the source root explicitly, without changing the installed runtime.
+        launcher = ("import os,runpy,sys; "
+                    "sys.path[:0]=[os.environ['LIFEOS_RESOURCE_ROOT'],"
+                    "os.path.join(os.environ['LIFEOS_RESOURCE_ROOT'],'scripts')]; "
+                    "sys.argv=sys.argv[1:]; "
+                    "target=sys.argv.pop(0); "
+                    "runpy.run_module(sys.argv[0],run_name='__main__',alter_sys=True) "
+                    "if target=='-m' else "
+                    "(sys.argv.insert(0,target),runpy.run_path(target,run_name='__main__'))")
+        actual_command = [command[0], '-c', launcher, *command[1:]]
     try:
-        completed = subprocess.run(list(map(str, command)), cwd=ROOT, env=env,
+        completed = subprocess.run(actual_command, cwd=ROOT, env=env,
                                    capture_output=True, text=True, encoding='utf-8',
                                    errors='replace', timeout=timeout)
         status = 'passed' if completed.returncode == 0 else 'failed'
@@ -85,9 +99,13 @@ def run_command(name, command, env, timeout=120):
     except OSError as error:
         status, exit_code, output = 'failed', None, str(error)
     (OUT / f'{name}.log').write_text(output, encoding='utf-8')
+    skipped = [line.strip() for line in output.splitlines()
+               if '# SKIP' in line or re.search(r"\bskipped ['\"]", line)]
     return {'name': name, 'status': status, 'ok': status == 'passed',
             'seconds': round(time.perf_counter() - started, 3), 'exit_code': exit_code,
-            'command': list(map(str, command)), 'log': f'docs/qa_v04/{name}.log'}
+            'command': command, 'python_root_bootstrap': actual_command is not command,
+            'log': (OUT / f'{name}.log').relative_to(ROOT).as_posix(),
+            'skipped': skipped}
 
 
 def static_result(name, started, checked, errors):
@@ -109,6 +127,23 @@ def python_syntax(files):
         except (OSError, SyntaxError, ValueError) as error:
             errors.append(f'{file.relative_to(ROOT)}: {error}')
     return static_result('python-syntax', started, checked, errors)
+
+
+def json_syntax():
+    started, checked, errors = time.perf_counter(), 0, []
+    files = [ROOT / 'package.json', ROOT / 'package-lock.json',
+             ROOT / 'desktop/package.json', ROOT / 'desktop/package-lock.json']
+    for directory in ('config', 'marketplace', 'mobile'):
+        for base, folders, names in os.walk(ROOT / directory):
+            folders[:] = [name for name in folders if name not in SKIP_DIRECTORIES]
+            files.extend(Path(base) / name for name in names if name.endswith('.json'))
+    for file in sorted(set(files)):
+        checked += 1
+        try:
+            json.loads(file.read_text(encoding='utf-8-sig'))
+        except (OSError, ValueError) as error:
+            errors.append(f'{file.relative_to(ROOT)}: {error}')
+    return static_result('json-syntax', started, checked, errors)
 
 
 class InlineScripts(HTMLParser):
@@ -219,11 +254,12 @@ def main():
         print(f"[{result['status'].upper():7}] {result['name']} ({result['seconds']}s)", flush=True)
 
     save()
-    with tempfile.TemporaryDirectory(prefix='lifeos-v03-release-') as directory:
+    with tempfile.TemporaryDirectory(prefix='lifeos-release-') as directory:
         env = isolated_environment(Path(directory))
         env['LIFEOS_TEST_PYTHON'] = str(backend_python)
         checks = [
             ('ai-control', [sys.executable, '-m', 'unittest', 'scripts.test_ai_providers', 'scripts.test_ai_control', 'scripts.test_ai_integrations', '-v']),
+            ('ollama-demo', [sys.executable, '-m', 'unittest', 'scripts.test_ollama_demo', '-v']),
             ('ai-settings-ui', [node, 'scripts/test_ai_settings_ui.mjs']),
             ('ai-workflows', [sys.executable, 'scripts/test_ai_workflows.py']),
             ('ai-retrieval', [sys.executable, '-m', 'unittest', 'scripts.test_ai_retrieval', '-v']),
@@ -231,12 +267,16 @@ def main():
             ('cloud-ai-errors', [sys.executable, '-m', 'unittest', 'scripts.test_cloud_ai', '-v']),
             ('poetry-engine', [sys.executable, '-m', 'unittest', 'scripts.test_poetry_engine', '-v']),
             ('import-clear', [sys.executable, 'scripts/test_import_clear.py']),
+            ('import-deferred-restore', [sys.executable, '-m', 'unittest', 'scripts.test_import_deferred_restore', '-v']),
+            ('import-restore-ui', [node, 'scripts/test_import_restore_ui.mjs']),
             ('import-roundtrip', [sys.executable, 'scripts/test_import_roundtrip.py']),
             ('attic-serving', [sys.executable, 'scripts/test_attic.py']),
             ('archive-charts-ui', [node, 'scripts/test_archive_charts.mjs']),
             ('white-noise', [node, 'scripts/test_white_noise.mjs']),
             ('poetry-ui', [node, 'scripts/test_poetry_ui.mjs']),
             ('pet-ui', [node, 'scripts/test_pet_ui.mjs']),
+            ('pet-settings', [node, 'scripts/test_pet_settings.mjs']),
+            ('search-ui', [node, 'scripts/test_search_ui.mjs']),
             ('pet-catalog', [sys.executable, 'scripts/test_pet_catalog.py']),
             ('pet-removal', [sys.executable, 'scripts/test_pet_removal.py']),
             ('vivi-pet', [sys.executable, 'scripts/test_vivi_pet.py']),
@@ -266,10 +306,11 @@ def main():
         files = list(code_files())
         record(python_syntax(files))
         record(javascript_syntax(files, node, env))
+        record(json_syntax())
         record(metadata())
     report = save(completed=True)
     print(json.dumps(report['summary'], ensure_ascii=False))
-    print('Evidence: docs/qa_v04/checks.json')
+    print('Evidence: ' + (OUT / 'checks.json').relative_to(ROOT).as_posix())
     return 0 if report['ok'] else 1
 
 

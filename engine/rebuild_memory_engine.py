@@ -524,7 +524,9 @@ def main():
     try:
         from product_core import seed_feature_dependencies, bootstrap_existing, mark_deterministic_fresh, derived_refresh_status, complete_derived_refresh
         seed_feature_dependencies(root=ROOT)
-        bootstrap_existing(ROOT)
+        # A running background rebuild must never replace an open SQLite file.
+        # Deferred restores are applied by the process startup/bootstrap path.
+        bootstrap_existing(ROOT,recover_pending=False)
         # A full rebuild already includes every deterministic corpus layer.
         mark_deterministic_fresh(ROOT)
         rst=derived_refresh_status(ROOT)

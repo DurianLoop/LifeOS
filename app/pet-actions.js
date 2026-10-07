@@ -1,4 +1,4 @@
-/* A looping action belongs to one pet, across its shelf and in-app companion. */
+/* Action commands are transient; each renderer completes its own full animation. */
 (() => {
   'use strict';
   const actions=[['idle','待机'],['running-right','向右跑'],['running-left','向左跑'],['waving','挥手'],['jumping','跳跃'],['failed','失败'],['waiting','等待'],['running','运行'],['review','审阅']];
@@ -6,15 +6,21 @@
   const customActions=new Map();
   const getActions=slug=>customActions.get(slug)||actions;
   function register(slug,list){if(slug&&Array.isArray(list))customActions.set(slug,list.filter(item=>Array.isArray(item)&&typeof item[0]==='string'&&typeof item[1]==='string'));}
-  const choices=new Map(),listeners=new Set();
-  let menu=null,opened=null,request=0;
-  const selected=slug=>choices.get(slug)||null;
-  function select(slug,action){
+  const commands=new Map(),seen=new Set(),listeners=new Set();
+  let menu=null,opened=null,request=0,commandSequence=0;
+  const command=slug=>commands.has(slug)?{...commands.get(slug)}:null;
+  const selected=slug=>commands.get(slug)?.active?commands.get(slug).action:null;
+  function select(slug,action,{requestId}={}){
     if(!slug)return;
     if(action!==null&&!getActions(slug).some(([id])=>id===action))return;
-    if(selected(slug)===action)return;
-    if(action===null)choices.delete(slug);else choices.set(slug,action);
-    listeners.forEach(fn=>fn(slug,action));
+    const id=typeof requestId==='string'&&requestId?requestId:Date.now().toString(36)+'-'+(++commandSequence).toString(36)+'-'+Math.random().toString(36).slice(2,8);
+    if(seen.has(id))return id;seen.add(id);if(seen.size>512)seen.delete(seen.values().next().value);
+    commands.set(slug,{action,requestId:id,active:action!==null});
+    listeners.forEach(fn=>fn(slug,action,{requestId:id,completed:false}));return id;
+  }
+  function finish(slug,requestId){
+    const current=commands.get(slug);if(!current?.active||current.requestId!==requestId)return false;
+    current.active=false;listeners.forEach(fn=>fn(slug,null,{requestId,completed:true}));return true;
   }
   function close(restore=false){
     request++;
@@ -27,11 +33,11 @@
     menu=document.createElement('div');menu.id='petActionMenu';menu.className='petActionMenu';menu.role='menu';menu.hidden=true;
     menu.setAttribute('aria-label','桌宠动作');document.body.append(menu);
     menu.addEventListener('click',async event=>{
-      const button=event.target.closest('[data-pet-loop],[data-pet-chat]');
+      const button=event.target.closest('[data-pet-action],[data-pet-chat]');
       if(!button||!opened||menu.dataset.busy==='true')return;
       const target=opened,sequence=++request;
       if(button.hasAttribute('data-pet-chat')){close(false);target.chat?.();return;}
-      const action=button.dataset.petLoop==='auto'?null:button.dataset.petLoop;
+      const action=button.dataset.petAction==='auto'?null:button.dataset.petAction;
       menu.dataset.busy='true';button.setAttribute('aria-busy','true');
       try{
         await target.prepare?.(action);
@@ -60,11 +66,10 @@
     mount();close(false);opened=target;menu.dataset.busy='false';menu.replaceChildren();
     const title=document.createElement('b');title.textContent=target.name||'桌宠';menu.append(title);
     if(target.chat){const button=document.createElement('button');button.type='button';button.role='menuitem';button.dataset.petChat='true';button.textContent='和它聊聊';menu.append(button);}
-    const choice=selected(target.slug);
     const available=getActions(target.slug);
     for(const [id,label] of [...available,['auto','恢复自动']]){
-      const button=document.createElement('button');button.type='button';button.role='menuitemradio';button.dataset.petLoop=id;
-      button.setAttribute('aria-checked',String(id==='auto'?choice===null:choice===id));button.textContent=label;menu.append(button);
+      const button=document.createElement('button');button.type='button';button.role='menuitem';button.dataset.petAction=id;
+      button.textContent=label;menu.append(button);
       const row=available.findIndex(([action])=>action===id);if(!customActions.has(target.slug)&&row>=0&&target.frameMap?.[row]?.length===0){button.disabled=true;button.setAttribute('aria-disabled','true');button.title='这个桌宠没有此动作';}
     }
     const hint=document.createElement('p');hint.role='status';hint.hidden=true;menu.append(hint);menu.hidden=false;
@@ -73,7 +78,7 @@
     let x=Number.isFinite(target.x)?target.x:rect.right+8,y=Number.isFinite(target.y)?target.y:rect.top;
     if(x+width>viewportWidth-pad)x=Math.min(rect.left-width-8,viewportWidth-width-pad);
     menu.style.left=Math.max(pad,x)+'px';menu.style.top=Math.max(pad,Math.min(y,viewportHeight-height-pad))+'px';
-    menu.querySelector('[aria-checked="true"]')?.focus({preventScroll:true});
+    menu.querySelector('button:not(:disabled)')?.focus({preventScroll:true});
   }
-  window.lifeosPetActions={actions,getActions,register,selected,select,open,close,subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn);}};
+  window.lifeosPetActions={actions,getActions,register,selected,command,select,finish,open,close,subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn);}};
 })();

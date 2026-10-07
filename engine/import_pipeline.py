@@ -154,18 +154,17 @@ def commit_import(job_id, overrides=None, root:Path=ROOT):
             except Exception: pass
         raise
 
-def rollback_import(job_id,root:Path=ROOT):
+def rollback_import(job_id,root:Path=ROOT, *, defer=False):
+    job_id=str(job_id or '').strip()
+    if not re.fullmatch(r'[A-Za-z0-9_-]{1,128}',job_id):raise ValueError('invalid import job id')
     job=get_job(job_id,root)
     if not job:raise ValueError('import job not found')
     bid=job.get('snapshot_dir')
     if not bid: raise ValueError('job has no pre-import snapshot')
-    out=pc.restore_backup(bid,root)
-    con=pc.connect(root)
-    try:con.execute("UPDATE import_jobs SET status='rolled_back',rolled_back_at=? WHERE job_id=?",(pc.utcnow(),job_id));con.commit()
-    finally:con.close()
-    return {'ok':True,'job_id':job_id,'restore':out}
+    out=pc.restore_backup(bid,root,defer=defer,post_restore={'import_job_id':job_id,'action':'rollback'})
+    return {'ok':True,'job_id':job_id,'restore':out,'restart_required':defer}
 
-def clear_import(job_id, root:Path=ROOT):
+def clear_import(job_id, root:Path=ROOT, *, defer=False):
     """Remove one import test job and its staged payload safely.
 
     A committed job is restored from the pre-import snapshot before its job
@@ -192,8 +191,13 @@ def clear_import(job_id, root:Path=ROOT):
     # A rolled-back job is already at its pre-import state. Re-restoring it
     # could discard legitimate edits made after the user clicked rollback.
     if snapshot and status in ('committed','committing','failed'):
-        pc.restore_backup(snapshot,root)
+        pc.restore_backup(snapshot,root,defer=defer,post_restore={'import_job_id':job_id,'action':'clear'})
         restored=True
+        if defer:
+            return {'ok':True,'job_id':job_id,'restored':False,'restore_pending':True,
+                    'removed_payload':False,'restart_required':True}
+        return {'ok':True,'job_id':job_id,'restored':True,'removed_payload':not payload_dir.exists(),
+                'restart_required':False}
 
     con=pc.connect(root)
     try:

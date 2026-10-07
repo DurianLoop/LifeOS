@@ -16,18 +16,20 @@ function deferred() {
   return {promise, resolve};
 }
 
-function mainLifecycle(isPackaged,{keepPet=false,saveSafe=true}={}) {
+function mainLifecycle(isPackaged,{keepPet=false,saveSafe=true,deferBackendClose=false}={}) {
   // Execute the actual entry point with only inert dependencies. No directories,
   // credentials, sockets, Python children, or Electron windows are opened.
   const ready = deferred(), healthy = deferred(), windows = [], failures = [];
   const handles = new Map(), scheduled = [], backendCalls = [], fileCalls = [];
   const app = new EventEmitter(), ipcMain = new EventEmitter();
   const locations = {appData: path.resolve('fixture/application-data')};
-  let quits = 0, stops = 0,petStops=0;
+  let quits = 0, stops = 0,petStops=0,relaunches=0;const petSender={},petCompletions=[],backendChild=new EventEmitter();
+  backendChild.exitCode=null;backendChild.signalCode=null;
   Object.assign(app, {
     isPackaged, setName() {}, setPath(name, value) { locations[name] = value; },
     getPath: name => locations[name], whenReady: () => ready.promise,
     requestSingleInstanceLock: () => true, quit() { quits += 1;const event={prevented:false,preventDefault(){this.prevented=true}};app.emit('before-quit',event);if(!event.prevented)for(const window of windows)if(!window.isDestroyed())window.close(); },
+    relaunch(){relaunches++},
   });
   ipcMain.handle = (name, handler) => handles.set(name, handler);
   class Window extends EventEmitter {
@@ -52,7 +54,7 @@ function mainLifecycle(isPackaged,{keepPet=false,saveSafe=true}={}) {
     prepareWorkspace(value) { backendCalls.push(['prepare', value]); },
     async availablePort() { return 48761; },
     backendLaunch(value) { backendCalls.push(['launch', value]); return {command: 'fixture-python'}; },
-    startBackend() { backendCalls.push(['start']); return {failure: new Promise(() => {}), stop() { stops += 1; }}; },
+    startBackend() { backendCalls.push(['start']); return {child:backendChild,failure: new Promise(() => {}), stop() { stops += 1;if(!deferBackendClose)setImmediate(()=>{backendChild.exitCode=0;backendChild.emit('close',0,null)}) }}; },
     waitForServer(url) { backendCalls.push(['health', url]); return healthy.promise; },
   };
   const updater = new EventEmitter();
@@ -68,7 +70,7 @@ function mainLifecycle(isPackaged,{keepPet=false,saveSafe=true}={}) {
     './workspace-store.cjs': {createStore:()=>({operation:()=>null})},
     './storage-migration.cjs': {recoverLegacyStorage:async()=>{}},
     './close-guard.cjs': require('./close-guard.cjs'),
-    './pet-controller.cjs': {createPetController:()=>({start:async()=>{},stop(){petStops++},keepAlive:()=>keepPet,snapshot:()=>({ok:true}),isSender:()=>false})},
+    './pet-controller.cjs': {createPetController:()=>({start:async()=>{},stop(){petStops++},keepAlive:()=>keepPet,snapshot:()=>({ok:true}),isSender:sender=>sender===petSender,completeAction:value=>petCompletions.push(value)})},
     './shared-pet-actions.cjs': {loadPetActions:()=>[['idle','待机']]},
     './update-controller.cjs': {createUpdateController:()=>({check:async()=>({ok:true}),snapshot:()=>({status:'idle'})})},
     './bottle-reminders.cjs': {startBottleReminders:()=>({stop(){}})},
@@ -84,7 +86,8 @@ function mainLifecycle(isPackaged,{keepPet=false,saveSafe=true}={}) {
     setImmediate, console: {error(...args) { failures.push(args); }},
   };
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, 'main.cjs'), 'utf8'), context, {filename: 'main.cjs'});
-  return {ready, healthy, windows, app, ipcMain, handles, backendCalls, fileCalls, failures, scheduled,
+  return {ready, healthy, windows, app, ipcMain, handles, backendCalls, fileCalls, failures, scheduled,petSender,petCompletions,backendChild,
+    get relaunches(){return relaunches},
     get quits() { return quits; }, get stops() { return stops; },get petStops(){return petStops}};
 }
 
@@ -117,6 +120,8 @@ for (const isPackaged of [false, true]) {
     const channels = [...lifecycle.ipcMain.eventNames(), ...lifecycle.handles.keys()];
     assert.ok(channels.includes('lifeos:pet-settings-get'));
     assert.equal((await lifecycle.handles.get('lifeos:pet-settings-get')({sender:{}})).ok,false,'foreign renderer cannot control pets');
+    lifecycle.ipcMain.emit('lifeos:pet-action-complete',{sender:{}},{slug:'fixture',requestId:'one'});assert.equal(lifecycle.petCompletions.length,0);
+    lifecycle.ipcMain.emit('lifeos:pet-action-complete',{sender:lifecycle.petSender},{slug:'fixture',requestId:'one'});assert.equal(lifecycle.petCompletions.length,1,'only the owned native renderer may complete its action');
     assert.ok(lifecycle.handles.has('lifeos:window-control'), 'normal application IPC remains installed');
     assert.deepEqual(lifecycle.fileCalls, []);
     assert.equal(lifecycle.quits, 0);
@@ -139,6 +144,28 @@ test('failed draft saving cancels an explicit exit and leaves background service
 });
 test('closing the application without a retained desktop pet shuts down its backend',async()=>{
   const f=mainLifecycle(false),flush=()=>new Promise(setImmediate);f.ready.resolve();f.healthy.resolve();await flush();f.windows[0].close();await flush();assert.equal(f.windows[0].destroyed,true);assert.equal(f.stops,1);assert.equal(f.petStops,1);
+});
+
+for(const isPackaged of [false,true])test((isPackaged?'packaged':'source')+' recovery restart saves drafts and waits for the owned backend to close',async()=>{
+  const f=mainLifecycle(isPackaged,{keepPet:true,deferBackendClose:true}),flush=()=>new Promise(setImmediate);
+  f.ready.resolve();f.healthy.resolve();await flush();
+  const restart=f.handles.get('lifeos:restart'),main=f.windows[0];
+  assert.equal((await restart({sender:{}})).ok,false,'foreign sender cannot restart the app');
+  const pending=restart({sender:main.webContents});await flush();
+  assert.equal(f.stops,1);assert.equal(f.relaunches,0,'relaunch waits for backend close rather than an exit request');
+  assert.equal((await restart({sender:main.webContents})).ok,false,'concurrent restart is ignored');
+  f.backendChild.exitCode=0;f.backendChild.emit('close',0,null);
+  assert.equal((await pending).ok,true);assert.equal(f.relaunches,1);await flush();
+  assert.ok(main.destroyed);assert.equal(f.stops,1,'quitting does not stop the backend twice');assert.equal(f.petStops,1);
+  assert.deepEqual(f.failures,[]);
+});
+
+test('recovery restart cancelled by failed draft saving preserves all services',async()=>{
+  const f=mainLifecycle(false,{keepPet:true,saveSafe:false}),flush=()=>new Promise(setImmediate);
+  f.ready.resolve();f.healthy.resolve();await flush();
+  const result=await f.handles.get('lifeos:restart')({sender:f.windows[0].webContents});
+  assert.equal(result.ok,false);assert.match(result.error,/草稿尚未保存/);
+  assert.equal(f.stops,0);assert.equal(f.relaunches,0);assert.equal(f.petStops,0);assert.equal(f.windows[0].destroyed,false);
 });
 
 function workspace(t, beforeRemove = async () => {}) {

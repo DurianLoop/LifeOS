@@ -1237,6 +1237,8 @@ class Handler(BottleAPI, SimpleHTTPRequestHandler):
                 return self.send_json(ai_control.control_status(ROOT))
             if path=='/api/ai/integrations':
                 return self.send_json(ai_control.integrations_status(ROOT))
+            if path=='/api/ai/ollama/models':
+                return self.send_json(ai_control.ollama_models(q.get('base_url',[None])[0],ROOT))
             if path=='/api/sync/status':
                 out=sync_engine.status(ROOT);out['items']=product.list_sync_conflicts(ROOT);return self.send_json(out)
             if path=='/api/p2/status':
@@ -2073,9 +2075,9 @@ class Handler(BottleAPI, SimpleHTTPRequestHandler):
             if path=='/api/import/commit':
                 return self.send_json(import_pipeline.commit_import(b.get('job_id',''),b.get('overrides') or {},ROOT))
             if path=='/api/import/rollback':
-                return self.send_json(import_pipeline.rollback_import(b.get('job_id',''),ROOT))
+                return self.send_json(import_pipeline.rollback_import(b.get('job_id',''),ROOT,defer=True))
             if path=='/api/import/clear':
-                return self.send_json(import_pipeline.clear_import(b.get('job_id',''),ROOT))
+                return self.send_json(import_pipeline.clear_import(b.get('job_id',''),ROOT,defer=True))
             if path=='/api/backups/create':
                 return self.send_json(product.create_backup(b.get('reason') or 'manual',ROOT,bool(b.get('include_derived'))))
             if path=='/api/backups/restore':

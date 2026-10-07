@@ -1,6 +1,6 @@
 """Recover interrupted file/SQLite writes before indexing the workspace."""
 from pathlib import Path
-import base64, contextlib, hashlib, json, os, shutil, sqlite3, uuid, zipfile
+import base64, contextlib, datetime as dt, hashlib, json, os, re, shutil, sqlite3, uuid, zipfile
 
 
 def atomic_bytes(path, data):
@@ -119,12 +119,45 @@ def rollback_restore(root, value):
                 os.replace(old, target)
 
 
+def validate_restore_cleanup(value):
+    if value is None:
+        return None
+    if (not isinstance(value, dict) or set(value) != {'import_job_id', 'action'}
+            or value['action'] not in ('clear', 'rollback')
+            or not isinstance(value['import_job_id'], str)
+            or not re.fullmatch(r'[A-Za-z0-9_-]{1,128}', value['import_job_id'])):
+        raise ValueError('恢复后导入清理记录无效')
+    return value
+
+
+def finish_restore_cleanup(root, value):
+    """Idempotent import bookkeeping, only after the restored DB is committed."""
+    cleanup = validate_restore_cleanup(value)
+    if not cleanup:
+        return
+    job_id = cleanup['import_job_id']
+    if (root / '.lifeos' / 'imports').is_symlink() or (root / '.lifeos' / 'imports' / job_id).is_symlink():
+        raise ValueError('导入文件路径无效')
+    payload = inside(root, '.lifeos/imports/' + job_id)
+    with contextlib.closing(sqlite3.connect(root / '.lifeos' / 'core.db')) as con:
+        if cleanup['action'] == 'clear':
+            con.execute('DELETE FROM import_items WHERE job_id=?', (job_id,))
+            con.execute('DELETE FROM import_jobs WHERE job_id=?', (job_id,))
+        else:
+            con.execute("UPDATE import_jobs SET status='rolled_back',rolled_back_at=? WHERE job_id=?",
+                        (dt.datetime.now(dt.timezone.utc).isoformat(timespec='seconds'), job_id))
+        con.commit()
+    if cleanup['action'] == 'clear' and payload.exists():
+        shutil.rmtree(payload)
+
+
 def recover_restore(root, checkpoint=lambda phase: None):
     pending = root / '.lifeos' / 'pending-restore.json'
     if not pending.exists():
         return
     value = json.loads(pending.read_text(encoding='utf-8'))
     job = inside(root, value['job'])
+    cleanup = validate_restore_cleanup(value.get('post_restore'))
     if value['phase'] == 'applying':
         rollback_restore(root, value)
     elif value['phase'] == 'prepared':
@@ -151,5 +184,8 @@ def recover_restore(root, checkpoint=lambda phase: None):
             raise
     elif value['phase'] != 'committed':
         raise ValueError('恢复记录损坏，请保留工作区')
+    if value['phase'] == 'committed':
+        finish_restore_cleanup(root, cleanup)
+        checkpoint('post_restore')
     pending.unlink()
     shutil.rmtree(job, ignore_errors=True)

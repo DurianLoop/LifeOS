@@ -464,13 +464,84 @@
   function highlight(text,query){const clean=String(text||'').replace(/<[^>]*>/g,'');const re=new RegExp(`(${String(query||'').replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`,'ig');return esc(clean).replace(re,'<mark>$1</mark>')}
   async function renderSearchI2(){const cp=copy(),q=STATE.searchQ||'',kind=STATE.searchKind||'all',year=STATE.searchYear||'',section=STATE.searchSection||'',sort=STATE.searchSort||'relevance';return pageWrap(`<section class="i2Search"><header><h1>${esc(cp.searchTitle)}</h1></header><div class="i2SearchBar"><input id="searchQ" class="input" value="${esc(q)}" placeholder="${esc(cp.searchPlaceholder)}"><button id="searchFilterToggle" class="btn" aria-expanded="false">${esc(c('筛选','Filters','筛选'))}</button><button id="searchClear" class="btn">${esc(c('清空','Clear','清空'))}</button></div><section id="i2Filters" class="i2Filters" hidden><label>${esc(c('来源','Source type','来源'))}<select id="searchKind" class="input"><option value="all">${esc(c('日记 + 周记','Daily + weekly','日记 + 周记'))}</option><option value="daily">${esc(c('仅日记','Daily only','仅日记'))}</option><option value="weekly">${esc(c('仅周记','Weekly only','仅周记'))}</option></select></label><label>${esc(c('年份','Year','年份'))}<select id="searchYear" class="input"><option value="">${esc(c('全部年份','All years','全部年份'))}</option><option>2025</option><option>2026</option></select></label><label>${esc(c('段落','Section','篇章'))}<select id="searchSection" class="input"><option value="">${esc(c('全部段落','All sections','全部篇章'))}</option>${SECTIONS.slice(0,5).map(x=>`<option value="${esc(x)}">${esc(sectionName(x))}</option>`).join('')}</select></label><label>${esc(c('排序','Sort','排序'))}<select id="searchSort" class="input"><option value="relevance">${esc(c('相关度','Relevance','相关'))}</option><option value="date_desc">${esc(c('最新优先','Newest first','最新'))}</option><option value="date_asc">${esc(c('最早优先','Oldest first','最早'))}</option></select></label></section><div id="i2SearchResults" class="i2SearchResults"><p class="muted">${esc(q?c('正在查找原文…','Finding source passages…','正在寻页…'):c('输入一个词开始寻找。','Type something to start.','写下一字，便可寻迹。'))}</p></div><div id="searchOut" hidden></div><div id="searchFacets" hidden></div><button id="searchDeepRead" hidden></button><button id="searchAsk" hidden></button></section>`)}
 
-  async function runI2Search(){const q=$('#searchQ')?.value.trim()||'',kind=$('#searchKind')?.value||'all',year=$('#searchYear')?.value||'',section=$('#searchSection')?.value||'',sort=$('#searchSort')?.value||'relevance';Object.assign(STATE,{searchQ:q,searchKind:kind,searchYear:year,searchSection:section,searchSort:sort});const out=$('#i2SearchResults');if(!q){out.innerHTML=`<p class="muted">${esc(c('输入一个词开始寻找。','Type something to start.','写下一字，便可寻迹。'))}</p>`;return}out.innerHTML=`<p class="muted">${esc(c('正在查找原文…','Finding source passages…','正在寻页…'))}</p>`;const d=await api(`/api/search?q=${encodeURIComponent(q)}&section=${encodeURIComponent(section)}&kind=${encodeURIComponent(kind)}&year=${encodeURIComponent(year)}&sort=${encodeURIComponent(sort)}&limit=80`,{noCache:true});out.innerHTML=`<div class="i2SearchSummary">${esc(c(`${d.total_matches||0} 个匹配段落`,`${d.total_matches||0} matching sections`,`${d.total_matches||0} 处相应`))}</div>`+(d.items||[]).map(x=>`<article class="i2Result" data-i2-source="${esc(x.source_path)}" tabindex="-1"><time>${esc(x.date)}</time><div><span>${esc(x.kind==='weekly'?c('周记','Weekly','周记'):c('日记','Daily','日记'))}</span><span>${esc(sectionName(x.section||''))}</span><p>${highlight(x.snippet,q)}</p></div><button class="source" data-i2-source="${esc(x.source_path)}">${esc(c('打开原页','Open source','展开原页'))} →</button></article>`).join('')||`<p class="muted">${esc(c('没有找到。换一个更接近原文的词试试。','No match. Try wording closer to the original source.','未寻得此字。试试更近原句的说法。'))}</p>`;$$('[data-i2-source]').forEach(x=>x.onclick=event=>{event.stopPropagation();openJournal(x.dataset.i2Source)});if(I2.search?.selectedSourcePath){document.querySelector(`[data-i2-source="${CSS.escape(I2.search.selectedSourcePath)}"]`)?.focus()}}
-  function captureSearch(){I2.search={query:$('#searchQ')?.value||STATE.searchQ||'',kind:$('#searchKind')?.value||'all',year:$('#searchYear')?.value||'',section:$('#searchSection')?.value||'',sort:$('#searchSort')?.value||'relevance',scrollY:(window.lifeosPageScroller?.()||window).scrollTop??window.scrollY,selectedSourcePath:null};try{sessionStorage.setItem('lifeos.i2.search',JSON.stringify(I2.search))}catch(_){}}
-  function restoreSearch(){try{I2.search=I2.search||JSON.parse(sessionStorage.getItem('lifeos.i2.search')||'null')}catch(_){}if(!I2.search)return;Object.assign(STATE,{searchQ:I2.search.query,searchKind:I2.search.kind,searchYear:I2.search.year,searchSection:I2.search.section,searchSort:I2.search.sort});setTimeout(()=>{const x=I2.search;if($('#searchQ')){$('#searchQ').value=x.query;$('#searchKind').value=x.kind;$('#searchYear').value=x.year;$('#searchSection').value=x.section;$('#searchSort').value=x.sort;runI2Search().then(()=>(window.lifeosPageScroller?.()||window).scrollTo({top:x.scrollY||0,behavior:'auto'}))}},0)}
+  function searchValues(){return {query:($('#searchQ')?.value??STATE.searchQ??'').trim(),kind:$('#searchKind')?.value??STATE.searchKind??'all',year:$('#searchYear')?.value??STATE.searchYear??'',section:$('#searchSection')?.value??STATE.searchSection??'',sort:$('#searchSort')?.value??STATE.searchSort??'relevance'}}
+  function syncSearchState(value){Object.assign(STATE,{searchQ:value.query,searchKind:value.kind,searchYear:value.year,searchSection:value.section,searchSort:value.sort});syncHistory('replace')}
+  function setSearchControls(value){for(const [id,key] of [['searchQ','query'],['searchKind','kind'],['searchYear','year'],['searchSection','section'],['searchSort','sort']]){const input=$('#'+id);if(input)input.value=value[key]}}
+  function cancelI2Search(){
+    I2.searchSequence=(I2.searchSequence||0)+1;
+    clearTimeout(I2.searchTimer);I2.searchTimer=null;
+    clearTimeout(I2.searchRestoreTimer);I2.searchRestoreTimer=null;
+    I2.searchRequest?.abort();I2.searchRequest=null;
+  }
+  function clearSearchContext(){
+    I2.search=null;if(I2.journalData)I2.journalData.backSearch=false;
+    if(STATE.sourceOrigin?.feature==='Universal Search')STATE.sourceOrigin=null;
+    try{sessionStorage.removeItem('lifeos.i2.search')}catch(_){}
+  }
+  function clearI2Search(){
+    cancelI2Search();clearSearchContext();
+    const value={query:'',kind:'all',year:'',section:'',sort:'relevance'};
+    setSearchControls(value);syncSearchState(value);
+    if($('#i2Filters'))$('#i2Filters').hidden=true;
+    $('#searchFilterToggle')?.setAttribute('aria-expanded','false');
+    runI2Search();$('#searchQ')?.focus({preventScroll:true});
+  }
+  async function runI2Search(){
+    cancelI2Search();
+    const input=$('#searchQ'),out=$('#i2SearchResults');
+    if(STATE.feature!=='Universal Search'||!input||!out)return false;
+    const value=searchValues(),{query:q,kind,year,section,sort}=value,sequence=I2.searchSequence;
+    syncSearchState(value);
+    const current=()=>sequence===I2.searchSequence&&STATE.feature==='Universal Search'&&$('#searchQ')===input&&$('#i2SearchResults')===out&&out.isConnected!==false&&JSON.stringify(searchValues())===JSON.stringify(value);
+    if(!q){out.innerHTML=`<p class="muted">${esc(c('输入一个词开始寻找。','Type something to start.','写下一字，便可寻迹。'))}</p>`;return true}
+    const request=new AbortController();I2.searchRequest=request;
+    out.innerHTML=`<p class="muted">${esc(c('正在查找原文…','Finding source passages…','正在寻页…'))}</p>`;
+    try{
+      const d=await api(`/api/search?q=${encodeURIComponent(q)}&section=${encodeURIComponent(section)}&kind=${encodeURIComponent(kind)}&year=${encodeURIComponent(year)}&sort=${encodeURIComponent(sort)}&limit=80`,{noCache:true,signal:request.signal});
+      if(!current())return false;
+      const rows=(d.items||[]).map(x=>`<article class="i2Result" data-i2-source="${esc(x.source_path)}" tabindex="-1"><time>${esc(x.date)}</time><div><span>${esc(x.kind==='weekly'?c('周记','Weekly','周记'):c('日记','Daily','日记'))}</span><span>${esc(sectionName(x.section||''))}</span><p>${highlight(x.snippet,q)}</p></div><button class="source" data-i2-source="${esc(x.source_path)}">${esc(c('打开原页','Open source','展开原页'))} →</button></article>`).join('');
+      out.innerHTML=`<div class="i2SearchSummary">${esc(c(`${d.total_matches||0} 个匹配段落`,`${d.total_matches||0} matching sections`,`${d.total_matches||0} 处相应`))}</div>`+(rows||`<p class="muted">${esc(c('没有找到。换一个更接近原文的词试试。','No match. Try wording closer to the original source.','未寻得此字。试试更近原句的说法。'))}</p>`);
+      out.querySelectorAll('[data-i2-source]').forEach(x=>x.onclick=event=>{event.stopPropagation();openJournal(x.dataset.i2Source)});
+      if(I2.search?.selectedSourcePath)out.querySelector(`[data-i2-source="${CSS.escape(I2.search.selectedSourcePath)}"]`)?.focus({preventScroll:true});
+      return true;
+    }catch(error){
+      if(!current()||error.name==='AbortError')return false;
+      out.innerHTML=`<p class="muted" role="status">${esc(c('搜索暂不可用，请重试。','Search unavailable. Please retry.','搜索暂不可用，请重试。'))}</p>`;return false;
+    }finally{if(I2.searchRequest===request)I2.searchRequest=null;}
+  }
+  function captureSearch(){
+    const value=searchValues();if(!value.query){clearSearchContext();return}
+    I2.search={...value,scrollY:(window.lifeosPageScroller?.()||window).scrollTop??window.scrollY,selectedSourcePath:null};
+    try{sessionStorage.setItem('lifeos.i2.search',JSON.stringify(I2.search))}catch(_){}
+  }
+  function restoreSearch(){
+    try{I2.search=I2.search||JSON.parse(sessionStorage.getItem('lifeos.i2.search')||'null')}catch(_){}
+    const savedSearch=I2.search;if(!savedSearch?.query?.trim()){clearSearchContext();return}
+    cancelI2Search();const sequence=I2.searchSequence;
+    syncSearchState(savedSearch);
+    I2.searchRestoreTimer=setTimeout(()=>{
+      I2.searchRestoreTimer=null;
+      if(sequence!==I2.searchSequence||I2.search!==savedSearch||STATE.feature!=='Universal Search'||!$('#searchQ'))return;
+      setSearchControls(savedSearch);
+      const task=runI2Search(),requestSequence=I2.searchSequence;
+      task.then(applied=>{if(applied&&requestSequence===I2.searchSequence&&I2.search===savedSearch)(window.lifeosPageScroller?.()||window).scrollTo({top:savedSearch.scrollY||0,behavior:'auto'})});
+    },0);
+  }
   function bindI2(){
     updateLanguageControl();
-    if(STATE.feature==='Universal Search'){
-      $('#searchKind').value=STATE.searchKind||'all';$('#searchYear').value=STATE.searchYear||'';$('#searchSection').value=STATE.searchSection||'';$('#searchSort').value=STATE.searchSort||'relevance';let timer;$('#searchQ').oninput=()=>{clearTimeout(timer);timer=setTimeout(runI2Search,170)};['#searchKind','#searchYear','#searchSection','#searchSort'].forEach(s=>$(s).onchange=runI2Search);$('#searchClear').onclick=()=>{Object.assign(STATE,{searchQ:'',searchKind:'all',searchYear:'',searchSection:'',searchSort:'relevance'});render()};$('#searchFilterToggle').onclick=()=>{const p=$('#i2Filters'),open=p.hidden;p.hidden=!open;$('#searchFilterToggle').setAttribute('aria-expanded',String(open))};runI2Search();
+    if(STATE.feature==='Universal Search'&&$('#i2SearchResults')){
+      cancelI2Search();setSearchControls({query:STATE.searchQ||'',kind:STATE.searchKind||'all',year:STATE.searchYear||'',section:STATE.searchSection||'',sort:STATE.searchSort||'relevance'});
+      const changed=(immediate,clearEmpty=false)=>{
+        cancelI2Search();clearSearchContext();const value=searchValues();syncSearchState(value);
+        if(!value.query&&clearEmpty){clearI2Search();return}
+        if(immediate||!value.query)runI2Search();else I2.searchTimer=setTimeout(()=>{I2.searchTimer=null;runI2Search()},170);
+      };
+      $('#searchQ').oninput=()=>changed(false,true);
+      $('#searchQ').onkeydown=event=>{if(event.key==='Enter'&&!event.isComposing){event.preventDefault();changed(true)}};
+      ['#searchKind','#searchYear','#searchSection','#searchSort'].forEach(selector=>$(selector).onchange=()=>changed(true));
+      $('#searchClear').onclick=clearI2Search;
+      $('#searchFilterToggle').onclick=()=>{const panel=$('#i2Filters'),open=panel.hidden;panel.hidden=!open;$('#searchFilterToggle').setAttribute('aria-expanded',String(open))};
+      runI2Search();
     }
     if(STATE.feature==='Journal'){
       $('#journalStartWrite')?.addEventListener('click',()=>openProductDock('writer',{date:localDateISO(),openedFrom:'journal'}));
@@ -491,7 +562,7 @@
     }
   }
 
-  openJournal=async function(path){if(STATE.feature==='Universal Search'){captureSearch();I2.search.selectedSourcePath=path;try{sessionStorage.setItem('lifeos.i2.search',JSON.stringify(I2.search))}catch(_){}}return saved.openJournal(path)};
+  openJournal=async function(path){if(STATE.feature==='Universal Search'){captureSearch();if(I2.search){I2.search.selectedSourcePath=path;try{sessionStorage.setItem('lifeos.i2.search',JSON.stringify(I2.search))}catch(_){}}}return saved.openJournal(path)};
   openProductDock=async function(tab='writer',context={}){const result=await saved.openProductDock(tab,context);document.body.classList.toggle('writerImmersive',PRODUCT.tab==='writer'&&$('#productDock')?.classList.contains('open'));if(typeof buildRail==='function')buildRail();return result};
   setProductDock=function(open){if(!open){if(I2.flushDraft?.()===false)return;I2.flushDraft=null}saved.setProductDock(open);if(!open){I2.layout?.destroy();I2.layout=null;I2.calendar?.destroy();I2.calendar=null;I2.renderSequence=(I2.renderSequence||0)+1;I2.editing=false;I2.chapterOpen=false;document.body.classList.remove('writerImmersive')};if(typeof buildRail==='function')buildRail()};
   function installI2Surface(){
@@ -499,7 +570,7 @@
     // v01 boot loads its copydeck asynchronously, so install after it has
     // finished assigning its compatibility renderers.
     renderProductWriter=renderWriterExpanded;RENDERERS['Journal']=renderJournalI2;RENDERERS['Universal Search']=renderSearchI2;
-    bindSpecific=function(){saved.bindSpecific();bindI2()};
+    bindSpecific=function(){if(STATE.feature!=='Universal Search'||!$('#i2SearchResults'))saved.bindSpecific();bindI2()};
     const previousProductTab=renderProductTab;
     renderProductTab=async function(tab,...args){
       if(tab!=='writer'){
@@ -514,7 +585,7 @@
       PRODUCT.tab=tab;updateWriterMode();
       try{return await previousProductTab(tab,...args)}finally{updateWriterMode()}
     };
-    const previousRender=render;render=async function(){I2.journalBook?.destroy();I2.journalBook=null;I2.journalSequence=(I2.journalSequence||0)+1;await previousRender();updateLanguageControl()};
+    const previousRender=render;render=async function(){cancelI2Search();I2.journalBook?.destroy();I2.journalBook=null;I2.journalSequence=(I2.journalSequence||0)+1;await previousRender();updateLanguageControl()};
     if($('#productDock')?.classList.contains('open')&&PRODUCT.tab==='writer')renderProductWriter();
     window.dispatchEvent(new Event('lifeos:i2-ready'));
   }

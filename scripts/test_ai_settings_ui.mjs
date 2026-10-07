@@ -12,14 +12,15 @@ const catalog = [
   {id:'qwen',label:'通义千问',model:'qwen-test',base_url:'https://qwen.example.test/v1',wire_api:'chat_completions'},
   {id:'glm',label:'智谱 GLM',model:'glm-test',base_url:'https://glm.example.test/v4',wire_api:'chat_completions'},
 ];
-function setup({ai={},saved_connection,integrations={},providers=catalog,postImpl,apiError}={}) {
+function setup({ai={},saved_connection,integrations={},providers=catalog,postImpl,apiImpl,apiError,ollama={}}={}) {
   const events={},windowEvents={},nodes={},posts=[],reads=[];
-  const data={ai:{mode:'byok',enabled:true,provider:'deepseek',model:'deepseek-chat',base_url:'https://api.deepseek.com',wire_api:'chat_completions',configured:true,available:true,payload_preview:true,cache:true,...ai},providers,saved_connection,integrations,
+  const data={ai:{mode:'byok',enabled:true,provider:'deepseek',model:'deepseek-chat',base_url:'https://api.deepseek.com',wire_api:'chat_completions',configured:true,available:true,payload_preview:true,cache:true,...ai},providers,saved_connection,integrations,ollama,
     features:['ask','past_me','classical','poetry','pet'].map(id=>({id,enabled:true,available:true,setting_key:`ai.features.${id}`}))};
   function node(id,values={}) {return nodes[id]={id,value:'',checked:false,disabled:false,hidden:false,dataset:{},
     closest(selector){return selector==='#aiSettingsForm'?nodes.aiSettingsForm:this;},hasAttribute(name){return name==='data-open-ai-settings'&&this.openAI;},setAttribute(){},removeAttribute(){},...values};}
   node('aiSettingsForm',{reportValidity:()=>true,querySelectorAll:()=>Object.values(nodes)});
-  for(const id of ['aiApiFields','aiConnectionNote','aiAdvancedConnection','aiTestConnection','aiSaveSettings','aiSettingsFeedback','aiSecret'])node(id);
+  for(const id of ['aiApiFields','aiConnectionNote','aiAdvancedConnection','aiTestConnection','aiSaveSettings','aiSettingsFeedback','aiSettingsStatus','aiSecret','aiOllamaFields','aiOllamaRefresh','aiOllamaFeedback'])node(id);
+  node('aiOllamaModel',{value:ollama.model||''});
   const connection=saved_connection||data.ai;
   node('aiProvider',{value:connection.provider});node('aiModel',{value:connection.model});node('aiBaseUrl',{value:connection.base_url});node('aiWireApi',{value:connection.wire_api});
   node('aiEnabled',{checked:data.ai.enabled});node('aiPayloadPreview',{checked:true});node('aiUseCache',{checked:true});
@@ -27,7 +28,7 @@ function setup({ai={},saved_connection,integrations={},providers=catalog,postImp
   const featureNodes=data.features.map(item=>node(item.id,{checked:true,dataset:{aiSetting:item.setting_key}}));
   let renders=0,opened;
   const context={FEATURES:[],DREAM_META:{},RENDERERS:{},STATE:{feature:'Home'},esc:escape,pageWrap:body=>body,bindSpecific(){},
-    async api(url){reads.push(url);if(apiError)throw new Error(apiError);return data;},
+    async api(url){reads.push(url);if(apiError)throw new Error(apiError);return apiImpl?apiImpl(url,data):data;},
     async post(url,payload){posts.push({url,payload:JSON.parse(JSON.stringify(payload))});return postImpl?postImpl(url,payload):{ok:true};},
     async render(){renders++;},openFeature(name){opened=name;},
     document:{getElementById:id=>nodes[id],addEventListener(name,callback){events[name]=callback;},querySelector:()=>nodes.connection,querySelectorAll:()=>featureNodes},
@@ -53,7 +54,7 @@ test('simple API form uses the server provider catalog and does not expose saved
 });
 
 for(const [installed,available] of [[false,true],[true,false],[false,false]])test(`CC option is hidden unless the app and Codex are present (${installed},${available})`,async()=>{
-  const app=setup({integrations:{cc_switch:{installed},codex:{available}}});assert.doesNotMatch(await app.render(),/name="aiConnection"/);
+  const app=setup({integrations:{cc_switch:{installed},codex:{available}}});const html=await app.render();assert.doesNotMatch(html,/name="aiConnection" value="codex"/);assert.match(html,/name="aiConnection" value="ollama"/);
 });
 
 test('selecting a provider matches model, endpoint and protocol and clears the typed key',async()=>{
@@ -80,7 +81,7 @@ for(const mode of ['byok','disabled'])test(`a saved ${mode} selection stays on A
 
 for(const mode of ['codex','cloud','local'])test(`legacy ${mode} remains usable and switching to API restores saved connection`,async()=>{
   const app=setup({ai:{mode,provider:mode,model:'runtime-model'},saved_connection:{provider:'glm',model:'kept-model',base_url:'https://saved.example.test',wire_api:'responses'}});
-  const html=await app.render();assert.doesNotMatch(html,/name="aiConnection"/);assert.match(app.nodes.aiConnectionNote.innerHTML,/当前连接/);
+  const html=await app.render();assert.doesNotMatch(html,/name="aiConnection" value="codex"/);assert.match(app.nodes.aiConnectionNote.innerHTML,/当前连接/);
   await app.submit();assert.equal(app.posts[0].payload.items['ai.mode'],mode);assert.equal(Object.hasOwn(app.posts[0].payload.items,'ai.model'),false);
   await app.click('aiSwitchToAPI');await app.submit();assert.equal(app.posts[1].payload.items['ai.mode'],'byok');assert.equal(app.posts[1].payload.items['ai.model'],'kept-model');assert.equal(app.posts[1].payload.items['ai.provider'],'glm');
 });
@@ -90,6 +91,39 @@ test('blank keys are omitted, submitted keys are cleared, and feature switches a
   assert.equal(Object.hasOwn(app.posts[0].payload,'key'),false);assert.equal(app.posts[0].payload.items['ai.features.poetry'],false);assert.equal(app.posts[0].payload.items['ai.features.ask'],true);
   app.nodes.aiSecret.value='fresh-key-value';await app.submit();assert.equal(app.posts[1].payload.key,'fresh-key-value');assert.equal(app.nodes.aiSecret.value,'');
   app.nodes.aiEnabled.checked=false;await app.submit();assert.equal(app.posts[2].payload.items['ai.enabled'],false);assert.equal(app.posts[2].payload.items['ai.allow_remote'],false);
+});
+
+test('Ollama discovery occurs only after selection and keeps the saved API connection',async()=>{
+  const app=setup({ollama:{base_url:'http://localhost:11434',model:'qwen3:4b'},apiImpl:(url,data)=>url.startsWith('/api/ai/ollama/')?{ok:true,models:['gemma3:1b','qwen3:4b'],message:''}:data});
+  const html=await app.render();assert.match(html,/Ollama <small>Demo/);assert.deepEqual(app.reads,['/api/ai/control']);
+  app.nodes.aiSecret.value='typed-cloud-key';app.change('connection','ollama');await flush();
+  assert.equal(app.nodes.aiSecret.value,'');assert.equal(app.nodes.aiApiFields.disabled,true);assert.equal(app.nodes.aiOllamaFields.disabled,false);
+  assert.equal(app.nodes.aiOllamaModel.value,'qwen3:4b');assert.match(app.nodes.aiOllamaModel.innerHTML,/gemma3:1b/);
+  await app.submit();const {items}=app.posts[0].payload;
+  assert.equal(items['ai.mode'],'ollama');assert.equal(items['ai.ollama_model'],'qwen3:4b');assert.equal(items['ai.allow_remote'],false);
+  for(const field of ['ai.provider','ai.model','ai.base_url','ai.wire_api'])assert.equal(Object.hasOwn(items,field),false);
+  assert.equal(Object.hasOwn(app.posts[0].payload,'key'),false);
+  app.change('connection','byok');await app.submit();assert.equal(app.posts[1].payload.items['ai.model'],'deepseek-chat');
+});
+
+test('saved Ollama model loads on return and model names are escaped',async()=>{
+  const app=setup({ai:{mode:'ollama',provider:'ollama'},ollama:{model:'saved-model'},apiImpl:(url,data)=>url.startsWith('/api/ai/ollama/')?{ok:true,models:['saved-model','<bad-model>']}:data});
+  assert.match(await app.render(),/value="ollama" checked/);await flush();
+  assert.equal(app.nodes.aiOllamaModel.value,'saved-model');assert.match(app.nodes.aiOllamaModel.innerHTML,/&lt;bad-model&gt;/);assert.doesNotMatch(app.nodes.aiOllamaModel.innerHTML,/<bad-model>/);
+});
+
+test('Ollama offline state can refresh successfully and never displays thrown upstream content',async()=>{
+  let offline=true;
+  const app=setup({ai:{mode:'ollama'},apiImpl:(url,data)=>{if(!url.startsWith('/api/ai/ollama/'))return data;if(offline)throw new Error('UPSTREAM_SECRET');return {ok:true,models:['qwen3:4b']};}});
+  await app.render();await flush();assert.match(app.nodes.aiOllamaFeedback.textContent,/启动本机 Ollama/);assert.doesNotMatch(app.nodes.aiOllamaFeedback.textContent,/UPSTREAM_SECRET/);assert.equal(app.nodes.aiSettingsStatus.textContent,'待连接');
+  offline=false;await app.click('aiOllamaRefresh');assert.equal(app.nodes.aiOllamaModel.value,'qwen3:4b');assert.equal(app.nodes.aiOllamaRefresh.disabled,false);
+});
+
+test('stale Ollama discovery cannot replace a new settings page or another mode',async()=>{
+  let resolveModels;
+  const app=setup({apiImpl:(url,data)=>url.startsWith('/api/ai/ollama/')?new Promise(resolve=>resolveModels=resolve):data});
+  await app.render();app.change('connection','ollama');app.change('connection','byok');resolveModels({ok:true,models:['stale-model']});await flush();
+  assert.equal(app.nodes.aiOllamaModel.value,'');assert.equal(app.nodes.aiApiFields.hidden,false);
 });
 
 test('save and test errors cannot echo request secrets',async()=>{

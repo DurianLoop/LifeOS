@@ -1,6 +1,7 @@
 const {contextBridge,ipcRenderer}=require('electron');
 contextBridge.exposeInMainWorld('lifeosDesktop',{
   windowControl:(action)=>ipcRenderer.invoke('lifeos:window-control',action),
+  restart:()=>ipcRenderer.invoke('lifeos:restart'),
   petGetSettings:()=>ipcRenderer.invoke('lifeos:pet-settings-get'),
   petSetSettings:patch=>ipcRenderer.invoke('lifeos:pet-settings-set',patch),
   petRefresh:()=>ipcRenderer.invoke('lifeos:pet-refresh'),

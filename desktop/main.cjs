@@ -56,6 +56,24 @@ const gotLock=app.requestSingleInstanceLock();if(!gotLock){app.quit()}else{app.o
 
 ipcMain.handle('lifeos:window-control',(event,action)=>{const target=BrowserWindow.fromWebContents(event.sender);if(!target||target!==mainWindow)return {ok:false};if(action==='minimize')target.minimize();if(action==='toggle-maximize'){target.isMaximized()?target.unmaximize():target.maximize()}if(action==='close')target.close();return {ok:true,maximized:target.isMaximized()};});
 const trusted=event=>mainWindow&&!mainWindow.isDestroyed()&&event.sender===mainWindow.webContents;
+let restarting=false;
+ipcMain.handle('lifeos:restart',async event=>{
+  if(!trusted(event)||restarting)return {ok:false};
+  if(process.env.LIFEOS_EXTERNAL_BACKEND==='1')return {ok:false,error:'请重启本机服务后重新打开 LifeOS'};
+  restarting=true;
+  try{
+    if(!await closeGuard?.prepare()){restarting=false;return {ok:false,error:'草稿尚未保存，请保存后重试'};}
+    closeGuard.allow();quitRequested=true;quitting=true;
+    pets?.stop();reminders?.stop();
+    const child=backend?.child;
+    if(child&&child.exitCode===null&&child.signalCode===null){
+      await new Promise(resolve=>{child.once('close',resolve);backend.stop()});
+    }else backend?.stop();
+    stopped=true;
+    app.relaunch();setImmediate(()=>app.quit());
+    return {ok:true};
+  }catch{restarting=false;return {ok:false,error:'重启未完成，请关闭并重新打开 LifeOS'};}
+});
 ipcMain.on('lifeos:storage',(event,command)=>{try{if(!trusted(event)||!store)throw new Error('存储不可用');event.returnValue={ok:true,value:store.operation(command)}}catch(error){event.returnValue={ok:false,error:String(error.message||'本地存储不可用')}}});
 for(const [channel,method] of [['check','check'],['download','download'],['cancel','cancel'],['install','install'],['status','snapshot']])ipcMain.handle('lifeos:update-'+channel,async event=>trusted(event)&&updates?updates[method]():{ok:false,error:'更新服务未就绪'});
 const petTrusted=event=>trusted(event)||pets?.isSender(event.sender);
@@ -63,6 +81,7 @@ for(const [channel,method] of [['settings-get','snapshot'],['settings-set','setS
 ipcMain.handle('lifeos:pet-open-main',async(event,value)=>petTrusted(event)?openMain(value||{}):{ok:false});
 for(const [channel,method] of [['ready','onReady'],['failed','onFailed'],['menu','openMenu'],['drag-start','dragStart'],['drag-move','dragMove'],['drag-end','dragEnd'],['position','moveCompanion']])ipcMain.on('lifeos:pet-'+channel,(event,value)=>{if(pets?.isSender(event.sender))try{pets[method](value)}catch{}});
 ipcMain.on('lifeos:pet-chat',event=>{if(pets?.isSender(event.sender))openMain({chat:true}).catch(startupFailure)});
+ipcMain.on('lifeos:pet-action-complete',(event,value)=>{if(pets?.isSender(event.sender))pets.completeAction(value)});
 ipcMain.on('lifeos:pet-event',(event,value)=>{if(petTrusted(event)&&typeof value?.type==='string'&&value.type.length<100)pets?.sendEvent({type:value.type,detail:value.detail})});
 app.on('activate',()=>{if(creating)creating.then(()=>openMain()).catch(startupFailure);else openMain().catch(startupFailure)});
 app.on('window-all-closed',()=>{if(!creating&&!quitting&&!pets?.keepAlive()&&process.platform!=='darwin')app.quit()});

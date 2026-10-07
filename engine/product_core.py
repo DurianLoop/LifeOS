@@ -539,10 +539,10 @@ def complete_derived_refresh(target_generation: int, *, root: Path = ROOT, error
     return st
 
 
-def bootstrap_existing(root: Path = ROOT, copy_revision_files=True) -> dict:
+def bootstrap_existing(root: Path = ROOT, copy_revision_files=True, *, recover_pending=True) -> dict:
     """Register Vault files without rewriting them. Safe to run repeatedly."""
     ensure_dirs(root)
-    durable_io.recover_restore(root)
+    if recover_pending:durable_io.recover_restore(root)
     durable_io.recover_entry_writes(root)
     con=connect(root); created=0; updated=0; unchanged=0
     try:
@@ -953,8 +953,9 @@ def list_backups(root: Path = ROOT):
         return [dict(r) for r in con.execute('SELECT * FROM backups ORDER BY created_at DESC')]
     finally: con.close()
 
-def restore_backup(backup_id: str, root: Path = ROOT, *, defer=False):
+def restore_backup(backup_id: str, root: Path = ROOT, *, defer=False, post_restore=None):
     with _LOCK:
+        post_restore=durable_io.validate_restore_cleanup(post_restore)
         pending=root/'.lifeos'/'pending-restore.json'
         if pending.exists():raise ValueError('已有待恢复备份，请先重启')
         con=connect(root)
@@ -967,10 +968,13 @@ def restore_backup(backup_id: str, root: Path = ROOT, *, defer=False):
         try:
             durable_io.validate_backup(p,job/'new')
             if get_setting('backup.auto_before_restore','true',root)=='true':create_backup('pre-restore safety backup',root)
-            durable_io.atomic_json(pending,{'phase':'prepared','job':job.relative_to(root).as_posix()})
+            state={'phase':'prepared','job':job.relative_to(root).as_posix()}
+            if post_restore:state['post_restore']=post_restore
+            durable_io.atomic_json(pending,state)
             if not defer:durable_io.recover_restore(root)
         except Exception:
-            shutil.rmtree(job,ignore_errors=True);raise
+            if not pending.exists():shutil.rmtree(job,ignore_errors=True)
+            raise
         return {'ok':True,'restart_required':True,'backup':dict(r)}
 
 

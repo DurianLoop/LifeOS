@@ -285,30 +285,46 @@ test('shelf animation stops when leaving the pet page and obeys its motion switc
   assert.equal([...app.clock.tasks.values()].filter(task=>task.ms===155).length,0);
 });
 
-test('each pet keeps a looping action and the active pet does not inherit another pet choice',async()=>{
+test('pet library restores all default cards and category with its clear icon or Escape',async()=>{
+  const app=await shelf(),field=app.nodes.get('#petPageSearch'),category=app.nodes.get('#petPageCategory'),clear=app.nodes.get('#petPageSearchClear'),cards=app.nodes.get('#petPageCatalog');
+  field.value='no-such-pet';field.oninput({target:field});assert.equal(clear.hidden,false);assert.ok(cards.innerHTML.includes('没有符合的桌宠'));
+  clear.onclick();assert.equal(field.value,'');assert.equal(category.value,'all');assert.equal(clear.hidden,true);assert.ok(cards.innerHTML.includes('data-pet-install="fixture"')||cards.innerHTML.includes('data-pet-activate="fixture"'));
+  field.value='fixture';field.oninput({target:field});const html=await app.context.RENDERERS['Pet Shelf']();assert.ok(html.includes('value="fixture"'),'returning to the page displays the filter that is actually applied');
+  let prevented=false;field.onkeydown({key:'Escape',preventDefault(){prevented=true;}});assert.equal(prevented,true);assert.equal(field.value,'');assert.equal(clear.hidden,true);
+});
+
+test('action commands replay the same action, deduplicate IPC echoes and ignore stale completion',async()=>{
+  const app=await shelf(),actions=app.context.window.lifeosPetActions,events=[];actions.subscribe((slug,action,meta)=>events.push({slug,action,...meta}));
+  const first=actions.select('fixture','waving'),second=actions.select('fixture','waving');assert.notEqual(first,second);assert.equal(events.length,2);
+  actions.select('fixture','waving',{requestId:first});assert.equal(events.length,2);assert.equal(actions.command('fixture').requestId,second);
+  assert.equal(actions.finish('fixture',first),false);assert.equal(actions.selected('fixture'),'waving');assert.equal(actions.finish('fixture',second),true);assert.equal(actions.selected('fixture'),null);assert.equal(events.at(-1).completed,true);
+});
+
+test('shelf plays every requested cell once, returns to idle and lets the same action run again',async()=>{
   const app=await shelf(),sprite=app.nodes.get('#petPageSprite'),actions=app.context.window.lifeosPetActions;
   assert.ok(app.html.includes('data-columns="2"'));
   assert.equal(app.html.includes('互动动作'),false);
   actions.select('another-pet','jumping');assert.equal(sprite.dataset.petAction,'idle');
   actions.select('fixture','waving');assert.equal(sprite.dataset.petAction,'waving');
-  const columns=[];for(let i=0;i<12;i++){columns.push(Math.round(parseFloat(sprite.style.backgroundPosition)*7/100));app.clock.run(155);}
-  assert.deepEqual(columns,[0,1,2,3,4,5,0,1,2,3,4,5]);
-  assert.equal(sprite.style.backgroundPosition.split(' ')[1],'37.5%');
+  const columns=[];for(let i=0;i<6;i++){assert.equal(sprite.dataset.petAction,'waving');columns.push(Math.round(parseFloat(sprite.style.backgroundPosition)*7/100));app.clock.run(155);}
+  assert.deepEqual(columns,[0,1,2,3,4,5]);assert.equal(sprite.dataset.petAction,'idle');assert.equal(actions.selected('fixture'),null);
+  const finished=actions.command('fixture');assert.equal(finished.active,false);
+  actions.select('fixture','waving');assert.equal(sprite.dataset.petAction,'waving');assert.notEqual(actions.command('fixture').requestId,finished.requestId);assert.equal(sprite.style.backgroundPosition.split(' ')[0],'0%');
   assert.equal(actions.selected('another-pet'),'jumping');
   actions.select('fixture',null);assert.equal(sprite.dataset.petAction,'idle');assert.equal(actions.selected('another-pet'),'jumping');
 });
 
-test('floating v2 pet repeats an explicit action through navigation, pointer gaze and drag release',async()=>{
+test('floating v2 one-shot survives navigation and drag, then ends after each original cell once',async()=>{
   const app=floating({installed:[{...pet,spriteVersionNumber:2,frame_map:Array.from({length:11},()=>[0,2,4])}]});await settle();
   const sprite=app.nodes.get('#lifePetFloatSprite'),actions=app.context.window.lifeosPetActions;
   actions.select('fixture','jumping');assert.equal(sprite.dataset.petAction,'jumping');
   app.events['lifeos:event']({detail:{type:'navigate'}});assert.equal(sprite.dataset.petAction,'jumping');
   sprite.trigger('pointermove',{clientX:900,clientY:30});assert.equal(sprite.dataset.petAction,'jumping');assert.equal(sprite.style.backgroundPosition.split(' ')[1],'-624px');
-  const columns=[];for(let i=0;i<9;i++){columns.push(-parseFloat(sprite.style.backgroundPosition)/144||0);app.clock.run(140);}
-  assert.deepEqual(columns,[0,2,4,0,2,4,0,2,4]);
+  const columns=[-parseFloat(sprite.style.backgroundPosition)/144||0];app.clock.run(140);columns.push(-parseFloat(sprite.style.backgroundPosition)/144||0);
   const float=app.nodes.get('#lifePetFloat'),pointer=(x,y)=>({button:0,pointerId:1,clientX:x,clientY:y,preventDefault(){}});
   sprite.trigger('pointerdown',pointer(float.offsetLeft+20,float.offsetTop+20));sprite.trigger('pointermove',pointer(50,380));sprite.trigger('pointerup');assert.equal(sprite.dataset.petAction,'jumping');
-  actions.select('fixture',null);app.events['lifeos:event']({detail:{type:'journal-open'}});assert.equal(sprite.dataset.petAction,'review');
+  app.clock.run(140);columns.push(-parseFloat(sprite.style.backgroundPosition)/144||0);assert.equal(sprite.dataset.petAction,'jumping');app.clock.run(140);assert.equal(sprite.dataset.petAction,'idle');assert.deepEqual(columns,[0,2,4]);assert.equal(actions.selected('fixture'),null);
+  actions.select('fixture','jumping');assert.equal(sprite.dataset.petAction,'jumping');actions.select('fixture',null);app.events['lifeos:event']({detail:{type:'journal-open'}});assert.equal(sprite.dataset.petAction,'review');
 });
 
 test('empty v2 action rows fall back to a populated action while motion pause keeps a visible companion',async()=>{
@@ -324,7 +340,7 @@ function desktop() {
   let ready=0;
   root.clientWidth=192;root.clientHeight=208;root.replaceChildren=()=>{root.children=[]};
   const initial={id:'fixture',version:1,sprite:'file:///first.webp',frameMap:pet.frame_map,motion:true,visible:true};
-  const context={...clock,URLSearchParams,addEventListener(){},location:{search:'?'+new URLSearchParams({pet:JSON.stringify(initial)})},
+  const context={...clock,performance:{now:()=>0},URLSearchParams,addEventListener(){},location:{search:'?'+new URLSearchParams({pet:JSON.stringify(initial)})},
     Image:class {naturalWidth=8;naturalHeight=9;decode(){return new Promise((resolve,reject)=>images.push({resolve,reject}));}},
     document:{getElementById:()=>root,createElement:canvas},window:{lifeosPet:{ready(){ready++;},failed(){},onEvent(){},onAction(){},onConfig(){}}}};
   vm.createContext(context);vm.runInContext(actionsCode,context);vm.runInContext(desktopCode,context);

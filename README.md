@@ -1,6 +1,15 @@
-# LifeOS v0.5.0
+# LifeOS v0.5.1
 
 LifeOS is a local-first journal and personal memory workspace, with an editable writing desk, journal book, and desktop companion.
+
+## New in v0.5.1
+
+- **Natural ViVi behavior:** automatic companion actions vary without immediate repeats. A chosen action plays completely once before automatic behavior resumes; original animation frames and timing are retained.
+- **Ollama Demo:** choose Ollama in AI settings, detect models already downloaded on your computer, and test the connection. Local generation reuses the existing AI features and their controls.
+- **Search reset:** clear pet-library searches with × or Escape, and reset journal search filters and saved context without stale results returning.
+- **Smooth companion controls:** fine size adjustment uses a slider, left and right edge hiding face the correct direction, and shared animation caches reduce repeated decoding.
+
+[Release notes](docs/RELEASE_v0.5.1.md) · [v0.5.1 release](https://github.com/DurianLoop/LifeOS/releases/tag/v0.5.1)
 
 ## New in v0.5.0
 
@@ -40,7 +49,7 @@ LifeOS is a local-first journal and personal memory workspace, with an editable 
 
 ## Windows download
 
-Download [LifeOS-Setup-0.5.0.exe](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.0/LifeOS-Setup-0.5.0.exe) from the [v0.5.0 release](https://github.com/DurianLoop/LifeOS/releases/tag/v0.5.0). Python is included. This community build is unsigned.
+Download [LifeOS-Setup-0.5.1.exe](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.1/LifeOS-Setup-0.5.1.exe) from the [v0.5.1 release](https://github.com/DurianLoop/LifeOS/releases/tag/v0.5.1). Python is included. This community build is unsigned.
 
 Installed app data is stored under `%APPDATA%/LifeOS/workspace/`; startup diagnostics are under `%APPDATA%/LifeOS/logs/desktop.log`. Back up the workspace folder to preserve journals, revisions and settings. Source runs continue to use the repository folder.
 
