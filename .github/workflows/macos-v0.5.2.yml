@@ -1,0 +1,102 @@
+name: Add macOS installers to v0.5.2
+
+on:
+  push:
+    branches: [codex/v0.5.2-macos]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macos-v0.5.2-release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: macOS ${{ matrix.arch }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: arm64
+            runner: macos-15
+          - arch: x64
+            runner: macos-15-intel
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - name: Audit clean release source
+        run: python3 scripts/public_release_audit.py
+      - name: Prepare native embedded Python
+        run: python3 scripts/prepare_macos_python.py --arch '${{ matrix.arch }}'
+      - name: Install desktop dependencies
+        run: npm ci --prefix desktop --no-audit --no-fund
+      - name: Desktop regressions
+        env:
+          LIFEOS_TEST_PYTHON: ${{ github.workspace }}/desktop/python-runtime/bin/python3
+        run: npm test --prefix desktop
+      - name: Build DMG and ZIP
+        working-directory: desktop
+        run: npx electron-builder --mac dmg zip --${{ matrix.arch }} --config electron-builder.mac.cjs --publish never
+      - name: Verify final native installers
+        run: python3 scripts/verify_macos_package.py --arch '${{ matrix.arch }}'
+      - name: Prepare architecture metadata
+        run: mv desktop/dist/latest-mac.yml desktop/dist/latest-mac-${{ matrix.arch }}.yml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-installer-${{ matrix.arch }}
+          if-no-files-found: error
+          path: |
+            desktop/dist/LifeOS-0.5.2-mac-${{ matrix.arch }}.dmg
+            desktop/dist/LifeOS-0.5.2-mac-${{ matrix.arch }}.zip
+            desktop/dist/latest-mac-${{ matrix.arch }}.yml
+            desktop/dist/MACOS_RELEASE_VALIDATION-${{ matrix.arch }}.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: macos-qa-${{ matrix.arch }}
+          if-no-files-found: ignore
+          path: desktop/dist/qa-macos-${{ matrix.arch }}/
+  publish:
+    name: Append verified macOS assets
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: macos-installer-*
+          merge-multiple: true
+          path: mac-assets
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install PyYAML==6.0.3
+      - name: Upload and verify existing release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/publish_macos_assets.py --assets mac-assets
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: macos-publish-report
+          if-no-files-found: ignore
+          path: |
+            mac-assets/macos-published.json
+            mac-assets/SHA256SUMS-macos-v0.5.2.txt
+            mac-assets/MACOS_RELEASE_VALIDATION.json

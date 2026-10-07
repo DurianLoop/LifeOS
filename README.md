@@ -62,6 +62,14 @@ Download [LifeOS-Setup-0.5.2.exe](https://github.com/DurianLoop/LifeOS/releases/
 
 Installed app data is stored under `%APPDATA%/LifeOS/workspace/`; startup diagnostics are under `%APPDATA%/LifeOS/logs/desktop.log`. Back up the workspace folder to preserve journals, revisions and settings. Source runs continue to use the repository folder.
 
+## macOS download
+
+Choose [Apple Silicon DMG](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-0.5.2-mac-arm64.dmg) for M-series Macs or [Intel DMG](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-0.5.2-mac-x64.dmg). Open the DMG and drag LifeOS into Applications. macOS 11 or newer is required; Python and offline assets are included.
+
+These community builds have verified ad-hoc signatures and are not Apple-notarized. If macOS blocks the first launch, allow LifeOS in System Settings → Privacy & Security. Journal data lives in `~/Library/Application Support/LifeOS/workspace/`; logs live in `~/Library/Application Support/LifeOS/logs/desktop.log`.
+
+The Mac build branch adds platform packaging and native editing menus to the existing v0.5.2 source. The original release tag and Windows downloads are retained. See [Mac build and validation](docs/MACOS_RELEASE.md).
+
 ## Privacy and memorial hosting
 
 The repository and installer contain no author journals, attachments, revision history, credentials or user databases. The installer creates an empty local workspace on first launch. Local `vault/`, `data/`, `.lifeos/` and `.env` are excluded from publication.

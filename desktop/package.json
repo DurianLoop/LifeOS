@@ -118,7 +118,15 @@
         "dmg",
         "zip"
       ],
-      "category": "public.app-category.lifestyle"
+      "category": "public.app-category.lifestyle",
+      "artifactName": "LifeOS-${version}-mac-${arch}.${ext}",
+      "identity": null,
+      "hardenedRuntime": false,
+      "minimumSystemVersion": "11.0.0",
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "为未来的自己录制漂流瓶语音",
+        "NSCameraUsageDescription": "为未来的自己录制漂流瓶视频"
+      }
     },
     "linux": {
       "target": [

@@ -16,11 +16,11 @@ function deferred() {
   return {promise, resolve};
 }
 
-function mainLifecycle(isPackaged,{keepPet=false,saveSafe=true,deferBackendClose=false}={}) {
+function mainLifecycle(isPackaged,{keepPet=false,saveSafe=true,deferBackendClose=false,platform='win32'}={}) {
   // Execute the actual entry point with only inert dependencies. No directories,
   // credentials, sockets, Python children, or Electron windows are opened.
   const ready = deferred(), healthy = deferred(), windows = [], failures = [];
-  const handles = new Map(), scheduled = [], backendCalls = [], fileCalls = [];
+  const handles = new Map(), scheduled = [], backendCalls = [], fileCalls = [], builtMenus = [], applicationMenus = [];
   const app = new EventEmitter(), ipcMain = new EventEmitter();
   const locations = {appData: path.resolve('fixture/application-data')};
   let quits = 0, stops = 0,petStops=0,relaunches=0;const petSender={},petCompletions=[],backendChild=new EventEmitter();
@@ -61,7 +61,7 @@ function mainLifecycle(isPackaged,{keepPet=false,saveSafe=true,deferBackendClose
   updater.checkForUpdates = async () => ({updateInfo: {version: 'fixture'}});
   const modules = {
     electron: {app, BrowserWindow: Window, ipcMain, shell: {openExternal() {}},
-      Menu: {setApplicationMenu() {}}, dialog: {showErrorBox(...args) { failures.push(args); },showMessageBox:async()=>({response:0})}},
+      Menu: {buildFromTemplate(template) {const menu={template};builtMenus.push(menu);return menu;},setApplicationMenu(menu) {applicationMenus.push(menu);}}, dialog: {showErrorBox(...args) { failures.push(args); },showMessageBox:async()=>({response:0})}},
     path,
     fs: new Proxy({}, {get: (_, method) => (...args) => {
       fileCalls.push([method, args]); throw new Error('Main lifecycle must not access the filesystem');
@@ -80,16 +80,45 @@ function mainLifecycle(isPackaged,{keepPet=false,saveSafe=true,deferBackendClose
   };
   const context = {
     URL,
-    __dirname, process: {env: {}, platform: 'win32', resourcesPath: paths.resourceRoot},
+    __dirname, process: {env: {}, platform, resourcesPath: paths.resourceRoot},
     require(name) { assert.ok(Object.hasOwn(modules, name), `unexpected main dependency: ${name}`); return modules[name]; },
     setTimeout(callback, delay) { scheduled.push({callback, delay}); return scheduled.length; },
     setImmediate, console: {error(...args) { failures.push(args); }},
   };
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, 'main.cjs'), 'utf8'), context, {filename: 'main.cjs'});
-  return {ready, healthy, windows, app, ipcMain, handles, backendCalls, fileCalls, failures, scheduled,petSender,petCompletions,backendChild,
+  return {ready, healthy, windows, app, ipcMain, handles, backendCalls, fileCalls, failures, scheduled,petSender,petCompletions,backendChild,builtMenus,applicationMenus,
     get relaunches(){return relaunches},
     get quits() { return quits; }, get stops() { return stops; },get petStops(){return petStops}};
 }
+
+for(const isPackaged of [false,true])test(`${isPackaged?'packaged':'source'} macOS installs native app, editing and window menus before showing its window`,async()=>{
+  const f=mainLifecycle(isPackaged,{platform:'darwin'}),flush=()=>new Promise(setImmediate);
+  assert.equal(f.applicationMenus.length,0,'menus wait for Electron readiness');
+  f.ready.resolve();await flush();
+  assert.equal(f.builtMenus.length,1);
+  assert.equal(f.applicationMenus[0],f.builtMenus[0],'the constructed native menu is installed');
+  assert.deepEqual(Array.from(f.applicationMenus[0].template,item=>item.role),['appMenu','editMenu','windowMenu'],'Electron roles supply standard Mac editing, application and window shortcuts');
+  assert.equal(f.windows.length,0,'menu creation does not bypass backend health');
+  f.healthy.resolve();await flush();
+  assert.equal(f.windows.length,1);assert.deepEqual(f.failures,[]);
+  f.app.emit('activate');await flush();assert.equal(f.builtMenus.length,1,'Dock activation reuses the installed menu');
+  f.app.quit();await flush();assert.equal(f.windows[0].destroyed,true);assert.equal(f.stops,1);assert.equal(f.petStops,1);
+});
+
+for(const platform of ['win32','linux'])test(`${platform} retains its custom window controls without a native menu`,async()=>{
+  const f=mainLifecycle(true,{platform}),flush=()=>new Promise(setImmediate);
+  f.ready.resolve();f.healthy.resolve();await flush();
+  assert.deepEqual(f.applicationMenus,[null]);assert.equal(f.builtMenus.length,0);assert.deepEqual(f.failures,[]);
+  assert.ok(f.handles.has('lifeos:window-control'));
+  f.app.quit();await flush();assert.equal(f.stops,1);
+});
+
+test('macOS explicit quit preserves the application and backend when draft saving fails',async()=>{
+  const f=mainLifecycle(true,{platform:'darwin',keepPet:true,saveSafe:false}),flush=()=>new Promise(setImmediate);
+  f.ready.resolve();f.healthy.resolve();await flush();f.app.quit();await flush();
+  assert.equal(f.windows[0].destroyed,false);assert.equal(f.stops,0);assert.equal(f.petStops,0);
+  assert.equal(f.applicationMenus.length,1,'the standard menu remains installed after cancelled exit');
+});
 
 for (const isPackaged of [false, true]) {
   test(`${isPackaged ? 'packaged' : 'source'} defaults to one application window with trusted pet settings IPC`, async () => {

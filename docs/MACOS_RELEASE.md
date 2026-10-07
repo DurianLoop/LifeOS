@@ -1,0 +1,13 @@
+# macOS v0.5.2
+
+The original v0.5.2 release baseline is `1ca8858ea3fcb752b7af065aa0de8f4c11ff514a`. Mac packaging is maintained on `codex/v0.5.2-macos`, without moving that tag or replacing Windows release assets.
+
+The GitHub workflow builds native arm64 and x64 DMG/ZIP files using macOS 15 runners. Each application includes its matching Python 3.13.16 install-only runtime from python-build-standalone release 20261003, verified against a fixed SHA-256, plus the Python dependencies and Pillow. No system Python or separate dependency installation is required. The full runtime retains upstream license information.
+
+The Mac edition has the same v0.5.2 product features, plus native application/edit/window menus for standard Cmd shortcuts and camera/microphone purpose strings for drift-bottle recordings. Data is stored separately from the installed application, under `~/Library/Application Support/LifeOS/workspace/`.
+
+Native libraries, Python extension modules, Electron helpers/frameworks and the final application receive ad-hoc signatures. This is a community build without an Apple Developer ID or notarization. It requires macOS 11 or newer. DMG installation is by dragging LifeOS into Applications; ZIP files provide an alternative. A newly downloaded copy may need first-launch approval in System Settings → Privacy & Security.
+
+Before uploading, CI audits public source and verifies each final archive, Mach-O architecture, deep application signature, recording purpose strings, internal runtime links and absence of private databases/settings. It mounts the DMG and extracts the ZIP into a path containing spaces and Chinese characters, launches the relocated native executable, tests the bundled backend with synthetic journals and runs actual packaged main/preload/UI checks across a restart. Real-device camera/microphone consent and Gatekeeper consent remain manual checks.
+
+Both architecture reports include the release baseline and Mac build commit. The publisher merges architecture-specific update metadata, checks SHA-256 and SHA-512 values, appends assets without replacing existing files, confirms uploaded digests/sizes and verifies that the original tag and all existing assets remain unchanged. See `MACOS_RELEASE_VALIDATION.json` and `SHA256SUMS-macos-v0.5.2.txt` in the release.
