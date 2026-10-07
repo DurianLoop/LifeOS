@@ -16,6 +16,7 @@
     "setup": "node setup.cjs setup --no-launch"
   },
   "dependencies": {
+    "builder-util-runtime": "9.7.0",
     "electron-updater": "^6.6.2"
   },
   "devDependencies": {

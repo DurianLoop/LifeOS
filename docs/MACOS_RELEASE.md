@@ -4,7 +4,7 @@ The original v0.5.2 release baseline is `1ca8858ea3fcb752b7af065aa0de8f4c11ff514
 
 The GitHub workflow builds native arm64 and x64 DMG/ZIP files using macOS 15 runners. Each application includes its matching Python 3.13.16 install-only runtime from python-build-standalone release 20261003, verified against a fixed SHA-256, plus the Python dependencies and Pillow. No system Python or separate dependency installation is required. The full runtime retains upstream license information.
 
-The Mac edition has the same v0.5.2 product features, plus native application/edit/window menus for standard Cmd shortcuts and camera/microphone purpose strings for drift-bottle recordings. Data is stored separately from the installed application, under `~/Library/Application Support/LifeOS/workspace/`.
+The Mac edition has the same v0.5.2 product features, plus native application/edit/window menus for standard Cmd shortcuts and camera/microphone purpose strings for drift-bottle recordings. Direct runtime dependencies are declared as production packages; packaged UI validation rejects module resolution into the source checkout, preventing missing dependencies from being masked by a development install. Data is stored separately from the installed application, under `~/Library/Application Support/LifeOS/workspace/`.
 
 Native libraries, Python extension modules, Electron helpers/frameworks and the final application receive ad-hoc signatures. This is a community build without an Apple Developer ID or notarization. It requires macOS 11 or newer. DMG installation is by dragging LifeOS into Applications; ZIP files provide an alternative. A newly downloaded copy may need first-launch approval in System Settings → Privacy & Security.
 

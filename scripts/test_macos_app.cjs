@@ -443,6 +443,14 @@ try {
     },
   });
   const load = Module._load;
+  const resolveFilename = Module._resolveFilename;
+  Module._resolveFilename = function (request, parent, ...args) {
+    const result = Reflect.apply(resolveFilename, this, [request, parent, ...args]);
+    if (parent?.filename && inside(asar, parent.filename) && request !== 'electron' && !Module.isBuiltin(request)) {
+      assert.ok(inside(asar, result), `Packaged dependency must resolve inside app.asar: ${request} -> ${result}`);
+    }
+    return result;
+  };
   Module._load = function (...args) {
     const result = Reflect.apply(load, this, args);
     return args[0] === 'electron' ? observedElectron : result;

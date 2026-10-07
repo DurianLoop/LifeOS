@@ -10,6 +10,19 @@ const {once, EventEmitter} = require('node:events');
 const vm = require('node:vm');
 const runtime = require('./runtime.cjs');
 
+test('main runtime dependencies are declared for production installation', () => {
+  const main = fs.readFileSync(path.join(__dirname, 'main.cjs'), 'utf8');
+  const dependencies = require('./package.json').dependencies;
+  const lock = require('./package-lock.json').packages;
+  const {isBuiltin} = require('node:module');
+  for (const [, name] of main.matchAll(/require\(['"]([^'"]+)['"]\)/g)) {
+    if (name === 'electron' || name.startsWith('.') || isBuiltin(name)) continue;
+    assert.ok(dependencies[name], `main directly uses undeclared runtime dependency ${name}`);
+    const entry = lock['node_modules/' + name];
+    assert.ok(entry && !entry.dev, `runtime dependency ${name} must not be pruned from installers`);
+  }
+});
+
 function deferred() {
   let resolve;
   const promise = new Promise(done => { resolve = done; });
