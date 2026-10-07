@@ -62,13 +62,14 @@ def native_smoke(app: Path, root: Path) -> dict:
     env = {key: value for key, value in os.environ.items()
            if not key.startswith(('LIFEOS_', 'PYTHON')) and key != 'ELECTRON_RUN_AS_NODE'}
     env.update(LIFEOS_ROOT=str(workspace), LIFEOS_PORT=str(port), LIFEOS_DESKTOP_DEBUG='1',
+               ELECTRON_ENABLE_LOGGING='1',
                PYTHON_KEYRING_BACKEND='keyring.backends.null.Keyring')
     opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
     process = None
     with (root / 'native-launch.log').open('wb') as log:
         try:
             process = subprocess.Popen([str(app / 'Contents' / 'MacOS' / 'LifeOS')],
-                                       env=env, stdout=log, stderr=log, start_new_session=True)
+                                       env=env, stdout=log, stderr=log)
             deadline = time.monotonic() + 60
             while time.monotonic() < deadline:
                 assert process.poll() is None, 'Final native LifeOS executable exited during startup'
@@ -98,14 +99,40 @@ def native_smoke(app: Path, root: Path) -> dict:
             raise
         finally:
             if process is not None:
+                # Retain the runner's GUI session, and stop only this app's descendants.
+                table = subprocess.check_output(['ps', '-axo', 'pid=,ppid='], text=True)
+                owned = [process.pid]
+                for parent in owned:
+                    owned.extend(int(row.split()[0]) for row in table.splitlines()
+                                 if len(row.split()) == 2 and int(row.split()[1]) == parent)
+                for pid in reversed(owned[1:]):
+                    try:
+                        os.kill(pid, signal.SIGTERM)
+                    except ProcessLookupError:
+                        pass
                 try:
-                    os.killpg(process.pid, signal.SIGTERM)
+                    process.terminate()
                     process.wait(timeout=10)
                 except (ProcessLookupError, subprocess.TimeoutExpired):
                     try:
-                        os.killpg(process.pid, signal.SIGKILL)
+                        process.kill()
                     except ProcessLookupError:
                         pass
+
+
+def ui_checks(app: Path, root: Path, phases=('first', 'restart')) -> tuple[list, Path]:
+    electron = ROOT / 'desktop' / 'node_modules' / 'electron' / 'dist' / 'Electron.app' / 'Contents' / 'MacOS' / 'Electron'
+    output = root / 'ui-qa'
+    checks = []
+    for phase in phases:
+        env = {**os.environ, 'MACOS_APP_PATH': str(app), 'QA_OUTPUT': str(output), 'QA_PHASE': phase}
+        env.pop('ELECTRON_RUN_AS_NODE', None)
+        subprocess.run([str(electron), str(ROOT / 'scripts' / 'test_macos_app.cjs')],
+                       env=env, check=True, timeout=120)
+        report = json.loads((output / f'{phase}-report.json').read_text())
+        assert report['ok']
+        checks.extend(report['checks'])
+    return checks, output
 
 
 def main():
@@ -120,6 +147,7 @@ def main():
     if args.native_app:
         with tempfile.TemporaryDirectory(prefix='lifeos-mac-preflight-') as folder:
             inspect_app(args.native_app.resolve(), args.arch)
+            ui_checks(args.native_app.resolve(), Path(folder), phases=('first',))
             print(json.dumps(native_smoke(args.native_app.resolve(), Path(folder))))
         return
     dist = args.dist.resolve()
@@ -152,16 +180,8 @@ def main():
         checks.extend(backend['checks'])
         native = native_smoke(app, root)
         checks.extend(native['checks'])
-        electron = ROOT / 'desktop' / 'node_modules' / 'electron' / 'dist' / 'Electron.app' / 'Contents' / 'MacOS' / 'Electron'
-        output = root / 'ui-qa'
-        for phase in ('first', 'restart'):
-            env = {**os.environ, 'MACOS_APP_PATH': str(app), 'QA_OUTPUT': str(output), 'QA_PHASE': phase}
-            env.pop('ELECTRON_RUN_AS_NODE', None)
-            subprocess.run([str(electron), str(ROOT / 'scripts' / 'test_macos_app.cjs')],
-                           env=env, check=True, timeout=120)
-            report = json.loads((output / f'{phase}-report.json').read_text())
-            assert report['ok']
-            checks.extend(report['checks'])
+        ui, output = ui_checks(app, root)
+        checks.extend(ui)
         # Keep synthetic UI screenshots in CI evidence, outside distributable packages.
         import shutil
         shutil.copytree(output, dist / f'qa-macos-{args.arch}',
