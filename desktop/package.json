@@ -10,7 +10,7 @@
     "test": "node --test startup.test.cjs setup.test.cjs pet-window.test.cjs reliability.test.cjs bottle-reminders.test.cjs",
     "dist": "electron-builder",
     "dist:win": "electron-builder --win nsis",
-    "dist:mac": "electron-builder --mac dmg zip",
+    "dist:mac": "electron-builder --mac dmg zip --config electron-builder.mac.cjs",
     "dist:linux": "electron-builder --linux AppImage",
     "dist:all": "electron-builder -mwl",
     "setup": "node setup.cjs setup --no-launch"

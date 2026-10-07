@@ -12,6 +12,7 @@ import plistlib
 import signal
 import socket
 import subprocess
+import sys
 import tempfile
 import time
 import urllib.request
@@ -60,7 +61,7 @@ def native_smoke(app: Path, root: Path) -> dict:
         port = sock.getsockname()[1]
     env = {key: value for key, value in os.environ.items()
            if not key.startswith(('LIFEOS_', 'PYTHON')) and key != 'ELECTRON_RUN_AS_NODE'}
-    env.update(LIFEOS_ROOT=str(workspace), LIFEOS_PORT=str(port),
+    env.update(LIFEOS_ROOT=str(workspace), LIFEOS_PORT=str(port), LIFEOS_DESKTOP_DEBUG='1',
                PYTHON_KEYRING_BACKEND='keyring.backends.null.Keyring')
     opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
     process = None
@@ -88,6 +89,13 @@ def native_smoke(app: Path, root: Path) -> dict:
                 assert json.load(response)['items'] == []
             return {'ok': True, 'checks': ['relocated final LifeOS executable starts its bundled backend',
                                            'first installation initializes an empty native workspace']}
+        except Exception:
+            log.flush()
+            print((root / 'native-launch.log').read_text(errors='replace')[-16000:], file=sys.stderr)
+            backend_log = Path.home() / 'Library' / 'Application Support' / 'LifeOS' / 'logs' / 'desktop.log'
+            if backend_log.exists():
+                print(backend_log.read_text(errors='replace')[-16000:], file=sys.stderr)
+            raise
         finally:
             if process is not None:
                 try:
@@ -104,10 +112,16 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--arch', choices=('arm64', 'x64'), required=True)
     parser.add_argument('--dist', type=Path, default=ROOT / 'desktop' / 'dist')
+    parser.add_argument('--native-app', type=Path, help='Run an early direct-executable smoke check before archives')
     args = parser.parse_args()
     assert platform.system() == 'Darwin'
     assert run('git', 'rev-parse', 'v0.5.2^{commit}', cwd=ROOT) == BASELINE
     subprocess.run(['git', 'merge-base', '--is-ancestor', BASELINE, 'HEAD'], cwd=ROOT, check=True)
+    if args.native_app:
+        with tempfile.TemporaryDirectory(prefix='lifeos-mac-preflight-') as folder:
+            inspect_app(args.native_app.resolve(), args.arch)
+            print(json.dumps(native_smoke(args.native_app.resolve(), Path(folder))))
+        return
     dist = args.dist.resolve()
     dmg = dist / f'LifeOS-0.5.2-mac-{args.arch}.dmg'
     archive = dist / f'LifeOS-0.5.2-mac-{args.arch}.zip'

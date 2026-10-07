@@ -47,9 +47,18 @@ jobs:
         env:
           LIFEOS_TEST_PYTHON: ${{ github.workspace }}/desktop/python-runtime/bin/python3
         run: npm test --prefix desktop
+      - name: Build native application
+        working-directory: desktop
+        run: npx electron-builder --mac --dir --${{ matrix.arch }} --config electron-builder.mac.cjs --publish never
+      - name: Verify direct executable before archiving
+        run: |
+          MAC_APP=$(find desktop/dist -maxdepth 2 -name LifeOS.app -type d -print -quit)
+          python3 scripts/verify_macos_package.py --arch '${{ matrix.arch }}' --native-app "$MAC_APP"
       - name: Build DMG and ZIP
         working-directory: desktop
-        run: npx electron-builder --mac dmg zip --${{ matrix.arch }} --config electron-builder.mac.cjs --publish never
+        run: |
+          MAC_APP=$(find dist -maxdepth 2 -name LifeOS.app -type d -print -quit)
+          npx electron-builder --mac dmg zip --${{ matrix.arch }} --config electron-builder.mac.cjs --config.compression=normal --prepackaged "$MAC_APP" --publish never
       - name: Verify final native installers
         run: python3 scripts/verify_macos_package.py --arch '${{ matrix.arch }}'
       - name: Prepare architecture metadata
