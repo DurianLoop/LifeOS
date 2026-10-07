@@ -133,7 +133,7 @@
     applyFontSize(readFontSize());
     const attic = document.querySelector('#atticOpen');
     if (attic) {
-      attic.textContent = '进入「其他」 →';
+      attic.textContent = window.lifeosNavCopy?.().attic || '阁楼';
       attic.onclick = () => { setPanelOpen?.(document.querySelector('#tweaksPanel'), document.querySelector('#allRail'), false); document.querySelector('#atticPanel')?.classList.remove('open'); openFeature('Other'); };
     }
     const mobileAttic = document.querySelector('#mobileAttic');

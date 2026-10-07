@@ -7,12 +7,13 @@
   try { groupOpen=localStorage.getItem(GROUP)!=='false'; } catch {}
   const get=id=>document.getElementById(id), text=()=>window.lifeosNavLanguage?.()==='en';
   const copy=(zh,en)=>text()?en:zh;
+  const label=(key,zh,en)=>window.lifeosNavCopy?.()[key]||copy(zh,en);
   function catalog() {
     return [...(window.lifeosNavItems?.()||[]).filter(item=>item.id!=='attic'),
-      {id:'overview',icon:'overview',label:copy('概览','Overview'),feature:'Attic'},
-      {id:'review',icon:'memory',label:copy('回看','Revisit'),feature:'Attic Review'},
-      {id:'organize',icon:'grow',label:copy('整理','Organize'),feature:'Attic Organize'},
-      {id:'observe',icon:'discover',label:copy('观察','Observe'),feature:'Attic Observe'}];
+      {id:'overview',icon:'overview',label:label('overview','概览','Overview'),feature:'Attic'},
+      {id:'review',icon:'memory',label:label('review','回看','Revisit'),feature:'Attic Review'},
+      {id:'organize',icon:'grow',label:label('organize','整理','Organize'),feature:'Attic Organize'},
+      {id:'observe',icon:'discover',label:label('observe','观察','Observe'),feature:'Attic Observe'}];
   }
   const current=item=>item.action==='write'?document.body.classList.contains('writerImmersive'):item.feature===STATE.feature&&!document.body.classList.contains('writerImmersive');
   function button(item,slot=false) {
@@ -29,7 +30,7 @@
     const scroll=rooms.scrollTop, oldFocus=document.activeElement?.dataset.sidebarItem;
     const atticActive=layout.attic.some(id=>current(registry.get(id)));
     rooms.classList.add('sidebarRooms');rooms.setAttribute('aria-label',copy('功能导航','Navigation'));
-    rooms.innerHTML=`${editing?`<p class="sidebarEditHint" id="sidebarEditHint">${copy('拖动排序，拖进阁楼收起','Drag to reorder or tuck into Attic')}</p>`:''}<div class="sidebarMain sidebarList" data-sidebar-zone="main">${layout.main.map((id,i)=>button(registry.get(id),i<4)).join('')}${editing&&!layout.main.length?`<span class="sidebarDropEmpty">${copy('拖到这里，放回侧栏','Drag here to restore')}</span>`:''}</div><div class="atticNavGroup"><button type="button" class="roomBtn atticNavToggle ${!groupOpen&&atticActive?'has-active':''}" data-nav-id="attic-group" id="sidebarAtticToggle" aria-expanded="${editing||groupOpen}" aria-controls="sidebarAtticList">${uiIcon('attic')}<span class="navText">${copy('阁楼','Attic')}</span><span class="atticNavChevron" aria-hidden="true">${editing||groupOpen?'⌄':'›'}</span></button><div id="sidebarAtticList" class="atticNavPages sidebarList" data-sidebar-zone="attic" ${editing||groupOpen?'':'hidden'}>${layout.attic.map(id=>button(registry.get(id))).join('')}${editing&&!layout.attic.length?`<span class="sidebarDropEmpty">${copy('拖到这里，收进阁楼','Drag here to tuck away')}</span>`:''}</div></div><button class="roomBtn mobileMoreButton" id="mobileMoreBtn" type="button" aria-haspopup="dialog" aria-controls="mobileMorePanel" aria-expanded="false">${uiIcon('more')}<span class="navText">${copy('更多','More')}</span></button>`;
+    rooms.innerHTML=`${editing?`<p class="sidebarEditHint" id="sidebarEditHint">${copy('拖动排序，拖进阁楼收起','Drag to reorder or tuck into Attic')}</p>`:''}<div class="sidebarMain sidebarList" data-sidebar-zone="main">${layout.main.map((id,i)=>button(registry.get(id),i<4)).join('')}${editing&&!layout.main.length?`<span class="sidebarDropEmpty">${copy('拖到这里，放回侧栏','Drag here to restore')}</span>`:''}</div><div class="atticNavGroup"><button type="button" class="roomBtn atticNavToggle ${!groupOpen&&atticActive?'has-active':''}" data-nav-id="attic-group" id="sidebarAtticToggle" aria-expanded="${editing||groupOpen}" aria-controls="sidebarAtticList">${uiIcon('attic')}<span class="navText">${esc(label('attic','阁楼','Attic'))}</span><span class="atticNavChevron" aria-hidden="true">${editing||groupOpen?'⌄':'›'}</span></button><div id="sidebarAtticList" class="atticNavPages sidebarList" data-sidebar-zone="attic" ${editing||groupOpen?'':'hidden'}>${layout.attic.map(id=>button(registry.get(id))).join('')}${editing&&!layout.attic.length?`<span class="sidebarDropEmpty">${copy('拖到这里，收进阁楼','Drag here to tuck away')}</span>`:''}</div></div><button class="roomBtn mobileMoreButton" id="mobileMoreBtn" type="button" aria-haspopup="dialog" aria-controls="mobileMorePanel" aria-expanded="false">${uiIcon('more')}<span class="navText">${esc(label('more','更多','More'))}</span></button>`;
     rooms.querySelectorAll('[data-sidebar-item]').forEach(node=>{
       node.onclick=event=>{if(suppressClick){event.preventDefault();return;}if(!editing)void navigate(registry.get(node.dataset.sidebarItem));};
       if(editing){node.addEventListener('keydown',keyMove);node.addEventListener('pointerdown',startPointer);}
@@ -59,7 +60,7 @@
     for(const node of [...panel.children])if(!node.classList.contains('sidebarMobileMenu'))node.style.display='none';
     panel.querySelector('.sidebarMobileMenu')?.remove();const menu=document.createElement('div');menu.className='sidebarMobileMenu';
     const rows=ids=>ids.map(id=>`<button type="button" data-mobile-sidebar="${esc(id)}">${uiIcon(registry.get(id).icon)}<span>${esc(registry.get(id).label)}</span></button>`).join('');
-    menu.innerHTML=`<div class="sidebarMobileList">${rows(layout.main)}</div><details ${groupOpen?'open':''}><summary>${copy('阁楼','Attic')}</summary><div class="sidebarMobileList">${rows(layout.attic)}</div></details><div class="sidebarMobileTools"><button type="button" data-mobile-tweaks>${copy('界面微调','Appearance')}</button><button type="button" data-mobile-settings>${copy('设置','Settings')}</button></div>`;
+    menu.innerHTML=`<div class="sidebarMobileList">${rows(layout.main)}</div><details ${groupOpen?'open':''}><summary>${esc(label('attic','阁楼','Attic'))}</summary><div class="sidebarMobileList">${rows(layout.attic)}</div></details><div class="sidebarMobileTools"><button type="button" data-mobile-tweaks>${copy('界面微调','Appearance')}</button><button type="button" data-mobile-settings>${copy('设置','Settings')}</button></div>`;
     panel.prepend(menu);menu.querySelectorAll('[data-mobile-sidebar]').forEach(node=>node.onclick=()=>navigate(registry.get(node.dataset.mobileSidebar)));
     menu.querySelector('[data-mobile-tweaks]').onclick=()=>{closeMobileMore();setPanelOpen(get('tweaksPanel'),get('allRail'),true);get('sidebarEdit')?.focus();};
     menu.querySelector('[data-mobile-settings]').onclick=()=>{closeMobileMore();openFeature('AI Settings');};

@@ -1,4 +1,8 @@
 /* Navigation editing uses the existing paper rail, not another settings screen. */
+:root{--sidebar-font:var(--type-sans);--sidebar-nav-size:var(--type-ui,15px)}
+html[data-copy-mode="poetic"]{--sidebar-font:var(--type-serif)}
+.sidebarRooms .roomBtn,.sidebarDragGhost,.sidebarMobileMenu button,.sidebarMobileMenu summary{font-family:var(--sidebar-font);font-size:calc(var(--sidebar-nav-size) * var(--life-font-scale,1))!important;line-height:var(--leading-ui,1.68)}
+.sidebarRooms .roomBtn .navText,.sidebarDragGhost .navText{font-family:inherit;font-size:inherit}
 .sidebarRooms{gap:0!important;min-height:0;overscroll-behavior:contain}
 .sidebarMain{display:flex;flex-direction:column;gap:3px}
 .sidebarRooms>.sidebarMain,.sidebarRooms>.atticNavGroup,.sidebarRooms>.sidebarEditHint{flex:none}
@@ -25,17 +29,19 @@ body.sidebarDraggingActive,body.sidebarDraggingActive *{cursor:grabbing!importan
 .sidebarEditing .sidebarDropEnd:after{content:'';display:block;height:2px;background:var(--dream-accent);margin:3px 7px 0 9px;pointer-events:none}
 .sidebarEditing .sidebarDropZone{background:color-mix(in srgb,var(--dream-accent) 5%,transparent)}
 .sidebarDropEmpty{display:block;min-height:54px;padding:17px 10px;border:1px dashed var(--line);font:10px/1.8 var(--type-sans);color:var(--muted);margin:6px 2px}
-.sidebarDragGhost{position:fixed;left:0;top:0;z-index:500;box-sizing:border-box;display:flex;align-items:center;gap:11px;padding:8px 9px;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:9px;box-shadow:0 14px 35px #14232b2b,0 3px 7px #14232b14;pointer-events:none;font:12px var(--type-sans);will-change:transform}
+.sidebarDragGhost{position:fixed;left:0;top:0;z-index:500;box-sizing:border-box;display:flex;align-items:center;gap:11px;padding:8px 9px;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:9px;box-shadow:0 14px 35px #14232b2b,0 3px 7px #14232b14;pointer-events:none;will-change:transform}
 .sidebarDragGhost .uiIcon{display:grid;width:20px;height:20px}.sidebarDragGhost .navText{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sidebarDragGhost .sidebarGrip{display:inline}
 .sidebarDropEmpty[hidden]{display:none}
 .sidebarMobileMenu{grid-column:1/-1;width:100%}.sidebarMobileList{display:grid;grid-template-columns:1fr 1fr}
 .sidebarMobileMenu details{border-top:1px solid var(--line);padding-top:8px;margin-top:8px}
-.sidebarMobileMenu summary{font:13px var(--type-serif);padding:8px;cursor:pointer;color:var(--muted)}
-.sidebarMobileMenu button{display:flex;align-items:center;gap:10px;min-width:0;font:13px var(--type-serif)}
+.sidebarMobileMenu summary{padding:8px;cursor:pointer;color:var(--muted)}
+.sidebarMobileMenu button{display:flex;align-items:center;gap:10px;min-width:0}
 .sidebarMobileMenu .uiIcon{width:19px;height:19px}.sidebarMobileTools{display:flex;justify-content:space-between;border-top:1px solid var(--line);margin-top:9px;padding:5px 9px 0}
-.sidebarMobileTools button{font:11px var(--type-sans);color:var(--muted)}
+.sidebarMobileTools button{color:var(--muted)}
 body.writerImmersive .sidebarEditBar{display:none}
 @media(max-width:880px){
+  body{--sidebar-nav-size:max(11px,calc(var(--type-ui,15px) - 3px))}
+  body.sidebarEditing{--sidebar-nav-size:var(--type-ui,15px)}
   .sidebarMain{display:contents}.sidebarEditBar{display:none}
   .rail .sidebarRooms>.sidebarMain>.roomBtn{display:none!important}
   .rail .sidebarRooms>.sidebarMain>.sidebarMobileSlot{display:flex!important}
@@ -49,6 +55,5 @@ body.writerImmersive .sidebarEditBar{display:none}
   body.sidebarEditing .sidebarGrip,body.sidebarEditing .atticNavChevron{display:inline}
   body.sidebarEditing .atticNavGroup{display:block}
   body.sidebarEditing .sidebarEditBar{display:block}
-  body.sidebarEditing .sidebarRooms .roomBtn .navText{font-size:13px}
 }
 @media(prefers-reduced-motion:reduce){.sidebarEditing .atticNavGroup{transition:none}}

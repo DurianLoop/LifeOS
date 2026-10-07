@@ -1,6 +1,15 @@
-# LifeOS v0.5.1
+# LifeOS v0.5.2
 
 LifeOS is a local-first journal and personal memory workspace, with an editable writing desk, journal book, and desktop companion.
+
+## New in v0.5.2
+
+- **Memory draw:** revisit an original journal, a paired echo or a source-backed thread. Avoid recent draws, open newly saved pages immediately and return to the chosen result.
+- **Lasting colour:** opening a drawn page adds a local multicolour bookmark to the book and its index. It survives restarts and can be removed without editing the journal.
+- **Poetic navigation:** poetry and on-this-day use 拾诗 and 旧笺 in poetic mode, with matching sidebar fonts and sizes. Ambient playback has a smaller button and a flowing fine slider.
+- **A wider companion room:** use the available window width, with consistent margins and aligned previews on narrow windows.
+
+[Release notes](docs/RELEASE_v0.5.2.md) · [v0.5.2 release](https://github.com/DurianLoop/LifeOS/releases/tag/v0.5.2)
 
 ## New in v0.5.1
 
@@ -49,7 +58,7 @@ LifeOS is a local-first journal and personal memory workspace, with an editable 
 
 ## Windows download
 
-Download [LifeOS-Setup-0.5.1.exe](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.1/LifeOS-Setup-0.5.1.exe) from the [v0.5.1 release](https://github.com/DurianLoop/LifeOS/releases/tag/v0.5.1). Python is included. This community build is unsigned.
+Download [LifeOS-Setup-0.5.2.exe](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-Setup-0.5.2.exe) from the [v0.5.2 release](https://github.com/DurianLoop/LifeOS/releases/tag/v0.5.2). Python is included. This community build is unsigned.
 
 Installed app data is stored under `%APPDATA%/LifeOS/workspace/`; startup diagnostics are under `%APPDATA%/LifeOS/logs/desktop.log`. Back up the workspace folder to preserve journals, revisions and settings. Source runs continue to use the repository folder.
 

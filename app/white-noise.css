@@ -33,9 +33,9 @@
 .whiteNoiseTransport button {
   display: grid;
   place-items: center;
-  flex: 0 0 42px;
-  width: 42px;
-  height: 42px;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
   min-width: 0;
   min-height: 0;
   padding: 0;
@@ -49,8 +49,8 @@
 
 .whiteNoiseTransport button svg {
   display: block;
-  width: 22px;
-  height: 22px;
+  width: 16px;
+  height: 16px;
 }
 
 .whiteNoiseTransport button:hover,
@@ -113,27 +113,25 @@
 .whiteNoiseGlow::after {
   content: "";
   position: absolute;
-  inset: -8px -18px;
+  inset: 0 -96px;
   background-image:
-    radial-gradient(circle at 9% 66%, #e9e5ff 0 1px, transparent 1.8px),
-    radial-gradient(circle at 18% 31%, #e9e5ff 0 1.1px, transparent 2px),
-    radial-gradient(circle at 33% 64%, #eee8ff 0 1px, transparent 1.7px),
-    radial-gradient(circle at 48% 33%, #f8f5ff 0 1.3px, transparent 2.1px),
-    radial-gradient(circle at 67% 62%, #ece5ff 0 1px, transparent 1.8px),
-    radial-gradient(circle at 84% 30%, #f4edff 0 1.2px, transparent 2px),
-    radial-gradient(circle at 92% 68%, #e6dcff 0 1px, transparent 1.8px);
-  opacity: .66;
-  animation: white-noise-drift 11s ease-in-out infinite alternate;
+    radial-gradient(ellipse 15px 6px at 24px 50%, rgba(237, 226, 255, .42), transparent),
+    radial-gradient(circle at 18px 65%, #f3efff 0 1.2px, transparent 2px),
+    radial-gradient(circle at 52px 30%, #f8f5ff 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at 80px 66%, #e9e2ff 0 1px, transparent 1.8px);
+  background-size: 96px 100%;
+  background-repeat: repeat-x;
+  opacity: .8;
+  animation: white-noise-drift 3s linear infinite;
   animation-play-state: paused;
 }
 
 .whiteNoiseGlow::after {
-  inset: -8px -28px;
-  opacity: .26;
+  inset: -4px -96px;
+  background-image: radial-gradient(ellipse 25px 8px at 48px 50%, rgba(243, 222, 255, .55), transparent);
+  opacity: .48;
   filter: blur(2px);
-  transform: translate(7px, -2px);
-  animation-duration: 17s;
-  animation-direction: alternate-reverse;
+  animation-duration: 5s;
 }
 
 .whiteNoiseSlider[data-playing="true"] .whiteNoiseGlow::before,
@@ -247,8 +245,8 @@ html[data-motion="off"] .whiteNoiseGlow::after {
 }
 
 @keyframes white-noise-drift {
-  from { transform: translate(-8px, 1px); }
-  to { transform: translate(8px, -2px); }
+  from { transform: translate3d(-96px, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
 }
 
 @keyframes white-noise-turn {
@@ -271,5 +269,13 @@ html[data-motion="off"] .whiteNoiseGlow::after {
 @media (max-width: 760px) {
   .tweaksPanel {
     max-height: calc(100dvh - 156px);
+  }
+}
+
+@media (pointer: coarse) {
+  .whiteNoiseTransport button {
+    flex-basis: 44px;
+    width: 44px;
+    height: 44px;
   }
 }

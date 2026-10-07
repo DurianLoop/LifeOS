@@ -4,7 +4,8 @@
   const PAGES = [['Attic', '概览', 'overview'], ['Attic Review', '回看', 'memory'],
     ['Attic Organize', '整理', 'grow'], ['Attic Observe', '观察', 'discover']];
   const NAMES = new Set(PAGES.map(p => p[0]));
-  const TITLES = Object.fromEntries(PAGES.map(p => [p[0], p[1]]));
+  const pageTitle = name => window.lifeosNavLabel?.(name) || PAGES.find(p=>p[0]===name)?.[1] || name;
+  const groupTitle = () => window.lifeosNavCopy?.().attic || '阁楼';
   const state = Object.fromEntries(PAGES.map(([name]) => [name, {scroll: 0, year: '', topic: '', kind: '', month: '', offset: 0}]));
   let data = null, activePage = null, renderSequence = 0, drawerSequence = 0, drawerBack = null, resetScroll = false;
   let groupOpen = true;
@@ -29,7 +30,7 @@
   ROOMS.ATTIC = {no: '16', desc: '', features: [...NAMES]};
 
   function header(name, sections) {
-    return `<header class="atticHeader"><h1>${name === 'Attic' ? '阁楼' : TITLES[name]}</h1><div class="atticHeaderTools"><nav class="atticIndex" aria-label="页内目录">${sections.map(([id,label],i) => `<button type="button" data-attic-jump="${id}" class="${i ? '' : 'active'}">${label}</button>`).join('')}</nav><button type="button" class="atticAll" data-attic-tools>工具索引</button></div></header>`;
+    return `<header class="atticHeader"><h1>${esc(pageTitle(name))}</h1><div class="atticHeaderTools"><nav class="atticIndex" aria-label="页内目录">${sections.map(([id,label],i) => `<button type="button" data-attic-jump="${id}" class="${i ? '' : 'active'}">${label}</button>`).join('')}</nav><button type="button" class="atticAll" data-attic-tools>工具索引</button></div></header>`;
   }
   function wrap(name, content, sections) {
     return `<section class="atticArchive"><div class="atticLab" data-attic-page="${name}">${header(name, sections)}${content}<footer class="atticEnd"><span>${toolCatalog().length} 项工具</span><button type="button" class="atticAction" data-attic-tools>浏览全部工具</button></footer></div></section>`;
@@ -215,11 +216,11 @@
   function rail() {
     const old=document.querySelector('#rooms [data-nav-id="attic"]');if(!old)return;
     const container=document.createElement('div');container.className='atticNavGroup';
-    container.innerHTML=`<button type="button" class="roomBtn atticNavToggle" data-nav-id="attic-group" aria-expanded="${groupOpen}">${uiIcon('attic')}<span class="navText">阁楼</span><span class="atticNavChevron" aria-hidden="true">${groupOpen?'⌄':'›'}</span></button><div class="atticNavPages" ${groupOpen?'':'hidden'}>${PAGES.map(([name,label,icon])=>`<button type="button" class="roomBtn ${STATE.feature===name&&!document.body.classList.contains('writerImmersive')?'active':''}" data-attic-route="${name}" aria-current="${STATE.feature===name?'page':'false'}">${uiIcon(icon)}<span class="navText">${label}</span></button>`).join('')}</div>`;
+    container.innerHTML=`<button type="button" class="roomBtn atticNavToggle" data-nav-id="attic-group" aria-expanded="${groupOpen}">${uiIcon('attic')}<span class="navText">${esc(groupTitle())}</span><span class="atticNavChevron" aria-hidden="true">${groupOpen?'⌄':'›'}</span></button><div class="atticNavPages" ${groupOpen?'':'hidden'}>${PAGES.map(([name,,icon])=>`<button type="button" class="roomBtn ${STATE.feature===name&&!document.body.classList.contains('writerImmersive')?'active':''}" data-attic-route="${name}" aria-current="${STATE.feature===name?'page':'false'}">${uiIcon(icon)}<span class="navText">${esc(pageTitle(name))}</span></button>`).join('')}</div>`;
     old.replaceWith(container);container.querySelector('.atticNavToggle').onclick=()=>{groupOpen=!groupOpen;buildRail();};
-    if(get('atticOpen'))get('atticOpen').textContent='打开阁楼';
-    if(get('mobileAttic'))get('mobileAttic').textContent='阁楼';
-    if(!get('atticMobilePages')&&get('mobileMorePanel')){const mobile=document.createElement('div');mobile.id='atticMobilePages';mobile.innerHTML=PAGES.map(([name,label])=>`<button type="button" data-attic-route="${name}">${label}</button>`).join('');get('mobileMorePanel').append(mobile);}
+    if(get('atticOpen'))get('atticOpen').textContent=groupTitle();
+    if(get('mobileAttic'))get('mobileAttic').textContent=groupTitle();
+    if(get('mobileMorePanel')){let mobile=get('atticMobilePages');if(!mobile){mobile=document.createElement('div');mobile.id='atticMobilePages';get('mobileMorePanel').append(mobile);}mobile.innerHTML=PAGES.map(([name])=>`<button type="button" data-attic-route="${name}">${esc(pageTitle(name))}</button>`).join('');}
   }
   function install() {
     if(!window.lifeosV01Ready)return;

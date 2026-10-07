@@ -3,6 +3,7 @@
   'use strict';
 
   const NAME = 'Daily Poetry';
+  const pageLabel = () => window.lifeosNavLabel?.(NAME) || window.lifeosNavCopy?.().poetry || '拾诗';
   const page = {view: 'today', selectedDate: null};
   const STYLES = {qingjian: '清简文言', biji: '笔记小品', shizhuan: '史传纪事', chidu: '尺牍书简'};
   const STRENGTHS = {light: '浅化 · 易读', medium: '中度 · 文言', deep: '凝练 · 古雅'};
@@ -16,7 +17,7 @@
   if (!FEATURES.some(item => item.name === NAME)) FEATURES.push({name: NAME, room: 'NOW', desc: '从今天的日记里遇见一首诗', no: FEATURES.length + 1});
   if (ROOMS.NOW?.features) ROOMS.NOW.features.push(NAME);
   FRONT_FEATURES.add(NAME);
-  DREAM_META[NAME] = ['今日一诗', ''];
+  DREAM_META[NAME] = [pageLabel(), ''];
 
   const poemTitle = record => `${record.poem.author} ·《${record.poem.title}》`;
   const currentCard = record => {
@@ -44,7 +45,7 @@
     } else if (state.has_journal) {
       title = state.generating ? '正在为今天寻一首诗…' : '今天的日记，等着一首诗';
       note = state.generating ? '生成完成后会自动出现在这里。' : '点击后将当天日记发给已配置的 AI，由它在未读的诗里选一首。';
-      action = state.generating ? '' : '<button type="button" id="poetryGenerate">生成今日一诗</button>';
+      action = state.generating ? '' : '<button type="button" id="poetryGenerate">为今日寻诗</button>';
     }
     return `<section class="poetryEmpty"><div class="poetryEmptyGlyph" aria-hidden="true">〝</div><h2>${esc(title)}</h2>${note ? `<p>${esc(note)}</p>` : ''}${action}${state.last_error ? `<small role="status">${esc(state.last_error)}</small>` : ''}</section>`;
   };
@@ -82,8 +83,8 @@
     const selected = history.find(x => x.journal_date === page.selectedDate);
     const settings = page.view === 'settings' ? await settingsPanel(state) : '';
     return pageWrap(`<section class="poetryPage">
-      <header class="poetryHeader"><div><h1>今日一诗</h1></div><div class="poetryHeaderDate"><b>${esc(state.date.slice(8))}</b><span>${esc(state.date.slice(0,7))}</span></div></header>
-      <nav class="poetryTabs" aria-label="今日一诗页面"><button type="button" data-poetry-view="today" ${page.view === 'today' ? 'aria-current="page"' : ''}>今日</button><button type="button" data-poetry-view="library" ${page.view === 'library' ? 'aria-current="page"' : ''}>诗词库 <small>${history.length}</small></button><button type="button" data-poetry-view="settings" ${page.view === 'settings' ? 'aria-current="page"' : ''}>诗文设置</button></nav>
+      <header class="poetryHeader"><div><h1>${esc(pageLabel())}</h1></div><div class="poetryHeaderDate"><b>${esc(state.date.slice(8))}</b><span>${esc(state.date.slice(0,7))}</span></div></header>
+      <nav class="poetryTabs" aria-label="${esc(pageLabel())}"><button type="button" data-poetry-view="today" ${page.view === 'today' ? 'aria-current="page"' : ''}>今日</button><button type="button" data-poetry-view="library" ${page.view === 'library' ? 'aria-current="page"' : ''}>诗词库 <small>${history.length}</small></button><button type="button" data-poetry-view="settings" ${page.view === 'settings' ? 'aria-current="page"' : ''}>诗文设置</button></nav>
       ${page.view === 'settings' ? settings : page.view === 'today' ? `<div class="poetryTodayLayout">${state.current ? currentCard(state.current) : emptyCard(state)}<aside class="poetrySideNote"><label class="poetryAuto"><input type="checkbox" id="poetryAuto" ${state.auto_enabled ? 'checked' : ''}><span><b>保存日记后自动荐诗</b><small>开启后，当天首次保存日记会发送当天正文给已配置的 AI。</small></span></label><small class="poetryRemain">诗词库还有 ${state.remaining} 首未曾相遇</small></aside></div>` : `<div class="poetryLibrary">${history.length ? `<div class="poetryLibraryList" aria-label="往日所得">${history.map(r => `<button type="button" data-poetry-day="${esc(r.journal_date)}" class="${r.journal_date === page.selectedDate ? 'active' : ''}"><time>${esc(r.journal_date)}</time><span>${esc(r.poem?.quote || '诗词资料暂缺')}</span><small>${esc(r.poem ? poemTitle(r) : '')}</small></button>`).join('')}</div>${detail(selected)}` : `<div class="poetryLibraryEmpty"><p>诗词库还是空的。今日遇见的诗，会自动留在这里。</p><button type="button" data-poetry-view="today">回到今日</button></div>`}</div>`}
     </section>`);
   }
@@ -97,7 +98,7 @@
       const full = document.querySelector('#poetryReadFull');
       if (full) full.onclick = () => {page.selectedDate = localDateISO(); page.view = 'library'; render()};
       const generateButton = document.querySelector('#poetryGenerate');
-      if (generateButton) generateButton.onclick = async () => {generateButton.disabled = true; generateButton.textContent = '正在寻诗…'; try {await post('/api/poetry/generate', {date: localDateISO()}); await render()} catch (error) {toast(error.message); generateButton.disabled = false; generateButton.textContent = '生成今日一诗'}};
+      if (generateButton) generateButton.onclick = async () => {generateButton.disabled = true; generateButton.textContent = '正在寻诗…'; try {await post('/api/poetry/generate', {date: localDateISO()}); await render()} catch (error) {toast(error.message); generateButton.disabled = false; generateButton.textContent = '为今日寻诗'}};
       const auto = document.querySelector('#poetryAuto');
       if (auto) auto.onchange = async () => {auto.disabled = true; try {await post('/api/poetry/settings', {auto_enabled: auto.checked}); toast(auto.checked ? '以后保存当天日记时会自动荐诗' : '已关闭自动荐诗')} catch (error) {auto.checked = !auto.checked; toast(error.message)} finally {auto.disabled = false}};
       const language = document.querySelector('#poetryLanguagePreset');
@@ -141,7 +142,7 @@
       if (!target.isConnected || (!state.current && !state.has_journal)) return;
       const button = document.createElement('button');
       button.type = 'button'; button.className = 'poetryHomeLink';
-      button.textContent = state.current ? '今日一诗 · 已得' : '今日一诗 · 待展';
+      button.textContent = state.current ? `${pageLabel()} · 已得` : `${pageLabel()} · 待展`;
       button.onclick = () => {page.view = 'today'; openFeature(NAME)};
       target.append(button);
     } catch (_) { /* Home remains usable if the local poetry service is unavailable. */ }

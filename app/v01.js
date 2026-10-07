@@ -16,7 +16,7 @@
   };
   const CLEAR = {
     zh: {
-      nav:{today:'今天',write:'写日记',journal:'日记',search:'搜索',poetry:'今日一诗',memory:'旧日来信',pet:'灵犀',more:'更多'},
+      nav:{today:'今天',write:'写日记',journal:'日记',search:'搜索',poetry:'今日一诗',memory:'旧日来信',bottle:'漂流瓶',pet:'灵犀',attic:'阁楼',overview:'概览',review:'回看',organize:'整理',observe:'观察',more:'更多'},
       top:{write:'写下来',search:'搜日记',ask:'问过去',tune:'微调'},
       home:{titleA:'把今天',titleB:'写下来',lead:'先把写、存、找、重读做得可靠。分析与 AI 都退到第二层，需要时再出现。',write:'写今天',continue:'继续写',journal:'翻日记',search:'搜一句话',memory:'看看旧日'},
       journey:[['01 · WRITE','写','空白页先出现，结构化模板以后再选。'],['02 · FIND','找','从一句话、一个人、一个地方回到原页。'],['03 · REREAD','重读','按日期翻阅，所有解释都能回到正文。'],['04 · RESURFACE','重逢','同一天的旧页偶尔回来，不制造打卡压力。']],
@@ -25,7 +25,7 @@
       themeLabel:'视觉世界', languageLabel:'语言与文案', advanced:'其他 · 阁楼'
     },
     en: {
-      nav:{today:'Today',write:'Write',journal:'Journal',search:'Search',poetry:'Daily poem',memory:'On this day',pet:'Companion',more:'More'},
+      nav:{today:'Today',write:'Write',journal:'Journal',search:'Search',poetry:'Daily poem',memory:'On this day',bottle:'Drift Bottle',pet:'Companion',attic:'Attic',overview:'Overview',review:'Revisit',organize:'Organize',observe:'Observe',more:'More'},
       top:{write:'Write',search:'Search journals',ask:'Ask the past',tune:'Tune'},
       home:{titleA:'Write down',titleB:'today',lead:'Make writing, saving, finding, and rereading reliable first. Analysis and AI stay in the second layer until you ask for them.',write:'Write today',continue:'Continue writing',journal:'Open journal',search:'Find a phrase',memory:'On this day'},
       journey:[['01 · WRITE','Write','Start from a blank page. Templates stay optional.'],['02 · FIND','Find','Return to the source from a phrase, person, place, or year.'],['03 · REREAD','Reread','Browse by date. Every interpretation can return to the original page.'],['04 · RESURFACE','Resurface','Old pages can come back gently, without streak pressure.']],
@@ -49,19 +49,20 @@
   const deckSurface = key => (state.deck?.core_surfaces || []).find(x => x.key === key) || null;
   const t = () => {
     const c = JSON.parse(JSON.stringify(baseCopy()));
-    if (state.preset === 'poetic' && state.deck) {
-      const home = deckSurface('home'), writer = deckSurface('writer'), journal = deckSurface('journal'), search = deckSurface('search'), on = deckSurface('on_this_day'), ask = deckSurface('ask');
-      c.nav.today = home?.display_name || '今朝'; c.nav.write = writer?.display_name || '落笔'; c.nav.journal = journal?.display_name || '流年'; c.nav.search = search?.display_name || '寻迹'; c.nav.poetry='今日一诗'; c.nav.memory = on?.display_name || '旧信';
-      c.top.write = writer?.display_name || '落笔'; c.top.search = search?.display_name || '寻迹'; c.top.ask = ask?.display_name || '近思'; c.home.titleA='把今日写下，'; c.home.titleB='让来日重逢'; c.home.lead=home?.subtitle || state.deck.brand?.body || c.home.lead;
-      c.home.write = home?.primary || '落笔 · 写今天'; c.home.journal = '翻一页 · 流年'; c.home.search='寻迹 · 找一句话'; c.home.memory='旧日来信 · 昔日今朝';
+    if (state.preset === 'poetic') {
+      const home = deckSurface('home'), writer = deckSurface('writer'), journal = deckSurface('journal'), search = deckSurface('search'), poetry = deckSurface('poetry'), on = deckSurface('on_this_day'), ask = deckSurface('ask');
+      c.nav.today = home?.display_name || '今朝'; c.nav.write = writer?.display_name || '落笔'; c.nav.journal = journal?.display_name || '流年'; c.nav.search = search?.display_name || '寻迹'; c.nav.poetry = poetry?.display_name || '拾诗'; c.nav.memory = on?.display_name || '旧笺';
+      Object.assign(c.nav,{overview:'览卷',review:'回眸',organize:'拾遗',observe:'观澜',more:'余章'});
+      c.top.write = writer?.display_name || '落笔'; c.top.search = search?.display_name || '寻迹'; c.top.ask = ask?.display_name || '近思'; c.home.titleA='把今日写下，'; c.home.titleB='让来日重逢'; c.home.lead=home?.subtitle || state.deck?.brand?.body || c.home.lead;
+      c.home.write = home?.primary || '落笔 · 写今天'; c.home.journal = '翻一页 · 流年'; c.home.search='寻迹 · 找一句话'; c.home.memory=c.nav.memory;
       c.writer.newTitle=writer?.display_name || '落笔'; c.writer.editTitle='续写这一页'; c.writer.note=writer?.subtitle || c.writer.note; c.writer.mainPlaceholder=writer?.placeholder || c.writer.mainPlaceholder; c.writer.saveNew=writer?.primary || '收笔 · 保存'; c.writer.saveEdit=writer?.primary || '收笔 · 保存';
       c.writer.draft=writer?.states?.autosaved || c.writer.draft; c.writer.saving=writer?.states?.saving || c.writer.saving; c.writer.saved=writer?.states?.saved || c.writer.saved; c.writer.failed=writer?.states?.failed || c.writer.failed; c.writer.offline=writer?.states?.offline || c.writer.offline;
       c.search.title=(search?.subtitle || c.search.title).replace(/[。.]$/, ''); c.search.placeholder=search?.placeholder || c.search.placeholder; c.search.go=search?.primary || '去寻'; c.search.none=search?.empty || c.search.none;
-      c.journey=[['01 · 落笔','写','今日这一页，从空白开始。'],['02 · 寻迹','找','从一句话，寻回一段已经远去的日子。'],['03 · 展卷','重读','旧页重开，所有路最终回到原文。'],['04 · 旧信','重逢','同一个今日，隔着不同年岁重新相逢。']];
+      c.journey=[['01 · 落笔','写','今日这一页，从空白开始。'],['02 · 寻迹','找','从一句话，寻回一段已经远去的日子。'],['03 · 展卷','重读','旧页重开，所有路最终回到原文。'],[`04 · ${c.nav.memory}`,'重逢','同一个今日，隔着不同年岁重新相逢。']];
       c.themeLabel='视觉世界';c.languageLabel='语言与文案';c.advanced='其他 · 阁楼';
     }
     if (state.preset === 'bilingual') {
-      c.nav={today:'今天 / Today',write:'写日记 / Write',journal:'日记 / Journal',search:'搜索 / Search',poetry:'今日一诗 / Poem',memory:'旧日 / On this day',pet:'灵犀 / Companion',more:'更多 / More'};
+      c.nav={today:'今天 / Today',write:'写日记 / Write',journal:'日记 / Journal',search:'搜索 / Search',poetry:'今日一诗 / Poem',memory:'旧日 / On this day',bottle:'漂流瓶 / Bottle',pet:'灵犀 / Companion',attic:'阁楼 / Attic',overview:'概览 / Overview',review:'回看 / Revisit',organize:'整理 / Organize',observe:'观察 / Observe',more:'更多 / More'};
       c.top={write:'写下来 / Write',search:'搜日记 / Search',ask:'问过去 / Ask',tune:'微调 / Tune'};
       c.themeLabel='视觉世界 / Theme';c.languageLabel='语言与文案 / Language';c.advanced='其他 / Attic';
     }
@@ -126,6 +127,7 @@
 
   function applyCoreCopy(){
     const c=t(); document.documentElement.lang=PRESETS[state.preset].locale;
+    document.documentElement.dataset.copyMode=PRESETS[state.preset].copyMode;
     const dockTitle=$('#productDockTitle');if(dockTitle)dockTitle.textContent=state.preset==='en'?'Life archive':'生活档案';
     const tabLabels={writer:state.preset==='en'?'Write':'写日记',import:state.preset==='en'?'Import':'导入',export:state.preset==='en'?'Export':'导出',versions:state.preset==='en'?'Revisions':'版本',backup:state.preset==='en'?'Backup':'备份',privacy:state.preset==='en'?'Privacy / AI':'隐私 / AI',sync:state.preset==='en'?'Sync':'同步',inbox:state.preset==='en'?'Inbox':'收件箱',platform:state.preset==='en'?'Platform':'P2 / 多端',memorial:state.preset==='en'?'Memorial / QR':'纪念页 / 二维码'};
     $$('[data-producttab]').forEach(b=>{const n=b.querySelector('span')?.outerHTML||'';b.innerHTML=n+esc(tabLabels[b.dataset.producttab]||b.textContent)});
@@ -157,13 +159,16 @@
       {id:'search',icon:'search',label:c.nav.search,feature:'Universal Search'},
       {id:'poetry',icon:'poetry',label:c.nav.poetry,feature:'Daily Poetry'},
       {id:'memory',icon:'memory',label:c.nav.memory,feature:'On This Day'},
-      {id:'bottle',icon:'bottle',label:state.preset==='en'?'Drift Bottle':state.preset==='bilingual'?'漂流瓶 / Bottle':'漂流瓶',feature:'Time Capsule'},
+      {id:'bottle',icon:'bottle',label:c.nav.bottle,feature:'Time Capsule'},
       {id:'pet',icon:'cat',label:c.nav.pet,feature:'Pet Shelf',pet:true},
-      {id:'attic',icon:'attic',label:c.advanced.split(' · ')[0],action:'attic'}
+      {id:'attic',icon:'attic',label:c.nav.attic,action:'attic'}
     ];
   }
   window.lifeosNavItems=coreNavItems;
   window.lifeosNavLanguage=()=>state.preset;
+  window.lifeosNavCopy=()=>t().nav;
+  const NAV_FEATURES={Home:'today',Journal:'journal','Universal Search':'search','Daily Poetry':'poetry','On This Day':'memory','Time Capsule':'bottle','Pet Shelf':'pet',Attic:'overview','Attic Review':'review','Attic Organize':'organize','Attic Observe':'observe'};
+  window.lifeosNavLabel=name=>t().nav[NAV_FEATURES[name]];
   function v01BuildRail(){
     const c=t(),el=$('#rooms');if(!el)return;
     const writerOpen=document.body.classList.contains('writerImmersive'),items=coreNavItems();
@@ -230,6 +235,7 @@
 
 
   function installBindings(){
+    const previousMeta=dreamMeta;dreamMeta=function(name){const result=previousMeta(name),label=window.lifeosNavLabel(name);return label?{...result,title:label}:result;};
     const oldRender=render; render=async function(){await oldRender();const journeyWrite=$('#homeWriteJourney');if(journeyWrite)journeyWrite.onclick=()=>openProductDock('writer',{date:localDateISO()});applyCoreCopy();};
     buildRail=v01BuildRail;
     renderProductWriter=renderV01Writer;

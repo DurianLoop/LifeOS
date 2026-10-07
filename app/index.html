@@ -786,15 +786,15 @@ html[data-theme="pixel"] .sectionRail button:after,html[data-theme="hotel"] .sec
   <link rel="stylesheet" href="/v01.css?v=4">
   <link rel="stylesheet" href="/v012.css?v=5">
   <link rel="stylesheet" href="/v012-writer-desk.css?v=4">
-  <link rel="stylesheet" href="/v012-pet.css?v=7">
-  <link rel="stylesheet" href="/v012-pet-preview.css?v=2">
+  <link rel="stylesheet" href="/v012-pet.css?v=8">
+  <link rel="stylesheet" href="/v012-pet-preview.css?v=3">
   <link rel="stylesheet" href="/v012-pet-float.css?v=8">
   <link rel="stylesheet" href="/vivi-pet.css?v=1">
   <link rel="stylesheet" href="/lifeos-shell.css?v=6">
   <link rel="stylesheet" href="/v03-rebuild.css?v=11">
   <link rel="stylesheet" href="/poetry.css?v=2">
   <link rel="stylesheet" href="/memorial.css?v=1">
-  <link rel="stylesheet" href="/white-noise.css?v=3">
+  <link rel="stylesheet" href="/white-noise.css?v=4">
   <link rel="stylesheet" href="/ai-settings.css?v=3">
   <link rel="stylesheet" href="/writer-layout.css?v=2">
   <link rel="stylesheet" href="/writer-calendar.css?v=1">
@@ -805,7 +805,8 @@ html[data-theme="pixel"] .sectionRail button:after,html[data-theme="hotel"] .sec
   <script src="/workspace-storage.js?v=1"></script>
   <script src="/charts.js?v=1"></script>
 <link rel="stylesheet" href="/bottles.css?v=1">
-<link rel="stylesheet" href="/sidebar.css?v=1">
+<link rel="stylesheet" href="/sidebar.css?v=2">
+<link rel="stylesheet" href="/memory-draw.css?v=2">
 <link rel="stylesheet" href="/welcome.css?v=1">
 </head>
 <body>
@@ -882,7 +883,7 @@ html[data-theme="pixel"] .sectionRail button:after,html[data-theme="hotel"] .sec
 <div class="mobileMorePanel" id="mobileMorePanel" role="dialog" aria-modal="false" aria-label="更多导航" aria-hidden="true" inert>
   <button type="button" id="mobileWriter"><span data-ui-icon="journal"></span><b>写下这一刻</b><small>新建或继续今天的日记</small></button>
   <button type="button" data-mobilefeature="AI Settings"><span data-ui-icon="settings"></span><b>AI 设置</b><small>模型连接与功能开关</small></button>
-  <button type="button" data-mobilefeature="Daily Poetry"><span data-ui-icon="poetry"></span><b>今日一诗</b><small>从今天的日记里遇见一句诗</small></button>
+  <button type="button" data-mobilefeature="Daily Poetry"><span data-ui-icon="poetry"></span><b>拾诗</b><small>从今天的日记里遇见一句诗</small></button>
   <button type="button" data-mobilefeature="Projects"><span data-ui-icon="grow"></span><b>正在生长</b><small>想法、项目与技能</small></button>
   <button type="button" data-mobilefeature="Memory Graph"><span data-ui-icon="world"></span><b>我的世界</b><small>人物、地点与星群</small></button>
   <button type="button" data-mobilefeature="Past Me"><span data-ui-icon="magic"></span><b>时间魔法</b><small>过去、未来与胶囊</small></button>
@@ -1042,7 +1043,7 @@ const DREAM_META={
  "First Proofs":["第一次留下痕迹","最早被日记记录下来的明确产出。"],
  "Evidence Chain Builder":["故事的证据线","每一个故事都必须能够走回原文。"],
  "文言化":["把今天写成旧时光","把现代汉语转换成文言文。"],
- "Daily Poetry":["今日一诗","一句诗，照见今天。"]
+ "Daily Poetry":["拾诗","一句诗，照见今天。"]
 };
 const USER_NAV=[
  {id:"today",icon:"☀",label:"此刻",feature:"Home"},
@@ -1918,7 +1919,7 @@ render();
 // implementation and to keep re-renders (preview / commit / rollback) bound.
 renderProductImport=async function(){const job=PRODUCT.importJob,foot=job?`<div class="writerFoot"><span class="writerDraft">Job ${esc(job.job_id)} · 可随时清除这次测试。</span><div class="actions"><button class="productAction" id="importRollback" type="button" ${job.status==='committed'?'':'disabled'}>回滚这次导入</button><button class="productAction" id="importClear" type="button">${job.status==='committed'?'清除并恢复':'清除这次导入'}</button><button class="productAction primary" id="importCommit" type="button" ${job.status&&job.status!=='preview'?'disabled':''}>确认导入</button></div></div>`:'';$('#productPanel').innerHTML=`<div class="productPanelInner">${productIntro('IMPORT · PREVIEW FIRST','导入日记','Markdown、TXT、HTML、CSV、通用 JSON、Day One JSON 与包含这些文件的 ZIP 都会先经过 Detect → Normalize → Preview。提交前自动备份。')}<div class="fileDrop" role="button" tabindex="0" aria-label="选择或拖入日记文件"><div><b>选择日记文件 / ZIP</b><p class="small">原始导入包会保留在 <span class="mono">.lifeos/imports</span>，便于以后追溯。</p><input id="importFiles" type="file" multiple accept=".md,.markdown,.txt,.html,.htm,.csv,.json,.zip,text/*,application/json,application/zip"><div class="actions" style="justify-content:center;margin-top:14px"><button class="productAction primary" id="importPreview" type="button">先看导入计划</button></div></div></div><div id="importResult">${job?importJobHtml(job):''}</div>${foot}</div>`;enhanceImportInteraction();$('#importPreview').onclick=async()=>{const files=[...$('#importFiles').files];if(!files.length)return toast('先选择一些文件');const button=$('#importPreview');button.disabled=true;button.textContent='正在阅读导入包…';try{PRODUCT.importFiles=files;PRODUCT.importJob=await post('/api/import/preview',{source_name:'LifeOS browser import',files:await readImportFiles(files)});await renderProductImport();lifeEvent('import-preview',{count:PRODUCT.importJob.stats?.total||0})}catch(error){toast(error.message)}finally{button.disabled=false}};if($('#importCommit'))$('#importCommit').onclick=async()=>{const overrides={};$$('[data-import-action]').forEach(item=>{overrides[item.dataset.importAction]={action:item.value}});$$('[data-import-date]').forEach(item=>{overrides[item.dataset.importDate]=overrides[item.dataset.importDate]||{};overrides[item.dataset.importDate].journal_date=item.value});const button=$('#importCommit');button.disabled=true;button.textContent='正在安全提交…';try{const out=await post('/api/import/commit',{job_id:PRODUCT.importJob.job_id,overrides});PRODUCT.importJob=await api('/api/import/job?job_id='+encodeURIComponent(PRODUCT.importJob.job_id),{noCache:true});lifeEvent('import-completed',{count:out.changed?.length||0,status:'committed'});dreamBubble(`搬进来了 ${out.changed?.length||0} 页，旧版本都还在。`);await renderProductImport();refreshProductDockStatus()}catch(error){toast(error.message);button.disabled=false;button.textContent='确认导入'}};if($('#importRollback'))$('#importRollback').onclick=async()=>{if(!confirm('把 Vault 和版本元数据恢复到这次导入之前？系统会先保留当前安全备份。'))return;if(window.lifeosPrepareToClose&&!await window.lifeosPrepareToClose())return toast('草稿尚未保存');const out=await post('/api/import/rollback',{job_id:PRODUCT.importJob.job_id});lifeEvent('import-rollback',{status:out.restart_required?'restart-required':'restored'});PRODUCT.importJob=null;if(out.restart_required)return showRestoreRestart('导入前快照已准备');toast('已恢复到导入前快照');await renderProductImport()};if($('#importClear'))$('#importClear').onclick=async()=>{const job=PRODUCT.importJob;if(!job)return;const committed=job.status==='committed';const message=committed?'清除会恢复导入前快照；导入后新增或修改的内容也会回到快照时状态。继续？':'删除这次导入预览的原始文件和记录？';if(!confirm(message))return;if(committed&&window.lifeosPrepareToClose&&!await window.lifeosPrepareToClose())return toast('草稿尚未保存');const button=$('#importClear');button.disabled=true;try{const out=await post('/api/import/clear',{job_id:job.job_id});lifeEvent('import-cleared',{restored:!!out.restored,restart_required:!!out.restart_required});PRODUCT.importJob=null;PRODUCT.importFiles=[];if(out.restart_required)return showRestoreRestart('清除与恢复已准备');await renderProductImport();refreshProductDockStatus();toast(out.restored?'已恢复并清除这次导入':'已清除这次导入')}catch(error){toast(error.message);button.disabled=false}}}
 </script>
-<script src="/v01.js?v=8"></script>
+<script src="/v01.js?v=10"></script>
 <script src="/writer-layout.js?v=2"></script>
 <script src="/writer-calendar.js?v=1"></script>
 <script src="/journal-book.js?v=1"></script>
@@ -1932,15 +1933,16 @@ renderProductImport=async function(){const job=PRODUCT.importJob,foot=job?`<div 
 <script src="/v012-pet-float.js?v=15"></script>
 <script src="/pet-settings.js?v=3"></script>
 <script src="/lifeos-shell.js?v=3"></script>
-<script src="/v03-rebuild.js?v=9"></script>
-<script src="/poetry.js?v=2"></script>
+<script src="/v03-rebuild.js?v=10"></script>
+<script src="/poetry.js?v=3"></script>
 <script src="/memorial.js?v=1"></script>
 <script src="/white-noise.js?v=3"></script>
 <script src="/ai-settings.js?v=3"></script>
-<script src="/attic.js?v=1"></script>
+<script src="/attic.js?v=2"></script>
 <script src="/bottles.js?v=1"></script>
 <script src="/sidebar-model.js?v=1"></script>
-<script src="/sidebar.js?v=1"></script>
+<script src="/sidebar.js?v=2"></script>
+<script src="/memory-draw.js?v=2"></script>
 <script src="/welcome.js?v=1"></script>
 </body>
 </html>

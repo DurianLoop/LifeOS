@@ -18,7 +18,7 @@ from engine import import_pipeline
 from engine import sync_engine
 from engine import p2_core, p2_sync, crypto_vault, poetry_engine, memorial
 from connectors import CONNECTORS
-from backend import ai_providers, ai_control, attic, product_help, vivi_pet
+from backend import ai_providers, ai_control, attic, product_help, vivi_pet, memory_lottery
 from backend.secret_store import set_secret, delete_secret
 from backend.bottles import BottleAPI
 APP=SOURCE_ROOT/'app'
@@ -1320,9 +1320,14 @@ class Handler(BottleAPI, SimpleHTTPRequestHandler):
                 return self.send_json({'items':rows(rs)})
             if path=='/api/journal':
                 sp=q.get('path',[''])[0]
+                current=memory_lottery.current_source(ROOT,sp)
+                if not current:return self.send_json({'error':'这页日记已不存在'},404)
                 r=con.execute("SELECT * FROM memories WHERE source_path=?",(sp,)).fetchone()
-                if not r: return self.send_json({'error':'not found'},404)
-                pe=product.get_entry(source_path=sp,root=ROOT)
+                if not r or r['sha256']!=current['sha256']:
+                    page=memory_lottery.current_journal(ROOT,sp,current,dict(r) if r else None)
+                    if page:return self.send_json(page)
+                    if not r:return self.send_json({'error':'这页日记已不存在'},404)
+                pe=current['entry']
                 return self.send_json({'memory':dict(r),'sections':sections_for(con,r['id']),
                                        'metrics':jrow(con.execute("SELECT * FROM memory_metrics WHERE memory_id=?",(r['id'],)).fetchone()),
                                        'skills':rows(con.execute("""SELECT sd.name,sa.mention_count,sa.matched_terms_json
@@ -1561,35 +1566,10 @@ class Handler(BottleAPI, SimpleHTTPRequestHandler):
                     d=dict(r); d['samples']=json.loads(d.pop('samples_json') or '[]'); items.append(d)
                 return self.send_json({'items':items,'note':'这些是按可见关键词聚类得到的反复问题候选，不代表问题尚未解决。'})
             if path=='/api/serendipity':
-                mode=q.get('mode',['mixed'])[0]
-                if mode=='echo':
-                    total=con.execute('SELECT COUNT(*) FROM memory_echoes').fetchone()[0]
-                    if not total:return self.send_json({'item':None})
-                    off=random.randrange(min(total,60)); r=con.execute("SELECT e.*,ml.source_path left_source,mr.source_path right_source FROM memory_echoes e JOIN memories ml ON ml.id=e.left_memory_id JOIN memories mr ON mr.id=e.right_memory_id ORDER BY e.score DESC LIMIT 1 OFFSET ?",(off,)).fetchone(); d=dict(r); d['shared_terms']=json.loads(d.pop('shared_terms_json') or '[]')
-                    return self.send_json({'type':'echo','item':d})
-                # Mixed mode can also surface one of the deterministic Observatory clues.
-                if mode=='mixed' and random.random()<0.48:
-                    typ=random.choice(['signal','return','dormant','portrait'])
-                    if typ=='signal':
-                        x=con.execute('SELECT * FROM trajectory_signals ORDER BY RANDOM() LIMIT 1').fetchone()
-                        if x:
-                            x=dict(x); return self.send_json({'type':'card','item':{'card_type':'EARLY SIGNAL','title':x['label'],'metric':str(x['lead_days'])+' days before peak','body':x['reason'],'source_paths':[x['first_source']] if x.get('first_source') else [],'payload':x}})
-                    if typ=='return':
-                        x=con.execute('SELECT r.*,mp.source_path prev_source,mr.source_path return_source FROM return_events r LEFT JOIN memories mp ON mp.id=r.prev_memory_id LEFT JOIN memories mr ON mr.id=r.return_memory_id ORDER BY RANDOM() LIMIT 1').fetchone()
-                        if x:
-                            x=dict(x); return self.send_json({'type':'card','item':{'card_type':'RETURN','title':x['label']+' came back','metric':str(x['gap_days'])+' quiet days','body':x['prev_date']+' → '+x['return_date']+'. No recorded evidence in between does not mean the activity stopped in real life.','source_paths':[p for p in [x.get('prev_source'),x.get('return_source')] if p],'payload':x}})
-                    if typ=='dormant':
-                        x=con.execute('SELECT * FROM dormant_threads ORDER BY RANDOM() LIMIT 1').fetchone()
-                        if x:
-                            x=dict(x); paths=json.loads(x.pop('source_paths_json') or '[]'); return self.send_json({'type':'card','item':{'card_type':'DORMANT THREAD','title':x['anchor'],'metric':str(x['dormant_days'])+' days quiet','body':str(x['occurrences'])+' related '+x['kind']+' candidates were recorded between '+x['first_date']+' and '+x['last_date']+'. Dormant is not the same as unresolved.','source_paths':paths[:2],'payload':x}})
-                    if typ=='portrait':
-                        x=con.execute('SELECT * FROM month_portraits ORDER BY RANDOM() LIMIT 1').fetchone()
-                        if x:
-                            x=dict(x); days=json.loads(x.pop('notable_days_json') or '[]'); return self.send_json({'type':'card','item':{'card_type':'MONTH PORTRAIT','title':x['month']+' · '+x['weather'],'metric':str(x['entries'])+' diary days','body':str(x['char_count'])+' characters. The weather label describes writing structure, not personality.','source_paths':[z.get('source_path') for z in days[:2] if z.get('source_path')],'payload':x}})
-                r=con.execute('SELECT * FROM curiosity_cards ORDER BY RANDOM() LIMIT 1').fetchone()
-                if r:
-                    d=dict(r); d['source_paths']=json.loads(d.pop('source_paths_json') or '[]'); d['payload']=json.loads(d.pop('payload_json') or '{}'); return self.send_json({'type':'card','item':d})
-                return self.send_json({'item':None})
+                try:
+                    return self.send_json(memory_lottery.draw(con,ROOT,q.get('mode',['mixed'])[0],q.get('exclude',[None])[0]))
+                except ValueError as error:
+                    return self.send_json({'error':str(error)},400)
             if path=='/api/observatory':
                 era=con.execute('SELECT * FROM personal_eras ORDER BY start_month').fetchall()
                 ret=rows(con.execute('SELECT r.*,mp.source_path prev_source,mr.source_path return_source FROM return_events r LEFT JOIN memories mp ON mp.id=r.prev_memory_id LEFT JOIN memories mr ON mr.id=r.return_memory_id ORDER BY gap_days DESC LIMIT 8'))

@@ -25,8 +25,8 @@ import time
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / 'docs' / 'qa_v051'
-VERSION = '0.5.1'
+OUT = ROOT / 'docs' / 'qa_v052'
+VERSION = '0.5.2'
 CODE_DIRECTORIES = ('app', 'backend', 'cloud', 'connectors', 'desktop', 'engine',
                     'importers', 'memorial-site', 'mobile', 'netlify', 'scripts')
 SKIP_DIRECTORIES = {'.git', '.venv', 'node_modules', '__pycache__', 'python-runtime',
@@ -281,6 +281,8 @@ def main():
             ('pet-removal', [sys.executable, 'scripts/test_pet_removal.py']),
             ('vivi-pet', [sys.executable, 'scripts/test_vivi_pet.py']),
             ('product-help', [sys.executable, 'scripts/test_product_help.py']),
+            ('memory-lottery', [sys.executable, '-m', 'unittest', 'scripts.test_memory_lottery', '-v']),
+            ('memory-draw-ui', [node, 'scripts/test_memory_draw.mjs']),
             ('sidebar-layout', [node, 'scripts/test_sidebar_model.cjs']),
             ('writer-layout-ui', [node, 'scripts/test_writer_layout.mjs']),
             ('writer-workflows-ui', [node, 'scripts/test_writer_workflows.mjs']),

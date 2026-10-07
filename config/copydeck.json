@@ -56,8 +56,13 @@
     },
     {
       "key": "on_this_day",
-      "label": "旧信",
+      "label": "旧笺",
       "assistive": "历史上的今天"
+    },
+    {
+      "key": "poetry",
+      "label": "拾诗",
+      "assistive": "每日荐诗"
     },
     {
       "key": "search",
@@ -114,7 +119,7 @@
       "primary": "落笔 · 写今天",
       "secondary": [
         "翻一页 · 流年",
-        "旧日来信 · 昔日今朝",
+        "旧笺",
         "问问过去 · 近思"
       ],
       "empty": "今天还没有落笔。日子不必惊天动地，写下一件真实发生的小事就好。",
@@ -161,13 +166,20 @@
     },
     {
       "key": "on_this_day",
-      "display_name": "昔日今朝",
+      "display_name": "旧笺",
       "english": "On This Day",
       "subtitle": "同一个今日，隔着不同年岁重新相逢。",
       "primary": "拆开旧信",
       "empty": "今日没有旧信。岁月偶有沉默，也很好。",
       "source_key": "wang_lanting",
       "source_type": "意象取材"
+    },
+    {
+      "key": "poetry",
+      "display_name": "拾诗",
+      "english": "Daily Poetry",
+      "primary": "为今日寻诗",
+      "source_type": "原创"
     },
     {
       "key": "search",
@@ -563,7 +575,7 @@
       "key": "On This Day",
       "room": "NOW",
       "room_display": "今朝",
-      "display_name": "昔日今朝",
+      "display_name": "旧笺",
       "subtitle": "历史上的今天",
       "function_desc": "历史上的今天",
       "source_key": "wang_lanting",

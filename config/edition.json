@@ -1,6 +1,6 @@
 {
   "edition": "public-template",
-  "display_name": "LifeOS v0.5.1",
+  "display_name": "LifeOS v0.5.2",
   "contains_user_memory": false,
   "intended_for": "personal local journaling",
   "distribution_warning": "Empty journal template."
