@@ -3,13 +3,16 @@
 // Run with the matching Electron executable on macOS, once for each QA_PHASE.
 // This loads the final package's main/preload and bundled backend, without an
 // offscreen window or an external server. Gatekeeper/signing are tested apart.
-const {app, BrowserWindow, Menu, dialog, session, clipboard} = require('electron');
+const electron = require('electron');
+const {app, BrowserWindow, Menu, dialog, session, clipboard} = electron;
 const fs = require('node:fs');
 const originalFs = require('original-fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const assert = require('node:assert/strict');
 const childProcess = require('node:child_process');
+const Module = require('node:module');
+const constructedWindowOptions = new WeakMap();
 
 const phase = process.env.QA_PHASE || 'first';
 const output = path.resolve(process.env.QA_OUTPUT || 'artifacts/qa-macos');
@@ -65,6 +68,7 @@ function diagnosticSnapshot() {
     backend_log_bytes: fs.existsSync(log) ? fs.statSync(log).size : 0,
     windows: BrowserWindow.getAllWindows().map(window => ({id: window.id, visible: window.isVisible(),
       destroyed: window.isDestroyed(), preload: window.webContents.getLastWebPreferences().preload,
+      constructor_preload: constructedWindowOptions.get(window)?.webPreferences?.preload,
       loading: window.webContents.isLoading(), url: window.webContents.getURL().split('?')[0]})),
     backend_children: backendChildren.map(child => ({pid: child.pid, exit_code: child.exitCode, signal: child.signalCode})),
     timeline: startupTimeline,
@@ -240,8 +244,14 @@ async function verifyUI(window) {
   await until(() => window.isVisible(), 'real Mac window is shown');
   assert.equal(await js(`lifeosDesktop.platform`), 'darwin');
   assert.equal(await js(`typeof lifeosDesktop.storage`), 'function');
+  assert.equal(await js(`typeof lifeosDesktop.windowControl`), 'function');
+  assert.equal(await js(`lifeosDesktop.storage({op:'snapshot'}).ok`), true, 'packaged preload executes trusted native storage IPC');
   assert.equal(app.getPath('userData'), profile);
-  assert.equal(window.webContents.getLastWebPreferences().preload, path.join(asar, 'preload.cjs'));
+  assert.equal(constructedWindowOptions.get(window)?.webPreferences?.preload, path.join(asar, 'preload.cjs'), 'actual constructor selects the packaged preload');
+  const preferences = window.webContents.getLastWebPreferences();
+  assert.equal(preferences.sandbox, true);
+  assert.equal(preferences.contextIsolation, true);
+  assert.equal(preferences.nodeIntegration, false);
   const health = await get('/api/health');
   assert.equal(health.ok, true); assert.equal(health.mode, 'local-first');
   assert.equal(backendChildren.length, 1, 'actual packaged main launches one bundled backend');
@@ -338,20 +348,28 @@ app.on('browser-window-created', (_event, window) => {
     expected_preload: path.join(asar, 'preload.cjs'), sandbox: preferences.sandbox,
     context_isolation: preferences.contextIsolation, node_integration: preferences.nodeIntegration});
   for (const event of ['did-start-loading', 'dom-ready', 'did-finish-load', 'did-stop-loading']) {
-    window.webContents.on(event, () => trace('window-' + event, {window_id: window.id,
+    window.webContents.on(event, () => trace('window-' + event, {window_id: windowId,
       preload: window.webContents.getLastWebPreferences().preload,
+      constructor_preload: constructedWindowOptions.get(window)?.webPreferences?.preload,
       url: window.webContents.getURL().split('?')[0]}));
   }
   window.once('ready-to-show', () => trace('window-ready-to-show', {window_id: window.id}));
   window.once('closed', () => trace('window-closed', {window_id: windowId}));
-  if (preferences.preload !== path.join(asar, 'preload.cjs')) return;
+  const isMainWindow = () => constructedWindowOptions.get(window)?.webPreferences?.preload === path.join(asar, 'preload.cjs');
   window.webContents.on('console-message', (_event, level, message) => {
+    if (!isMainWindow()) return;
     const details = typeof level === 'object' ? level : {level, message};
     if (details.level === 'error' || details.level >= 3) rendererErrors.push(details.message);
   });
-  window.webContents.once('render-process-gone', (_event, details) => void fail(new Error('Renderer stopped: ' + JSON.stringify(details))));
-  window.webContents.once('did-fail-load', (_event, code, description) => void fail(new Error('UI load failed: ' + code + ' ' + description)));
-  window.webContents.once('did-finish-load', () => void verifyUI(window).catch(error => void fail(error)));
+  window.webContents.once('render-process-gone', (_event, details) => {if (isMainWindow()) void fail(new Error('Renderer stopped: ' + JSON.stringify(details)));});
+  window.webContents.once('did-fail-load', (_event, code, description) => {if (isMainWindow()) void fail(new Error('UI load failed: ' + code + ' ' + description));});
+  // browser-window-created fires inside the constructor, before its Proxy can
+  // record the returned instance. Read the real options only after load.
+  window.webContents.once('did-finish-load', () => {
+    trace('window-classified-after-load', {window_id: windowId, main_window: isMainWindow(),
+      constructor_preload: constructedWindowOptions.get(window)?.webPreferences?.preload});
+    if (isMainWindow()) void verifyUI(window).catch(error => void fail(error));
+  });
 });
 
 try {
@@ -407,6 +425,28 @@ try {
   app.whenReady().then(() => {
     trace('harness-when-ready-resolved'); boundNetwork(session.defaultSession);
   }).catch(error => void fail(error));
+  // Instrument construction without replacing options, visibility, graphics,
+  // preload, or any native window behavior. Some Electron versions omit the
+  // preload field from getLastWebPreferences(), so it cannot classify windows.
+  const observedBrowserWindow = new Proxy(BrowserWindow, {
+    construct(target, args, newTarget) {
+      const window = Reflect.construct(target, args, newTarget);
+      constructedWindowOptions.set(window, args[0] || {});
+      trace('native-window-constructor-returned', {window_id: window.id,
+        constructor_preload: args[0]?.webPreferences?.preload});
+      return window;
+    },
+  });
+  const observedElectron = new Proxy(electron, {
+    get(target, key, receiver) {
+      return key === 'BrowserWindow' ? observedBrowserWindow : Reflect.get(target, key, receiver);
+    },
+  });
+  const load = Module._load;
+  Module._load = function (...args) {
+    const result = Reflect.apply(load, this, args);
+    return args[0] === 'electron' ? observedElectron : result;
+  };
   trace('load-packaged-updater-enter');
   const updater = require(path.join(asar, 'node_modules', 'electron-updater')).autoUpdater;
   trace('load-packaged-updater-complete');
