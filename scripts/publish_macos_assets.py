@@ -57,6 +57,7 @@ def main():
     combined = {**metadata[1], 'files': [file for item in metadata for file in item['files']]}
     assert len({item['url'] for item in combined['files']}) == len(combined['files'])
     assert {item['url'] for item in combined['files']} <= expected
+    assert {f'LifeOS-0.5.2-mac-{arch}.zip' for arch in ('arm64', 'x64')} <= {item['url'] for item in combined['files']}
     for item in combined['files']:
         import base64
         data = (root / item['url']).read_bytes()
@@ -77,6 +78,12 @@ def main():
     original = {item['name']: {'size': item['size'], 'digest': item.get('digest'), 'id': item['id']}
                 for item in release['assets']}
     upload = release['upload_url'].split('{')[0]
+    # Reject all conflicting retries before making any release mutation.
+    for file in files:
+        if file.name in original:
+            data = file.read_bytes()
+            assert original[file.name]['size'] == len(data)
+            assert original[file.name]['digest'] == 'sha256:' + hashlib.sha256(data).hexdigest(), 'Existing asset differs: ' + file.name
     verified = []
     for file in files:
         data = file.read_bytes()
