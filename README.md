@@ -6,9 +6,7 @@ LifeOS is a local-first journal and personal memory workspace, with an editable 
 
 **Drift Bottle:** write a letter, record audio or video, and seal it until a chosen future time. Offline sea backgrounds, durable drafts, timed opening, in-app arrivals and native desktop reminders make the reunion feel personal. Bottles stay outside journal retrieval and AI, and their media is included in workspace backups.
 
-This version is in local acceptance. The published stable download remains v0.4.2.
-
-[Local acceptance notes](docs/RELEASE_v0.4.3.md)
+[Release notes](docs/RELEASE_v0.4.3.md)
 
 ## New in v0.4.2
 
@@ -32,7 +30,7 @@ This version is in local acceptance. The published stable download remains v0.4.
 
 ## Windows download
 
-Download [LifeOS-Setup-0.4.2.exe](https://github.com/DurianLoop/LifeOS/releases/download/v0.4.2/LifeOS-Setup-0.4.2.exe) from the [v0.4.2 release](https://github.com/DurianLoop/LifeOS/releases/tag/v0.4.2). Python is included. This community build is unsigned.
+Download [LifeOS-Setup-0.4.3.exe](https://github.com/DurianLoop/LifeOS/releases/download/v0.4.3/LifeOS-Setup-0.4.3.exe) from the [v0.4.3 release](https://github.com/DurianLoop/LifeOS/releases/tag/v0.4.3). Python is included. This community build is unsigned.
 
 Installed app data is stored under `%APPDATA%/LifeOS/workspace/`; startup diagnostics are under `%APPDATA%/LifeOS/logs/desktop.log`. Back up the workspace folder to preserve journals, revisions and settings. Source runs continue to use the repository folder.
 
