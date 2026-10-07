@@ -198,6 +198,7 @@ def main():
         # Keep synthetic UI screenshots in CI evidence, outside distributable packages.
         import shutil
         shutil.copytree(output, dist / f'qa-macos-{args.arch}',
+                        dirs_exist_ok=True,
                         ignore=shutil.ignore_patterns('workspace', 'application-data', 'profile'))
     assets = [{'name': file.name, 'bytes': file.stat().st_size,
                'sha256': hashlib.sha256(file.read_bytes()).hexdigest()} for file in (dmg, archive)]
