@@ -149,10 +149,8 @@
     applyCoreCopy();
   });
 
-  function v01BuildRail(){
-    const c=t(), el=$('#rooms'); if(!el) return;
-    const writerOpen=document.body.classList.contains('writerImmersive');
-    const items=[
+  function coreNavItems(){
+    const c=t();return [
       {id:'today',icon:'today',label:c.nav.today,feature:'Home'},
       {id:'write',icon:'write',label:c.nav.write,action:'write'},
       {id:'journal',icon:'journal',label:c.nav.journal,feature:'Journal'},
@@ -163,6 +161,12 @@
       {id:'pet',icon:'magic',label:c.nav.pet,feature:'Pet Shelf',pet:true},
       {id:'attic',icon:'attic',label:c.advanced.split(' · ')[0],action:'attic'}
     ];
+  }
+  window.lifeosNavItems=coreNavItems;
+  window.lifeosNavLanguage=()=>state.preset;
+  function v01BuildRail(){
+    const c=t(),el=$('#rooms');if(!el)return;
+    const writerOpen=document.body.classList.contains('writerImmersive'),items=coreNavItems();
     el.innerHTML=items.map(v=>{const active=v.action==='write'?writerOpen:!!(v.feature&&STATE.feature===v.feature&&!writerOpen);return `<button class="roomBtn ${active?'active':''}" type="button" data-nav-id="${esc(v.id)}" ${v.pet?'data-petpage="true"':v.feature?`data-frontfeature="${esc(v.feature)}"`:''} ${v.action?`data-coreaction="${esc(v.action)}"`:''} aria-current="${active?'page':'false'}">${uiIcon(v.icon)}<span class="navText">${esc(v.label)}</span></button>`}).join('')+`<button class="roomBtn mobileMoreButton" id="mobileMoreBtn" type="button" aria-haspopup="dialog" aria-controls="mobileMorePanel" aria-expanded="false">${uiIcon('more')}<span class="navText">${esc(c.nav.more)}</span></button>`;
     $$('[data-frontfeature]').forEach(b=>b.onclick=()=>{closeMobileMore();openFeature(b.dataset.frontfeature)});
     $$('[data-petpage]').forEach(b=>b.onclick=()=>{closeMobileMore();window.dispatchEvent(new CustomEvent('lifeos:open-pet'))});

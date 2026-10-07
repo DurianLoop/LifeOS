@@ -26,7 +26,7 @@ import time
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'docs' / 'qa_v04'
-VERSION = '0.4.3'
+VERSION = '0.5.0'
 CODE_DIRECTORIES = ('app', 'backend', 'cloud', 'connectors', 'desktop', 'engine',
                     'importers', 'memorial-site', 'mobile', 'netlify', 'scripts')
 SKIP_DIRECTORIES = {'.git', '.venv', 'node_modules', '__pycache__', 'python-runtime',
@@ -237,6 +237,7 @@ def main():
             ('white-noise', [node, 'scripts/test_white_noise.mjs']),
             ('poetry-ui', [node, 'scripts/test_poetry_ui.mjs']),
             ('pet-ui', [node, 'scripts/test_pet_ui.mjs']),
+            ('sidebar-layout', [node, 'scripts/test_sidebar_model.cjs']),
             ('writer-layout-ui', [node, 'scripts/test_writer_layout.mjs']),
             ('writer-workflows-ui', [node, 'scripts/test_writer_workflows.mjs']),
             ('writer-calendar-ui', [node, 'scripts/test_writer_calendar.mjs']),

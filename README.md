@@ -1,6 +1,13 @@
-# LifeOS v0.4.3
+# LifeOS v0.5.0
 
 LifeOS is a local-first journal and personal memory workspace, with an editable writing desk, journal book, and desktop companion.
+
+## New in v0.5.0
+
+- **Your sidebar:** edit in place, drag features to reorder them or tuck them into Attic, bring them back, cancel changes or restore defaults. Navigation preferences survive desktop restarts.
+- **A short welcome:** new installations offer writing, importing or looking around in one screen. Existing users and restored journals skip it. AI setup stays optional.
+
+[Local acceptance notes](docs/RELEASE_v0.5.0.md)
 
 ## New in v0.4.3
 

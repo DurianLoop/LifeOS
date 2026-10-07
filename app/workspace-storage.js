@@ -2,7 +2,8 @@
 (() => {
   'use strict';
   const native=window.localStorage,bridge=window.lifeosDesktop?.storage;
-  if(!bridge)return;
+  const known=storage=>{for(let i=0;i<storage.length;i++)if(/^lifeos[.:]/.test(storage.key(i)||''))return true;return false;};
+  if(!bridge){try{window.lifeosVisitContext={existing:known(native),storageError:false};}catch{window.lifeosVisitContext={existing:true,storageError:true};}return;}
   let failure=null;
   const call=command=>{const reply=bridge(command);if(!reply?.ok){failure=new Error(reply?.error||'无法保存本地草稿');throw failure}failure=null;return reply.value};
   let items={};
@@ -12,6 +13,7 @@
     for(let i=0;i<native.length;i++){const key=native.key(i);if(/^lifeos[.:]/.test(key))legacy[key]=native.getItem(key)}
     if(Object.keys(legacy).length){items=call({op:'import',items:legacy});for(const key of Object.keys(legacy))native.removeItem(key)}
   }catch(error){failure=error}
+  window.lifeosVisitContext={existing:Object.keys(items).some(key=>/^lifeos[.:]/.test(key)),storageError:!!failure};
   const storage={
     get length(){return Object.keys(items).length},
     key:index=>Object.keys(items)[index]??null,
