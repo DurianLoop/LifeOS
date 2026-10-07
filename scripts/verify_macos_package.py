@@ -193,7 +193,7 @@ def main():
         checks.extend(backend['checks'])
         native = native_smoke(app, root)
         checks.extend(native['checks'])
-        ui, output = ui_checks(app, root)
+        ui, output = ui_checks(app, root, evidence=dist / f'qa-macos-{args.arch}')
         checks.extend(ui)
         # Keep synthetic UI screenshots in CI evidence, outside distributable packages.
         import shutil

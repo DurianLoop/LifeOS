@@ -15,8 +15,12 @@ const Module = require('node:module');
 const constructedWindowOptions = new WeakMap();
 
 const phase = process.env.QA_PHASE || 'first';
-const output = path.resolve(process.env.QA_OUTPUT || 'artifacts/qa-macos');
-const appPath = path.resolve(process.env.MACOS_APP_PATH || 'desktop/dist/mac-arm64/LifeOS.app');
+const requestedOutput = path.resolve(process.env.QA_OUTPUT || 'artifacts/qa-macos');
+fs.mkdirSync(requestedOutput, {recursive: true});
+// macOS temp paths expose both /var and /private/var. Node canonicalizes
+// module filenames, so use filesystem identity for all QA path comparisons.
+const output = fs.realpathSync(requestedOutput);
+const appPath = fs.realpathSync(path.resolve(process.env.MACOS_APP_PATH || 'desktop/dist/mac-arm64/LifeOS.app'));
 const resources = path.join(appPath, 'Contents', 'Resources');
 const asar = path.join(resources, 'app.asar');
 const workspace = path.join(output, 'workspace');
