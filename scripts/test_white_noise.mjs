@@ -10,9 +10,10 @@ const kinds = ['rain', 'fire', 'ocean', 'forest', 'stream', 'night'];
 const tick = () => new Promise(resolve => setImmediate(resolve));
 
 function setup({ supported = true, saved = null, deferResume = false, deferFetch = false, deferDecode = false } = {}) {
-  const ids = ['Toggle', 'Kind', 'Volume', 'VolumeText', 'Status'];
+  const ids = ['Toggle', 'Kind', 'Volume', 'VolumeText', 'Status', 'Slider'];
   const elements = Object.fromEntries(ids.map(name => [`whiteNoise${name}`, {
-    value: '', textContent: '', disabled: false, handlers: {}, attributes: {},
+    value: '', textContent: '', innerHTML: '', disabled: false, handlers: {}, attributes: {},
+    style: { values: {}, setProperty(name, value) { this.values[name] = value; } },
     addEventListener(name, handler) { this.handlers[name] = handler; },
     setAttribute(name, value) { this.attributes[name] = value; },
   }]));
@@ -106,7 +107,7 @@ test('recordings load only on demand, loop locally, and stop with a fade', async
   const context = app.contexts[0];
   assert.equal(context.sources[0].loop, true);
   assert.equal(context.sources[0].started, true);
-  assert.equal(app.elements.whiteNoiseToggle.textContent, '暂停');
+  assert.equal(app.elements.whiteNoiseToggle.attributes['aria-label'], '暂停白噪音');
   await app.event('Toggle', 'click');
   assert.ok(context.sources[0].stopTime > context.currentTime);
   app.flushTimers();
@@ -155,7 +156,7 @@ test('volume and scene persist without auto-playing or retaining a pending ramp'
 test('changing scene during download aborts the old request; cancel prevents late playback', async () => {
   const app = setup({ deferFetch: true });
   await app.event('Toggle', 'click');
-  assert.equal(app.elements.whiteNoiseToggle.textContent, '取消');
+  assert.equal(app.elements.whiteNoiseToggle.attributes['aria-label'], '取消载入白噪音');
   assert.equal(app.elements.whiteNoiseToggle.disabled, false);
   await app.event('Kind', 'change', 'ocean');
   assert.equal(app.requests[0].aborted, true);
@@ -164,7 +165,7 @@ test('changing scene during download aborts the old request; cancel prevents lat
   app.requests[1].finish();
   await tick();
   assert.equal(app.contexts[0].sources.length, 0);
-  assert.equal(app.elements.whiteNoiseToggle.textContent, '播放');
+  assert.equal(app.elements.whiteNoiseToggle.attributes['aria-label'], '播放白噪音');
 });
 
 test('decodes are serialized and stale results never start a source or fill the cache', async () => {
@@ -209,7 +210,7 @@ test('decode failure returns usable feedback and retry succeeds', async () => {
   await app.event('Toggle', 'click');
   app.contexts[0].decodes[0].fail(new Error('bad recording'));
   await tick();
-  assert.equal(app.elements.whiteNoiseToggle.textContent, '播放');
+  assert.equal(app.elements.whiteNoiseToggle.attributes['aria-label'], '播放白噪音');
   assert.match(app.elements.whiteNoiseStatus.textContent, /无法播放/);
   await app.event('Toggle', 'click');
   app.contexts[0].decodes[1].finish();
@@ -242,7 +243,7 @@ test('pagehide during decode closes the old context and a fresh play stays isola
   second.decodes[0].finish();
   await tick();
   assert.equal(second.sources.length, 1);
-  assert.equal(app.elements.whiteNoiseToggle.textContent, '暂停');
+  assert.equal(app.elements.whiteNoiseToggle.attributes['aria-label'], '暂停白噪音');
 });
 
 test('unsupported audio, corrupt settings and retired scenes recover safely', () => {
@@ -252,6 +253,37 @@ test('unsupported audio, corrupt settings and retired scenes recover safely', ()
   assert.equal(app.elements.whiteNoiseKind.value, 'rain');
   assert.equal(app.elements.whiteNoiseVolume.value, '25');
   assert.equal(setup({ saved: '{"kind":"train","volume":900}' }).elements.whiteNoiseKind.value, 'rain');
+});
+
+test('icon labels and volume motion reflect audible playback and cancelable loading', async () => {
+  const app = setup({ deferFetch: true });
+  const toggle = app.elements.whiteNoiseToggle;
+  const slider = app.elements.whiteNoiseSlider;
+  assert.equal(toggle.attributes['data-state'], 'play');
+  assert.match(toggle.innerHTML, /<svg/);
+  assert.match(toggle.innerHTML, /aria-hidden="true"/);
+  assert.equal(toggle.textContent, '', 'transport stays icon-only');
+  assert.equal(slider.attributes['data-playing'], 'false');
+  await app.event('Toggle', 'click');
+  assert.equal(toggle.attributes['aria-busy'], 'true');
+  assert.equal(toggle.attributes['data-state'], 'cancel');
+  assert.equal(toggle.attributes.title, '取消载入白噪音');
+  assert.equal(slider.attributes['data-playing'], 'false', 'loading does not suggest audible playback');
+  app.requests[0].finish();
+  await tick();
+  assert.equal(toggle.attributes['data-state'], 'pause');
+  assert.equal(toggle.attributes['aria-busy'], 'false');
+  assert.equal(slider.attributes['data-playing'], 'true');
+  await app.event('Volume', 'input', '0');
+  assert.equal(slider.attributes['data-playing'], 'false', 'muted audio rests');
+  assert.equal(slider.style.values['--white-noise-fill'], 'calc(0% + 24px)');
+  assert.equal(app.elements.whiteNoiseVolume.attributes['aria-valuetext'], '0%');
+  await app.event('Volume', 'input', '100');
+  assert.equal(slider.attributes['data-playing'], 'true');
+  assert.equal(slider.style.values['--white-noise-fill'], 'calc(100% + 0px)');
+  await app.event('Toggle', 'click');
+  assert.equal(slider.attributes['data-playing'], 'false');
+  assert.equal(toggle.attributes['aria-label'], '播放白噪音');
 });
 
 test('all packaged recordings match their licensed source manifest and size budget', () => {

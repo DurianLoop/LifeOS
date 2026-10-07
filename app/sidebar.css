@@ -4,11 +4,10 @@
 .sidebarRooms>.sidebarMain,.sidebarRooms>.atticNavGroup,.sidebarRooms>.sidebarEditHint{flex:none}
 .sidebarRooms .navText{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sidebarRooms .roomBtn{flex:none}.sidebarRooms .atticNavToggle.has-active{color:var(--dream-accent)}
-.sidebarEditBar{flex:none;padding-top:10px;margin-top:8px;border-top:1px solid var(--line)}
+.sidebarEditBar{flex:none;padding-top:10px;margin-top:8px;border-top:1px solid var(--line)}.sidebarEditBar[hidden]{display:none!important}
 .sidebarEditBar button{border:0;background:none;color:var(--muted);font:10px/1.4 var(--type-sans);min-height:34px;padding:5px 3px;cursor:pointer}
-#sidebarEdit{display:flex;align-items:center;gap:9px;width:100%;text-align:left;padding-left:10px}
-#sidebarEdit .uiIcon{width:13px;height:13px}#sidebarEdit .uiIcon svg{width:13px;height:13px}
-#sidebarEdit:hover{color:var(--ink)}.sidebarEditActions{display:flex;align-items:center;justify-content:space-between;gap:5px}
+.sidebarTweakEdit{min-height:40px;border:1px solid var(--line);background:transparent;color:var(--ink);font:12px var(--type-sans);padding:8px 12px;text-align:left;cursor:pointer}.sidebarTweakEdit:hover{background:var(--paper2)}
+.sidebarEditActions{display:flex;align-items:center;justify-content:space-between;gap:5px}
 #sidebarDone{background:var(--ink);color:var(--paper);padding:6px 10px;border-radius:3px}
 .sidebarEditStatus{font:10px/1.7 var(--type-sans);color:var(--muted);overflow-wrap:anywhere}
 .sidebarEditStatus:not(:empty){padding:3px 2px 9px}.sidebarEditStatus.is-error{color:#9b5849}
@@ -19,14 +18,16 @@
 .sidebarEditing .sidebarRooms .roomBtn.active{border-bottom-color:transparent;box-shadow:none}
 .sidebarEditing .sidebarRooms .roomBtn:focus-visible,.sidebarEditBar button:focus-visible{outline:1px solid var(--dream-accent);outline-offset:-1px}
 .sidebarEditing .atticNavToggle{cursor:default}.sidebarEditing .bottleBadge{display:none}
-.sidebarEditing .sidebarDragging{opacity:.3}.sidebarEditing .atticNavGroup{transition:background .15s}
+.sidebarEditing .sidebarDragging{opacity:.12;background:color-mix(in srgb,var(--dream-accent) 9%,transparent)}.sidebarEditing .atticNavGroup{transition:background .15s}
+body.sidebarDraggingActive,body.sidebarDraggingActive *{cursor:grabbing!important;user-select:none!important}
 .sidebarList{position:relative;min-height:10px}
 .sidebarEditing .sidebarDropBefore:before{content:'';position:absolute;left:9px;right:7px;top:-2px;height:2px;background:var(--dream-accent);pointer-events:none}
 .sidebarEditing .sidebarDropEnd:after{content:'';display:block;height:2px;background:var(--dream-accent);margin:3px 7px 0 9px;pointer-events:none}
 .sidebarEditing .sidebarDropZone{background:color-mix(in srgb,var(--dream-accent) 5%,transparent)}
 .sidebarDropEmpty{display:block;min-height:54px;padding:17px 10px;border:1px dashed var(--line);font:10px/1.8 var(--type-sans);color:var(--muted);margin:6px 2px}
-.sidebarDragGhost{position:fixed;z-index:500;width:190px;display:flex;align-items:center;gap:10px;padding:10px 13px;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:4px;box-shadow:0 8px 22px #14232b26;pointer-events:none;opacity:.95;font:12px var(--type-sans)}
-.sidebarDragGhost .uiIcon{width:19px;height:19px}
+.sidebarDragGhost{position:fixed;left:0;top:0;z-index:500;box-sizing:border-box;display:flex;align-items:center;gap:11px;padding:8px 9px;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:9px;box-shadow:0 14px 35px #14232b2b,0 3px 7px #14232b14;pointer-events:none;font:12px var(--type-sans);will-change:transform}
+.sidebarDragGhost .uiIcon{display:grid;width:20px;height:20px}.sidebarDragGhost .navText{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sidebarDragGhost .sidebarGrip{display:inline}
+.sidebarDropEmpty[hidden]{display:none}
 .sidebarMobileMenu{grid-column:1/-1;width:100%}.sidebarMobileList{display:grid;grid-template-columns:1fr 1fr}
 .sidebarMobileMenu details{border-top:1px solid var(--line);padding-top:8px;margin-top:8px}
 .sidebarMobileMenu summary{font:13px var(--type-serif);padding:8px;cursor:pointer;color:var(--muted)}

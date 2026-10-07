@@ -16,7 +16,11 @@
 
 单个媒体文件限 100 MB，一次录制最长 10 分钟。时间使用设备时钟，显示为当前设备的本地时间。漂流瓶保存在本地工作区，不调用 AI，不进入日记检索或纪念页。备份可包含封存内容，应像日记备份一样妥善保管
 
-此版本用于本地人工验收，GitHub 当前稳定版仍为 v0.4.2
+## Windows 下载
+
+[下载 LifeOS-Setup-0.4.3.exe](https://github.com/DurianLoop/LifeOS/releases/download/v0.4.3/LifeOS-Setup-0.4.3.exe) · [SHA-256 校验文件](https://github.com/DurianLoop/LifeOS/releases/download/v0.4.3/SHA256SUMS.txt)
+
+Windows x64 安装包内置 Python，无需安装开发环境。旧版用户可关闭 LifeOS 后运行安装包覆盖安装；已有工作区位于 `%APPDATA%/LifeOS/workspace/`
 
 ## 验证
 

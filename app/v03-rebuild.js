@@ -27,7 +27,7 @@
     field.className = 'tweakField v03FontField';
     field.innerHTML = '<span>字体大小</span><div><select id="v03FontSize" aria-label="字体大小"><option value="default">大 · 默认</option><option value="large">更大</option><option value="xlarge">特大</option></select></div>';
     const anchor = panel.querySelector('#atticOpen');
-    if (anchor) panel.insertBefore(field, anchor);
+    if (anchor) anchor.parentNode.insertBefore(field, anchor);
     else panel.append(field);
     field.querySelector('select').addEventListener('change', event => applyFontSize(event.target.value));
     applyFontSize(readFontSize());

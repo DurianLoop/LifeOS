@@ -1,0 +1,2805 @@
+{
+  "schema_version": 1,
+  "version": "0.5.0-help.3",
+  "product_version": "0.5.0",
+  "scope": "Public local application guide; no user data",
+  "cards": [
+    {
+      "id": "product",
+      "title": "LifeOS 使用入门",
+      "aliases": [
+        "LifeOS 使用入门",
+        "lifeos",
+        "产品功能",
+        "软件功能",
+        "新手引导",
+        "功能介绍",
+        "有哪些功能",
+        "你有什么功能",
+        "你能做什么",
+        "产品怎么用",
+        "lifeos介绍",
+        "first run",
+        "onboarding",
+        "what can you do"
+      ],
+      "keywords": [],
+      "entry": "左侧功能栏",
+      "content": "LifeOS 是本地优先的日记与生活档案。今朝看近况，落笔写日记，流年翻阅，寻迹搜索，旧信读往年今日；今日一诗、漂流瓶和灵犀分别提供诗词、未来来信与桌宠。阁楼分概览、回看、整理、观察，可打开工具索引。界面微调管理外观和侧栏，左下设置齿轮连接可选的 AI。首次安装只有一屏引导，可写一页、导入旧日记或先看看；已有日记及升级用户跳过引导。",
+      "feature": "Home",
+      "action": null,
+      "covers": [
+        "Home"
+      ]
+    },
+    {
+      "id": "sidebar",
+      "title": "侧栏",
+      "aliases": [
+        "侧栏",
+        "侧边栏",
+        "左侧栏",
+        "左边功能",
+        "导航栏",
+        "编辑侧栏",
+        "功能顺序",
+        "sidebar",
+        "navigation"
+      ],
+      "keywords": [
+        "左边",
+        "功能",
+        "顺序",
+        "隐藏",
+        "拖动"
+      ],
+      "entry": "界面微调 → 编辑侧栏",
+      "content": "打开界面微调，点击编辑侧栏。按住功能的图标或拖柄，拖动调整先后；拖进下方阁楼可以收起，拖回侧栏可以恢复。点击完成才保存；取消放弃本次编辑；恢复默认后仍需完成才生效。键盘上下箭头排序，左箭头放回侧栏，右箭头收进阁楼，Esc 取消。侧栏收起图标或 Ctrl+Shift+B 会一起隐藏左侧导航和品牌区域，再点页面标题左边的图标展开。窄窗口可从更多进入界面微调，设置入口仍独立。",
+      "feature": null,
+      "action": "appearance",
+      "covers": [],
+      "intents": [
+        "(?:拖动|排序|收进|拖进|拖回|放回|藏进).{0,18}(?:阁楼|侧栏|侧边栏|左边|功能)",
+        "(?:调整|修改|编辑|自定义).{0,12}(?:侧栏|侧边栏|左侧|导航)",
+        "(?:隐藏|不要显示|收起).{0,16}(?:每日一诗|今日一诗|灵犀|寻迹|旧信|功能)",
+        "(?:每日一诗|今日一诗|灵犀|寻迹|旧信).{0,16}(?:隐藏|收起|收进|关掉|拖|最下|最上)",
+        "(?:关掉|不想看|拖).{0,16}(?:每日一诗|今日一诗|灵犀|寻迹|旧信)"
+      ]
+    },
+    {
+      "id": "appearance",
+      "title": "界面微调",
+      "aliases": [
+        "界面微调",
+        "外观",
+        "视觉世界",
+        "字体大小",
+        "排版节奏",
+        "主题",
+        "appearance",
+        "theme",
+        "字体"
+      ],
+      "keywords": [
+        "字号",
+        "配色",
+        "语言",
+        "动画"
+      ],
+      "entry": "界面微调",
+      "content": "点击界面微调可以选择视觉世界（主题）、动态强度、排版节奏、字体大小和语言与文案，也能编辑侧栏或播放白噪音。偏好保存在本机工作区，重启保留。全局字体大小改变阅读尺寸；落笔下方工具栏中的文字格式用于正在编辑的纸格内容。窄窗口从更多进入界面微调。",
+      "feature": null,
+      "action": "appearance",
+      "covers": []
+    },
+    {
+      "id": "white-noise",
+      "title": "白噪音",
+      "aliases": [
+        "白噪音",
+        "白噪声",
+        "雨声",
+        "海浪",
+        "森林鸟鸣",
+        "篝火",
+        "溪流",
+        "夏夜",
+        "white noise",
+        "ambient"
+      ],
+      "keywords": [
+        "声音",
+        "播放",
+        "音量"
+      ],
+      "entry": "界面微调 → 白噪音",
+      "content": "打开界面微调中的白噪音，选择雨声、篝火、海浪、森林鸟鸣、溪流或夏夜，再点击播放图标。再次点击可暂停，音量条可拖动或用方向键调整；切换音源会平滑过渡。六段自然录音随应用打包，离线可播放，不调用 AI。关闭微调面板会继续播放，重启应用后保持暂停，音源和音量会保留。",
+      "feature": null,
+      "action": "appearance",
+      "covers": []
+    },
+    {
+      "id": "writer",
+      "title": "落笔",
+      "aliases": [
+        "落笔",
+        "写日记",
+        "写作页面",
+        "编辑格子",
+        "纸格",
+        "添格",
+        "章法",
+        "writing desk"
+      ],
+      "keywords": [
+        "格子",
+        "对齐",
+        "缩放",
+        "拖动",
+        "日期",
+        "写作"
+      ],
+      "entry": "侧栏 → 落笔",
+      "content": "点击落笔后选择日期，日期与星期并排；点击日期展开日历，有内容的日期高亮，前后箭头切换日期。单击纸格进入编辑，Esc 返回格子总览。编辑布局时拖柄移动格子，拖边缘或角点自由调整大小；辅助吸附协助对齐，自动向上填空。添格添加段落，可自定义标题、隐藏或恢复格子；章法保存和应用布局模板。默认使用纸张，下方工具栏调整文字格式。工具可预览当前草稿、管理附件或标签、看历史；收笔·保存才写入正式日记，新编辑会保留版本。日/周/月/年视图是阅读汇总，不会自动生成日记。",
+      "feature": null,
+      "action": "writer",
+      "covers": []
+    },
+    {
+      "id": "drafts",
+      "title": "草稿与保存",
+      "aliases": [
+        "草稿与保存",
+        "草稿",
+        "自动保存",
+        "未保存",
+        "清除草稿",
+        "autosave",
+        "draft"
+      ],
+      "keywords": [
+        "保存",
+        "恢复",
+        "清除",
+        "关闭"
+      ],
+      "entry": "落笔 → 工具",
+      "content": "正在编辑的日记文字、未提交附件、格子布局及字体会作为本地草稿保留，重启或后端端口变化后可继续。收笔·保存会形成正式日记版本；预览此页只看当前草稿，不等于保存。工具中的清除本地草稿只清除未提交草稿，不删除正式日记。保存或附件写入失败时保留编辑内容，可重试；关闭窗口会等待待保存操作并检查草稿。",
+      "feature": null,
+      "action": "writer",
+      "covers": []
+    },
+    {
+      "id": "journal",
+      "title": "流年",
+      "aliases": [
+        "流年",
+        "日记",
+        "月光日记",
+        "翻页",
+        "书本",
+        "目录跳转",
+        "journal",
+        "journal book"
+      ],
+      "keywords": [
+        "翻阅",
+        "日历",
+        "周记",
+        "阅读"
+      ],
+      "entry": "侧栏 → 流年",
+      "content": "流年把日记作为书本翻阅，长文在书页内部滚动。打开目录，用标题或日期搜索，按年/月筛选，点击条目跳转；底部左右箭头翻页，也能输入页码。点击日期会展开日历，有内容的日期高亮。档案同时有日记和周记时可以切换；周记保留自己的年份与周编号。日记可编辑，页面信息中的版本支持预览和从这里恢复，恢复会添加新版本并保留历史；周记不显示编辑或恢复按钮。",
+      "feature": "Journal",
+      "action": null,
+      "covers": [
+        "Journal"
+      ]
+    },
+    {
+      "id": "search",
+      "title": "寻迹",
+      "aliases": [
+        "寻迹",
+        "原文搜索",
+        "本地搜索",
+        "在旧日里寻找",
+        "universal search"
+      ],
+      "keywords": [
+        "搜索",
+        "筛选",
+        "关键词"
+      ],
+      "entry": "侧栏 → 寻迹",
+      "content": "输入关键词搜索本机日记原文，可按日记/周记、年份、篇章和相关度/最新/最早筛选。搜索是本地词法匹配，不是向量语义搜索。展开结果后可进入流年阅读完整来源，返回保留搜索位置。需要 AI 解释时，打开人生问答，重新检索并确认要发送的证据，只有明确解释时才调用模型。",
+      "feature": "Universal Search",
+      "action": null,
+      "covers": [
+        "Universal Search"
+      ],
+      "intents": [
+        "(?:查找|搜索).{0,18}(?:日记|周记|原文)",
+        "(?:日记|周记).{0,18}(?:查找|搜索)"
+      ]
+    },
+    {
+      "id": "on-this-day",
+      "title": "旧信",
+      "aliases": [
+        "旧信",
+        "往年今日",
+        "历史上的今天",
+        "旧日来信",
+        "on this day"
+      ],
+      "keywords": [],
+      "entry": "侧栏 → 旧信",
+      "content": "旧信显示历史上同月同日的日记原文，点击来源可阅读完整日记。只读取本机档案，不调用 AI；没有相同日期的记录时会显示空状态，不补写往事。",
+      "feature": "On This Day",
+      "action": null,
+      "covers": [
+        "On This Day"
+      ]
+    },
+    {
+      "id": "poetry",
+      "title": "今日一诗",
+      "aliases": [
+        "今日一诗",
+        "每日一诗",
+        "诗词库",
+        "荐诗",
+        "生成今日一诗",
+        "daily poetry"
+      ],
+      "keywords": [
+        "诗句",
+        "推荐",
+        "原诗"
+      ],
+      "entry": "侧栏 → 今日一诗",
+      "content": "在今日一诗页面生成当天荐诗、查看缘由、阅读全篇，也可在诗词库查看历史选诗。AI 荐诗只使用所选当天日记，需要先配置并启用相应 AI；保存日记后自动荐诗默认关闭，主动打开后会在保存时发送当天正文。诗文设置管理界面语言、文体、程度及文言化偏好，与 AI 连接设置分开。浏览已有诗词及历史推荐不需要每次调用模型。",
+      "feature": "Daily Poetry",
+      "action": null,
+      "covers": [
+        "Daily Poetry"
+      ]
+    },
+    {
+      "id": "poetry-settings",
+      "title": "诗文设置",
+      "aliases": [
+        "诗文设置",
+        "文体",
+        "文言程度",
+        "诗文语言",
+        "诗文偏好",
+        "poetry settings",
+        "poetry preferences"
+      ],
+      "keywords": [
+        "诗",
+        "语言",
+        "文言",
+        "设置"
+      ],
+      "entry": "今日一诗 → 诗文设置",
+      "content": "打开今日一诗中的诗文设置，选择诗文、中英文结合或 English 的界面语言；选择文体、程度以及本地草译或 AI 文言化，再点保存偏好。诗文设置在诗词页面，AI 设置只管理模型连接和功能权限。AI 文言化需启用并连接模型；本地草译离线可用。",
+      "feature": "Daily Poetry",
+      "action": null,
+      "covers": []
+    },
+    {
+      "id": "classical",
+      "title": "文言化",
+      "aliases": [
+        "文言化",
+        "文言文",
+        "草译",
+        "清简文言",
+        "笔记小品",
+        "classical chinese"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 文言化",
+      "content": "文言化可选择原日记或输入现代汉语，选择清简文言、笔记小品、史传纪事、尺牍书简以及转换程度。先生成并对照原文，结果不自动覆盖日记。本地草译是保守的词语替换，可离线使用；AI 方式需要设置里的文言化许可，只有当前选择或输入的文字发送给模型。模型失败时明确显示本地草译，不当作成功的 AI 结果。诗文偏好在今日一诗 → 诗文设置保存。",
+      "feature": "文言化",
+      "action": null,
+      "covers": [
+        "文言化"
+      ]
+    },
+    {
+      "id": "bottles",
+      "title": "漂流瓶",
+      "aliases": [
+        "漂流瓶",
+        "未来来信",
+        "封存",
+        "时间胶囊",
+        "drift bottle",
+        "time capsule"
+      ],
+      "keywords": [
+        "录音",
+        "录像",
+        "提醒",
+        "未来",
+        "来信",
+        "录制",
+        "开启时间"
+      ],
+      "entry": "侧栏 → 漂流瓶",
+      "content": "点击写信，写文字、录声音或视频，或选择已有媒体文件；可换个灵感、选择月海/晨雾/暮色背景。约定未来开启日期和时间，也可用一周/一月/一年后的快捷时间，然后封存。封存后不能修改或提前开启，到期才可开启漂流瓶。未封存草稿自动保存，也可删除。单段录制最长 10 分钟，单个媒体文件限 100 MB。到期有应用内提醒；应用运行时可发系统通知，关闭后的下次打开补查。时间以设备时钟为准，漂流瓶保存在本机，不进入日记检索、AI 或纪念页，媒体会纳入工作区备份。",
+      "feature": "Time Capsule",
+      "action": null,
+      "covers": [
+        "Time Capsule"
+      ],
+      "intents": [
+        "录(?:一段)?(?:声音|音频|视频)",
+        "寄给(?:未来|未来的自己)",
+        "record.{0,20}(?:voice|audio|video).{0,12}(?:bottle|future)"
+      ]
+    },
+    {
+      "id": "pets",
+      "title": "灵犀与桌宠",
+      "aliases": [
+        "灵犀与桌宠",
+        "灵犀",
+        "桌宠",
+        "猫咪",
+        "桌宠目录",
+        "互动动作",
+        "重复动作",
+        "循环动作",
+        "ViVi",
+        "Desk Otter",
+        "桌面桌宠",
+        "关闭窗口后保留桌宠",
+        "pet shelf",
+        "companion",
+        "pets"
+      ],
+      "keywords": [
+        "单列",
+        "双列",
+        "四列",
+        "右击",
+        "右键",
+        "动作",
+        "动画",
+        "桌宠设置",
+        "移除桌宠",
+        "拖动动作",
+        "置顶"
+      ],
+      "entry": "侧栏 → 灵犀",
+      "content": "灵犀的桌宠目录默认双列；更新目录左侧的单列、双列、四列图标可以改变展示密度。点击下载到本机，再使用该桌宠；已安装区的移除按钮也支持 Desk Otter 和 ViVi，移除后重启不复活，再从宠物库添加可恢复。当前桌宠、已安装卡片或目录预览都可右击，选择一种动作让它重复播放；选择恢复自动回到原来的事件互动。灵犀标题右侧的齿轮打开桌宠设置，可选择软件内或桌面显示、显示开关、关闭窗口后保留、桌面置顶、大小和播放动效。桌面模式需桌面客户端，软件内悬浮宠会收起；选择关闭窗口后保留时，关主窗口仍有桌宠及托盘，可以从托盘重新打开软件、隐藏桌宠或退出 LifeOS；明确退出会结束后台与桌宠。ViVi 保留 14 个原始 GIF 和 16 个动作选项，包括左右行走、长动作、登场、藏起及拖动反馈；设置里可控制自动游走、靠边藏起及飞起来/摸摸/流汗/跳跃四种拖动动作。目录先读取随应用打包的快照，更新目录才联网拉取公开资源；各资源保留自己的来源与许可。",
+      "feature": "Pet Shelf",
+      "action": null,
+      "covers": [],
+      "intents": [
+        "pet.{0,30}(?:jump|animat|action|loop|column|keep|repeat)",
+        "(?:loop|repeat|jump).{0,18}pet"
+      ]
+    },
+    {
+      "id": "pet-chat",
+      "title": "灵犀对话与使用指南",
+      "aliases": [
+        "灵犀对话与使用指南",
+        "桌宠聊天",
+        "ai对话",
+        "灵犀对话",
+        "产品知识库",
+        "使用指南",
+        "知识库",
+        "pet chat"
+      ],
+      "keywords": [
+        "聊天",
+        "回答",
+        "帮助",
+        "日记"
+      ],
+      "entry": "灵犀 → 桌宠 → 聊天",
+      "content": "桌宠旁的对话可以闲聊或问 LifeOS 怎么使用，例如怎么调整侧栏。产品问题会在本机使用指南中检索相关功能，再把本轮必要片段与当前对话交给设置中的模型，不会每次附整本手册。回复下方显示来源，可打开对应功能。未连接模型或关闭 AI 时，明确返回本地指南；普通闲聊仍需要启用桌宠聊天。这里只使用当前对话，不读取或检索日记，不带当前页内容或桌面事件，也不会写入日记。产品指南只介绍现有功能，尚未完成的能力会标明。",
+      "feature": "Pet Shelf",
+      "action": null,
+      "covers": []
+    },
+    {
+      "id": "ai-settings",
+      "title": "AI 设置",
+      "aliases": [
+        "AI 设置",
+        "ai设置",
+        "模型设置",
+        "api key",
+        "deepseek",
+        "qwen",
+        "glm",
+        "cc-switch",
+        "cc switch",
+        "codex",
+        "api连接",
+        "模型连接"
+      ],
+      "keywords": [
+        "ai",
+        "密钥",
+        "服务商",
+        "配置"
+      ],
+      "entry": "左下设置齿轮 → AI 设置",
+      "content": "点击左下设置齿轮打开 AI 设置，启用 AI，选择服务商并填写 API Key，再保存或保存并测试。Qwen、DeepSeek、GLM 等预置服务自动填写模型和地址；需要特殊服务时展开自定义服务，填写模型名称、服务地址和接口格式。检测到本机 CC Switch 及可用的 Codex 后才提供跟随 CC Switch 的方案，复用当前连接且不修改其配置。功能设置中分别管理人生问答、以前的我、AI 文言化与桌宠聊天，以及证据摘要与本地缓存。关闭 AI 或对应功能会阻止模型请求。诗文偏好在今日一诗管理。",
+      "feature": "AI Settings",
+      "action": null,
+      "covers": [],
+      "intents": [
+        "^(?:那|软件的|产品的)?设置.{0,4}(?:在哪|哪里)",
+        "(?:找|打开|进入).{0,4}(?:设置)$"
+      ]
+    },
+    {
+      "id": "ask",
+      "title": "人生问答",
+      "aliases": [
+        "人生问答",
+        "问问过去的我",
+        "ask my life",
+        "证据包",
+        "解释证据"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Ask My Life",
+      "content": "人生问答先按问题检索本机原文证据，查看出处、日期和片段，勾选或删减后点击解释所选。只发送你确认的证据，回答需引用 [E1] 等编号；证据不足默认不调用模型，可以补充证据或明确谨慎解释。问题或日记变化后需要重新检索确认。没有配置模型时只返回本地证据，模型错误会显示失败，不编造解释。产品如何使用的问题可直接问灵犀，不需要选择日记证据。",
+      "feature": "Ask My Life",
+      "action": null,
+      "covers": [
+        "Ask My Life"
+      ]
+    },
+    {
+      "id": "past-me",
+      "title": "以前的我",
+      "aliases": [
+        "以前的我",
+        "过去的我",
+        "past me",
+        "截止日期"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Past Me",
+      "content": "以前的我需要选择截止日期，只检索该日期之前的真实记录；先查看和选定证据，再让模型解释。截止日期不等于模型真的成为当时的你。Roundtable 目前为同一问题准备多个截止日期的证据包，供你并排比较；没有多个人格模型自动讨论。对应的以前的我 AI 开关与远端许可仍有效。",
+      "feature": "Past Me",
+      "action": null,
+      "covers": [
+        "Past Me"
+      ]
+    },
+    {
+      "id": "future-me",
+      "title": "愿望重读",
+      "aliases": [
+        "愿望重读",
+        "future me",
+        "目标重读"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Future Me",
+      "content": "Future Me 重读原文中明确写下的目标、计划和愿望，不预测未来。Life Movie 根据月份和来源组织年度故事板，是可阅读的记录概览，不生成视频。想把新的文字、录音或视频约定未来再打开，应使用侧栏的漂流瓶。",
+      "feature": "Future Me",
+      "action": null,
+      "covers": [
+        "Future Me"
+      ]
+    },
+    {
+      "id": "attic",
+      "title": "阁楼",
+      "aliases": [
+        "阁楼",
+        "概览",
+        "回看",
+        "整理",
+        "观察",
+        "工具索引",
+        "attic",
+        "overview"
+      ],
+      "keywords": [
+        "工具",
+        "索引",
+        "统计",
+        "来源"
+      ],
+      "entry": "侧栏 → 阁楼",
+      "content": "阁楼有概览、回看、整理、观察四页。概览用主题首次与最近原文、线索和月度记录开始浏览；回看按主题与年份读日记和摘录；整理按项目/问题/决定查看原文候选与后续来源；观察看年月写作、技能及词语记录。每页右上或页尾有工具索引，可搜索中文或英文名打开已有工具。来源可在右侧预览，也能进入流年；返回时保留筛选和滚动位置。这些统计和候选来自本地索引，不调用 AI，不表示能力评分或因果关系。",
+      "feature": "Attic",
+      "action": null,
+      "covers": []
+    },
+    {
+      "id": "import",
+      "title": "导入旧日记",
+      "aliases": [
+        "导入旧日记",
+        "导入",
+        "导入日记",
+        "import",
+        "day one"
+      ],
+      "keywords": [
+        "旧日记",
+        "zip",
+        "文件",
+        "markdown"
+      ],
+      "entry": "落笔 → 工具 → 导入旧日记",
+      "content": "在落笔的工具中选择导入旧日记；空流年或阁楼也有导入入口。选择或拖入 Markdown、TXT、HTML、CSV、通用 JSON、Day One JSON 或包含这些格式的 ZIP，点击先看导入计划。检查识别日期、正文和重复情况，可以修改日期或每条动作，再确认导入。正式提交前会做安全备份，保留原始导入包和来源。日记和周记可混合导入，周记保留原始周编号。打开导入后，生活档案侧栏还提供导出、版本、备份等入口。",
+      "feature": null,
+      "action": "import",
+      "covers": []
+    },
+    {
+      "id": "import-clear",
+      "title": "清除导入与回滚",
+      "aliases": [
+        "清除导入与回滚",
+        "回滚",
+        "清除导入",
+        "清除并恢复",
+        "删除导入",
+        "导入测试",
+        "rollback"
+      ],
+      "keywords": [
+        "导入",
+        "清除",
+        "恢复",
+        "删除"
+      ],
+      "entry": "生活档案 → 导入",
+      "content": "未提交时清除这次导入只删除预览记录与该次导入文件。已提交后清除并恢复或回滚这次导入，会将整个工作区恢复到导入前快照；导入后新增或修改的其他内容也会一起回到快照状态，因此需要先确认并保留安全备份。它不是只删除几篇导入日记。清除本地写作草稿与清除导入是不同操作，前者不删除正式日记。",
+      "feature": null,
+      "action": "import",
+      "covers": [],
+      "intents": [
+        "导入.{0,22}(?:清除|删|撤销|回退|回滚|恢复|以前|之前)",
+        "(?:清除|删|撤销|回退|回滚|恢复|回到).{0,16}导入",
+        "(?:undo|clear|delete|rollback|restore).{0,24}import",
+        "import.{0,24}(?:undo|clear|delete|rollback|restore)"
+      ]
+    },
+    {
+      "id": "delete-entry",
+      "title": "删除正式日记",
+      "aliases": [
+        "删除正式日记",
+        "删除日记",
+        "删除一篇日记",
+        "彻底删除",
+        "清空日记库"
+      ],
+      "keywords": [
+        "日记",
+        "删除",
+        "清空"
+      ],
+      "entry": "生活档案 → 备份 / 落笔 → 工具",
+      "content": "当前界面尚未提供删除单篇正式日记或一键清空日记库的按钮。落笔工具中的清除本地草稿只清除未提交草稿，不删除已保存日记；清除并恢复这次导入是整个导入前工作区快照回滚，也不是单篇删除。漂流瓶草稿有自己的删除操作。需要彻底整理档案时先备份工作区，不能把草稿清除当作正式日记已删除。",
+      "feature": null,
+      "action": "backup",
+      "covers": [],
+      "intents": [
+        "(?:删|清空).{0,12}(?:日记|journal)",
+        "delete.{0,20}(?:journal|diary|diaries)"
+      ]
+    },
+    {
+      "id": "export",
+      "title": "导出日记",
+      "aliases": [
+        "导出日记",
+        "导出",
+        "导出此页",
+        "export"
+      ],
+      "keywords": [
+        "markdown",
+        "csv",
+        "json",
+        "附件"
+      ],
+      "entry": "落笔 → 工具 → 导出此页 / 生活档案 → 导出",
+      "content": "导出可以选择全部、日期范围或当前页，输出 Markdown ZIP、JSON 或 CSV。Markdown 包可包含附件；JSON 和 CSV 保留日记字段，适合往返或另作分析。导出只生成副本，不删除本机日记。已下载到系统目录的文件需在文件管理器中删除，应用不会自动清理下载。可先用隔离工作区重新导入导出包检查结果；从导出窗口的生活档案侧栏也能进入导入、版本和备份。",
+      "feature": null,
+      "action": "export",
+      "covers": []
+    },
+    {
+      "id": "versions",
+      "title": "版本与恢复",
+      "aliases": [
+        "版本与恢复",
+        "历史版本",
+        "恢复版本",
+        "revision",
+        "版本记录",
+        "版本预览"
+      ],
+      "keywords": [
+        "版本",
+        "历史",
+        "恢复"
+      ],
+      "entry": "流年 → 页面信息 → 版本 / 生活档案 → 版本",
+      "content": "日记保存修改会保留历史版本。在流年页面信息中进入版本，先预览所选旧版，再点击从这里恢复。恢复会创建新版本，历史仍在，不直接抹掉版本链。生活档案版本页也可选择日记查看。周记目前只可读取和导出，不显示编辑或恢复按钮。Git Life 展示本地来源、版本与档案状态，不是 GitHub 自动提交或推送。",
+      "feature": null,
+      "action": "versions",
+      "covers": []
+    },
+    {
+      "id": "backup",
+      "title": "备份与恢复",
+      "aliases": [
+        "备份与恢复",
+        "备份",
+        "backup",
+        "恢复备份",
+        "安全备份",
+        "工作区备份"
+      ],
+      "keywords": [
+        "恢复",
+        "还原",
+        "数据"
+      ],
+      "entry": "生活档案 → 备份",
+      "content": "从落笔工具进入导入或导出后，在生活档案侧栏选择备份，点击现在做一个备份。工作区备份包含日记、版本、附件、草稿、偏好和漂流瓶媒体。恢复前校验包内文件并创建安全备份，确认后在重启时替换当前工作区；中断会按恢复记录回滚。保留的安全备份可在备份列表找到。备份可能包含未到开启时间的漂流瓶内容，需妥善保存。导入回滚与恢复完整备份都会影响工作区，先确认当前内容已保留。",
+      "feature": null,
+      "action": "backup",
+      "covers": []
+    },
+    {
+      "id": "privacy",
+      "title": "本地数据与隐私",
+      "aliases": [
+        "本地数据与隐私",
+        "隐私",
+        "本地数据",
+        "数据位置",
+        "公开全库",
+        "私有",
+        "privacy"
+      ],
+      "keywords": [
+        "日记",
+        "上传",
+        "联网",
+        "数据"
+      ],
+      "entry": "生活档案 → 隐私与本地",
+      "content": "LifeOS 默认本地优先。安装版工作区在 %APPDATA%/LifeOS/workspace，启动日志在 %APPDATA%/LifeOS/logs/desktop.log；源码运行使用仓库目录。原始 Markdown 在 vault，索引可重建，版本、草稿和偏好存于独立工作区元数据。AI 只在允许的功能和操作中发送当前输入或确认的证据；桌宠聊天不读日记。Private / Share 不会一键公开全库，分享或纪念页需主动选定与确认。遥测默认关闭，隐私与本地页可设置导入/恢复前备份和后台索引整理。",
+      "feature": null,
+      "action": "privacy",
+      "covers": []
+    },
+    {
+      "id": "memorial",
+      "title": "纪念页与二维码",
+      "aliases": [
+        "纪念页与二维码",
+        "纪念页",
+        "二维码",
+        "qr code",
+        "公开主页",
+        "memorial"
+      ],
+      "keywords": [
+        "发布",
+        "分享",
+        "扫码"
+      ],
+      "entry": "生活档案 → 纪念页与二维码",
+      "content": "打开纪念页与二维码，编辑标题和前言，明确勾选要公开的日记全文，挑选 1–12 篇精选故事，先预览再确认发布。发布后可复制稳定网址、下载 SVG 二维码、更新或撤下页面。需要单独配置 Netlify 站点与发布密钥（或开发服务），GitHub 发版不等于发布你的纪念页。只公开所选快照，后续日记编辑仍私有直到再次发布；公开页面的 AI 分身还需在线模型服务，不复用桌面 API Key。",
+      "feature": null,
+      "action": "memorial",
+      "covers": []
+    },
+    {
+      "id": "inbox",
+      "title": "记忆收件箱",
+      "aliases": [
+        "记忆收件箱",
+        "收件箱",
+        "connector",
+        "calendar ics",
+        "generic json",
+        "inbox"
+      ],
+      "keywords": [
+        "日历",
+        "接入",
+        "第三方"
+      ],
+      "entry": "生活档案 → 收件箱",
+      "content": "收件箱先接住来自 Generic JSON 或 Calendar ICS 本地导出的记忆候选。选择连接类型并粘贴内容，送进收件箱后查看来源、时间和正文，再选择忽略或整理成日记。导入一份第三方记录不会自动等同于本人日记。生产 OAuth 对接尚需对应服务商授权与配置，不能直接登录所有第三方服务。",
+      "feature": null,
+      "action": "inbox",
+      "covers": []
+    },
+    {
+      "id": "platform",
+      "title": "同步与多端开发状态",
+      "aliases": [
+        "同步与多端开发状态",
+        "同步",
+        "多端",
+        "mac",
+        "安卓",
+        "ios",
+        "android",
+        "手机端",
+        "p2",
+        "付费",
+        "端到端加密",
+        "recovery key",
+        "sync"
+      ],
+      "keywords": [
+        "云端",
+        "手机",
+        "跨端",
+        "多端"
+      ],
+      "entry": "生活档案 → 同步 / P2 多端",
+      "content": "当前可在生活档案同步页配置服务地址、注册或登录参考同步服务并手动同步，冲突需要选择本地或远端版本。P2 页面包含开发中的多端、加密和显式分享配置。Mac、Android、iOS 与生产云同步仍需后续开发和分端验收，当前不是已上线的一键跨端服务；付费能力也需要真实支付系统。端到端同步加密需生成并离线保存 Recovery Key，丢失后服务端不能替你恢复密文。不要将开发状态当作已发布产品能力。",
+      "feature": null,
+      "action": "sync",
+      "covers": []
+    },
+    {
+      "id": "updates",
+      "title": "启动与更新",
+      "aliases": [
+        "启动与更新",
+        "启动",
+        "安装",
+        "更新版本",
+        "下载更新",
+        "electron",
+        "启动失败",
+        "desktop setup"
+      ],
+      "keywords": [
+        "桌面",
+        "升级",
+        "报错",
+        "失败"
+      ],
+      "entry": "生活档案 → 隐私与本地 → 更新",
+      "content": "Windows 安装包内置 Python，首次打开会创建空工作区，升级保留本地日记和设置。源码安装运行 setup_desktop.bat，它使用 desktop/.venv，不往共享 Anaconda 安装依赖；之后用 start_desktop.bat 启动，会检查真正的 Electron 可执行文件。自动更新可检查、下载、取消、重试，准备安装时先保存草稿与备份。启动失败可查看 %APPDATA%/LifeOS/logs/desktop.log；网络下载受阻时保留日志并重试。v0.5 当前仍在人工验收源码阶段，不应声称已发布安装包。",
+      "feature": null,
+      "action": "privacy",
+      "covers": []
+    },
+    {
+      "id": "tool-3",
+      "title": "时间线",
+      "aliases": [
+        "时间线",
+        "Timeline"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 时间线",
+      "content": "来自日程原文的时间线。 从阁楼任一页打开工具索引，搜索「时间线」或「Timeline」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Timeline",
+      "action": null,
+      "covers": [
+        "Timeline"
+      ]
+    },
+    {
+      "id": "tool-6",
+      "title": "潜入记忆海",
+      "aliases": [
+        "潜入记忆海",
+        "Deep Read",
+        "深读"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 潜入记忆海",
+      "content": "对一个主题做长周期证据阅读。 从阁楼任一页打开工具索引，搜索「潜入记忆海」或「Deep Read」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Deep Read",
+      "action": null,
+      "covers": [
+        "Deep Read"
+      ]
+    },
+    {
+      "id": "tool-7",
+      "title": "日记成册",
+      "aliases": [
+        "日记成册",
+        "Book"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 日记成册",
+      "content": "把人生阶段组织成可翻阅章节。 从阁楼任一页打开工具索引，搜索「日记成册」或「Book」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Book",
+      "action": null,
+      "covers": [
+        "Book"
+      ]
+    },
+    {
+      "id": "tool-8",
+      "title": "Chapters",
+      "aliases": [
+        "Chapters"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Chapters",
+      "content": "基于时间段生成章节候选。 从阁楼任一页打开工具索引，搜索「Chapters」或「Chapters」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Chapters",
+      "action": null,
+      "covers": [
+        "Chapters"
+      ]
+    },
+    {
+      "id": "tool-9",
+      "title": "相遇的人",
+      "aliases": [
+        "相遇的人",
+        "People"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 相遇的人",
+      "content": "角色与显式配置人物的出现轨迹。 从阁楼任一页打开工具索引，搜索「相遇的人」或「People」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "People",
+      "action": null,
+      "covers": [
+        "People"
+      ]
+    },
+    {
+      "id": "tool-10",
+      "title": "去过的地方会发光",
+      "aliases": [
+        "去过的地方会发光",
+        "Life Map"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 去过的地方会发光",
+      "content": "地点提及与空间记忆。 从阁楼任一页打开工具索引，搜索「去过的地方会发光」或「Life Map」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Life Map",
+      "action": null,
+      "covers": [
+        "Life Map"
+      ]
+    },
+    {
+      "id": "tool-11",
+      "title": "想法",
+      "aliases": [
+        "想法",
+        "Ideas"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 想法",
+      "content": "从原文中抽取的想法候选。 从阁楼任一页打开工具索引，搜索「想法」或「Ideas」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Ideas",
+      "action": null,
+      "covers": [
+        "Ideas"
+      ]
+    },
+    {
+      "id": "tool-12",
+      "title": "Beliefs",
+      "aliases": [
+        "Beliefs"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Beliefs",
+      "content": "自我探索/体系构建中的显式观点候选。 从阁楼任一页打开工具索引，搜索「Beliefs」或「Beliefs」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Beliefs",
+      "action": null,
+      "covers": [
+        "Beliefs"
+      ]
+    },
+    {
+      "id": "tool-13",
+      "title": "Contradictions",
+      "aliases": [
+        "Contradictions"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Contradictions",
+      "content": "前后观点的人工复核候选。 从阁楼任一页打开工具索引，搜索「Contradictions」或「Contradictions」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Contradictions",
+      "action": null,
+      "covers": [
+        "Contradictions"
+      ]
+    },
+    {
+      "id": "tool-14",
+      "title": "技能关联",
+      "aliases": [
+        "技能关联",
+        "Skill Constellation"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 技能关联",
+      "content": "技能簇与父子关系。 从阁楼任一页打开工具索引，搜索「技能关联」或「Skill Constellation」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Skill Constellation",
+      "action": null,
+      "covers": [
+        "Skill Constellation"
+      ]
+    },
+    {
+      "id": "tool-15",
+      "title": "Skill Points",
+      "aliases": [
+        "Skill Points"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Skill Points",
+      "content": "分数由真实提及日数计算，只描述档案里的活动可见度，不是能力或水平评分。 从阁楼任一页打开工具索引，搜索「Skill Points」或「Skill Points」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Skill Points",
+      "action": null,
+      "covers": [
+        "Skill Points"
+      ]
+    },
+    {
+      "id": "tool-16",
+      "title": "技能证据",
+      "aliases": [
+        "技能证据",
+        "Skill Evidence"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 技能证据",
+      "content": "选择技能，查看对应真实日记来源，并可保存来源标记；不把日记提及次数换算为能力。 从阁楼任一页打开工具索引，搜索「技能证据」或「Skill Evidence」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Skill Evidence",
+      "action": null,
+      "covers": [
+        "Skill Evidence"
+      ]
+    },
+    {
+      "id": "tool-17",
+      "title": "技能变化",
+      "aliases": [
+        "技能变化",
+        "Skill Evolution"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 技能变化",
+      "content": "选择技能查看按实际月份绘制的变化图和数据表，无记录月份不会伪造记录。 从阁楼任一页打开工具索引，搜索「技能变化」或「Skill Evolution」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Skill Evolution",
+      "action": null,
+      "covers": [
+        "Skill Evolution"
+      ]
+    },
+    {
+      "id": "tool-18",
+      "title": "Builds",
+      "aliases": [
+        "Builds"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Builds",
+      "content": "不同年份的角色 Build。 从阁楼任一页打开工具索引，搜索「Builds」或「Builds」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Builds",
+      "action": null,
+      "covers": [
+        "Builds"
+      ]
+    },
+    {
+      "id": "tool-19",
+      "title": "Achievements",
+      "aliases": [
+        "Achievements"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Achievements",
+      "content": "里程碑候选。 从阁楼任一页打开工具索引，搜索「Achievements」或「Achievements」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Achievements",
+      "action": null,
+      "covers": [
+        "Achievements"
+      ]
+    },
+    {
+      "id": "tool-20",
+      "title": "习惯记录",
+      "aliases": [
+        "习惯记录",
+        "Habits"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 习惯记录",
+      "content": "习惯栏目结构与长期存在。 从阁楼任一页打开工具索引，搜索「习惯记录」或「Habits」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Habits",
+      "action": null,
+      "covers": [
+        "Habits"
+      ]
+    },
+    {
+      "id": "tool-21",
+      "title": "写作统计",
+      "aliases": [
+        "写作统计",
+        "Analytics"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 写作统计",
+      "content": "查看年月写作统计、月度图表和数据表，按真实记录日计算，没写日记不等于失败。 从阁楼任一页打开工具索引，搜索「写作统计」或「Analytics」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Analytics",
+      "action": null,
+      "covers": [
+        "Analytics"
+      ]
+    },
+    {
+      "id": "tool-22",
+      "title": "词语变化",
+      "aliases": [
+        "词语变化",
+        "Word Evolution"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 词语变化",
+      "content": "选择词语，查看它在实际月份的出现变化和数据表；不是语义情绪分析。 从阁楼任一页打开工具索引，搜索「词语变化」或「Word Evolution」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Word Evolution",
+      "action": null,
+      "covers": [
+        "Word Evolution"
+      ]
+    },
+    {
+      "id": "tool-23",
+      "title": "Self Model",
+      "aliases": [
+        "Self Model"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Self Model",
+      "content": "显式观点、问题和关注主题组成的动态模型。 从阁楼任一页打开工具索引，搜索「Self Model」或「Self Model」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Self Model",
+      "action": null,
+      "covers": [
+        "Self Model"
+      ]
+    },
+    {
+      "id": "tool-25",
+      "title": "Roundtable",
+      "aliases": [
+        "Roundtable",
+        "圆桌"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Roundtable",
+      "content": "为同一问题准备多个截止日期之前的原始证据包，可并排回看；目前没有多个人格 AI 模型自动讨论。 从阁楼任一页打开工具索引，搜索「Roundtable」或「Roundtable」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Roundtable",
+      "action": null,
+      "covers": [
+        "Roundtable"
+      ]
+    },
+    {
+      "id": "tool-28",
+      "title": "年度回顾",
+      "aliases": [
+        "年度回顾",
+        "Year in Review"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 年度回顾",
+      "content": "选择年份查看有日期来源的结构化回顾、月份、主题及里程碑候选；记录多寡不表示生活质量。 从阁楼任一页打开工具索引，搜索「年度回顾」或「Year in Review」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Year in Review",
+      "action": null,
+      "covers": [
+        "Year in Review"
+      ]
+    },
+    {
+      "id": "tool-29",
+      "title": "人生放映室",
+      "aliases": [
+        "人生放映室",
+        "Life Movie",
+        "年度故事板",
+        "life movie"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 人生放映室",
+      "content": "按月份和真实来源组织年度故事板，可回读原文，是阅读界面，不生成视频。 从阁楼任一页打开工具索引，搜索「人生放映室」或「Life Movie」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Life Movie",
+      "action": null,
+      "covers": [
+        "Life Movie"
+      ]
+    },
+    {
+      "id": "tool-30",
+      "title": "星群之间",
+      "aliases": [
+        "星群之间",
+        "Memory Graph"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 星群之间",
+      "content": "技能、主题、角色、地点的共现图。 从阁楼任一页打开工具索引，搜索「星群之间」或「Memory Graph」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Memory Graph",
+      "action": null,
+      "covers": [
+        "Memory Graph"
+      ]
+    },
+    {
+      "id": "tool-32",
+      "title": "摘录",
+      "aliases": [
+        "摘录",
+        "Quotes"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 摘录",
+      "content": "心得与摘录中的摘录候选。 从阁楼任一页打开工具索引，搜索「摘录」或「Quotes」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Quotes",
+      "action": null,
+      "covers": [
+        "Quotes"
+      ]
+    },
+    {
+      "id": "tool-33",
+      "title": "问题",
+      "aliases": [
+        "问题",
+        "Questions"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 问题",
+      "content": "反复出现的问题候选。 从阁楼任一页打开工具索引，搜索「问题」或「Questions」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Questions",
+      "action": null,
+      "covers": [
+        "Questions"
+      ]
+    },
+    {
+      "id": "tool-34",
+      "title": "项目",
+      "aliases": [
+        "项目",
+        "Projects"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 项目",
+      "content": "项目/课题/论文/产品相关候选。 从阁楼任一页打开工具索引，搜索「项目」或「Projects」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Projects",
+      "action": null,
+      "covers": [
+        "Projects"
+      ]
+    },
+    {
+      "id": "tool-35",
+      "title": "决定",
+      "aliases": [
+        "决定",
+        "Decisions"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 决定",
+      "content": "选择与决定候选。 从阁楼任一页打开工具索引，搜索「决定」或「Decisions」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Decisions",
+      "action": null,
+      "covers": [
+        "Decisions"
+      ]
+    },
+    {
+      "id": "tool-36",
+      "title": "分岔记录",
+      "aliases": [
+        "分岔记录",
+        "Forks"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 分岔记录",
+      "content": "可能的人生岔路，需人工确认。 从阁楼任一页打开工具索引，搜索「分岔记录」或「Forks」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Forks",
+      "action": null,
+      "covers": [
+        "Forks"
+      ]
+    },
+    {
+      "id": "tool-37",
+      "title": "Git Life",
+      "aliases": [
+        "Git Life"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Git Life",
+      "content": "展示本地来源、版本与档案状态，Markdown 是原始档案；不会自动执行 Git 提交或 GitHub 推送。 从阁楼任一页打开工具索引，搜索「Git Life」或「Git Life」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Git Life",
+      "action": null,
+      "covers": [
+        "Git Life"
+      ]
+    },
+    {
+      "id": "tool-38",
+      "title": "CHANGELOG",
+      "aliases": [
+        "CHANGELOG"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → CHANGELOG",
+      "content": "并排展示年份间的档案差异，不自动生成或推送软件发布日志。 从阁楼任一页打开工具索引，搜索「CHANGELOG」或「CHANGELOG」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "CHANGELOG",
+      "action": null,
+      "covers": [
+        "CHANGELOG"
+      ]
+    },
+    {
+      "id": "tool-39",
+      "title": "两个我坐下来聊聊",
+      "aliases": [
+        "两个我坐下来聊聊",
+        "Compare Me"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 两个我坐下来聊聊",
+      "content": "选择两个时间范围，比较有来源的日记可见度及每记录日的归一化统计；记录不均衡时谨慎比较，不评价哪个时期更好。 从阁楼任一页打开工具索引，搜索「两个我坐下来聊聊」或「Compare Me」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Compare Me",
+      "action": null,
+      "covers": [
+        "Compare Me"
+      ]
+    },
+    {
+      "id": "tool-40",
+      "title": "Memory Provenance",
+      "aliases": [
+        "Memory Provenance"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Memory Provenance",
+      "content": "来源、哈希、AI/原文分层。 从阁楼任一页打开工具索引，搜索「Memory Provenance」或「Memory Provenance」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Memory Provenance",
+      "action": null,
+      "covers": [
+        "Memory Provenance"
+      ]
+    },
+    {
+      "id": "tool-41",
+      "title": "Correct AI",
+      "aliases": [
+        "Correct AI"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Correct AI",
+      "content": "记录你对 AI 解释的正确/部分正确/错误判定与修正，不是训练或微调模型。 从阁楼任一页打开工具索引，搜索「Correct AI」或「Correct AI」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Correct AI",
+      "action": null,
+      "covers": [
+        "Correct AI"
+      ]
+    },
+    {
+      "id": "tool-42",
+      "title": "Private / Share",
+      "aliases": [
+        "Private / Share",
+        "private/share"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Private / Share",
+      "content": "默认私有，查看隐私状态；不会一键公开全库。创建公开链接或纪念页需要另行选定内容与确认发布。 从阁楼任一页打开工具索引，搜索「Private / Share」或「Private / Share」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Private / Share",
+      "action": null,
+      "covers": [
+        "Private / Share"
+      ]
+    },
+    {
+      "id": "tool-43",
+      "title": "Cabinet of Curiosities",
+      "aliases": [
+        "Cabinet of Curiosities"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Cabinet of Curiosities",
+      "content": "从统计、共现、时间跨度里捞出你没主动寻找的线索。 从阁楼任一页打开工具索引，搜索「Cabinet of Curiosities」或「Cabinet of Curiosities」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Cabinet of Curiosities",
+      "action": null,
+      "covers": [
+        "Cabinet of Curiosities"
+      ]
+    },
+    {
+      "id": "tool-44",
+      "title": "记忆回声",
+      "aliases": [
+        "记忆回声",
+        "Memory Echoes"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 记忆回声",
+      "content": "让两篇相隔很远却共享少见语言片段的日记相遇。 从阁楼任一页打开工具索引，搜索「记忆回声」或「Memory Echoes」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Memory Echoes",
+      "action": null,
+      "covers": [
+        "Memory Echoes"
+      ]
+    },
+    {
+      "id": "tool-45",
+      "title": "隐藏章节",
+      "aliases": [
+        "隐藏章节",
+        "Hidden Chapters"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 隐藏章节",
+      "content": "从月度注意力结构变化提出人生章节候选。 从阁楼任一页打开工具索引，搜索「隐藏章节」或「Hidden Chapters」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Hidden Chapters",
+      "action": null,
+      "covers": [
+        "Hidden Chapters"
+      ]
+    },
+    {
+      "id": "tool-46",
+      "title": "首次与最近",
+      "aliases": [
+        "首次与最近",
+        "First / Last"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 首次与最近",
+      "content": "追踪技能、主题、地点、角色的第一次与最近一次出现。 从阁楼任一页打开工具索引，搜索「首次与最近」或「First / Last」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "First / Last",
+      "action": null,
+      "covers": [
+        "First / Last"
+      ]
+    },
+    {
+      "id": "tool-47",
+      "title": "Recurring Questions",
+      "aliases": [
+        "Recurring Questions",
+        "反复的问题",
+        "Question Threads"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Recurring Questions",
+      "content": "跨越数月反复出现的问题线索。 从阁楼任一页打开工具索引，搜索「Recurring Questions」或「Recurring Questions」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Recurring Questions",
+      "action": null,
+      "covers": [
+        "Recurring Questions"
+      ]
+    },
+    {
+      "id": "tool-48",
+      "title": "生活节律",
+      "aliases": [
+        "生活节律",
+        "Life Rhythms"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 生活节律",
+      "content": "星期节律、长日记与沉默区间。 从阁楼任一页打开工具索引，搜索「生活节律」或「Life Rhythms」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Life Rhythms",
+      "action": null,
+      "covers": [
+        "Life Rhythms"
+      ]
+    },
+    {
+      "id": "tool-49",
+      "title": "Skill Alchemy",
+      "aliases": [
+        "Skill Alchemy"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Skill Alchemy",
+      "content": "哪些技能总在同一天共同出现。 从阁楼任一页打开工具索引，搜索「Skill Alchemy」或「Skill Alchemy」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Skill Alchemy",
+      "action": null,
+      "covers": [
+        "Skill Alchemy"
+      ]
+    },
+    {
+      "id": "tool-50",
+      "title": "记忆抽签机",
+      "aliases": [
+        "记忆抽签机",
+        "Serendipity"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 记忆抽签机",
+      "content": "随机打开一个你没有主动搜索的时间桥。 从阁楼任一页打开工具索引，搜索「记忆抽签机」或「Serendipity」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Serendipity",
+      "action": null,
+      "covers": [
+        "Serendipity"
+      ]
+    },
+    {
+      "id": "tool-51",
+      "title": "Trajectory Observatory",
+      "aliases": [
+        "Trajectory Observatory"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Trajectory Observatory",
+      "content": "把阶段、回归、早期信号、写作结构与未再出现的线索放在同一张观测台。 从阁楼任一页打开工具索引，搜索「Trajectory Observatory」或「Trajectory Observatory」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Trajectory Observatory",
+      "action": null,
+      "covers": [
+        "Trajectory Observatory"
+      ]
+    },
+    {
+      "id": "tool-52",
+      "title": "Personal Eras",
+      "aliases": [
+        "Personal Eras"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Personal Eras",
+      "content": "从月度主题+技能结构变化提出人生阶段候选。 从阁楼任一页打开工具索引，搜索「Personal Eras」或「Personal Eras」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Personal Eras",
+      "action": null,
+      "covers": [
+        "Personal Eras"
+      ]
+    },
+    {
+      "id": "tool-53",
+      "title": "Return Map",
+      "aliases": [
+        "Return Map"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Return Map",
+      "content": "哪些技能或主题沉寂很久之后又重新出现。 从阁楼任一页打开工具索引，搜索「Return Map」或「Return Map」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Return Map",
+      "action": null,
+      "covers": [
+        "Return Map"
+      ]
+    },
+    {
+      "id": "tool-54",
+      "title": "Dormant Threads",
+      "aliases": [
+        "Dormant Threads"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Dormant Threads",
+      "content": "曾多次出现、但最近较久没有再次记录的问题/想法/项目线索。 从阁楼任一页打开工具索引，搜索「Dormant Threads」或「Dormant Threads」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Dormant Threads",
+      "action": null,
+      "covers": [
+        "Dormant Threads"
+      ]
+    },
+    {
+      "id": "tool-55",
+      "title": "想法脉络",
+      "aliases": [
+        "想法脉络",
+        "Idea Genealogy"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 想法脉络",
+      "content": "把相似的想法片段连接成可能的想法谱系。 从阁楼任一页打开工具索引，搜索「想法脉络」或「Idea Genealogy」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Idea Genealogy",
+      "action": null,
+      "covers": [
+        "Idea Genealogy"
+      ]
+    },
+    {
+      "id": "tool-56",
+      "title": "Before / After",
+      "aliases": [
+        "Before / After"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Before / After",
+      "content": "比较里程碑或决定前后30天的主题与技能结构。 从阁楼任一页打开工具索引，搜索「Before / After」或「Before / After」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Before / After",
+      "action": null,
+      "covers": [
+        "Before / After"
+      ]
+    },
+    {
+      "id": "tool-57",
+      "title": "Voice Drift",
+      "aliases": [
+        "Voice Drift"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Voice Drift",
+      "content": "观察写作长度、反思比例、问题/想法密度如何变化。 从阁楼任一页打开工具索引，搜索「Voice Drift」或「Voice Drift」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Voice Drift",
+      "action": null,
+      "covers": [
+        "Voice Drift"
+      ]
+    },
+    {
+      "id": "tool-58",
+      "title": "记忆天气台",
+      "aliases": [
+        "记忆天气台",
+        "Memory Weather"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 记忆天气台",
+      "content": "把每个月的写作结构归纳为 Reflective / Sparse / Mixed 等档案天气。 从阁楼任一页打开工具索引，搜索「记忆天气台」或「Memory Weather」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Memory Weather",
+      "action": null,
+      "covers": [
+        "Memory Weather"
+      ]
+    },
+    {
+      "id": "tool-59",
+      "title": "Skill Bridges",
+      "aliases": [
+        "Skill Bridges"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Skill Bridges",
+      "content": "技能与生活主题在同一天共同出现的桥梁。 从阁楼任一页打开工具索引，搜索「Skill Bridges」或「Skill Bridges」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Skill Bridges",
+      "action": null,
+      "covers": [
+        "Skill Bridges"
+      ]
+    },
+    {
+      "id": "tool-60",
+      "title": "月度画像",
+      "aliases": [
+        "月度画像",
+        "Month Portraits"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 月度画像",
+      "content": "每个月的主题、技能、写作天气与高密度日期画像。 从阁楼任一页打开工具索引，搜索「月度画像」或「Month Portraits」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Month Portraits",
+      "action": null,
+      "covers": [
+        "Month Portraits"
+      ]
+    },
+    {
+      "id": "tool-61",
+      "title": "Archive Health",
+      "aliases": [
+        "Archive Health"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Archive Health",
+      "content": "检查覆盖率、日期异常、重复哈希、栏目完整度与来源策略。 从阁楼任一页打开工具索引，搜索「Archive Health」或「Archive Health」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Archive Health",
+      "action": null,
+      "covers": [
+        "Archive Health"
+      ]
+    },
+    {
+      "id": "tool-62",
+      "title": "时间折叠",
+      "aliases": [
+        "时间折叠",
+        "Timefold Atlas"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 时间折叠",
+      "content": "把承诺、自我描述、动量、跨年同月与长距离重现放进同一张时间折叠图。 从阁楼任一页打开工具索引，搜索「时间折叠」或「Timefold Atlas」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Timefold Atlas",
+      "action": null,
+      "covers": [
+        "Timefold Atlas"
+      ]
+    },
+    {
+      "id": "tool-63",
+      "title": "Growth Rings",
+      "aliases": [
+        "Growth Rings"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Growth Rings",
+      "content": "看技能、主题、地点、角色第一次进入档案的累积年轮。 从阁楼任一页打开工具索引，搜索「Growth Rings」或「Growth Rings」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Growth Rings",
+      "action": null,
+      "covers": [
+        "Growth Rings"
+      ]
+    },
+    {
+      "id": "tool-64",
+      "title": "Novelty Atlas",
+      "aliases": [
+        "Novelty Atlas"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Novelty Atlas",
+      "content": "比较每天和此前90天的语言/主题新颖度。 从阁楼任一页打开工具索引，搜索「Novelty Atlas」或「Novelty Atlas」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Novelty Atlas",
+      "action": null,
+      "covers": [
+        "Novelty Atlas"
+      ]
+    },
+    {
+      "id": "tool-65",
+      "title": "Bridge Days",
+      "aliases": [
+        "Bridge Days"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Bridge Days",
+      "content": "寻找同一天连接多个生活领域的跨域页面。 从阁楼任一页打开工具索引，搜索「Bridge Days」或「Bridge Days」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Bridge Days",
+      "action": null,
+      "covers": [
+        "Bridge Days"
+      ]
+    },
+    {
+      "id": "tool-66",
+      "title": "主题分布",
+      "aliases": [
+        "主题分布",
+        "Attention Portfolio"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 主题分布",
+      "content": "观察每个月主题组合的集中度与多样性。 从阁楼任一页打开工具索引，搜索「主题分布」或「Attention Portfolio」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Attention Portfolio",
+      "action": null,
+      "covers": [
+        "Attention Portfolio"
+      ]
+    },
+    {
+      "id": "tool-67",
+      "title": "给未来的纸条",
+      "aliases": [
+        "给未来的纸条",
+        "Promise Ledger"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 给未来的纸条",
+      "content": "收集未来式自我承诺/计划候选，并追踪后续语言回声。 从阁楼任一页打开工具索引，搜索「给未来的纸条」或「Promise Ledger」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Promise Ledger",
+      "action": null,
+      "covers": [
+        "Promise Ledger"
+      ]
+    },
+    {
+      "id": "tool-68",
+      "title": "Future Echoes",
+      "aliases": [
+        "Future Echoes"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Future Echoes",
+      "content": "把早先面向未来的句子与后来相似的记录并排。 从阁楼任一页打开工具索引，搜索「Future Echoes」或「Future Echoes」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Future Echoes",
+      "action": null,
+      "covers": [
+        "Future Echoes"
+      ]
+    },
+    {
+      "id": "tool-69",
+      "title": "Identity Ledger",
+      "aliases": [
+        "Identity Ledger"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Identity Ledger",
+      "content": "只记录本人明确写过的自我描述、偏好、边界与愿景。 从阁楼任一页打开工具索引，搜索「Identity Ledger」或「Identity Ledger」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Identity Ledger",
+      "action": null,
+      "covers": [
+        "Identity Ledger"
+      ]
+    },
+    {
+      "id": "tool-70",
+      "title": "Motif Atlas",
+      "aliases": [
+        "Motif Atlas"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Motif Atlas",
+      "content": "聚合跨很长时间重复出现的语言母题。 从阁楼任一页打开工具索引，搜索「Motif Atlas」或「Motif Atlas」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Motif Atlas",
+      "action": null,
+      "covers": [
+        "Motif Atlas"
+      ]
+    },
+    {
+      "id": "tool-71",
+      "title": "Turning Point Index",
+      "aliases": [
+        "Turning Point Index"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Turning Point Index",
+      "content": "以结构密度生成值得人工重读的转折候选日期。 从阁楼任一页打开工具索引，搜索「Turning Point Index」或「Turning Point Index」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Turning Point Index",
+      "action": null,
+      "covers": [
+        "Turning Point Index"
+      ]
+    },
+    {
+      "id": "tool-72",
+      "title": "Thread Reopenings",
+      "aliases": [
+        "Thread Reopenings"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Thread Reopenings",
+      "content": "寻找想法/问题/项目沉默数月后再次出现的候选链。 从阁楼任一页打开工具索引，搜索「Thread Reopenings」或「Thread Reopenings」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Thread Reopenings",
+      "action": null,
+      "covers": [
+        "Thread Reopenings"
+      ]
+    },
+    {
+      "id": "tool-73",
+      "title": "技能趋势",
+      "aliases": [
+        "技能趋势",
+        "Skill Momentum"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 技能趋势",
+      "content": "比较最近60天与此前180天的技能证据可见度。 从阁楼任一页打开工具索引，搜索「技能趋势」或「Skill Momentum」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Skill Momentum",
+      "action": null,
+      "covers": [
+        "Skill Momentum"
+      ]
+    },
+    {
+      "id": "tool-74",
+      "title": "Seasonal Echoes",
+      "aliases": [
+        "Seasonal Echoes"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Seasonal Echoes",
+      "content": "并排比较两个年份的同一个月份。 从阁楼任一页打开工具索引，搜索「Seasonal Echoes」或「Seasonal Echoes」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Seasonal Echoes",
+      "action": null,
+      "covers": [
+        "Seasonal Echoes"
+      ]
+    },
+    {
+      "id": "tool-75",
+      "title": "Mirror Atlas",
+      "aliases": [
+        "Mirror Atlas"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Mirror Atlas",
+      "content": "把计划、兑现线索、阻力、规则、边界、沉默与完成方式放在同一面镜子里。 从阁楼任一页打开工具索引，搜索「Mirror Atlas」或「Mirror Atlas」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Mirror Atlas",
+      "action": null,
+      "covers": [
+        "Mirror Atlas"
+      ]
+    },
+    {
+      "id": "tool-76",
+      "title": "Intention / Outcome",
+      "aliases": [
+        "Intention / Outcome"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Intention / Outcome",
+      "content": "比较未来式语言后来是否留下可追溯的回声或闭环候选。 从阁楼任一页打开工具索引，搜索「Intention / Outcome」或「Intention / Outcome」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Intention / Outcome",
+      "action": null,
+      "covers": [
+        "Intention / Outcome"
+      ]
+    },
+    {
+      "id": "tool-77",
+      "title": "Closure Candidates",
+      "aliases": [
+        "Closure Candidates"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Closure Candidates",
+      "content": "把早先的计划/愿望与后来里程碑或项目候选配对，等待人工确认。 从阁楼任一页打开工具索引，搜索「Closure Candidates」或「Closure Candidates」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Closure Candidates",
+      "action": null,
+      "covers": [
+        "Closure Candidates"
+      ]
+    },
+    {
+      "id": "tool-78",
+      "title": "Friction Atlas",
+      "aliases": [
+        "Friction Atlas"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Friction Atlas",
+      "content": "只收集原文中明确出现的卡点、没时间、担心、困难等阻力语言。 从阁楼任一页打开工具索引，搜索「Friction Atlas」或「Friction Atlas」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Friction Atlas",
+      "action": null,
+      "covers": [
+        "Friction Atlas"
+      ]
+    },
+    {
+      "id": "tool-79",
+      "title": "Personal Protocols",
+      "aliases": [
+        "Personal Protocols"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Personal Protocols",
+      "content": "收集反复写下的“我应该 / 我需要 / 不要 / 下次要”等个人规则。 从阁楼任一页打开工具索引，搜索「Personal Protocols」或「Personal Protocols」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Personal Protocols",
+      "action": null,
+      "covers": [
+        "Personal Protocols"
+      ]
+    },
+    {
+      "id": "tool-80",
+      "title": "不想去的海岸线",
+      "aliases": [
+        "不想去的海岸线",
+        "Boundary Ledger"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 不想去的海岸线",
+      "content": "只记录本人明确写过的“不想 / 不喜欢 / 不愿意 / 不能接受”等边界。 从阁楼任一页打开工具索引，搜索「不想去的海岸线」或「Boundary Ledger」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Boundary Ledger",
+      "action": null,
+      "covers": [
+        "Boundary Ledger"
+      ]
+    },
+    {
+      "id": "tool-81",
+      "title": "Quiet Priorities",
+      "aliases": [
+        "Quiet Priorities"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Quiet Priorities",
+      "content": "找历史上常出现、最近90天明显安静下来的主题与技能。 从阁楼任一页打开工具索引，搜索「Quiet Priorities」或「Quiet Priorities」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Quiet Priorities",
+      "action": null,
+      "covers": [
+        "Quiet Priorities"
+      ]
+    },
+    {
+      "id": "tool-82",
+      "title": "Idea Survival",
+      "aliases": [
+        "Idea Survival"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Idea Survival",
+      "content": "看哪些想法跨过数周数月后仍会重新出现。 从阁楼任一页打开工具索引，搜索「Idea Survival」或「Idea Survival」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Idea Survival",
+      "action": null,
+      "covers": [
+        "Idea Survival"
+      ]
+    },
+    {
+      "id": "tool-83",
+      "title": "Milestone Lead-up",
+      "aliases": [
+        "Milestone Lead-up"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Milestone Lead-up",
+      "content": "把里程碑候选和更早的相关想法/项目记录并排。 从阁楼任一页打开工具索引，搜索「Milestone Lead-up」或「Milestone Lead-up」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Milestone Lead-up",
+      "action": null,
+      "covers": [
+        "Milestone Lead-up"
+      ]
+    },
+    {
+      "id": "tool-84",
+      "title": "决定回放",
+      "aliases": [
+        "决定回放",
+        "Decision Replay"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 决定回放",
+      "content": "重放明确决定前后30天的主题与技能上下文。 从阁楼任一页打开工具索引，搜索「决定回放」或「Decision Replay」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Decision Replay",
+      "action": null,
+      "covers": [
+        "Decision Replay"
+      ]
+    },
+    {
+      "id": "tool-85",
+      "title": "分岔回放",
+      "aliases": [
+        "分岔回放",
+        "Fork Replay"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 分岔回放",
+      "content": "从“还是 / 要不要 / 选择 / 放弃”等岔路语言出发，看后来哪条路径留下了记录。 从阁楼任一页打开工具索引，搜索「分岔回放」或「Fork Replay」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Fork Replay",
+      "action": null,
+      "covers": [
+        "Fork Replay"
+      ]
+    },
+    {
+      "id": "tool-86",
+      "title": "Identity Mirror",
+      "aliases": [
+        "Identity Mirror"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Identity Mirror",
+      "content": "对照自我描述与同一篇日记的主题、技能。 从阁楼任一页打开工具索引，搜索「Identity Mirror」或「Identity Mirror」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Identity Mirror",
+      "action": null,
+      "covers": [
+        "Identity Mirror"
+      ]
+    },
+    {
+      "id": "tool-87",
+      "title": "Completion Texture",
+      "aliases": [
+        "Completion Texture"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Completion Texture",
+      "content": "观察里程碑候选通常与哪些主题/技能在同一天共同出现。 从阁楼任一页打开工具索引，搜索「Completion Texture」或「Completion Texture」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Completion Texture",
+      "action": null,
+      "covers": [
+        "Completion Texture"
+      ]
+    },
+    {
+      "id": "tool-88",
+      "title": "Compass Atlas",
+      "aliases": [
+        "Compass Atlas"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Compass Atlas",
+      "content": "把问题、技能迁移、人物/地点上下文、聚焦窗口、修订轨迹和证据缺口组织成下一步回看的方向盘。 从阁楼任一页打开工具索引，搜索「Compass Atlas」或「Compass Atlas」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Compass Atlas",
+      "action": null,
+      "covers": [
+        "Compass Atlas"
+      ]
+    },
+    {
+      "id": "tool-89",
+      "title": "Learning Loops",
+      "aliases": [
+        "Learning Loops"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Learning Loops",
+      "content": "寻找一个明确问题与后来相关想法、项目或里程碑之间的高置信回看链。 从阁楼任一页打开工具索引，搜索「Learning Loops」或「Learning Loops」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Learning Loops",
+      "action": null,
+      "covers": [
+        "Learning Loops"
+      ]
+    },
+    {
+      "id": "tool-90",
+      "title": "Skill Transfer Trails",
+      "aliases": [
+        "Skill Transfer Trails"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Skill Transfer Trails",
+      "content": "观察不同技能家族在哪些真实日期里长期共同出现。 从阁楼任一页打开工具索引，搜索「Skill Transfer Trails」或「Skill Transfer Trails」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Skill Transfer Trails",
+      "action": null,
+      "covers": [
+        "Skill Transfer Trails"
+      ]
+    },
+    {
+      "id": "tool-91",
+      "title": "Social Gravity",
+      "aliases": [
+        "Social Gravity"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Social Gravity",
+      "content": "角色与主题/技能在同一天出现的上下文矩阵，不评价关系本身。 从阁楼任一页打开工具索引，搜索「Social Gravity」或「Social Gravity」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Social Gravity",
+      "action": null,
+      "covers": [
+        "Social Gravity"
+      ]
+    },
+    {
+      "id": "tool-92",
+      "title": "Place Imprints",
+      "aliases": [
+        "Place Imprints"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Place Imprints",
+      "content": "地点与主题/技能在同一天留下的记录纹理。 从阁楼任一页打开工具索引，搜索「Place Imprints」或「Place Imprints」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Place Imprints",
+      "action": null,
+      "covers": [
+        "Place Imprints"
+      ]
+    },
+    {
+      "id": "tool-93",
+      "title": "Focus Bursts",
+      "aliases": [
+        "Focus Bursts"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Focus Bursts",
+      "content": "寻找短时间内某主题或技能连续高密度出现的记录窗口。 从阁楼任一页打开工具索引，搜索「Focus Bursts」或「Focus Bursts」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Focus Bursts",
+      "action": null,
+      "covers": [
+        "Focus Bursts"
+      ]
+    },
+    {
+      "id": "tool-94",
+      "title": "Visibility Arcs",
+      "aliases": [
+        "Visibility Arcs"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Visibility Arcs",
+      "content": "把主题/技能按月展开成峰值、安静与再次出现的档案弧线。 从阁楼任一页打开工具索引，搜索「Visibility Arcs」或「Visibility Arcs」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Visibility Arcs",
+      "action": null,
+      "covers": [
+        "Visibility Arcs"
+      ]
+    },
+    {
+      "id": "tool-95",
+      "title": "After Friction",
+      "aliases": [
+        "After Friction"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → After Friction",
+      "content": "对照阻力记录与之后的行动、里程碑。 从阁楼任一页打开工具索引，搜索「After Friction」或「After Friction」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "After Friction",
+      "action": null,
+      "covers": [
+        "After Friction"
+      ]
+    },
+    {
+      "id": "tool-96",
+      "title": "忘记打开的门",
+      "aliases": [
+        "忘记打开的门",
+        "Forgotten Doors"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 忘记打开的门",
+      "content": "重新打开那些很久以前出现、后来几乎没有留下语言回声的想法与问题。 从阁楼任一页打开工具索引，搜索「忘记打开的门」或「Forgotten Doors」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Forgotten Doors",
+      "action": null,
+      "covers": [
+        "Forgotten Doors"
+      ]
+    },
+    {
+      "id": "tool-97",
+      "title": "Revision Trails",
+      "aliases": [
+        "Revision Trails"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Revision Trails",
+      "content": "追踪同一主题下的显式观点、个人规则与自我描述如何被反复重写。 从阁楼任一页打开工具索引，搜索「Revision Trails」或「Revision Trails」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Revision Trails",
+      "action": null,
+      "covers": [
+        "Revision Trails"
+      ]
+    },
+    {
+      "id": "tool-98",
+      "title": "Evidence Gaps",
+      "aliases": [
+        "Evidence Gaps"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Evidence Gaps",
+      "content": "主动展示 LifeOS 不应该过度下结论的薄证据、异常和单点记录。 从阁楼任一页打开工具索引，搜索「Evidence Gaps」或「Evidence Gaps」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Evidence Gaps",
+      "action": null,
+      "covers": [
+        "Evidence Gaps"
+      ]
+    },
+    {
+      "id": "tool-99",
+      "title": "Questions Worth Asking",
+      "aliases": [
+        "Questions Worth Asking"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Questions Worth Asking",
+      "content": "依据本地证据结构生成值得问自己的问题，而不是预生成答案。 从阁楼任一页打开工具索引，搜索「Questions Worth Asking」或「Questions Worth Asking」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Questions Worth Asking",
+      "action": null,
+      "covers": [
+        "Questions Worth Asking"
+      ]
+    },
+    {
+      "id": "tool-100",
+      "title": "Orientation Cards",
+      "aliases": [
+        "Orientation Cards"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Orientation Cards",
+      "content": "把最值得重新打开的学习回路、技能桥、修订线和遗忘之门整理成一副方向卡。 从阁楼任一页打开工具索引，搜索「Orientation Cards」或「Orientation Cards」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Orientation Cards",
+      "action": null,
+      "covers": [
+        "Orientation Cards"
+      ]
+    },
+    {
+      "id": "tool-101",
+      "title": "Topology Atlas",
+      "aliases": [
+        "Topology Atlas"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Topology Atlas",
+      "content": "把技能、主题、角色与地点组成一张可追溯的人生拓扑图：看邻域、门户、桥接日期、转场与路径。 从阁楼任一页打开工具索引，搜索「Topology Atlas」或「Topology Atlas」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Topology Atlas",
+      "action": null,
+      "covers": [
+        "Topology Atlas"
+      ]
+    },
+    {
+      "id": "tool-102",
+      "title": "Life Neighborhoods",
+      "aliases": [
+        "Life Neighborhoods"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Life Neighborhoods",
+      "content": "从同日共现图中识别局部人生邻域；它们是导航簇，不是隐藏人格类别。 从阁楼任一页打开工具索引，搜索「Life Neighborhoods」或「Life Neighborhoods」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Life Neighborhoods",
+      "action": null,
+      "covers": [
+        "Life Neighborhoods"
+      ]
+    },
+    {
+      "id": "tool-103",
+      "title": "Gateway Nodes",
+      "aliases": [
+        "Gateway Nodes"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Gateway Nodes",
+      "content": "寻找同时连接多个人生邻域的技能、主题、角色或地点。 从阁楼任一页打开工具索引，搜索「Gateway Nodes」或「Gateway Nodes」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Gateway Nodes",
+      "action": null,
+      "covers": [
+        "Gateway Nodes"
+      ]
+    },
+    {
+      "id": "tool-104",
+      "title": "Bridge Memories",
+      "aliases": [
+        "Bridge Memories"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Bridge Memories",
+      "content": "寻找同一天横跨多个人生邻域的原始日记页。 从阁楼任一页打开工具索引，搜索「Bridge Memories」或「Bridge Memories」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Bridge Memories",
+      "action": null,
+      "covers": [
+        "Bridge Memories"
+      ]
+    },
+    {
+      "id": "tool-105",
+      "title": "Context Signatures",
+      "aliases": [
+        "Context Signatures"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Context Signatures",
+      "content": "查看每个人生邻域常伴随出现的技能、主题、人物角色、地点与月份。 从阁楼任一页打开工具索引，搜索「Context Signatures」或「Context Signatures」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Context Signatures",
+      "action": null,
+      "covers": [
+        "Context Signatures"
+      ]
+    },
+    {
+      "id": "tool-106",
+      "title": "Transition Matrix",
+      "aliases": [
+        "Transition Matrix"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Transition Matrix",
+      "content": "观察相邻记录日之间人生上下文怎样发生切换，不用于预测。 从阁楼任一页打开工具索引，搜索「Transition Matrix」或「Transition Matrix」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Transition Matrix",
+      "action": null,
+      "covers": [
+        "Transition Matrix"
+      ]
+    },
+    {
+      "id": "tool-107",
+      "title": "Co-occurrence Surprise",
+      "aliases": [
+        "Co-occurrence Surprise"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Co-occurrence Surprise",
+      "content": "寻找实际共现次数明显高于简单独立基线的组合，专门用来触发重读。 从阁楼任一页打开工具索引，搜索「Co-occurrence Surprise」或「Co-occurrence Surprise」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Co-occurrence Surprise",
+      "action": null,
+      "covers": [
+        "Co-occurrence Surprise"
+      ]
+    },
+    {
+      "id": "tool-108",
+      "title": "Rare Pairings",
+      "aliases": [
+        "Rare Pairings"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Rare Pairings",
+      "content": "寻找只出现少数几次、却异常集中在一起的稀有组合。 从阁楼任一页打开工具索引，搜索「Rare Pairings」或「Rare Pairings」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Rare Pairings",
+      "action": null,
+      "covers": [
+        "Rare Pairings"
+      ]
+    },
+    {
+      "id": "tool-109",
+      "title": "Orphan Islands",
+      "aliases": [
+        "Orphan Islands"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Orphan Islands",
+      "content": "找到图里连接很弱的技能、地点或主题：可能孤立，也可能只是记录不足。 从阁楼任一页打开工具索引，搜索「Orphan Islands」或「Orphan Islands」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Orphan Islands",
+      "action": null,
+      "covers": [
+        "Orphan Islands"
+      ]
+    },
+    {
+      "id": "tool-110",
+      "title": "Anchor Memories",
+      "aliases": [
+        "Anchor Memories"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Anchor Memories",
+      "content": "按图结构找到连接很多节点和邻域的高密度原始日期。 从阁楼任一页打开工具索引，搜索「Anchor Memories」或「Anchor Memories」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Anchor Memories",
+      "action": null,
+      "covers": [
+        "Anchor Memories"
+      ]
+    },
+    {
+      "id": "tool-111",
+      "title": "Neighborhood Drift",
+      "aliases": [
+        "Neighborhood Drift"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Neighborhood Drift",
+      "content": "比较每个月人生邻域的结构占比如何漂移。 从阁楼任一页打开工具索引，搜索「Neighborhood Drift」或「Neighborhood Drift」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Neighborhood Drift",
+      "action": null,
+      "covers": [
+        "Neighborhood Drift"
+      ]
+    },
+    {
+      "id": "tool-112",
+      "title": "Context Switches",
+      "aliases": [
+        "Context Switches"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Context Switches",
+      "content": "回看相邻记录日里主导人生上下文发生切换的瞬间。 从阁楼任一页打开工具索引，搜索「Context Switches」或「Context Switches」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Context Switches",
+      "action": null,
+      "covers": [
+        "Context Switches"
+      ]
+    },
+    {
+      "id": "tool-113",
+      "title": "Life Routes",
+      "aliases": [
+        "Life Routes"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Life Routes",
+      "content": "寻找在连续记录日里反复出现的人生上下文三步路径。 从阁楼任一页打开工具索引，搜索「Life Routes」或「Life Routes」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Life Routes",
+      "action": null,
+      "covers": [
+        "Life Routes"
+      ]
+    },
+    {
+      "id": "tool-114",
+      "title": "Footprint Atlas",
+      "aliases": [
+        "Footprint Atlas"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Footprint Atlas",
+      "content": "把作品、输出、分享、交接、反馈、外部认可和技能到产出的时间关系组织成“我留下了什么”。 从阁楼任一页打开工具索引，搜索「Footprint Atlas」或「Footprint Atlas」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Footprint Atlas",
+      "action": null,
+      "covers": [
+        "Footprint Atlas"
+      ]
+    },
+    {
+      "id": "tool-115",
+      "title": "Artifact Ledger",
+      "aliases": [
+        "Artifact Ledger"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Artifact Ledger",
+      "content": "只收集带有明确产出动作与作品名词的原文候选：论文、简历、代码、网站、产品、PRD、PPT 等。 从阁楼任一页打开工具索引，搜索「Artifact Ledger」或「Artifact Ledger」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Artifact Ledger",
+      "action": null,
+      "covers": [
+        "Artifact Ledger"
+      ]
+    },
+    {
+      "id": "tool-116",
+      "title": "Output Trails",
+      "aliases": [
+        "Output Trails"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Output Trails",
+      "content": "看同类作品在数月乃至一年多的日记里如何反复被创建、修改、提交、发布和分享。 从阁楼任一页打开工具索引，搜索「Output Trails」或「Output Trails」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Output Trails",
+      "action": null,
+      "covers": [
+        "Output Trails"
+      ]
+    },
+    {
+      "id": "tool-117",
+      "title": "Sharing Trails",
+      "aliases": [
+        "Sharing Trails"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Sharing Trails",
+      "content": "只记录工作/作品语境中明确向外分享、展示或发送的候选轨迹。 从阁楼任一页打开工具索引，搜索「Sharing Trails」或「Sharing Trails」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Sharing Trails",
+      "action": null,
+      "covers": [
+        "Sharing Trails"
+      ]
+    },
+    {
+      "id": "tool-118",
+      "title": "Handoff Moments",
+      "aliases": [
+        "Handoff Moments"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Handoff Moments",
+      "content": "收集交给、交付、提交、上传、发给、对接、汇报等“东西离开我手里”的时刻。 从阁楼任一页打开工具索引，搜索「Handoff Moments」或「Handoff Moments」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Handoff Moments",
+      "action": null,
+      "covers": [
+        "Handoff Moments"
+      ]
+    },
+    {
+      "id": "tool-119",
+      "title": "Audience Map",
+      "aliases": [
+        "Audience Map"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Audience Map",
+      "content": "查看作品分享记录中的人物。 从阁楼任一页打开工具索引，搜索「Audience Map」或「Audience Map」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Audience Map",
+      "action": null,
+      "covers": [
+        "Audience Map"
+      ]
+    },
+    {
+      "id": "tool-120",
+      "title": "Feedback Echoes",
+      "aliases": [
+        "Feedback Echoes"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Feedback Echoes",
+      "content": "把明确反馈语言与附近的作品轨迹并排，等待你确认它们是否真指向同一件作品。 从阁楼任一页打开工具索引，搜索「Feedback Echoes」或「Feedback Echoes」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Feedback Echoes",
+      "action": null,
+      "covers": [
+        "Feedback Echoes"
+      ]
+    },
+    {
+      "id": "tool-121",
+      "title": "External Validation",
+      "aliases": [
+        "External Validation"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → External Validation",
+      "content": "查看接收、发表、认可与获奖记录。 从阁楼任一页打开工具索引，搜索「External Validation」或「External Validation」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "External Validation",
+      "action": null,
+      "covers": [
+        "External Validation"
+      ]
+    },
+    {
+      "id": "tool-122",
+      "title": "Reuse Trails",
+      "aliases": [
+        "Reuse Trails"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Reuse Trails",
+      "content": "寻找某类作品隔很久后再次出现：可能是复用、重做，也可能只是同类的新作品。 从阁楼任一页打开工具索引，搜索「Reuse Trails」或「Reuse Trails」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Reuse Trails",
+      "action": null,
+      "covers": [
+        "Reuse Trails"
+      ]
+    },
+    {
+      "id": "tool-123",
+      "title": "Learning → Output",
+      "aliases": [
+        "Learning → Output"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Learning → Output",
+      "content": "观察输出前30天哪些技能留下过证据；只表示时间邻近，不做能力归因。 从阁楼任一页打开工具索引，搜索「Learning → Output」或「Learning → Output」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Learning → Output",
+      "action": null,
+      "covers": [
+        "Learning → Output"
+      ]
+    },
+    {
+      "id": "tool-124",
+      "title": "Artifact Lead-up",
+      "aliases": [
+        "Artifact Lead-up"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Artifact Lead-up",
+      "content": "把创建/提交/发布前14天的技能与主题上下文铺开，重看作品出现前发生了什么。 从阁楼任一页打开工具索引，搜索「Artifact Lead-up」或「Artifact Lead-up」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Artifact Lead-up",
+      "action": null,
+      "covers": [
+        "Artifact Lead-up"
+      ]
+    },
+    {
+      "id": "tool-125",
+      "title": "Contribution Threads",
+      "aliases": [
+        "Contribution Threads"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Contribution Threads",
+      "content": "追踪明确帮别人、分享经验、改材料等向外贡献的长期候选线；不做善意或影响力评分。 从阁楼任一页打开工具索引，搜索「Contribution Threads」或「Contribution Threads」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Contribution Threads",
+      "action": null,
+      "covers": [
+        "Contribution Threads"
+      ]
+    },
+    {
+      "id": "tool-126",
+      "title": "Legacy Questions",
+      "aliases": [
+        "Legacy Questions"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Legacy Questions",
+      "content": "根据作品跨度、复用、分享与结果结构自动生成“我留下些什么”的问题，只生成问题不预写答案。 从阁楼任一页打开工具索引，搜索「Legacy Questions」或「Legacy Questions」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Legacy Questions",
+      "action": null,
+      "covers": [
+        "Legacy Questions"
+      ]
+    },
+    {
+      "id": "tool-127",
+      "title": "Lineage Atlas",
+      "aliases": [
+        "Lineage Atlas"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Lineage Atlas",
+      "content": "把想法、项目、作品、交接、反馈、修改与结果串成可回到原文的证据谱系；只展示顺序与相似性，不编因果。 从阁楼任一页打开工具索引，搜索「Lineage Atlas」或「Lineage Atlas」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Lineage Atlas",
+      "action": null,
+      "covers": [
+        "Lineage Atlas"
+      ]
+    },
+    {
+      "id": "tool-128",
+      "title": "想法与作品",
+      "aliases": [
+        "想法与作品",
+        "Thought → Artifact"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 想法与作品",
+      "content": "寻找明确想法/未来式语言与后来作品痕迹之间的保守连接，展示共同锚点、上下文与时间间隔。 从阁楼任一页打开工具索引，搜索「想法与作品」或「Thought → Artifact」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Thought → Artifact",
+      "action": null,
+      "covers": [
+        "Thought → Artifact"
+      ]
+    },
+    {
+      "id": "tool-129",
+      "title": "项目家族",
+      "aliases": [
+        "项目家族",
+        "Project Families"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 项目家族",
+      "content": "按作品类别把项目候选与产出痕迹组成家族；家族不是自动识别出的同一个真实项目。 从阁楼任一页打开工具索引，搜索「项目家族」或「Project Families」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Project Families",
+      "action": null,
+      "covers": [
+        "Project Families"
+      ]
+    },
+    {
+      "id": "tool-130",
+      "title": "Artifact Ancestry",
+      "aliases": [
+        "Artifact Ancestry"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Artifact Ancestry",
+      "content": "把同类作品的相邻 create/revise/submit/publish/share 痕迹串起来，不冒充真实文件版本史。 从阁楼任一页打开工具索引，搜索「Artifact Ancestry」或「Artifact Ancestry」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Artifact Ancestry",
+      "action": null,
+      "covers": [
+        "Artifact Ancestry"
+      ]
+    },
+    {
+      "id": "tool-131",
+      "title": "Version Trees",
+      "aliases": [
+        "Version Trees"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Version Trees",
+      "content": "查看一种作品的动作序列与分支：创建之后通常出现修改、提交、发布还是分享。 从阁楼任一页打开工具索引，搜索「Version Trees」或「Version Trees」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Version Trees",
+      "action": null,
+      "covers": [
+        "Version Trees"
+      ]
+    },
+    {
+      "id": "tool-132",
+      "title": "Idea-to-Output Latency",
+      "aliases": [
+        "Idea-to-Output Latency"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Idea-to-Output Latency",
+      "content": "统计保守“想法→作品”候选的日历间隔；它不是工期，更不是执行效率评分。 从阁楼任一页打开工具索引，搜索「Idea-to-Output Latency」或「Idea-to-Output Latency」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Idea-to-Output Latency",
+      "action": null,
+      "covers": [
+        "Idea-to-Output Latency"
+      ]
+    },
+    {
+      "id": "tool-133",
+      "title": "Feedback Loops",
+      "aliases": [
+        "Feedback Loops"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Feedback Loops",
+      "content": "把作品→明确反馈→后续修改候选放在同一条线上；时间接近不等于反馈导致修改。 从阁楼任一页打开工具索引，搜索「Feedback Loops」或「Feedback Loops」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Feedback Loops",
+      "action": null,
+      "covers": [
+        "Feedback Loops"
+      ]
+    },
+    {
+      "id": "tool-134",
+      "title": "Rework Cycles",
+      "aliases": [
+        "Rework Cycles"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Rework Cycles",
+      "content": "识别同类作品在短窗口内反复修改的周期，观察迭代纹理而不是评价反复返工好坏。 从阁楼任一页打开工具索引，搜索「Rework Cycles」或「Rework Cycles」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Rework Cycles",
+      "action": null,
+      "covers": [
+        "Rework Cycles"
+      ]
+    },
+    {
+      "id": "tool-135",
+      "title": "Cross-Pollination",
+      "aliases": [
+        "Cross-Pollination"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Cross-Pollination",
+      "content": "寻找两类作品在同日或七天内反复靠近的时期，并显示共同技能/主题上下文。 从阁楼任一页打开工具索引，搜索「Cross-Pollination」或「Cross-Pollination」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Cross-Pollination",
+      "action": null,
+      "covers": [
+        "Cross-Pollination"
+      ]
+    },
+    {
+      "id": "tool-136",
+      "title": "第一次留下痕迹",
+      "aliases": [
+        "第一次留下痕迹",
+        "First Proofs"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 第一次留下痕迹",
+      "content": "寻找每类作品最早的保守完成/提交/发布/分享证据；first recorded 不等于人生第一次。 从阁楼任一页打开工具索引，搜索「第一次留下痕迹」或「First Proofs」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "First Proofs",
+      "action": null,
+      "covers": [
+        "First Proofs"
+      ]
+    },
+    {
+      "id": "tool-137",
+      "title": "Unfinished Lineages",
+      "aliases": [
+        "Unfinished Lineages"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Unfinished Lineages",
+      "content": "重读最近较少提及的想法与项目。 从阁楼任一页打开工具索引，搜索「Unfinished Lineages」或「Unfinished Lineages」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Unfinished Lineages",
+      "action": null,
+      "covers": [
+        "Unfinished Lineages"
+      ]
+    },
+    {
+      "id": "tool-138",
+      "title": "Release Cadence",
+      "aliases": [
+        "Release Cadence"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → Release Cadence",
+      "content": "查看提交、发布与分享的节奏。 从阁楼任一页打开工具索引，搜索「Release Cadence」或「Release Cadence」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Release Cadence",
+      "action": null,
+      "covers": [
+        "Release Cadence"
+      ]
+    },
+    {
+      "id": "tool-139",
+      "title": "故事的证据线",
+      "aliases": [
+        "故事的证据线",
+        "Evidence Chain Builder"
+      ],
+      "keywords": [],
+      "entry": "阁楼 → 工具索引 → 故事的证据线",
+      "content": "串联想法、作品、交付与反馈的记录。 从阁楼任一页打开工具索引，搜索「故事的证据线」或「Evidence Chain Builder」后点击进入；页面提供的来源可返回原文，记录不足时显示空内容。 结果来自本机索引，候选不等于确认事实，共现和时间接近不等于因果。",
+      "feature": "Evidence Chain Builder",
+      "action": null,
+      "covers": [
+        "Evidence Chain Builder"
+      ]
+    }
+  ]
+}

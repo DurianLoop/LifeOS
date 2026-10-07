@@ -786,9 +786,10 @@ html[data-theme="pixel"] .sectionRail button:after,html[data-theme="hotel"] .sec
   <link rel="stylesheet" href="/v01.css?v=4">
   <link rel="stylesheet" href="/v012.css?v=5">
   <link rel="stylesheet" href="/v012-writer-desk.css?v=4">
-  <link rel="stylesheet" href="/v012-pet.css?v=3">
-  <link rel="stylesheet" href="/v012-pet-preview.css?v=1">
-  <link rel="stylesheet" href="/v012-pet-float.css?v=7">
+  <link rel="stylesheet" href="/v012-pet.css?v=5">
+  <link rel="stylesheet" href="/v012-pet-preview.css?v=2">
+  <link rel="stylesheet" href="/v012-pet-float.css?v=8">
+  <link rel="stylesheet" href="/vivi-pet.css?v=1">
   <link rel="stylesheet" href="/lifeos-shell.css?v=6">
   <link rel="stylesheet" href="/v03-rebuild.css?v=11">
   <link rel="stylesheet" href="/poetry.css?v=2">
@@ -810,11 +811,11 @@ html[data-theme="pixel"] .sectionRail button:after,html[data-theme="hotel"] .sec
 <body>
 <a class="skipLink" href="#view">Skip to archive content</a>
 <header class="lifeWindowBar" aria-label="LifeOS 窗口工具栏">
-  <div class="lifeWindowIdentity">
+  <div class="lifeWindowIdentity" id="lifeWindowIdentity">
     <div class="lifeWindowBrand"><b>LifeOS <i aria-hidden="true">✦</i></b><span>将记忆存档</span></div>
-    <button class="lifeSidebarToggle" id="lifeSidebarToggle" type="button" aria-label="收起侧边栏" aria-controls="rooms" aria-expanded="true" title="收起侧边栏"><span aria-hidden="true">‹</span></button>
   </div>
   <div class="lifeWindowPage">
+    <button class="lifeSidebarToggle" id="lifeSidebarToggle" type="button" aria-label="收起侧边栏" aria-controls="lifeWindowIdentity lifeSidebar" aria-expanded="true" title="收起侧边栏"><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 5h16M4 12h8M4 19h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="m20 8-5 4 5 4z" fill="currentColor"/></svg></span></button>
     <div class="crumb" id="crumb">LIFEOS / <strong>NOW</strong></div>
     <div class="topActions">
       <button class="linkBtn writePrimary" id="memoryDockOpen" type="button">写下来 <span aria-hidden="true">＋</span></button>
@@ -830,7 +831,7 @@ html[data-theme="pixel"] .sectionRail button:after,html[data-theme="hotel"] .sec
   </div>
 </header>
 <div class="app">
-<aside class="rail" aria-label="主要导航">
+<aside class="rail" id="lifeSidebar" aria-label="主要导航">
   <nav class="rooms" id="rooms" aria-label="日记世界"></nav>
   <div class="railActions" aria-label="快速操作">
     <button class="round iconButton" id="surpriseRail" type="button" aria-label="随机打开一段记忆" title="随机记忆"><span aria-hidden="true">✦</span></button>
@@ -861,20 +862,22 @@ html[data-theme="pixel"] .sectionRail button:after,html[data-theme="hotel"] .sec
 </div>
 <div class="tweaksPanel" id="tweaksPanel" role="dialog" aria-modal="false" aria-labelledby="tweaksTitle" aria-hidden="true" inert>
   <div class="tweaksHead"><div><h2 id="tweaksTitle">界面微调</h2></div><button class="close iconButton" id="tweaksClose" type="button" aria-label="关闭界面微调">×</button></div>
+  <div class="tweaksBody">
   <label class="tweakField"><span>视觉世界</span><select id="themeSelect"><optgroup label="熟悉的世界"><option value="moon">月光档案馆</option><option value="candy">蜜桃梦境</option><option value="rain">雨夜录像厅</option><option value="pixel">像素卧室</option></optgroup><optgroup label="Theme Lab · 新世界"><option value="greenhouse">玻璃温室</option><option value="abyss">深海电台</option><option value="post">星际邮局</option><option value="hotel">无尽旅馆</option><option value="oracle">黑猫占星室</option><option value="film">胶片夏日</option></optgroup></select><small class="themeHint" id="themeHint">暖纸、月相与旧墨。适合长期阅读。</small></label>
   <label class="tweakField"><span>动画</span><select id="motionSelect"><option value="alive">会呼吸</option><option value="quiet">安静一点</option><option value="off">不动</option></select></label>
   <label class="tweakField"><span>排版节奏</span><div><select id="typeSelect"><option value="literary">文学 · 默认</option><option value="airy">舒展 · 慢慢读</option><option value="compact">紧凑 · 多看一点</option></select><small class="typeHint" id="typeHint">适中的字距与行宽，适合日常阅读。</small></div></label>
+  <div class="tweakField sidebarTweakField"><span id="sidebarTweakLabel">侧栏</span><button type="button" id="sidebarEdit" class="sidebarTweakEdit">编辑侧栏</button></div>
   <div class="tweakField whiteNoiseField" role="group" aria-labelledby="whiteNoiseTitle">
     <span id="whiteNoiseTitle">白噪音</span>
     <div class="whiteNoiseBody">
       <select id="whiteNoiseKind" aria-label="环境声音"><option value="rain">雨声 · 庭院</option><option value="fire">篝火 · 炉边</option><option value="ocean">海浪 · 潮汐</option><option value="forest">森林 · 鸟鸣</option><option value="stream">溪流 · 林间</option><option value="night">夏夜 · 虫鸣</option></select>
-      <div class="whiteNoiseTransport"><button id="whiteNoiseToggle" type="button" aria-pressed="false">播放</button><input id="whiteNoiseVolume" type="range" min="0" max="100" value="25" aria-label="白噪音音量"><output id="whiteNoiseVolumeText" for="whiteNoiseVolume">25%</output></div>
+      <div class="whiteNoiseTransport"><button id="whiteNoiseToggle" type="button" aria-pressed="false" aria-label="播放白噪音" title="播放白噪音"></button><div id="whiteNoiseSlider" class="whiteNoiseSlider" data-playing="false"><span class="whiteNoiseGlow" aria-hidden="true"></span><input id="whiteNoiseVolume" type="range" min="0" max="100" value="25" aria-label="白噪音音量"></div><output id="whiteNoiseVolumeText" for="whiteNoiseVolume">25%</output></div>
       <small id="whiteNoiseStatus" class="whiteNoiseStatus" role="status">本地播放，刷新后暂停。</small>
       <a class="whiteNoiseCredits" href="/assets/audio/ATTRIBUTION.html" target="_blank" rel="noopener">录音来源与许可</a>
     </div>
   </div>
   <button class="tweakAction" id="atticOpen" type="button">进入「其他」<span aria-hidden="true">→</span></button>
-
+  </div>
 </div>
 <div class="mobileMorePanel" id="mobileMorePanel" role="dialog" aria-modal="false" aria-label="更多导航" aria-hidden="true" inert>
   <button type="button" id="mobileWriter"><span data-ui-icon="journal"></span><b>写下这一刻</b><small>新建或继续今天的日记</small></button>
@@ -1121,6 +1124,7 @@ function uiIcon(name){const icons={
  grow:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V10M12 13c-5 0-7-2.5-7-7 4.5 0 7 2 7 7ZM12 16c5 0 7-2.5 7-7-4.5 0-7 2-7 7Z"/></svg>',
  world:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.4 3.7 5.2 3.7 8.5S14.5 18.1 12 20.5C9.5 18.1 8.3 15.3 8.3 12S9.5 5.9 12 3.5Z"/></svg>',
  magic:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 16.8c-2.2 0-4-1.8-4-4s1.8-4 4-4c4.6 0 5 8 9.6 8 2.2 0 4-1.8 4-4s-1.8-4-4-4c-4.6 0-5 8-9.6 8Z"/></svg>',
+ cat:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10V4l5 3a10 10 0 0 1 4 0l5-3v6a7 7 0 0 1 1 4c0 4-3.6 6-8 6s-8-2-8-6a7 7 0 0 1 1-4Z"/><path d="M8 12v1m8-1v1m-5 2h2l-1 1-1-1Zm-9-1 4 1m-3 3 3-1m16-3-4 1m3 3-3-1"/></svg>',
  discover:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="m15.5 8.5-2.1 4.9-4.9 2.1 2.1-4.9 4.9-2.1Z"/></svg>',
  more:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg>',
  search:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.4 15.4 5.1 5.1"/></svg>',
@@ -1915,9 +1919,13 @@ renderProductImport=async function(){const job=PRODUCT.importJob,foot=job?`<div 
 <script src="/journal-book.js?v=1"></script>
 <script src="/desktop-update.js?v=1"></script>
 <script src="/v012.js?v=15"></script>
-<script src="/pet-sprite.js?v=1"></script>
-<script src="/v012-pet-rail.js?v=10"></script>
-<script src="/v012-pet-float.js?v=11"></script>
+<script src="/pet-sprite.js?v=2"></script>
+<script src="/pet-actions.js?v=2"></script>
+<script src="/vivi-pet.js?v=1"></script>
+<script src="/pet-renderers.js?v=1"></script>
+<script src="/v012-pet-rail.js?v=12"></script>
+<script src="/v012-pet-float.js?v=13"></script>
+<script src="/pet-settings.js?v=1"></script>
 <script src="/lifeos-shell.js?v=3"></script>
 <script src="/v03-rebuild.js?v=9"></script>
 <script src="/poetry.js?v=2"></script>

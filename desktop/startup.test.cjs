@@ -16,32 +16,33 @@ function deferred() {
   return {promise, resolve};
 }
 
-function mainLifecycle(isPackaged) {
+function mainLifecycle(isPackaged,{keepPet=false,saveSafe=true}={}) {
   // Execute the actual entry point with only inert dependencies. No directories,
   // credentials, sockets, Python children, or Electron windows are opened.
   const ready = deferred(), healthy = deferred(), windows = [], failures = [];
   const handles = new Map(), scheduled = [], backendCalls = [], fileCalls = [];
   const app = new EventEmitter(), ipcMain = new EventEmitter();
   const locations = {appData: path.resolve('fixture/application-data')};
-  let quits = 0, stops = 0;
+  let quits = 0, stops = 0,petStops=0;
   Object.assign(app, {
     isPackaged, setName() {}, setPath(name, value) { locations[name] = value; },
     getPath: name => locations[name], whenReady: () => ready.promise,
-    requestSingleInstanceLock: () => true, quit() { quits += 1; },
+    requestSingleInstanceLock: () => true, quit() { quits += 1;const event={prevented:false,preventDefault(){this.prevented=true}};app.emit('before-quit',event);if(!event.prevented)for(const window of windows)if(!window.isDestroyed())window.close(); },
   });
   ipcMain.handle = (name, handler) => handles.set(name, handler);
   class Window extends EventEmitter {
     constructor(options) {
-      super(); this.options = options; this.shows = 0; this.focuses = 0;
-      this.webContents = {setWindowOpenHandler() {}, send() {}};
+      super(); this.options = options; this.shows = 0; this.focuses = 0;this.destroyed=false;this.messages=[];
+      this.webContents = {setWindowOpenHandler() {}, send:(...value)=>this.messages.push(value),executeJavaScript:async()=>saveSafe};
       windows.push(this);
     }
     async loadURL(url) { this.url = url; this.emit('ready-to-show'); }
-    isDestroyed() { return false; }
+    isDestroyed() { return this.destroyed; }
     isMinimized() { return false; }
     isMaximized() { return false; }
     show() { this.shows += 1; }
     focus() { this.focuses += 1; }
+    close(){const event={prevented:false,preventDefault(){this.prevented=true}};this.emit('close',event);if(!event.prevented){this.destroyed=true;this.emit('closed');if(windows.every(window=>window.destroyed))app.emit('window-all-closed')}}
     static fromWebContents(contents) { return windows.find(window => window.webContents === contents); }
   }
   const paths = {resourceRoot: path.resolve('fixture/resources'),
@@ -58,7 +59,7 @@ function mainLifecycle(isPackaged) {
   updater.checkForUpdates = async () => ({updateInfo: {version: 'fixture'}});
   const modules = {
     electron: {app, BrowserWindow: Window, ipcMain, shell: {openExternal() {}},
-      Menu: {setApplicationMenu() {}}, dialog: {showErrorBox(...args) { failures.push(args); }}},
+      Menu: {setApplicationMenu() {}}, dialog: {showErrorBox(...args) { failures.push(args); },showMessageBox:async()=>({response:0})}},
     path,
     fs: new Proxy({}, {get: (_, method) => (...args) => {
       fileCalls.push([method, args]); throw new Error('Main lifecycle must not access the filesystem');
@@ -66,7 +67,9 @@ function mainLifecycle(isPackaged) {
     './runtime.cjs': fakeRuntime,
     './workspace-store.cjs': {createStore:()=>({operation:()=>null})},
     './storage-migration.cjs': {recoverLegacyStorage:async()=>{}},
-    './close-guard.cjs': {createCloseGuard:()=>({prepare:async()=>true,onClose(){},allow(){},isAllowed:()=>true})},
+    './close-guard.cjs': require('./close-guard.cjs'),
+    './pet-controller.cjs': {createPetController:()=>({start:async()=>{},stop(){petStops++},keepAlive:()=>keepPet,snapshot:()=>({ok:true}),isSender:()=>false})},
+    './shared-pet-actions.cjs': {loadPetActions:()=>[['idle','待机']]},
     './update-controller.cjs': {createUpdateController:()=>({check:async()=>({ok:true}),snapshot:()=>({status:'idle'})})},
     './bottle-reminders.cjs': {startBottleReminders:()=>({stop(){}})},
     'builder-util-runtime': {CancellationToken:class {}},
@@ -82,11 +85,11 @@ function mainLifecycle(isPackaged) {
   };
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, 'main.cjs'), 'utf8'), context, {filename: 'main.cjs'});
   return {ready, healthy, windows, app, ipcMain, handles, backendCalls, fileCalls, failures, scheduled,
-    get quits() { return quits; }, get stops() { return stops; }};
+    get quits() { return quits; }, get stops() { return stops; },get petStops(){return petStops}};
 }
 
 for (const isPackaged of [false, true]) {
-  test(`${isPackaged ? 'packaged' : 'source'} main lifecycle opens only the application window and has no native pet IPC`, async () => {
+  test(`${isPackaged ? 'packaged' : 'source'} defaults to one application window with trusted pet settings IPC`, async () => {
     const lifecycle = mainLifecycle(isPackaged);
     const flush = () => new Promise(setImmediate);
     assert.equal(lifecycle.windows.length, 0);
@@ -110,10 +113,10 @@ for (const isPackaged of [false, true]) {
     lifecycle.app.emit('second-instance');
     await flush();
     assert.equal(lifecycle.windows.length, 1, 'activation and a second launch reuse the application window');
-    assert.equal(main.focuses, 1);
+    assert.equal(main.focuses, 2);
     const channels = [...lifecycle.ipcMain.eventNames(), ...lifecycle.handles.keys()];
-    assert.deepEqual(channels.filter(channel => /^(?:lifeos:pet(?:-|$)|pet:)/.test(channel)), [],
-      'the native process exposes no independent pet-window controls');
+    assert.ok(channels.includes('lifeos:pet-settings-get'));
+    assert.equal((await lifecycle.handles.get('lifeos:pet-settings-get')({sender:{}})).ok,false,'foreign renderer cannot control pets');
     assert.ok(lifecycle.handles.has('lifeos:window-control'), 'normal application IPC remains installed');
     assert.deepEqual(lifecycle.fileCalls, []);
     assert.equal(lifecycle.quits, 0);
@@ -121,6 +124,22 @@ for (const isPackaged of [false, true]) {
     assert.equal(lifecycle.stops, 1, 'quitting still stops the owned backend');
   });
 }
+
+test('desktop keep-on-close preserves backend, reopens one main window, and explicit exit tears everything down',async()=>{
+  const f=mainLifecycle(false,{keepPet:true}),flush=()=>new Promise(setImmediate);f.ready.resolve();f.healthy.resolve();await flush();
+  const first=f.windows[0];first.close();assert.equal(first.destroyed,false,'close waits for saved draft');await flush();
+  assert.equal(first.destroyed,true);assert.equal(f.quits,0);assert.equal(f.stops,0);
+  f.app.emit('second-instance');f.app.emit('activate');await flush();
+  assert.equal(f.windows.length,2,'concurrent reopen requests create one replacement');assert.equal(f.backendCalls.filter(([name])=>name==='start').length,1);
+  f.app.quit();await flush();assert.equal(f.windows[1].destroyed,true);assert.equal(f.stops,1);assert.equal(f.petStops,1);
+});
+test('failed draft saving cancels an explicit exit and leaves background services available',async()=>{
+  const f=mainLifecycle(false,{keepPet:true,saveSafe:false}),flush=()=>new Promise(setImmediate);f.ready.resolve();f.healthy.resolve();await flush();
+  f.app.quit();await flush();assert.equal(f.windows[0].destroyed,false);assert.equal(f.stops,0);assert.equal(f.petStops,0);
+});
+test('closing the application without a retained desktop pet shuts down its backend',async()=>{
+  const f=mainLifecycle(false),flush=()=>new Promise(setImmediate);f.ready.resolve();f.healthy.resolve();await flush();f.windows[0].close();await flush();assert.equal(f.windows[0].destroyed,true);assert.equal(f.stops,1);assert.equal(f.petStops,1);
+});
 
 function workspace(t, beforeRemove = async () => {}) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'LifeOS 启动测试 '));

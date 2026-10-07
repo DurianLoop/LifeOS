@@ -1,0 +1,12 @@
+{
+  "slug": "vivi--durianloop",
+  "name": "ViVi",
+  "author": "DurianLoop",
+  "author_url": "https://github.com/DurianLoop",
+  "license": "Author-provided assets; see package attribution",
+  "description": "ViVi Diary 的原生 GIF 桌宠，保留全部动作与自动陪伴交互",
+  "primary_category": "LifeOS",
+  "source_url": "https://github.com/DurianLoop/ViVi_diary",
+  "source_commit": "a779b01267d989cce268fba4b56fbee7516aeaae",
+  "renderer": "vivi-gif"
+}

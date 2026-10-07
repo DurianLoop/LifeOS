@@ -3,6 +3,7 @@
   const toggle = document.getElementById('whiteNoiseToggle');
   const kindSelect = document.getElementById('whiteNoiseKind');
   const volumeInput = document.getElementById('whiteNoiseVolume');
+  const volumeSlider = document.getElementById('whiteNoiseSlider');
   const volumeText = document.getElementById('whiteNoiseVolumeText');
   const status = document.getElementById('whiteNoiseStatus');
   if (!toggle || !kindSelect || !volumeInput || !volumeText || !status) return;
@@ -26,6 +27,12 @@
   let pendingFetch = null;
   let loadQueue = Promise.resolve();
   let errorMessage = '';
+  let renderedIcon = '';
+  const icons = {
+    play: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5.5 19 12 9 18.5Z" fill="currentColor"/></svg>',
+    pause: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8.5 6v12M15.5 6v12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>',
+    cancel: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle class="whiteNoiseSpinner" cx="12" cy="12" r="8.3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="34 19"/><rect x="9" y="9" width="6" height="6" rx="1" fill="currentColor"/></svg>',
+  };
 
   kindSelect.value = kind;
   volumeInput.value = String(volume);
@@ -35,11 +42,24 @@
   }
 
   function render() {
-    toggle.textContent = requestedPlaying ? (active ? '暂停' : '取消') : '播放';
+    const icon = requestedPlaying ? (active ? 'pause' : 'cancel') : 'play';
+    if (icon !== renderedIcon) {
+      toggle.innerHTML = icons[icon];
+      renderedIcon = icon;
+    }
+    const label = requestedPlaying ? (active ? '暂停白噪音' : '取消载入白噪音') : '播放白噪音';
+    toggle.setAttribute('aria-label', label);
+    toggle.setAttribute('title', label);
     toggle.setAttribute('aria-pressed', String(requestedPlaying));
     toggle.setAttribute('aria-busy', String(loading));
+    toggle.setAttribute('data-state', icon);
     toggle.disabled = !AudioContextClass;
     volumeText.value = `${volume}%`;
+    volumeInput.setAttribute('aria-valuetext', `${volume}%`);
+    if (volumeSlider) {
+      volumeSlider.style.setProperty('--white-noise-fill', `calc(${volume}% + ${(100 - volume) * .24}px)`);
+      volumeSlider.setAttribute('data-playing', String(requestedPlaying && !!active && volume > 0));
+    }
     status.textContent = errorMessage || (!AudioContextClass ? '当前浏览器不支持声音播放。'
       : loading ? `正在载入${names[kind]}…${active ? ` ${names[active.kind]}继续播放。` : ''}`
       : requestedPlaying && active ? `${names[active.kind]}正在播放，关闭设置后也会继续。`

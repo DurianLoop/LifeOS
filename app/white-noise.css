@@ -1,9 +1,22 @@
 .tweaksPanel {
+  display: flex;
+  flex-direction: column;
   z-index: 550;
   max-height: calc(100dvh - 92px);
+  overflow: hidden;
+}
+
+.tweaksHead {
+  flex: none;
+}
+
+.tweaksBody {
+  min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+  padding-right: 8px;
 }
 
 .whiteNoiseBody {
@@ -14,17 +27,30 @@
   display: flex;
   align-items: center;
   gap: 9px;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .whiteNoiseTransport button {
-  min-width: 58px;
-  min-height: 44px;
-  padding: 0 8px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
   border: 1px solid var(--line);
+  border-radius: 50%;
   background: var(--paper2);
   color: var(--ink);
   cursor: pointer;
+  transition: background .18s ease, color .18s ease, border-color .18s ease;
+}
+
+.whiteNoiseTransport button svg {
+  display: block;
+  width: 22px;
+  height: 22px;
 }
 
 .whiteNoiseTransport button:hover,
@@ -34,10 +60,161 @@
   color: var(--paper);
 }
 
-.whiteNoiseTransport input {
+.whiteNoiseTransport button:disabled {
+  cursor: default;
+  opacity: .45;
+}
+
+.whiteNoiseTransport button:focus-visible {
+  outline: 2px solid var(--accent, var(--ink));
+  outline-offset: 3px;
+}
+
+.whiteNoiseSpinner {
+  transform-origin: 12px 12px;
+  animation: white-noise-turn 1.5s linear infinite;
+}
+
+.whiteNoiseSlider {
+  --white-noise-fill: calc(25% + 18px);
+  position: relative;
   flex: 1;
+  min-width: 68px;
+  height: 42px;
+  isolation: isolate;
+}
+
+.whiteNoiseSlider::before,
+.whiteNoiseGlow {
+  position: absolute;
+  top: 13px;
+  bottom: 13px;
+  left: 0;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.whiteNoiseSlider::before {
+  content: "";
+  right: 0;
+  background: linear-gradient(100deg, #355cab 0%, #7352ab 65%, #6b55a8 100%);
+  opacity: .24;
+  box-shadow: inset 0 0 0 1px rgba(74, 57, 118, .14);
+}
+
+.whiteNoiseGlow {
+  width: var(--white-noise-fill);
+  overflow: hidden;
+  background: linear-gradient(105deg, #2d58be 0%, #8568dd 47%, #a478e6 68%, #6550b9 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14);
+}
+
+.whiteNoiseGlow::before,
+.whiteNoiseGlow::after {
+  content: "";
+  position: absolute;
+  inset: -8px -18px;
+  background-image:
+    radial-gradient(circle at 9% 66%, #e9e5ff 0 1px, transparent 1.8px),
+    radial-gradient(circle at 18% 31%, #e9e5ff 0 1.1px, transparent 2px),
+    radial-gradient(circle at 33% 64%, #eee8ff 0 1px, transparent 1.7px),
+    radial-gradient(circle at 48% 33%, #f8f5ff 0 1.3px, transparent 2.1px),
+    radial-gradient(circle at 67% 62%, #ece5ff 0 1px, transparent 1.8px),
+    radial-gradient(circle at 84% 30%, #f4edff 0 1.2px, transparent 2px),
+    radial-gradient(circle at 92% 68%, #e6dcff 0 1px, transparent 1.8px);
+  opacity: .66;
+  animation: white-noise-drift 11s ease-in-out infinite alternate;
+  animation-play-state: paused;
+}
+
+.whiteNoiseGlow::after {
+  inset: -8px -28px;
+  opacity: .26;
+  filter: blur(2px);
+  transform: translate(7px, -2px);
+  animation-duration: 17s;
+  animation-direction: alternate-reverse;
+}
+
+.whiteNoiseSlider[data-playing="true"] .whiteNoiseGlow::before,
+.whiteNoiseSlider[data-playing="true"] .whiteNoiseGlow::after {
+  animation-play-state: running;
+}
+
+.tweaksPanel:not(.open) .whiteNoiseGlow::before,
+.tweaksPanel:not(.open) .whiteNoiseGlow::after {
+  animation-play-state: paused;
+}
+
+html[data-motion="quiet"] .whiteNoiseGlow::before,
+html[data-motion="quiet"] .whiteNoiseGlow::after,
+html[data-motion="off"] .whiteNoiseGlow::before,
+html[data-motion="off"] .whiteNoiseGlow::after {
+  animation: none;
+}
+
+.whiteNoiseSlider input {
+  position: relative;
+  z-index: 1;
+  display: block;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 42px;
   min-width: 0;
-  accent-color: var(--ink);
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  touch-action: pan-y;
+}
+
+.whiteNoiseSlider input::-webkit-slider-runnable-track {
+  height: 16px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.whiteNoiseSlider input::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  margin-top: -4px;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 5px rgba(29, 22, 48, .17);
+  transition: box-shadow .18s ease;
+}
+
+.whiteNoiseSlider input::-moz-range-track {
+  height: 16px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.whiteNoiseSlider input::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 5px rgba(29, 22, 48, .17);
+}
+
+.whiteNoiseSlider input:hover::-webkit-slider-thumb,
+.whiteNoiseSlider input:active::-webkit-slider-thumb {
+  box-shadow: 0 1px 7px rgba(29, 22, 48, .24), 0 0 0 2px rgba(255, 255, 255, .18);
+}
+
+.whiteNoiseSlider input:focus-visible {
+  outline: 2px solid var(--accent, var(--ink));
+  outline-offset: 3px;
 }
 
 .whiteNoiseTransport output {
@@ -45,6 +222,7 @@
   text-align: right;
   color: var(--ink);
   font-size: 11px;
+  font-variant-numeric: tabular-nums;
 }
 
 .whiteNoiseStatus {
@@ -68,8 +246,26 @@
   color: var(--ink);
 }
 
-.whiteNoiseTransport button[aria-busy="true"] {
-  border-style: dashed;
+@keyframes white-noise-drift {
+  from { transform: translate(-8px, 1px); }
+  to { transform: translate(8px, -2px); }
+}
+
+@keyframes white-noise-turn {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .whiteNoiseSpinner,
+  .whiteNoiseGlow::before,
+  .whiteNoiseGlow::after {
+    animation: none;
+  }
+
+  .whiteNoiseTransport button,
+  .whiteNoiseSlider input::-webkit-slider-thumb {
+    transition: none;
+  }
 }
 
 @media (max-width: 760px) {

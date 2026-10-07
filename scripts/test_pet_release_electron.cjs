@@ -1,0 +1,74 @@
+'use strict';
+// Source integration QA. Only config and shipped public pets enter this workspace.
+const {app,BrowserWindow,ipcMain}=require('electron');
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const runtime=require('../desktop/runtime.cjs'),{createStore}=require('../desktop/workspace-store.cjs'),{normalizeSettings,SETTINGS_KEY}=require('../desktop/pet-controller.cjs');
+const ROOT=path.resolve(__dirname,'..'),out=path.join(ROOT,'docs','qa_pet_release','run-'+Date.now()),workspace=path.join(out,'workspace');
+fs.mkdirSync(workspace,{recursive:true});fs.cpSync(path.join(ROOT,'config'),path.join(workspace,'config'),{recursive:true});
+fs.cpSync(path.join(ROOT,'app/assets/pets'),path.join(workspace,'app/assets/pets'),{recursive:true});
+for(const folder of ['vault','data','.lifeos'])fs.mkdirSync(path.join(workspace,folder),{recursive:true});
+app.setPath('userData',path.join(out,'profile'));const store=createStore(workspace),wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),checks=[],errors=[];
+store.operation({op:'set',key:'lifeos.welcome.v1',value:'done'});
+let backend,win,base,networkRequests=0,settings=normalizeSettings({}),phase=0;
+app.on('window-all-closed',()=>{});
+ipcMain.on('lifeos:storage',(event,command)=>{try{event.returnValue={ok:true,value:store.operation(command)}}catch(error){event.returnValue={ok:false,error:error.message}}});
+ipcMain.handle('lifeos:update-status',()=>({status:'idle'}));
+ipcMain.handle('lifeos:pet-settings-get',()=>({ok:true,settings}));
+ipcMain.handle('lifeos:pet-settings-set',(_event,patch)=>{settings=normalizeSettings(patch,settings);store.operation({op:'set',key:SETTINGS_KEY,value:JSON.stringify(settings)});return{ok:true,settings}});
+ipcMain.handle('lifeos:pet-action',()=>({ok:true}));ipcMain.handle('lifeos:pet-refresh',()=>({ok:true,settings}));
+const js=code=>win.webContents.executeJavaScript(`(async()=>{${code}})()`);
+const until=async condition=>{for(let i=0;i<160;i++){if(await js('return '+condition))return;await wait(75)}throw Error('Wait failed: '+condition)};
+const shot=async name=>{await wait(200);fs.writeFileSync(path.join(out,name+'.png'),(await win.webContents.capturePage()).toPNG())};
+async function launch(){
+  const port=await runtime.availablePort(),paths={dataRoot:workspace,resourceRoot:ROOT,logFile:path.join(out,'backend-'+(++phase)+'.log')};
+  const env={...process.env,LIFEOS_PYTHON:path.join(ROOT,'desktop/python-runtime/python.exe'),PYTHON_KEYRING_BACKEND:'keyring.backends.null.Keyring'};
+  for(const name of Object.keys(env))if(name.endsWith('_API_KEY')||['PYTHONHOME','PYTHONPATH','ELECTRON_RUN_AS_NODE'].includes(name))delete env[name];
+  backend=runtime.startBackend(runtime.backendLaunch({...paths,isPackaged:false,env}),{...paths,port});base=`http://127.0.0.1:${port}`;
+  await runtime.waitForServer(base+'/api/health',{failure:backend.failure});
+  const persisted=store.operation({op:'get',key:SETTINGS_KEY});if(persisted)settings=normalizeSettings(JSON.parse(persisted));
+  win=new BrowserWindow({width:1320,height:980,show:false,webPreferences:{preload:path.join(ROOT,'desktop/preload.cjs'),sandbox:true,contextIsolation:true,nodeIntegration:false,offscreen:true,backgroundThrottling:false}});
+  win.webContents.on('console-message',details=>{if(details.level==='error'&&!/net::ERR|Failed to load resource/.test(details.message))errors.push(details.message)});
+  win.webContents.session.webRequest.onBeforeRequest({urls:['https://*/*','http://*/*']},(details,callback)=>{if(details.url.startsWith(base))return callback({});networkRequests++;callback({cancel:true})});
+  await win.loadURL(base);await until(`!!window.lifeosViVi&&!!window.lifeosPetRenderers&&!!window.lifeosSidebar`);await wait(1400);
+  await js(`window.confirm=()=>true;window.dispatchEvent(new Event('lifeos:open-pet'))`);await until(`!!document.querySelector('#petPageCatalog .petPageCard')&&!!document.querySelector('#petSettingsToggle')`);
+}
+async function data(){return js(`return (await fetch('/api/pets/catalog',{cache:'no-store'})).json()`)}
+async function run(){
+  await launch();let status=await data(),vivi='vivi--durianloop',otter=status.installed.find(p=>p.folder==='desk-otter').slug;
+  assert.equal(status.installed[0].slug,vivi);assert.equal(status.installed.find(p=>p.slug===vivi).renderer,'vivi-gif');assert.equal(status.installed.find(p=>p.slug===vivi).actions.length,16);
+  assert.equal(await js(`return getComputedStyle(document.querySelector('#petPageCatalog')).gridTemplateColumns.split(' ').length`),2);
+  assert.equal(await js(`return document.querySelectorAll('#petPageInstalled [data-pet-uninstall]').length`),status.installed.length);checks.push('ViVi is present with all 16 original actions, two columns by default, and every installed pet can be removed');
+  await js(`document.querySelector('#petPageInstalled [data-pet-activate="${vivi}"]').click()`);await until(`document.querySelector('#petPageSprite').dataset.petTarget==='${vivi}'&&document.querySelector('#petPageSprite .viviPetStage')?.dataset.ready==='true'`);
+  await until(`document.querySelector('#lifePetFloatSprite .viviPetStage')?.dataset.ready==='true'`);assert.equal(await js(`return document.querySelector('#lifePetFloat').hidden`),false);
+  assert.ok(await js(`const canvas=document.querySelector('#lifePetFloatSprite canvas'),data=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;return data.some((value,index)=>index%4===3&&value>0)`));
+  checks.push('activating ViVi paints its GIF in the actual shelf and internal companion');
+  await js(`document.querySelector('.petPageHero').scrollIntoView({block:'start'})`);await shot('灵犀-ViVi');
+  await js(`document.querySelector('#petPageSprite').focus({preventScroll:true});document.querySelector('#petPageSprite').dispatchEvent(new KeyboardEvent('keydown',{key:'F10',shiftKey:true,bubbles:true}))`);await until(`!!document.querySelector('#petActionMenu:not([hidden])')`);
+  const menuIds=await js(`return [...document.querySelectorAll('#petActionMenu [data-pet-loop]')].map(el=>el.dataset.petLoop).filter(id=>id!=='auto')`);
+  assert.equal(menuIds.length,16);assert.ok(menuIds.includes('special0')&&menuIds.includes('start')&&menuIds.includes('walk_left'));await shot('ViVi-完整动作菜单');
+  await js(`document.querySelector('#petActionMenu [data-pet-loop="special0"]').click()`);await until(`document.querySelector('#lifePetFloatSprite .viviPetStage').dataset.action==='special0'`);
+  assert.equal(await js(`return lifeosPetRenderers.get(document.querySelector('#lifePetFloatSprite')).getState().manualLoop`),'special0');checks.push('ViVi exposes every native action in the shared menu and the long action loops without the nine-row mapping');
+  await js(`lifeosPetActions.select('${vivi}','sit');document.querySelector('#petSettingsToggle').click()`);await until(`!document.querySelector('#petSettingsPanel').hidden&&!!document.querySelector('[data-vivi-setting="dragAction"]')`);
+  assert.ok(await js(`return ['mode','visible','keepOnClose','alwaysOnTop','scale'].every(name=>!!document.querySelector('[data-pet-setting="'+name+'"]'))`));
+  assert.ok(await js(`return ['dragAction','autoBehavior','edgeHide'].every(name=>!!document.querySelector('[data-vivi-setting="'+name+'"]'))`));
+  await js(`const el=document.querySelector('[data-vivi-setting="dragAction"]');el.value='sweat';el.dispatchEvent(new Event('change',{bubbles:true}))`);await until(`lifeosViViSettings.get().dragAction==='sweat'`);
+  await js(`const el=document.querySelector('[data-vivi-setting="autoBehavior"]');el.checked=false;el.dispatchEvent(new Event('change',{bubbles:true}))`);await until(`lifeosViViSettings.get().autoBehavior===false`);
+  await shot('桌宠-极简设置');checks.push('room settings preserve size, placement and the original ViVi drag/automatic/hiding preferences');
+  await js(`const el=document.querySelector('[data-pet-setting="scale"]');el.value='1.5';el.dispatchEvent(new Event('change',{bubbles:true}))`);await until(`lifeosPetSettings.get().scale===1.5`);
+  assert.ok(Math.abs(await js(`return document.querySelector('#lifePetFloatSprite').getBoundingClientRect().width`)-216)<1);
+  assert.ok(Math.abs(await js(`return lifeosPetRenderers.get(document.querySelector('#lifePetFloatSprite')).getState().width`)-216)<1);checks.push('global scale reaches the original renderer once without multiplying twice');
+  await js(`const el=document.querySelector('[data-pet-setting="mode"]');el.value='desktop';el.dispatchEvent(new Event('change',{bubbles:true}))`);await until(`lifeosPetSettings.get().mode==='desktop'&&document.querySelector('#lifePetFloat').hidden`);
+  assert.equal(await js(`return document.querySelector('#lifePetFloat').inert`),true);assert.equal(await js(`return document.querySelector('#lifePetChat').hidden`),true);
+  await js(`window.dispatchEvent(new Event('lifeos:open-pet-chat'))`);await wait(200);assert.equal(await js(`return document.querySelector('#lifePetFloat').hidden`),true);checks.push('desktop placement hides and disables the internal companion and does not revive it through chat');
+  await js(`const el=document.querySelector('[data-pet-setting="mode"]');el.value='in_app';el.dispatchEvent(new Event('change',{bubbles:true}))`);await until(`lifeosPetSettings.get().mode==='in_app'&&!document.querySelector('#lifePetFloat').hidden`);
+  await js(`document.querySelector('#petSettingsToggle').click();document.querySelector('#petPageInstalled [data-pet-uninstall="${vivi}"]').click()`);await until(`!document.querySelector('#petPageInstalled [data-pet-mini="${vivi}"]')`);
+  await js(`document.querySelector('#petPageInstalled [data-pet-uninstall="${otter}"]').click()`);await until(`!document.querySelector('#petPageInstalled [data-pet-mini="${otter}"]')`);
+  status=await data();assert.equal(status.installed.some(p=>p.slug===vivi||p.slug===otter),false);assert.ok(fs.existsSync(path.join(workspace,'app/assets/pets/vivi/sit.gif')));assert.ok(fs.existsSync(path.join(workspace,'app/assets/pets/desk-otter/spritesheet.webp')));checks.push('removing ViVi and bundled Desk Otter updates active selection while preserving recoverable local assets');
+  win.destroy();backend.child.kill();await wait(180);await launch();status=await data();assert.equal(status.installed.some(p=>p.slug===vivi||p.slug===otter),false);
+  assert.equal(await js(`return lifeosPetSettings.get().scale`),1.5);assert.equal(await js(`return lifeosViViSettings.get().dragAction`),'sweat');checks.push('removed pets remain removed across a new server port and settings survive restart');
+  await js(`document.querySelector('#petPageCatalog [data-pet-install="${vivi}"]').click()`);await until(`!!document.querySelector('#petPageInstalled [data-pet-mini="${vivi}"]')`);status=await data();assert.equal(status.active_slug,vivi);
+  await until(`document.querySelector('#lifePetFloatSprite .viviPetStage')?.dataset.ready==='true'`);checks.push('removed ViVi restores and activates offline from its public bundled package');
+  assert.deepEqual(errors,[]);assert.equal(fs.readdirSync(path.join(workspace,'vault')).length,0);checks.push('source renderer has no script errors and no journal data is imported or read');
+  fs.writeFileSync(path.join(out,'report.json'),JSON.stringify({ok:true,checks,diaries_opened:0,remote_ai_calls:0,network_attempts_blocked:networkRequests,native_window_scope:'separate desktop controller tests',source_workspace:workspace},null,2));console.log(JSON.stringify({ok:true,checks:checks.length,out}));
+}
+app.whenReady().then(run).then(()=>{backend?.child?.kill();win?.destroy();app.exit(0)}).catch(async error=>{fs.writeFileSync(path.join(out,'failure.txt'),error.stack);if(win&&!win.isDestroyed()){const state=await js(`return {feature:STATE.feature,active:document.querySelector('#petPageSprite')?.dataset.petTarget,stage:document.querySelector('#lifePetFloatSprite .viviPetStage')?.dataset,settings:window.lifeosPetSettings?.get(),extra:window.lifeosViViSettings?.get(),text:document.querySelector('#petSettingsHint')?.textContent}`).catch(()=>null);fs.writeFileSync(path.join(out,'failure-state.json'),JSON.stringify({state,errors},null,2));fs.writeFileSync(path.join(out,'failure.png'),(await win.webContents.capturePage()).toPNG());}console.error(error.stack);backend?.child?.kill();win?.destroy();app.exit(1)});

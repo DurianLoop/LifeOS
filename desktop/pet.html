@@ -1,18 +1,62 @@
-<!doctype html><meta charset="utf-8"><style>
-html,body{width:100%;height:100%;margin:0;background:transparent;overflow:hidden;user-select:none}.stage{position:absolute;inset:0}.sprite{width:192px;height:208px;background-repeat:no-repeat;cursor:grab;touch-action:none;transition:none;contain:layout paint}.sprite.dragging{cursor:grabbing}
-</style><div class="stage"><div id="pet" class="sprite" role="button" tabindex="0" aria-label="可拖动桌宠；按 Enter 挥手，右键打开菜单"></div></div><script>
-const petBridge=window.lifeosPet;const params=new URLSearchParams(location.search);let initialMeta=null,meta=null;try{initialMeta=JSON.parse(params.get('pet')||'null')}catch{try{initialMeta=JSON.parse(decodeURIComponent(params.get('pet')||'null'))}catch{}}const root=document.getElementById('pet');let configuredSprite='',configSequence=0;
-const ROW={idle:0,'running-right':1,'running-left':2,waving:3,jumping:4,failed:5,waiting:6,running:7,review:8};let state='idle',frame=0,timer=null,until=0,look=-1,drag=null;
-const isV2=()=>Number(meta?.version)===2;const standardState=s=>ROW[s]===undefined?'idle':s;
-function setState(next,ms=0){state=standardState(next);look=-1;frame=0;until=ms?Date.now()+ms:0;renderSprite()}
-function renderSprite(){if(!meta){root.style.backgroundImage='';return}const rows=isV2()?11:9,usingLook=isV2()&&look>=0,row=usingLook?9+Math.floor(look/8):ROW[state],cells=meta.frameMap?.[row]||[0,1,2,3,4,5,6,7],column=usingLook?look%8:cells[frame%cells.length],url=meta.sprite;if(configuredSprite!==url||root.dataset.rows!==String(rows)){root.style.backgroundImage=`url("${url}")`;root.style.backgroundSize=`${8*192}px ${rows*208}px`;root.dataset.rows=String(rows);configuredSprite=url}root.style.backgroundPosition=`-${column*192}px -${row*208}px`;}
-function loop(){if(!drag&&until&&Date.now()>=until)setState('idle');else if(!isV2()||look<0)frame+=1;renderSprite();timer=setTimeout(loop,state==='waiting'?240:140)}
-function populatedFrames(image,version){const rows=Number(version)===2?11:9,canvas=document.createElement('canvas');canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;const context=canvas.getContext('2d',{willReadFrequently:true});context.drawImage(image,0,0);const w=Math.floor(canvas.width/8),h=Math.floor(canvas.height/rows);return Array.from({length:rows},(_,row)=>{const cells=[];for(let column=0;column<8;column++){const pixels=context.getImageData(column*w,row*h,w,h).data;for(let i=3;i<pixels.length;i+=4){if(pixels[i]){cells.push(column);break}}}return cells.length?cells:[0]})}
-async function applyConfig(next){const sequence=++configSequence;if(!next?.sprite)return;try{const image=new Image();image.src=next.sprite;await image.decode();if(sequence!==configSequence)return;next={...next,frameMap:populatedFrames(image,next.version)};meta=next;frame=0;look=-1;renderSprite();delete root.dataset.loadError;if(!timer)timer=setTimeout(loop,140);petBridge?.ready?.()}catch{root.dataset.loadError='true'}}
-function pointLook(event){if(!isV2()||drag)return;const r=root.getBoundingClientRect(),dx=event.clientX-r.left-r.width/2,dy=event.clientY-r.top-r.height/2;if(Math.hypot(dx,dy)<16){look=-1}else{look=Math.round((Math.atan2(dx,-dy)*180/Math.PI+360)%360/22.5)%16}renderSprite()}
-root.addEventListener('pointerdown',event=>{if(event.button!==0)return;root.setPointerCapture?.(event.pointerId);drag={x:event.screenX,y:event.screenY,lastX:event.screenX,moved:false};root.classList.add('dragging');setState('running-right');petBridge?.dragStart({x:event.screenX,y:event.screenY});event.preventDefault()});
-root.addEventListener('pointermove',event=>{if(!drag)return;const dx=event.screenX-drag.lastX;if(Math.abs(event.screenX-drag.x)+Math.abs(event.screenY-drag.y)>3)drag.moved=true;if(dx){const next=dx<0?'running-left':'running-right';if(state!==next)setState(next);drag.lastX=event.screenX}petBridge?.dragMove({x:event.screenX,y:event.screenY});event.preventDefault()});
-function finishDrag(){if(!drag)return;const wasClick=!drag.moved;drag=null;root.classList.remove('dragging');petBridge?.dragEnd();if(wasClick){setState('waving',900);petBridge?.event('pet-click')}else setState('idle')}root.addEventListener('pointerup',finishDrag);root.addEventListener('pointercancel',()=>{drag=null;root.classList.remove('dragging');petBridge?.dragEnd();setState('idle')});root.addEventListener('contextmenu',event=>{event.preventDefault();petBridge?.openMenu()});root.addEventListener('dblclick',event=>{event.preventDefault();petBridge?.openChat()});root.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();setState('waving',900);petBridge?.event('pet-click')}if(event.key==='ContextMenu'||(event.shiftKey&&event.key==='F10')){event.preventDefault();petBridge?.openMenu()}});root.addEventListener('pointermove',pointLook);root.addEventListener('pointerleave',()=>{if(!drag){look=-1;renderSprite()}});
-const eventState={navigate:['running',850],'journal-open':['review',1200],'journal-focus-enter':['review',0],'journal-focus-exit':['idle',0],'journal-section':['review',700],'journal-complete':['waving',1100],theme:['jumping',900],typography:['review',700],'pet-click':['waving',900],'entry-created':['waving',1000],'entry-updated':['review',850],'lifeos:backend-exit':['failed',0]},manualDuration={idle:0,'running-right':1200,'running-left':1200,waving:1300,jumping:1100,failed:1500,waiting:0,running:1500,review:1500};petBridge?.onEvent?.(event=>{if(drag)return;const type=event?.type;if(type==='pet-drag')return setState(event?.detail?.direction==='left'?'running-left':'running-right');if(type==='pet-drag-end')return setState('idle');if(type==='pet-action'){const next=event?.detail?.state;return setState(next,manualDuration[next]??0)}const next=eventState[type];if(next)setState(next[0],next[1])});
-petBridge?.onConfig?.(applyConfig);applyConfig(initialMeta);
-</script>
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>LifeOS 桌宠</title><style>
+html,body{width:100%;height:100%;margin:0;background:transparent;overflow:hidden;user-select:none}.stage{position:absolute;inset:0}.sprite{width:100%;height:100%;background-repeat:no-repeat;cursor:grab;touch-action:none;transition:none;contain:layout paint;outline:none}.sprite:focus-visible{outline:1px dashed #8a7699;outline-offset:-3px}.sprite.dragging{cursor:grabbing}
+</style><div class="stage"><div id="pet" class="sprite" role="button" tabindex="0" aria-label="可拖动桌宠；按 Enter 挥手，右键打开动作和设置"></div></div><script>
+'use strict';
+const petBridge=window.lifeosPet,root=document.getElementById('pet'),params=new URLSearchParams(location.search),ROW={idle:0,'running-right':1,'running-left':2,waving:3,jumping:4,failed:5,waiting:6,running:7,review:8};
+let meta=null,sequence=0,frame=0,timer=null,state='idle',until=0,look=-1,drag=null,vivi=null,actions=null,paintedAsset='';
+const scripts=new Map();
+function loadScript(url){if(!scripts.has(url))scripts.set(url,new Promise((resolve,reject)=>{const script=document.createElement('script');script.src=url;script.onload=resolve;script.onerror=()=>reject(new Error('桌宠组件未能加载'));document.head.append(script)}));return scripts.get(url)}
+const selected=()=>actions?.selected(meta?.id)||null,isV2=()=>Number(meta?.version)===2;
+function setState(next,ms=0,force=false){if(selected()&&!force){next=selected();ms=0}state=Object.hasOwn(ROW,next)?next:'idle';look=-1;frame=0;until=ms?Date.now()+ms:0;paint()}
+function paint(){
+  if(!meta||vivi)return;
+  const rows=isV2()?11:9,usingLook=isV2()&&look>=0&&!selected(),requested=usingLook?9+Math.floor(look/8):ROW[state],row=meta.frameMap?.[requested]?.length===0?Math.max(0,meta.frameMap.findIndex(cells=>cells.length)):requested;
+  const cells=meta.frameMap?.[row]?.length?meta.frameMap[row]:[0,1,2,3,4,5,6,7],column=usingLook&&row===requested?look%8:cells[frame%cells.length],width=root.clientWidth,height=root.clientHeight;
+  const assetKey=meta.sprite+'|'+width+'|'+height+'|'+rows;if(paintedAsset!==assetKey){root.style.backgroundImage=`url("${meta.sprite}")`;root.style.backgroundSize=`${8*width}px ${rows*height}px`;paintedAsset=assetKey}root.style.backgroundPosition=`-${column*width}px -${row*height}px`;root.dataset.petAction=state;root.dataset.frame=String(frame);
+}
+function stop(){clearTimeout(timer);timer=null}
+function animate(){stop();if(!meta||vivi||meta.motion===false||meta.visible===false)return;timer=setTimeout(()=>{if(!drag&&until&&Date.now()>=until)setState('idle');else if(!isV2()||look<0||selected())frame++;paint();animate()},state==='waiting'?240:140)}
+function scanFrames(image,version){const rows=Number(version)===2?11:9,canvas=document.createElement('canvas');canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;const context=canvas.getContext('2d',{willReadFrequently:true});context.drawImage(image,0,0);const width=Math.floor(canvas.width/8),height=Math.floor(canvas.height/rows);return Array.from({length:rows},(_,row)=>{const cells=[];for(let col=0;col<8;col++){const pixels=context.getImageData(col*width,row*height,width,height).data;for(let i=3;i<pixels.length;i+=4)if(pixels[i]){cells.push(col);break}}return cells})}
+async function applyConfig(next){
+  const request=++sequence;if(!next?.sprite)return;
+  try{
+    if(!actions){if(!window.lifeosPetActions)await loadScript(next.actionsScript);if(request!==sequence)return;actions=window.lifeosPetActions}
+    if(Array.isArray(next.actions))actions.register(next.id,next.actions);
+    const changed=meta?.sprite!==next.sprite||meta?.renderer!==next.renderer;
+    if(changed&&next.renderer!=='vivi-gif'){const image=new Image();image.src=next.sprite;await image.decode();if(request!==sequence)return;next={...next,frameMap:scanFrames(image,next.version)}}
+    if(changed){stop();vivi?.destroy();vivi=null;root.replaceChildren();paintedAsset='';if(next.renderer==='vivi-gif')root.style.backgroundImage='';}
+    if(next.renderer==='vivi-gif'){
+      await loadScript(next.viviScript);if(request!==sequence)return;
+      if(!document.querySelector('[data-vivi-css]')){const sheet=document.createElement('link');sheet.rel='stylesheet';sheet.href=next.viviCSS;sheet.dataset.viviCss='true';document.head.append(sheet)}
+      meta=next;actions.select(next.id,next.action||null);
+      if(!vivi){
+        vivi=window.lifeosViVi.mount(root,{...next,slug:next.id,actions:next.viviActions},{mode:'companion',interactive:false,width:root.clientWidth,height:root.clientHeight,position:next.position,settings:{...next.settings,...next.vivi,scale:1},bounds:()=>({width:meta.workArea.width,height:meta.workArea.height}),onPosition:point=>petBridge.position(point),onError:error=>petBridge.failed(error.message)});
+      }
+      await vivi.ready;if(request!==sequence)return;vivi.setPosition(next.position.x,next.position.y);
+      vivi.resize(root.clientWidth,root.clientHeight);vivi.setMotion(next.motion!==false);vivi.setSettings({...next.vivi,scale:1});vivi.setVisible(next.visible!==false);
+      if(next.action)await vivi.select(next.action,{loop:true});else await vivi.select(null,{loop:false});
+    }else{
+      meta=next;actions.select(next.id,next.action||null);setState(next.action||'idle');animate();
+    }
+    delete root.dataset.loadError;root.dataset.renderer=next.renderer||'spritesheet';petBridge.ready();
+  }catch(error){if(request!==sequence)return;root.dataset.loadError=String(error.message);petBridge.failed(error.message)}
+}
+function point(event){return {x:event.screenX-(meta?.workArea?.x||0),y:event.screenY-(meta?.workArea?.y||0)}}
+root.addEventListener('pointerdown',event=>{if(event.button!==0||!meta)return;root.setPointerCapture?.(event.pointerId);drag={x:event.screenX,y:event.screenY,lastX:event.screenX,moved:false};root.classList.add('dragging');if(vivi)vivi.beginDrag(point(event));else setState('running-right',0,true);petBridge.dragStart({x:event.screenX,y:event.screenY});event.preventDefault()});
+root.addEventListener('pointermove',event=>{
+  if(drag){const dx=event.screenX-drag.lastX;if(Math.abs(event.screenX-drag.x)+Math.abs(event.screenY-drag.y)>3)drag.moved=true;
+    if(vivi)vivi.moveDrag(point(event));else{if(dx){const next=dx<0?'running-left':'running-right';if(state!==next)setState(next,0,true)}petBridge.dragMove({x:event.screenX,y:event.screenY})}drag.lastX=event.screenX;event.preventDefault();return;}
+  if(!isV2()||selected()||vivi)return;const r=root.getBoundingClientRect(),dx=event.clientX-r.width/2,dy=event.clientY-r.height/2;look=Math.hypot(dx,dy)<16?-1:Math.round((Math.atan2(dx,-dy)*180/Math.PI+360)%360/22.5)%16;paint();
+});
+function finishDrag(){if(!drag)return;const click=!drag.moved;drag=null;root.classList.remove('dragging');if(vivi){vivi.endDrag();if(click)vivi.interact()}else setState(click?'waving':'idle',click?900:0);petBridge.dragEnd()}
+root.addEventListener('pointerup',finishDrag);root.addEventListener('pointercancel',finishDrag);
+root.addEventListener('pointerleave',()=>{if(!drag){look=-1;paint()}});
+root.addEventListener('contextmenu',event=>{event.preventDefault();petBridge.openMenu()});
+root.addEventListener('dblclick',event=>{event.preventDefault();petBridge.openChat()});
+root.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();if(vivi)vivi.interact();else setState('waving',900)}if(event.key==='ContextMenu'||(event.shiftKey&&event.key==='F10')){event.preventDefault();petBridge.openMenu()}});
+const eventStates={navigate:['running',850],'journal-open':['review',1200],'journal-focus-enter':['review',0],'journal-focus-exit':['idle',0],'journal-section':['review',700],'journal-complete':['waving',1100],theme:['jumping',900],typography:['review',700],'entry-created':['waving',1000],'entry-updated':['review',850]};
+petBridge.onEvent(event=>{if(drag||selected()||vivi)return;const action=eventStates[event?.type];if(action)setState(...action)});
+petBridge.onAction(value=>{if(value.slug!==meta?.id)return;actions.select(value.slug,value.action);if(vivi)vivi.select(value.action,{loop:value.action!==null});else setState(value.action||'idle')});
+petBridge.onConfig(applyConfig);addEventListener('resize',()=>{paint();vivi?.resize(root.clientWidth,root.clientHeight)});
+try{applyConfig(JSON.parse(params.get('pet')||'null'))}catch(error){petBridge.failed(error.message)}
+</script></html>

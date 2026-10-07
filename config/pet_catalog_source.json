@@ -1,0 +1,14 @@
+{
+  "repository": "https://github.com/legeling/awesome-codex-pet",
+  "source_url": "https://raw.githubusercontent.com/legeling/awesome-codex-pet/4672bd7e16d0d4aab1a942e56c3e2458cc9dcbda/pets.json",
+  "catalog_commit": "4672bd7e16d0d4aab1a942e56c3e2458cc9dcbda",
+  "catalog_commit_date": "2026-10-06T14:11:42Z",
+  "verified_at": "2026-10-07T03:04:40.645868+00:00",
+  "upstream_sha256": "1f5edfbe3fb353eadbc57b6106570e0f1adc0b89d0ed7fbeea39fd329133d7f1",
+  "upstream_count": 305,
+  "sprite_versions": [
+    1,
+    2
+  ],
+  "asset_terms": "Each package retains its own author, source and license; this snapshot contains metadata only. Unknown or unsupported licenses are excluded from installation."
+}

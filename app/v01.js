@@ -158,7 +158,7 @@
       {id:'poetry',icon:'poetry',label:c.nav.poetry,feature:'Daily Poetry'},
       {id:'memory',icon:'memory',label:c.nav.memory,feature:'On This Day'},
       {id:'bottle',icon:'bottle',label:state.preset==='en'?'Drift Bottle':state.preset==='bilingual'?'漂流瓶 / Bottle':'漂流瓶',feature:'Time Capsule'},
-      {id:'pet',icon:'magic',label:c.nav.pet,feature:'Pet Shelf',pet:true},
+      {id:'pet',icon:'cat',label:c.nav.pet,feature:'Pet Shelf',pet:true},
       {id:'attic',icon:'attic',label:c.advanced.split(' · ')[0],action:'attic'}
     ];
   }

@@ -9,20 +9,26 @@
     if(!width||!height)throw new Error('桌宠图集尺寸无效');
     const context=canvas.getContext('2d',{willReadFrequently:true});
     context.drawImage(image,0,0);
-    return Array.from({length:rows},(_,row)=>{
+    const frames=Array.from({length:rows},(_,row)=>{
       const cells=[];
       for(let column=0;column<8;column++){
         const pixels=context.getImageData(column*width,row*height,width,height).data;
         for(let i=3;i<pixels.length;i+=4)if(pixels[i]){cells.push(column);break}
       }
-      return cells.length?cells:[0];
+      return cells;
     });
+    if(!frames.some(cells=>cells.length))throw new Error('桌宠图集没有可见角色');
+    return frames;
   }
   async function prepare(item){
     if(!item?.asset_url)return item;
     const key=`${item.asset_url}|${item.spriteVersionNumber||1}`;
     if(!assets.has(key)){
-      const image=new Image();image.src=item.asset_url;
+      const image=new Image();
+      // User-selected remote previews need CORS so alpha-derived frame maps
+      // remain usable. Local/file assets keep their original loading behavior.
+      if(/^https?:\/\//i.test(item.asset_url)&&new URL(item.asset_url).origin!==location.origin)image.crossOrigin='anonymous';
+      image.src=item.asset_url;
       assets.set(key,image.decode().then(()=>({image,frames:occupiedFrames(image,item.spriteVersionNumber)})).catch(error=>{assets.delete(key);throw error}));
     }
     const decoded=await assets.get(key);
