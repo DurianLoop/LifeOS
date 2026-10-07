@@ -93,6 +93,12 @@ def native_smoke(app: Path, root: Path) -> dict:
         except Exception:
             log.flush()
             print((root / 'native-launch.log').read_text(errors='replace')[-16000:], file=sys.stderr)
+            print('Native workspace directories:', sorted(p.name for p in workspace.iterdir()), file=sys.stderr)
+            sample = root / 'native-sample.txt'
+            if process is not None and process.poll() is None:
+                subprocess.run(['sample', str(process.pid), '1', '1', '-file', str(sample)], timeout=15)
+                if sample.exists():
+                    print(sample.read_text(errors='replace')[:24000], file=sys.stderr)
             backend_log = Path.home() / 'Library' / 'Application Support' / 'LifeOS' / 'logs' / 'desktop.log'
             if backend_log.exists():
                 print(backend_log.read_text(errors='replace')[-16000:], file=sys.stderr)
@@ -120,18 +126,24 @@ def native_smoke(app: Path, root: Path) -> dict:
                         pass
 
 
-def ui_checks(app: Path, root: Path, phases=('first', 'restart')) -> tuple[list, Path]:
+def ui_checks(app: Path, root: Path, phases=('first', 'restart'), evidence=None) -> tuple[list, Path]:
     electron = ROOT / 'desktop' / 'node_modules' / 'electron' / 'dist' / 'Electron.app' / 'Contents' / 'MacOS' / 'Electron'
     output = root / 'ui-qa'
     checks = []
-    for phase in phases:
-        env = {**os.environ, 'MACOS_APP_PATH': str(app), 'QA_OUTPUT': str(output), 'QA_PHASE': phase}
-        env.pop('ELECTRON_RUN_AS_NODE', None)
-        subprocess.run([str(electron), str(ROOT / 'scripts' / 'test_macos_app.cjs')],
-                       env=env, check=True, timeout=120)
-        report = json.loads((output / f'{phase}-report.json').read_text())
-        assert report['ok']
-        checks.extend(report['checks'])
+    try:
+        for phase in phases:
+            env = {**os.environ, 'MACOS_APP_PATH': str(app), 'QA_OUTPUT': str(output), 'QA_PHASE': phase}
+            env.pop('ELECTRON_RUN_AS_NODE', None)
+            subprocess.run([str(electron), str(ROOT / 'scripts' / 'test_macos_app.cjs')],
+                           env=env, check=True, timeout=120)
+            report = json.loads((output / f'{phase}-report.json').read_text())
+            assert report['ok']
+            checks.extend(report['checks'])
+    finally:
+        if evidence and output.exists():
+            import shutil
+            shutil.copytree(output, evidence, dirs_exist_ok=True,
+                            ignore=shutil.ignore_patterns('workspace', 'application-data', 'profile'))
     return checks, output
 
 
@@ -147,7 +159,8 @@ def main():
     if args.native_app:
         with tempfile.TemporaryDirectory(prefix='lifeos-mac-preflight-') as folder:
             inspect_app(args.native_app.resolve(), args.arch)
-            ui_checks(args.native_app.resolve(), Path(folder), phases=('first',))
+            ui_checks(args.native_app.resolve(), Path(folder), phases=('first',),
+                      evidence=args.dist.resolve() / f'qa-macos-{args.arch}')
             print(json.dumps(native_smoke(args.native_app.resolve(), Path(folder))))
         return
     dist = args.dist.resolve()

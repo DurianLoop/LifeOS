@@ -26,7 +26,8 @@ const fixture = {
   text: 'LifeOS macOS 0.5.2 synthetic journal. 今天仅用于安装包验收。',
   draftDate: '2099-01-06', draftText: 'LifeOS macOS synthetic draft survives a normal close',
 };
-const checks = [], backendChildren = [], blockedRequests = [], rendererErrors = [];
+const checks = [], backendChildren = [], blockedRequests = [], rendererErrors = [], startupTimeline = [];
+const startedAt = Date.now();
 let mainWindow = null, packaged = null, completed = false, failing = false, finalizing = false;
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 const hash = content => crypto.createHash('sha256').update(content).digest('hex');
@@ -38,14 +39,45 @@ const inside = (parent, child) => {
 const writeJSON = (file, data) => fs.writeFileSync(file, JSON.stringify(data, null, 2) + '\n');
 
 fs.mkdirSync(output, {recursive: true});
+function trace(event, details = {}) {
+  const record = {phase, elapsed_ms: Date.now() - startedAt, event, ...details};
+  startupTimeline.push(record);
+  // Only explicit runtime paths, lifecycle state and test output are logged.
+  // Never serialize process.env, launcher env, user settings or credentials.
+  const text = JSON.stringify(record);
+  try { fs.appendFileSync(path.join(output, phase + '-startup.jsonl'), text + '\n'); } catch {}
+  process.stderr.write('[LifeOS macOS QA] ' + text + '\n');
+}
+trace('harness-loaded', {platform: process.platform, architecture: process.arch,
+  electron: process.versions.electron, ready: app.isReady(), resources, workspace});
+app.on('will-finish-launching', () => trace('app-will-finish-launching'));
+app.on('ready', () => trace('app-ready', {ready: app.isReady()}));
+app.on('before-quit', () => trace('app-before-quit', {completed, failing}));
+app.on('quit', (_event, exitCode) => trace('app-quit', {exit_code: exitCode}));
 const watchdog = setTimeout(() => void fail(new Error('macOS packaged UI QA timed out')), 105000);
 
+function diagnosticSnapshot() {
+  const log = path.join(profile, 'logs', 'desktop.log');
+  return {
+    ready: app.isReady(), single_instance_lock: app.hasSingleInstanceLock(),
+    user_data: app.getPath('userData'), session_data: app.getPath('sessionData'),
+    workspace_exists: fs.existsSync(workspace), backend_log_exists: fs.existsSync(log),
+    backend_log_bytes: fs.existsSync(log) ? fs.statSync(log).size : 0,
+    windows: BrowserWindow.getAllWindows().map(window => ({id: window.id, visible: window.isVisible(),
+      destroyed: window.isDestroyed(), preload: window.webContents.getLastWebPreferences().preload,
+      loading: window.webContents.isLoading(), url: window.webContents.getURL().split('?')[0]})),
+    backend_children: backendChildren.map(child => ({pid: child.pid, exit_code: child.exitCode, signal: child.signalCode})),
+    timeline: startupTimeline,
+  };
+}
+
 async function until(test, description, timeout = 20000) {
+  trace('wait-enter', {description, timeout_ms: timeout});
   const deadline = Date.now() + timeout;
   while (Date.now() < deadline) {
     if (failing) throw new Error('QA has already failed');
     const value = await test();
-    if (value) return value;
+    if (value) { trace('wait-complete', {description}); return value; }
     await delay(100);
   }
   throw new Error('Timed out: ' + description);
@@ -97,14 +129,21 @@ async function fail(error) {
   failing = true;
   clearTimeout(watchdog);
   const message = String(error?.stack || error);
-  try { await screenshot(phase + '-failure'); } catch { /* Startup can fail before a window exists. */ }
+  trace('qa-failure', {error: message});
+  const diagnostics = diagnosticSnapshot();
+  const report = {ok: false, phase, checks, error: message, renderer_errors: rendererErrors,
+    blocked_external_requests: blockedRequests, backend_pids: backendChildren.map(child => child.pid), diagnostics};
+  // Write and print immediately: a stuck compositor must not prevent evidence.
+  try { writeJSON(path.join(output, phase + '-report.json'), report); } catch {}
+  process.stderr.write('[LifeOS macOS QA failure report] ' + JSON.stringify(report) + '\n');
+  try { await Promise.race([screenshot(phase + '-failure'), delay(2000)]); } catch { /* Startup can fail before a window exists. */ }
   try { await stopOwnedBackends(); } catch (cleanupError) { rendererErrors.push(String(cleanupError)); }
   try {
     copyBackendLog();
-    writeJSON(path.join(output, phase + '-report.json'), {
-      ok: false, phase, checks, error: message, renderer_errors: rendererErrors,
-      blocked_external_requests: blockedRequests, backend_pids: backendChildren.map(child => child.pid),
-    });
+    const log = path.join(profile, 'logs', 'desktop.log');
+    if (fs.existsSync(log)) process.stderr.write('[LifeOS macOS QA backend log tail]\n' + fs.readFileSync(log, 'utf8').slice(-16000) + '\n');
+    else process.stderr.write('[LifeOS macOS QA] packaged backend log was not created\n');
+    writeJSON(path.join(output, phase + '-report.json'), {...report, renderer_errors: rendererErrors});
   } finally { process.stderr.write(message + '\n'); app.exit(1); }
 }
 
@@ -195,6 +234,7 @@ async function checkJournal(entry) {
 }
 
 async function verifyUI(window) {
+  trace('verify-ui-enter', {window_id: window.id});
   mainWindow = window;
   await until(() => js(`window.lifeosV01Ready===true&&typeof openProductDock==='function'&&typeof api==='function'`), 'production UI readiness');
   await until(() => window.isVisible(), 'real Mac window is shown');
@@ -265,6 +305,7 @@ async function verifyUI(window) {
 }
 
 app.on('will-quit', event => {
+  trace('app-will-quit', {completed, failing, finalizing});
   if (finalizing || failing) return;
   event.preventDefault(); finalizing = true;
   void (async () => {
@@ -283,6 +324,7 @@ app.on('will-quit', event => {
       external_models_enabled: false, auto_update_network_disabled: true,
       blocked_external_requests: blockedRequests, renderer_errors: rendererErrors,
       backend_stopped: true, signing_or_gatekeeper_test: false,
+      startup_timeline: startupTimeline,
     });
     clearTimeout(watchdog);
     app.quit();
@@ -290,7 +332,18 @@ app.on('will-quit', event => {
 });
 
 app.on('browser-window-created', (_event, window) => {
+  const windowId = window.id;
   const preferences = window.webContents.getLastWebPreferences();
+  trace('browser-window-created', {window_id: window.id, preload: preferences.preload,
+    expected_preload: path.join(asar, 'preload.cjs'), sandbox: preferences.sandbox,
+    context_isolation: preferences.contextIsolation, node_integration: preferences.nodeIntegration});
+  for (const event of ['did-start-loading', 'dom-ready', 'did-finish-load', 'did-stop-loading']) {
+    window.webContents.on(event, () => trace('window-' + event, {window_id: window.id,
+      preload: window.webContents.getLastWebPreferences().preload,
+      url: window.webContents.getURL().split('?')[0]}));
+  }
+  window.once('ready-to-show', () => trace('window-ready-to-show', {window_id: window.id}));
+  window.once('closed', () => trace('window-closed', {window_id: windowId}));
   if (preferences.preload !== path.join(asar, 'preload.cjs')) return;
   window.webContents.on('console-message', (_event, level, message) => {
     const details = typeof level === 'object' ? level : {level, message};
@@ -331,6 +384,8 @@ try {
   app.setPath('sessionData', profile);
   Object.defineProperty(app, 'isPackaged', {value: true});
   Object.defineProperty(process, 'resourcesPath', {value: resources});
+  trace('isolated-profile-configured', {user_data: app.getPath('userData'),
+    app_data: app.getPath('appData'), session_data: app.getPath('sessionData'), packaged: app.isPackaged});
   // Observe actual spawn calls unchanged, so failure cleanup only touches our child.
   const spawn = childProcess.spawn;
   childProcess.spawn = function (command, args, options) {
@@ -338,16 +393,60 @@ try {
       assert.ok(inside(resources, path.resolve(command)), 'backend uses the final packaged executable');
       assert.equal(options.env.LIFEOS_ROOT, workspace);
       const child = Reflect.apply(spawn, this, [command, args, options]);
-      backendChildren.push(child); return child;
+      backendChildren.push(child);
+      trace('backend-spawn-called', {command, script: args?.[0], cwd: options.cwd, pid: child.pid});
+      child.once('spawn', () => trace('backend-spawned', {pid: child.pid}));
+      child.once('error', error => trace('backend-process-error', {pid: child.pid, error: String(error)}));
+      child.once('exit', (code, signal) => trace('backend-exit', {pid: child.pid, code, signal}));
+      child.once('close', (code, signal) => trace('backend-close', {pid: child.pid, code, signal}));
+      return child;
     }
     return Reflect.apply(spawn, this, [command, args, options]);
   };
-  app.on('session-created', boundNetwork);
-  app.whenReady().then(() => boundNetwork(session.defaultSession)).catch(error => void fail(error));
+  app.on('session-created', target => { trace('session-created'); boundNetwork(target); });
+  app.whenReady().then(() => {
+    trace('harness-when-ready-resolved'); boundNetwork(session.defaultSession);
+  }).catch(error => void fail(error));
+  trace('load-packaged-updater-enter');
   const updater = require(path.join(asar, 'node_modules', 'electron-updater')).autoUpdater;
+  trace('load-packaged-updater-complete');
   updater.checkForUpdates = async () => {
     updater.emit('update-not-available', {version: packaged.version});
     return {updateInfo: {version: packaged.version}};
   };
+  // Observe final-package runtime functions with their real args, return values
+  // and promises preserved. The product's implementation remains unchanged.
+  trace('load-packaged-runtime-enter');
+  const runtime = require(path.join(asar, 'runtime.cjs'));
+  const summarize = (name, args, value) => {
+    if (name === 'runtimePaths') return value ? {paths: value} : {packaged: args[0]?.isPackaged};
+    if (name === 'prepareWorkspace') return {resource_root: args[0]?.resourceRoot, data_root: args[0]?.dataRoot};
+    if (name === 'availablePort') return value === undefined ? {requested_port: args[0]} : {selected_port: value};
+    if (name === 'backendLaunch') return value ? {command: value.command, script: value.args?.[0]} : {resource_root: args[0]?.resourceRoot, data_root: args[0]?.dataRoot};
+    if (name === 'startBackend') return {command: args[0]?.command, script: args[0]?.args?.[0],
+      data_root: args[1]?.dataRoot, log_file: args[1]?.logFile, port: args[1]?.port, pid: value?.child?.pid};
+    if (name === 'waitForServer') return {url: String(args[0]).split('?')[0], healthy: value?.ok};
+    return {};
+  };
+  for (const name of ['runtimePaths', 'prepareWorkspace', 'availablePort', 'backendLaunch', 'startBackend', 'waitForServer']) {
+    const original = runtime[name];
+    runtime[name] = function (...args) {
+      const entered = Date.now();
+      trace('runtime-' + name + '-enter', summarize(name, args));
+      const finished = value => trace('runtime-' + name + '-complete', {duration_ms: Date.now() - entered, ...summarize(name, args, value)});
+      const rejected = error => trace('runtime-' + name + '-error', {duration_ms: Date.now() - entered, error: String(error?.stack || error)});
+      try {
+        const result = Reflect.apply(original, this, args);
+        if (result && typeof result.then === 'function') result.then(finished, rejected);
+        else finished(result);
+        return result;
+      } catch (error) { rejected(error); throw error; }
+    };
+  }
+  trace('load-packaged-runtime-complete');
+  const lock = app.requestSingleInstanceLock.bind(app);
+  app.requestSingleInstanceLock = (...args) => {trace('single-instance-lock-enter'); const result = lock(...args); trace('single-instance-lock-complete', {acquired: result}); return result;};
+  trace('load-packaged-main-enter', {main: path.join(asar, 'main.cjs'), ready: app.isReady()});
   require(path.join(asar, 'main.cjs'));
+  trace('load-packaged-main-complete', {ready: app.isReady()});
 } catch (error) { void fail(error); }
