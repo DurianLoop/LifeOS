@@ -1,0 +1,89 @@
+{
+  "canvas": [
+    1800,
+    1200
+  ],
+  "palette": {
+    "paper": "#f2eee5",
+    "ink": "#24352f",
+    "copper": "#a68a67"
+  },
+  "font": "Baskerville (local system font; not redistributed)",
+  "description": "Editorial presentation boards, not new UI captures. All UI pixels derive from existing v0.5.2 demo screenshots. No image generation, recoloring, replaced UI text, or fabricated interface elements.",
+  "sources": [
+    {
+      "output": "editorial/desk.png",
+      "source": "docs/images/readme/desk.png",
+      "source_size": [
+        1600,
+        1100
+      ],
+      "crop_box_ltrb": null,
+      "placement_xywh": [
+        148,
+        86,
+        1504,
+        1034.0
+      ],
+      "treatment": "Unaltered real screenshot; proportional resize, external paper frame and subtle shadow only."
+    },
+    {
+      "output": "editorial/memory.png",
+      "source": "docs/images/readme/journal.png",
+      "source_size": [
+        1600,
+        1100
+      ],
+      "crop_box_ltrb": null,
+      "placement_xywh": [
+        104,
+        88,
+        1340,
+        921.25
+      ],
+      "treatment": "Unaltered real screenshot; proportional resize, external paper frame and subtle shadow only."
+    },
+    {
+      "output": "editorial/memory.png",
+      "source": "docs/images/readme/memory.png",
+      "source_size": [
+        1600,
+        1100
+      ],
+      "crop_box_ltrb": [
+        362,
+        350,
+        1440,
+        630
+      ],
+      "placement_xywh": [
+        794,
+        898,
+        902,
+        234.286
+      ],
+      "treatment": "Unaltered real screenshot; proportional resize, external paper frame and subtle shadow only."
+    },
+    {
+      "output": "editorial/letters.png",
+      "source": "docs/images/readme/bottles.png",
+      "source_size": [
+        1600,
+        1100
+      ],
+      "crop_box_ltrb": [
+        0,
+        0,
+        1600,
+        895
+      ],
+      "placement_xywh": [
+        128,
+        144,
+        1544,
+        863.675
+      ],
+      "treatment": "Unaltered real screenshot; proportional resize, external paper frame and subtle shadow only."
+    }
+  ]
+}
