@@ -15,7 +15,9 @@
 
 [中文](README.md) | English | [Changelog](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/RELEASE_v0.5.2.md)
 
-**[Download & installation](#download) · [Features](#features) · [Data & AI](#privacy) · [Run from source](#source)**
+Product website: [lifeos-diary.netlify.app](https://lifeos-diary.netlify.app/)
+
+**[Website](https://lifeos-diary.netlify.app/) · [Download & installation](#download) · [Features](#features) · [Data & AI](#privacy) · [Run from source](#source)**
 
 </div>
 
