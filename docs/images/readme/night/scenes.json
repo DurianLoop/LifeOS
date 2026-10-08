@@ -3,22 +3,22 @@
     "file": "hero-zh.png",
     "size": {
       "width": 1600,
-      "height": 1305
+      "height": 1103
     },
-    "bytes": 1067467,
+    "bytes": 422715,
     "source": "workspace.png",
     "source_sha256": "70c20062e2ab50957b298f08130eb3ce4990e416a03fcaff558ec210cef3714e",
     "layout": {
       "viewport": 1600,
       "width": 1600,
-      "height": 1304.625,
+      "height": 1102.3125,
       "scrollWidth": 1600,
       "image": {
         "file": "workspace.png",
-        "x": 172,
-        "y": 386.4375,
-        "width": 1256,
-        "height": 838.1875,
+        "x": 76,
+        "y": 68,
+        "width": 1448,
+        "height": 966.3125,
         "naturalWidth": 1960,
         "naturalHeight": 1308
       }
@@ -50,23 +50,98 @@
     }
   },
   {
+    "file": "draw-zh.png",
+    "size": {
+      "width": 1600,
+      "height": 851
+    },
+    "bytes": 852463,
+    "source": "memory.png",
+    "source_sha256": "1432db4d054a5b3aeb635e85ab463ab6d2c4c7b6692d574bb58f90040ecc6652",
+    "layout": {
+      "viewport": 1600,
+      "width": 1600,
+      "height": 850.125,
+      "scrollWidth": 1600,
+      "image": {
+        "file": "memory.png",
+        "x": 76,
+        "y": 80,
+        "width": 998.015625,
+        "height": 686.125,
+        "naturalWidth": 1600,
+        "naturalHeight": 1100
+      }
+    }
+  },
+  {
+    "file": "letters-zh.png",
+    "size": {
+      "width": 1600,
+      "height": 1300
+    },
+    "bytes": 1372505,
+    "source": "bottles.png",
+    "source_sha256": "cbabb8e0a963000a76c9355036e725ad76dae90edc60106319dd074ad340c239",
+    "layout": {
+      "viewport": 1600,
+      "width": 1600,
+      "height": 1299.75,
+      "scrollWidth": 1600,
+      "image": {
+        "file": "bottles.png",
+        "x": 96,
+        "y": 249.75,
+        "width": 1408,
+        "height": 968,
+        "naturalWidth": 1600,
+        "naturalHeight": 1100
+      }
+    }
+  },
+  {
+    "file": "companion-zh.png",
+    "size": {
+      "width": 1600,
+      "height": 839
+    },
+    "bytes": 989037,
+    "source": "companion.png",
+    "source_sha256": "bed43c9519c6d0bc992bd190600ff1c6e6de6d2be91f42d474bfc5c771b88d88",
+    "layout": {
+      "viewport": 1600,
+      "width": 1600,
+      "height": 838.328125,
+      "scrollWidth": 1600,
+      "image": {
+        "file": "companion.png",
+        "x": 545.140625,
+        "y": 82,
+        "width": 980.859375,
+        "height": 674.328125,
+        "naturalWidth": 1600,
+        "naturalHeight": 1100
+      }
+    }
+  },
+  {
     "file": "hero-zh-mobile.png",
     "size": {
       "width": 800,
-      "height": 1172
+      "height": 586
     },
-    "bytes": 615444,
+    "bytes": 129881,
     "source": "workspace.png",
     "source_sha256": "70c20062e2ab50957b298f08130eb3ce4990e416a03fcaff558ec210cef3714e",
     "layout": {
       "viewport": 400,
       "width": 400,
-      "height": 585.5078125,
+      "height": 292.9140625,
       "scrollWidth": 400,
       "image": {
         "file": "workspace.png",
         "x": 15,
-        "y": 303.59375,
+        "y": 23,
         "width": 370,
         "height": 246.9140625,
         "naturalWidth": 1960,
@@ -100,25 +175,100 @@
     }
   },
   {
+    "file": "draw-zh-mobile.png",
+    "size": {
+      "width": 800,
+      "height": 1149
+    },
+    "bytes": 610438,
+    "source": "memory.png",
+    "source_sha256": "1432db4d054a5b3aeb635e85ab463ab6d2c4c7b6692d574bb58f90040ecc6652",
+    "layout": {
+      "viewport": 400,
+      "width": 400,
+      "height": 574.4453125,
+      "scrollWidth": 400,
+      "image": {
+        "file": "memory.png",
+        "x": 15,
+        "y": 287.0703125,
+        "width": 370,
+        "height": 254.375,
+        "naturalWidth": 1600,
+        "naturalHeight": 1100
+      }
+    }
+  },
+  {
+    "file": "letters-zh-mobile.png",
+    "size": {
+      "width": 800,
+      "height": 1030
+    },
+    "bytes": 589349,
+    "source": "bottles.png",
+    "source_sha256": "cbabb8e0a963000a76c9355036e725ad76dae90edc60106319dd074ad340c239",
+    "layout": {
+      "viewport": 400,
+      "width": 400,
+      "height": 514.8515625,
+      "scrollWidth": 400,
+      "image": {
+        "file": "bottles.png",
+        "x": 15,
+        "y": 227.4765625,
+        "width": 370,
+        "height": 254.375,
+        "naturalWidth": 1600,
+        "naturalHeight": 1100
+      }
+    }
+  },
+  {
+    "file": "companion-zh-mobile.png",
+    "size": {
+      "width": 800,
+      "height": 1048
+    },
+    "bytes": 606172,
+    "source": "companion.png",
+    "source_sha256": "bed43c9519c6d0bc992bd190600ff1c6e6de6d2be91f42d474bfc5c771b88d88",
+    "layout": {
+      "viewport": 400,
+      "width": 400,
+      "height": 523.8515625,
+      "scrollWidth": 400,
+      "image": {
+        "file": "companion.png",
+        "x": 15,
+        "y": 236.4765625,
+        "width": 370,
+        "height": 254.375,
+        "naturalWidth": 1600,
+        "naturalHeight": 1100
+      }
+    }
+  },
+  {
     "file": "hero-en.png",
     "size": {
       "width": 1600,
-      "height": 1305
+      "height": 1103
     },
-    "bytes": 1079801,
+    "bytes": 422715,
     "source": "workspace.png",
     "source_sha256": "70c20062e2ab50957b298f08130eb3ce4990e416a03fcaff558ec210cef3714e",
     "layout": {
       "viewport": 1600,
       "width": 1600,
-      "height": 1304.625,
+      "height": 1102.3125,
       "scrollWidth": 1600,
       "image": {
         "file": "workspace.png",
-        "x": 172,
-        "y": 386.4375,
-        "width": 1256,
-        "height": 838.1875,
+        "x": 76,
+        "y": 68,
+        "width": 1448,
+        "height": 966.3125,
         "naturalWidth": 1960,
         "naturalHeight": 1308
       }
@@ -150,23 +300,98 @@
     }
   },
   {
+    "file": "draw-en.png",
+    "size": {
+      "width": 1600,
+      "height": 851
+    },
+    "bytes": 861713,
+    "source": "memory.png",
+    "source_sha256": "1432db4d054a5b3aeb635e85ab463ab6d2c4c7b6692d574bb58f90040ecc6652",
+    "layout": {
+      "viewport": 1600,
+      "width": 1600,
+      "height": 850.125,
+      "scrollWidth": 1600,
+      "image": {
+        "file": "memory.png",
+        "x": 76,
+        "y": 80,
+        "width": 998.015625,
+        "height": 686.125,
+        "naturalWidth": 1600,
+        "naturalHeight": 1100
+      }
+    }
+  },
+  {
+    "file": "letters-en.png",
+    "size": {
+      "width": 1600,
+      "height": 1303
+    },
+    "bytes": 1380640,
+    "source": "bottles.png",
+    "source_sha256": "cbabb8e0a963000a76c9355036e725ad76dae90edc60106319dd074ad340c239",
+    "layout": {
+      "viewport": 1600,
+      "width": 1600,
+      "height": 1302.9375,
+      "scrollWidth": 1600,
+      "image": {
+        "file": "bottles.png",
+        "x": 96,
+        "y": 252.9375,
+        "width": 1408,
+        "height": 968,
+        "naturalWidth": 1600,
+        "naturalHeight": 1100
+      }
+    }
+  },
+  {
+    "file": "companion-en.png",
+    "size": {
+      "width": 1600,
+      "height": 839
+    },
+    "bytes": 996265,
+    "source": "companion.png",
+    "source_sha256": "bed43c9519c6d0bc992bd190600ff1c6e6de6d2be91f42d474bfc5c771b88d88",
+    "layout": {
+      "viewport": 1600,
+      "width": 1600,
+      "height": 838.328125,
+      "scrollWidth": 1600,
+      "image": {
+        "file": "companion.png",
+        "x": 545.140625,
+        "y": 82,
+        "width": 980.859375,
+        "height": 674.328125,
+        "naturalWidth": 1600,
+        "naturalHeight": 1100
+      }
+    }
+  },
+  {
     "file": "hero-en-mobile.png",
     "size": {
       "width": 800,
-      "height": 1172
+      "height": 586
     },
-    "bytes": 627845,
+    "bytes": 129881,
     "source": "workspace.png",
     "source_sha256": "70c20062e2ab50957b298f08130eb3ce4990e416a03fcaff558ec210cef3714e",
     "layout": {
       "viewport": 400,
       "width": 400,
-      "height": 585.5078125,
+      "height": 292.9140625,
       "scrollWidth": 400,
       "image": {
         "file": "workspace.png",
         "x": 15,
-        "y": 303.59375,
+        "y": 23,
         "width": 370,
         "height": 246.9140625,
         "naturalWidth": 1960,
@@ -192,6 +417,81 @@
         "file": "journal.png",
         "x": 15,
         "y": 174.890625,
+        "width": 370,
+        "height": 254.375,
+        "naturalWidth": 1600,
+        "naturalHeight": 1100
+      }
+    }
+  },
+  {
+    "file": "draw-en-mobile.png",
+    "size": {
+      "width": 800,
+      "height": 1153
+    },
+    "bytes": 626762,
+    "source": "memory.png",
+    "source_sha256": "1432db4d054a5b3aeb635e85ab463ab6d2c4c7b6692d574bb58f90040ecc6652",
+    "layout": {
+      "viewport": 400,
+      "width": 400,
+      "height": 576.4453125,
+      "scrollWidth": 400,
+      "image": {
+        "file": "memory.png",
+        "x": 15,
+        "y": 289.0703125,
+        "width": 370,
+        "height": 254.375,
+        "naturalWidth": 1600,
+        "naturalHeight": 1100
+      }
+    }
+  },
+  {
+    "file": "letters-en-mobile.png",
+    "size": {
+      "width": 800,
+      "height": 1030
+    },
+    "bytes": 600734,
+    "source": "bottles.png",
+    "source_sha256": "cbabb8e0a963000a76c9355036e725ad76dae90edc60106319dd074ad340c239",
+    "layout": {
+      "viewport": 400,
+      "width": 400,
+      "height": 514.8515625,
+      "scrollWidth": 400,
+      "image": {
+        "file": "bottles.png",
+        "x": 15,
+        "y": 227.4765625,
+        "width": 370,
+        "height": 254.375,
+        "naturalWidth": 1600,
+        "naturalHeight": 1100
+      }
+    }
+  },
+  {
+    "file": "companion-en-mobile.png",
+    "size": {
+      "width": 800,
+      "height": 1129
+    },
+    "bytes": 669664,
+    "source": "companion.png",
+    "source_sha256": "bed43c9519c6d0bc992bd190600ff1c6e6de6d2be91f42d474bfc5c771b88d88",
+    "layout": {
+      "viewport": 400,
+      "width": 400,
+      "height": 564.3515625,
+      "scrollWidth": 400,
+      "image": {
+        "file": "companion.png",
+        "x": 15,
+        "y": 276.9765625,
         "width": 370,
         "height": 254.375,
         "naturalWidth": 1600,

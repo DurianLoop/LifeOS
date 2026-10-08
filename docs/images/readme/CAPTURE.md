@@ -24,13 +24,19 @@
 
 ## 夜间书桌主视觉
 
-`night/hero-*.png` 与 `memory-*.png` 在完整界面截图之外加入深绿桌面、斜向暖光、纹理与阴影。主图使用作者提供的 `workspace.png`，阅读主视觉使用上表中的 `journal.png`。界面截图只做等比例缩放，不裁切、不调色、不覆盖内容；窗口四周的留白保护截图的完整边缘。点击 README 图像可查看原始 PNG。
+`night/hero-*.png`、`memory-*.png`、`draw-*.png`、`letters-*.png` 与 `companion-*.png` 在完整界面截图之外加入深绿桌面、斜向暖光、纹理与阴影。主图使用作者提供的 `workspace.png`，其余四组分别展示流年、记忆抽签、漂流瓶与灵犀的原始演示截图。界面只做等比例缩放，不裁切、不调色、不覆盖内容；窗口四周的留白保护截图的完整边缘。点击 README 图像可查看原始 PNG。
 
 深色光影是 README 的外围视觉设计，不代表应用界面增加了夜间主题。图像提供中英文和独立的手机构图，GitHub 根据视口宽度选择对应版本。产品说明、下载链接和技术文档保留为可检索、可点击的原生文本。
 
-设计源码为 `scripts/readme-night.html`。用本机已安装的 Electron 运行 `scripts/render_readme_night.cjs` 可生成图像。渲染只打开隐藏窗口，并阻断外网资源请求；临时 profile 与真实应用工作区隔离。渲染器检查原图的完整边界、显示比例和视口溢出。输出尺寸、来源 SHA-256 与画面中的原图位置见 [scenes.json](night/scenes.json)。
+设计源码为 `scripts/readme-night.html` 与 `scripts/readme-gallery.html`。用本机已安装的 Electron 运行 `scripts/render_readme_night.cjs` 可生成图像。渲染只打开隐藏窗口，并阻断外网资源请求；临时 profile 与真实应用工作区隔离。渲染器检查原图的完整边界、显示比例和视口溢出。输出尺寸、来源 SHA-256 与画面中的原图位置见 [scenes.json](night/scenes.json)。
 
 ViVi 的来源与权利声明保留在 [VIVI-LICENSE.md](VIVI-LICENSE.md)。其他宠物和自然声沿用发行版的署名与许可。
+
+## 页首徽章与 ViVi 动画
+
+`badges/*.svg` 是仓库内的静态状态徽章，展示固定的 v0.5.2 版本、Windows/macOS 安装包、本地优先和个人非商业许可。可用 `scripts/generate_readme_badges.py` 重新生成，不依赖外部徽章服务，不展示推测的下载量或排名。
+
+`vivi-relax.gif` 从 v0.5.2 的 `app/assets/pets/vivi/relax.gif` 原样复制，保留动画帧和时序。`vivi-relax-still.png` 是其第一帧，供减少动态效果偏好使用。哈希和来源记录于 [vivi-source.json](vivi-source.json)。
 
 ## 重新捕获演示界面
 

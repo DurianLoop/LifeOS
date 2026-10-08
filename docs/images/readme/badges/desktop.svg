@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="173" height="20" viewBox="0 0 173 20" role="img" aria-label="desktop: Windows | macOS">
+<title>desktop: Windows | macOS</title><defs><linearGradient id="s" x2="0" y2="100%"><stop offset="0" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-opacity=".08"/></linearGradient><clipPath id="r"><rect width="173" height="20" rx="3"/></clipPath></defs>
+<g clip-path="url(#r)"><path fill="#555" d="M0 0h57v20H0z"/><path fill="#657681" d="M57 0h116v20H57z"/><path fill="url(#s)" d="M0 0h173v20H0z"/></g>
+<g fill="#fff" text-anchor="middle" font-family="Verdana,DejaVu Sans,sans-serif" font-size="11"><text x="28.5" y="14">desktop</text><text x="115.0" y="14">Windows | macOS</text></g>
+</svg>

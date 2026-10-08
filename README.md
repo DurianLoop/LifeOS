@@ -1,4 +1,26 @@
 <a id="lifeos"></a>
+
+<div align="center">
+
+# LifeOS
+
+### 本地优先的日记、个人记忆与桌面陪伴
+
+**记录今天，翻阅往事，给未来的自己留一封信。日记与修订保存在本机，AI 按需接入。**
+
+[![Version](docs/images/readme/badges/version.svg)](https://github.com/DurianLoop/LifeOS/releases/tag/v0.5.2)
+[![Windows and macOS](docs/images/readme/badges/desktop.svg)](#download)
+[![Local-first](docs/images/readme/badges/data.svg)](#privacy)
+[![Personal, non-commercial license](docs/images/readme/badges/license.svg)](LICENSE.md)
+
+中文 | [English](README.en.md) | [更新日志](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/RELEASE_v0.5.2.md)
+
+**[下载与安装](#download) · [功能预览](#features) · [数据与 AI](#privacy) · [源码运行](#source)**
+
+</div>
+
+<br />
+
 <a id="preview"></a>
 
 <a href="docs/images/readme/workspace.png">
@@ -7,12 +29,6 @@
   <img src="docs/images/readme/night/hero-zh.png" width="1200" alt="LifeOS，一张安静的私人书桌。完整界面包含日记、日程、摘录、习惯打卡与桌宠；点击查看原图。" />
 </picture>
 </a>
-
-LifeOS 是本地优先的日记与个人记忆空间。写下今天，翻阅往事，也把一些话留给未来的自己。基础写作与阅读无需配置 AI。
-
-**[下载 Windows](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-Setup-0.5.2.exe)** &nbsp; · &nbsp; **[macOS&nbsp;Apple&nbsp;Silicon](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-0.5.2-mac-arm64.dmg)** &nbsp; · &nbsp; **[macOS&nbsp;Intel](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-0.5.2-mac-x64.dmg)**
-
-<sub>[v0.5.2](https://github.com/DurianLoop/LifeOS/releases/tag/v0.5.2) · [安装说明](#download) · [English](README.en.md) · [更新记录](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/RELEASE_v0.5.2.md)</sub>
 
 <br />
 
@@ -35,14 +51,18 @@ LifeOS 是本地优先的日记与个人记忆空间。写下今天，翻阅往�
 
 按日期翻页，用关键词找到原文。也可以抽一张记忆签，重读一篇没打算找的日记。想再读的地方，留下一枚彩笺。
 
-<details>
-<summary>看看记忆抽签</summary>
+<br />
 
-<img src="docs/images/readme/memory.png" width="1000" alt="v0.5.2 记忆抽签界面，使用虚构示例日记" />
+### 记忆抽签
+
+<a href="docs/images/readme/memory.png">
+<picture>
+  <source media="(max-width: 767px)" srcset="docs/images/readme/night/draw-zh-mobile.png" />
+  <img src="docs/images/readme/night/draw-zh.png" width="1200" alt="记忆抽签机：旧页、回声、线索三种抽法；截图日记为虚构示例。" />
+</picture>
+</a>
 
 「旧页」「回声」「线索」三种抽法都能返回原文。新保存的日记可立即抽取，连续抽取避开近期结果；彩色书签在书页和目录中同步保留。
-
-</details>
 
 <br />
 
@@ -50,10 +70,15 @@ LifeOS 是本地优先的日记与个人记忆空间。写下今天，翻阅往�
 
 给未来的自己写一封信，放进录音或视频，定好拆开的日期。漂流瓶保存在本机，随工作区一起备份。
 
-<details>
-<summary>看看漂流瓶</summary>
+<a href="docs/images/readme/bottles.png">
+<picture>
+  <source media="(max-width: 767px)" srcset="docs/images/readme/night/letters-zh-mobile.png" />
+  <img src="docs/images/readme/night/letters-zh.png" width="1200" alt="漂流瓶：写给未来的三封信，截图内容为虚构示例。" />
+</picture>
+</a>
 
-<img src="docs/images/readme/bottles.png" width="1000" alt="漂流瓶界面，展示三封虚构的未来来信" />
+<details>
+<summary>到期提醒说明</summary>
 
 漂流瓶是本地写给未来的内容。到期提醒需要 LifeOS 正在运行；完全退出期间不会弹出提醒，下次打开后可以查看已到期的瓶子。
 
@@ -63,10 +88,17 @@ LifeOS 是本地优先的日记与个人记忆空间。写下今天，翻阅往�
 
 六段自然声可以离线播放。ViVi 等桌宠可以留在应用里，也可以走到桌面上。侧栏按自己的习惯排列，不常用的功能收进阁楼。
 
-<details>
-<summary>看看桌宠</summary>
+<a href="docs/images/readme/companion.png">
+<picture>
+  <source media="(max-width: 767px)" srcset="docs/images/readme/night/companion-zh-mobile.png" />
+  <img src="docs/images/readme/night/companion-zh.png" width="1200" alt="灵犀：ViVi、已安装的桌宠与宠物库。" />
+</picture>
+</a>
 
-<img src="docs/images/readme/companion.png" width="1000" alt="灵犀界面，包含 ViVi、已安装角色与宠物库" />
+<p align="center"><picture><source media="(prefers-reduced-motion: reduce)" srcset="docs/images/readme/vivi-relax-still.png" /><img src="docs/images/readme/vivi-relax.gif" width="108" alt="ViVi" /></picture><br /><sub>ViVi · 一点桌边的陪伴</sub></p>
+
+<details>
+<summary>让桌宠留在桌面</summary>
 
 在灵犀设置中选择独立桌面模式，并开启关闭主窗口后保留桌宠。通过托盘可以重新打开 LifeOS，或完全退出。
 
@@ -82,6 +114,8 @@ LifeOS 是本地优先的日记与个人记忆空间。写下今天，翻阅往�
 <a id="quick-start"></a>
 
 ### 安装与开始
+
+**[下载 Windows](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-Setup-0.5.2.exe)** &nbsp; · &nbsp; **[macOS&nbsp;Apple&nbsp;Silicon](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-0.5.2-mac-arm64.dmg)** &nbsp; · &nbsp; **[macOS&nbsp;Intel](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-0.5.2-mac-x64.dmg)**
 
 安装包已包含运行环境，无需另装 Python 或 Node.js。打开后即可写作，或导入已有的 Markdown、TXT、HTML、JSON、CSV 与 Day One JSON 日记。
 

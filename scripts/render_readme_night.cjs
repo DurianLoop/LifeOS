@@ -22,14 +22,15 @@ app.whenReady().then(async () => {
   const report = [];
   for (const lang of ['zh', 'en']) {
     for (const mobile of [false, true]) {
-      for (const scene of ['hero', 'memory']) {
+      for (const scene of ['hero', 'memory', 'draw', 'letters', 'companion']) {
         const width = mobile ? 800 : 1600;
         const zoom = mobile ? 2 : 1;
         const win = new BrowserWindow({
           width, height: 1800, useContentSize: true, show: false,
           webPreferences: { offscreen: true, contextIsolation: true, nodeIntegration: false, backgroundThrottling: false, zoomFactor: zoom }
         });
-        await win.loadFile(path.join(__dirname, 'readme-night.html'), { query: { lang, capture: scene } });
+        const template = ['hero', 'memory'].includes(scene) ? 'readme-night.html' : 'readme-gallery.html';
+        await win.loadFile(path.join(__dirname, template), { query: { lang, capture: scene } });
         await win.webContents.executeJavaScript('Promise.all([...document.images].map(i => i.decode())).then(() => document.fonts.ready)');
         const layout = await win.webContents.executeJavaScript(`(() => {
           const el = document.getElementById('${scene}-art');

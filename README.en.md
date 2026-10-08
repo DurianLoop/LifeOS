@@ -1,4 +1,26 @@
 <a id="lifeos"></a>
+
+<div align="center">
+
+# LifeOS
+
+### A local-first journal for personal memories and desktop companionship
+
+**Write about today, revisit old entries, and leave a letter for your future self. Journals and revisions stay local; AI is optional.**
+
+[![Version](docs/images/readme/badges/version.svg)](https://github.com/DurianLoop/LifeOS/releases/tag/v0.5.2)
+[![Windows and macOS](docs/images/readme/badges/desktop.svg)](#download)
+[![Local-first](docs/images/readme/badges/data.svg)](#privacy)
+[![Personal, non-commercial license](docs/images/readme/badges/license.svg)](LICENSE.md)
+
+[中文](README.md) | English | [Changelog](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/RELEASE_v0.5.2.md)
+
+**[Download & installation](#download) · [Features](#features) · [Data & AI](#privacy) · [Run from source](#source)**
+
+</div>
+
+<br />
+
 <a id="preview"></a>
 
 <a href="docs/images/readme/workspace.png">
@@ -7,12 +29,6 @@
   <img src="docs/images/readme/night/hero-en.png" width="1200" alt="LifeOS, a quiet private desk. The complete interface includes journals, plans, quotations, habit tracking, and a companion. Click to view the original image." />
 </picture>
 </a>
-
-LifeOS is a local-first journal and a space for personal memories. Write about today, revisit old entries, or leave a few words for your future self. Everyday writing and reading need no AI setup.
-
-**[Download for Windows](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-Setup-0.5.2.exe)** &nbsp; · &nbsp; **[macOS&nbsp;Apple&nbsp;Silicon](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-0.5.2-mac-arm64.dmg)** &nbsp; · &nbsp; **[macOS&nbsp;Intel](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-0.5.2-mac-x64.dmg)**
-
-<sub>[v0.5.2](https://github.com/DurianLoop/LifeOS/releases/tag/v0.5.2) · [Installation](#download) · [中文](README.md) · [Release notes](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/RELEASE_v0.5.2.md)</sub>
 
 <br />
 
@@ -35,14 +51,18 @@ Keep journals, plans, and quotations on one desk, with paper panels you can move
 
 Browse by date or find the original text with a keyword. Try a memory draw to revisit an entry you had not planned to look for. Leave a colorful bookmark where you want to return.
 
-<details>
-<summary>See the memory draw</summary>
+<br />
 
-<img src="docs/images/readme/memory.png" width="1000" alt="The v0.5.2 memory-draw interface, using fictional journal entries" />
+### Memory draws
+
+<a href="docs/images/readme/memory.png">
+<picture>
+  <source media="(max-width: 767px)" srcset="docs/images/readme/night/draw-en-mobile.png" />
+  <img src="docs/images/readme/night/draw-en.png" width="1200" alt="Memory draws: old pages, echoes, and clues. The journal entry is fictional." />
+</picture>
+</a>
 
 Old pages, echoes, and clues all lead back to the original text. Newly saved entries are available immediately, and consecutive draws avoid recent results. Colorful bookmarks appear on both the page and in the contents.
-
-</details>
 
 <br />
 
@@ -50,10 +70,15 @@ Old pages, echoes, and clues all lead back to the original text. Newly saved ent
 
 Write a letter to your future self, add audio or video, and choose when to open it. Drift bottles stay on your computer and are included in workspace backups.
 
-<details>
-<summary>See drift bottles</summary>
+<a href="docs/images/readme/bottles.png">
+<picture>
+  <source media="(max-width: 767px)" srcset="docs/images/readme/night/letters-en-mobile.png" />
+  <img src="docs/images/readme/night/letters-en.png" width="1200" alt="Drift bottles: three letters to a future self. The letters are fictional." />
+</picture>
+</a>
 
-<img src="docs/images/readme/bottles.png" width="1000" alt="The drift-bottle interface, showing three fictional letters to a future self" />
+<details>
+<summary>About reminders</summary>
 
 Drift bottles are local letters to your future self. Reminders require LifeOS to be running. If you fully quit the app, no reminder appears while it is closed; you can view bottles that are ready when you next open it.
 
@@ -63,10 +88,17 @@ Drift bottles are local letters to your future self. Reminders require LifeOS to
 
 Six nature recordings play offline. ViVi and other pets can stay inside the app or on your desktop. Arrange the sidebar to suit your habits, and put less-used features in the Attic.
 
-<details>
-<summary>See the companions</summary>
+<a href="docs/images/readme/companion.png">
+<picture>
+  <source media="(max-width: 767px)" srcset="docs/images/readme/night/companion-en-mobile.png" />
+  <img src="docs/images/readme/night/companion-en.png" width="1200" alt="Companions: ViVi, installed desktop pets, and the pet library." />
+</picture>
+</a>
 
-<img src="docs/images/readme/companion.png" width="1000" alt="The companion interface, with ViVi, installed characters, and the pet gallery" />
+<p align="center"><picture><source media="(prefers-reduced-motion: reduce)" srcset="docs/images/readme/vivi-relax-still.png" /><img src="docs/images/readme/vivi-relax.gif" width="108" alt="ViVi" /></picture><br /><sub>ViVi · A little company at your desk</sub></p>
+
+<details>
+<summary>Keep a companion on your desktop</summary>
 
 In companion settings, choose the separate desktop mode and enable keeping the pet after the main window closes. Use the tray menu to reopen LifeOS or quit completely.
 
@@ -82,6 +114,8 @@ In companion settings, choose the separate desktop mode and enable keeping the p
 <a id="quick-start"></a>
 
 ### Install and get started
+
+**[Download for Windows](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-Setup-0.5.2.exe)** &nbsp; · &nbsp; **[macOS&nbsp;Apple&nbsp;Silicon](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-0.5.2-mac-arm64.dmg)** &nbsp; · &nbsp; **[macOS&nbsp;Intel](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-0.5.2-mac-x64.dmg)**
 
 The installers include the runtime. No separate Python or Node.js installation is needed. Start writing, or import existing journals in Markdown, TXT, HTML, JSON, CSV, or Day One JSON.
 

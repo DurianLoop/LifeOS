@@ -1,0 +1,12 @@
+{
+  "file": "vivi-relax.gif",
+  "source": "https://github.com/DurianLoop/LifeOS/blob/v0.5.2/app/assets/pets/vivi/relax.gif",
+  "sha256": "7c59ac247bd03e275a9a5614665d800b791efe0ea3ef2c67e2c0e66df7bdc251",
+  "frames": 23,
+  "size": [
+    350,
+    300
+  ],
+  "modifications": "None. Animation copied byte for byte.",
+  "static_fallback": "vivi-relax-still.png is the first frame, for prefers-reduced-motion."
+}
