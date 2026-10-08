@@ -9,6 +9,8 @@ const status = $('#site-status');
 const motionButton = $('#motion-toggle');
 const petButton = $('#pet-button');
 const petImage = $('#pet-image');
+const brandImage = $('#download-brand');
+let brandVisible = false;
 const petActions = [
   { name: '坐下', source: './assets/vivi-sit.gif' },
   { name: '跳跃', source: './assets/vivi-jump.gif' },
@@ -37,6 +39,31 @@ function syncPet() {
   setText('#pet-action-label', `ViVi · ${action.name}`);
   petButton?.setAttribute('aria-label', `切换 ViVi 动作，当前选择：${action.name}`);
 }
+
+function syncBrandMark() {
+  if (!brandImage) return;
+  const animated = brandVisible && pageActive && !document.hidden && !reducedMotion.matches && document.body.dataset.motion !== 'paused';
+  const source = animated ? brandImage.dataset.animatedSrc : brandImage.dataset.staticSrc;
+  if (brandImage.getAttribute('src') !== source) brandImage.src = source;
+}
+
+function syncAnimatedAssets() {
+  syncPet();
+  syncBrandMark();
+}
+
+// Start the GIF only when its section is visible. HTML remains static without JS.
+if (brandImage) {
+  if ('IntersectionObserver' in window) {
+    const brandObserver = new IntersectionObserver(([entry]) => {
+      brandVisible = entry.isIntersecting;
+      syncBrandMark();
+    });
+    brandObserver.observe(brandImage);
+  } else {
+    brandVisible = true;
+  }
+}
 petButton?.addEventListener('click', () => {
   petActionIndex = (petActionIndex + 1) % petActions.length;
   syncPet();
@@ -48,7 +75,7 @@ function syncMotion() {
   document.body.dataset.motion = paused ? 'paused' : 'playing';
   motionButton?.setAttribute('aria-pressed', String(paused));
   if (motionButton) motionButton.textContent = reducedMotion.matches ? '已遵循减少动效设置' : paused ? '开启动效' : '暂停动效';
-  syncPet();
+  syncAnimatedAssets();
 }
 motionButton?.addEventListener('click', () => {
   if (reducedMotion.matches) {
@@ -231,15 +258,15 @@ $$('dialog').forEach((dialog) => dialog.addEventListener('click', (event) => {
 // Native <dialog> supplies Escape dismissal, focus containment and focus restoration.
 
 document.addEventListener('visibilitychange', () => {
-  syncPet();
+  syncAnimatedAssets();
   if (document.hidden) forestAudio?.pause();
 });
 window.addEventListener('pagehide', () => {
   pageActive = false;
-  syncPet();
+  syncAnimatedAssets();
   forestAudio?.pause();
 });
 window.addEventListener('pageshow', () => {
   pageActive = true;
-  syncPet();
+  syncAnimatedAssets();
 });

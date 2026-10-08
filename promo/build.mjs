@@ -10,9 +10,11 @@ if (!output.startsWith(root + sep) || output !== resolve(root, 'dist')) {
 }
 const files = [
   'index.html', '_headers', 'robots.txt', 'sitemap.xml',
-  'styles.css', 'product.css', 'icons.css', 'motion.css', 'navigation.css',
+  'styles.css', 'product.css', 'icons.css', 'motion.css', 'navigation.css', 'branding.css',
   'app.js', 'universe.js', 'motion.js', 'navigation.js',
-  'assets/favicon.svg', 'assets/credits.html', 'assets/forest.ogg',
+  'assets/credits.html', 'assets/forest.ogg',
+  'assets/brand/lifeos-icon-32.png', 'assets/brand/lifeos-icon-128.png',
+  'assets/brand/lifeos-icon-256.png', 'assets/brand/lifeos-pages.gif',
   'assets/vivi-preview.png', 'assets/vivi-sit.gif', 'assets/vivi-jump.gif',
   'assets/vivi-relax.gif', 'assets/vivi-LICENSE.md',
   'assets/screens/workspace.png', 'assets/screens/memory.jpg',

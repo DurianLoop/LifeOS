@@ -1,0 +1,19 @@
+/* The supplied book mark keeps the established navigation dimensions. */
+img.brand-mark {
+  display: block;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+.download-spark .product-brand {
+  display: block;
+  width: 112px;
+  height: 112px;
+  margin: 0 auto;
+  object-fit: contain;
+  /* Reuse the PNG's alpha edge to hide the GIF's opaque outer matte. */
+  -webkit-mask: url('./assets/brand/lifeos-icon-256.png') center / contain no-repeat;
+  mask: url('./assets/brand/lifeos-icon-256.png') center / contain no-repeat;
+}
+@media (max-width: 760px) {
+  .download-spark .product-brand { width: 88px; height: 88px; }
+}
