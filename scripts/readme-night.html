@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LifeOS · 夜间书桌</title>
+<style>
+:root{color-scheme:dark;--ink:#101a17;--deep:#0b1311;--paper:#f1ecdf;--muted:#a6b2a7;--warm:#d9c3a0;--green:#bdcbb5;--line:rgba(226,234,220,.12)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--deep);color:var(--paper);font-family:"Microsoft YaHei UI","Microsoft YaHei","PingFang SC",sans-serif;-webkit-font-smoothing:antialiased}a{color:inherit;text-decoration:none}button,a{-webkit-tap-highlight-color:transparent}a:focus-visible{outline:2px solid var(--warm);outline-offset:6px}img{display:block;max-width:100%;height:auto}p,h1,h2,h3{margin:0}::selection{background:#657462;color:#fff}nav{max-width:1440px;margin:auto;height:92px;padding:0 64px;display:flex;align-items:center;justify-content:space-between;color:#afb8ab;font-size:13px}nav .nav-brand{font-size:19px;letter-spacing:-.8px;color:var(--paper);font-weight:600}nav .nav-links{display:flex;align-items:center;gap:32px}nav .nav-links a:hover{color:#fff}.nav-download{padding:10px 18px;border:1px solid #52614f;border-radius:6px}.art{position:relative;isolation:isolate;overflow:hidden}.scene-grain{pointer-events:none;position:absolute;inset:0;z-index:-1;opacity:.075;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.74' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' opacity='.8' filter='url(%23n)'/%3E%3C/svg%3E")}
+#hero-art{max-width:1440px;margin:auto;padding:70px 64px 70px;background:linear-gradient(116deg,#17251e 0%,#17231c 39%,#273027 73%,#17241d 100%)}
+#hero-art:before{content:"";position:absolute;z-index:-2;inset:0;background:linear-gradient(120deg,transparent 36%,rgba(223,194,145,.035) 42%,rgba(218,195,153,.13) 64%,rgba(217,191,145,.19) 66%,rgba(216,190,145,.055) 80%,transparent 88%)}
+#hero-art:after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(180deg,rgba(8,17,13,.08),transparent 35%,rgba(7,16,12,.13) 72%,rgba(4,11,8,.65)),linear-gradient(90deg,rgba(8,18,13,.15),transparent 54%)}
+.hero-copy{display:grid;grid-template-columns:1fr 300px;align-items:end;gap:80px;max-width:1190px;margin:auto}.hero-brand{display:flex;align-items:center;gap:13px;margin-bottom:32px;font-size:30px;font-weight:600;letter-spacing:-1.5px}.brand-mark{position:relative;display:inline-block;width:25px;height:27px;border:1.5px solid #c2d0ba;border-radius:5px 10px 5px 5px;transform:rotate(-8deg)}.brand-mark:before,.brand-mark:after{content:"";position:absolute;height:1px;background:#c2d0ba;left:6px;right:5px}.brand-mark:before{top:10px}.brand-mark:after{top:16px}h1{font-size:clamp(40px,4.15vw,62px);line-height:1.42;font-weight:400;letter-spacing:.025em;color:#f4f0e5}.hero-note{padding-bottom:10px;color:#b5c0b2;font-size:15px;line-height:2.05;max-width:292px}.hero-note strong{font-weight:400;color:#e2e4d7}.hero-note .quiet-meta{display:block;margin-top:24px;color:#8f9d8d;font-size:12px;letter-spacing:.12em}.screen-desk{position:relative;max-width:1160px;margin:54px auto 0;padding:0 0 24px}.screen-desk:before{content:"";position:absolute;z-index:-1;left:-16%;right:-16%;top:36%;bottom:-190px;background:linear-gradient(176deg,rgba(215,194,152,.035),rgba(164,145,106,.1) 48%,rgba(18,26,18,.14) 50%,rgba(0,7,3,.35));transform:perspective(800px) rotateX(10deg);filter:blur(.3px)}.window{position:relative;border-radius:8px;overflow:hidden;box-shadow:0 32px 45px -21px rgba(0,0,0,.9),0 50px 120px rgba(0,0,0,.32),0 0 0 1px rgba(255,246,210,.15)}.window img{width:100%;height:auto}.screen-caption{display:flex;justify-content:space-between;gap:20px;max-width:1160px;margin:17px auto 0;font-size:12px;line-height:1.7;color:#8d9a88}.screen-caption span:last-child{color:#b4bba8}.entry{max-width:1312px;margin:0 auto;padding:48px 40px 56px;display:flex;justify-content:space-between;gap:40px;align-items:center}.entry p{color:#b5bdb1;font-size:14px;line-height:1.9}.entry p strong{display:block;font-weight:500;color:#e2e7dc;font-size:17px;margin-bottom:5px}.download-links{display:flex;flex-wrap:wrap;align-items:center;gap:10px}.download-links a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 17px;border:1px solid #3a4c3d;border-radius:5px;color:#cad5c4;font-size:13px;white-space:nowrap;transition:background .18s,transform .18s}.download-links a:first-child{background:#d6dfcc;color:#203023;border-color:#d6dfcc}.download-links a:hover{background:#334837;transform:translateY(-2px)}.download-links a:first-child:hover{background:#eff4e8}
+#memory-art{max-width:1440px;margin:auto;min-height:740px;padding:88px 64px 84px;background:linear-gradient(120deg,#0f1a16,#17291f 70%,#14251c)}#memory-art:before{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(138deg,rgba(213,202,170,.06),transparent 48%)}.memory-grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(240px,.78fr);align-items:center;gap:68px}.memory-screen{position:relative;order:0}.memory-screen:before{content:"";position:absolute;z-index:-1;inset:-35px 50% -30px -35px;border-radius:6px;background:linear-gradient(110deg,rgba(224,201,151,.1),transparent);filter:blur(20px)}.memory-screen .window{border-radius:6px;box-shadow:0 26px 65px rgba(0,0,0,.4),0 0 0 1px rgba(242,229,191,.09)}.eyebrow{font-size:12px;letter-spacing:.17em;color:#8a9e88;display:block;margin-bottom:25px}.memory-copy h2{font-size:39px;line-height:1.5;letter-spacing:.015em;font-weight:400;margin-bottom:26px}.memory-copy p{font-size:14px;line-height:2;color:#a5b4a3}.memory-copy .memory-detail{margin-top:32px;padding-left:17px;border-left:1px solid #60725a;color:#c7d0be;font-size:13px;line-height:1.9}.memory-caption{margin-top:19px;font-size:11px;color:#71876e;letter-spacing:.04em}.memory-foot{margin-top:55px;display:flex;gap:38px;color:#94a68d;font-size:12px}.memory-foot span{display:flex;align-items:center;gap:8px}.memory-foot i{width:4px;height:4px;background:#8c9e80;border-radius:50%}
+#local-art{max-width:1440px;margin:0 auto;padding:106px 100px 116px;background:#0d1713}.local-top{display:grid;grid-template-columns:1fr 1fr;gap:100px;align-items:start}.local-top h2{font-weight:400;line-height:1.5;font-size:38px;letter-spacing:.015em}.local-top p{padding-top:8px;font-size:15px;line-height:2;color:#a4b2a0;max-width:470px}.local-columns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:64px;margin-top:70px}.local-item{padding-top:25px;border-top:1px solid #283a2d}.local-item h3{font-size:17px;font-weight:500;letter-spacing:.015em;margin-bottom:13px;color:#d4ddcc}.local-item p{font-size:13px;line-height:2;color:#859880}.local-item .icon{display:block;margin-bottom:20px;color:#9db38e}.icon svg{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:1.15;stroke-linecap:round;stroke-linejoin:round}.privacy-note{font-size:12px;line-height:1.9;color:#62795e;margin-top:36px;max-width:950px}
+.closing{max-width:1440px;margin:auto;text-align:center;padding:100px 32px 90px;background:linear-gradient(180deg,#192a1e,#1f3022)}.closing .closing-brand{font-size:38px;letter-spacing:-2px;font-weight:500;color:#e0e7d8}.closing h2{font-weight:400;font-size:25px;line-height:1.7;letter-spacing:.03em;margin:20px 0 12px}.closing p{color:#a5b99b;font-size:13px;line-height:2}.closing .download-links{justify-content:center;margin:30px 0 23px}.closing .release-link{font-size:12px;color:#93aa88;text-underline-offset:4px;text-decoration:underline}.footer{max-width:1440px;margin:auto;padding:30px 64px 38px;display:flex;justify-content:space-between;gap:20px;color:#5f7561;font-size:11px}.footer a:hover{color:#c0d0b7}
+@media(min-width:1600px){#hero-art h1{font-size:62px}}
+@media(max-width:1000px){nav{padding:0 32px;height:76px}#hero-art{padding:48px 38px 43px}.hero-copy{grid-template-columns:1fr 250px;gap:30px}.hero-brand{font-size:27px;margin-bottom:23px}h1{font-size:44px}.hero-note{font-size:13px}.screen-desk{margin-top:38px}.entry{padding:35px 38px;align-items:start;flex-direction:column;gap:23px}#memory-art{padding:66px 38px;min-height:0}.memory-grid{gap:35px;grid-template-columns:1.4fr 1fr}.memory-copy h2{font-size:30px}.memory-copy p{font-size:13px}.memory-copy .memory-detail{margin-top:20px}.memory-foot{margin-top:35px;gap:22px}#local-art{padding:75px 48px}.local-top{gap:45px}.local-top h2{font-size:31px}.local-top p{font-size:13px}.local-columns{gap:35px;margin-top:50px}.footer{padding:25px 32px}}
+@media(max-width:640px){nav{padding:0 22px;height:68px}.nav-links{gap:19px!important;font-size:12px}.nav-links a:first-child{display:none}.nav-download{padding:8px 14px}#hero-art{padding:35px 20px 30px}.hero-copy{display:block}.hero-brand{font-size:25px;margin-bottom:24px;gap:11px}.brand-mark{width:22px;height:24px}.hero-copy h1{font-size:36px;line-height:1.5;letter-spacing:.01em}.hero-note{font-size:13px;line-height:1.9;margin-top:19px;max-width:100%;padding:0}.hero-note br{display:none}.hero-note .quiet-meta{margin-top:13px;font-size:10px;letter-spacing:.06em}.screen-desk{margin-top:29px;padding-bottom:5px;margin-left:-5px;margin-right:-5px}.window{border-radius:4px;box-shadow:0 17px 25px -12px #000,0 25px 60px rgba(0,0,0,.3)}.screen-caption{font-size:10px;line-height:1.8;margin-top:15px}.screen-caption span:first-child{max-width:220px}.screen-caption span:last-child{display:none}.entry{padding:28px 22px 37px;gap:20px}.entry p{font-size:12px}.entry p strong{font-size:15px}.download-links{gap:8px}.download-links a{min-height:39px;padding:0 11px;font-size:11px}#memory-art{padding:45px 20px 38px}.memory-grid{display:flex;flex-direction:column;gap:29px}.memory-copy{order:0;width:100%}.memory-screen{order:1;width:100%}.eyebrow{font-size:10px;margin-bottom:16px}.memory-copy h2{font-size:29px;line-height:1.55;margin-bottom:17px}.memory-copy h2 br{display:none}.memory-copy p{font-size:13px;line-height:1.95}.memory-copy .memory-detail{margin-top:20px;font-size:12px;max-width:90%}.memory-caption{margin-top:14px;font-size:9px;line-height:1.8}.memory-foot{gap:18px;flex-wrap:wrap;font-size:10px;margin-top:27px}#local-art{padding:52px 24px 58px}.local-top{display:block}.local-top h2{font-size:28px}.local-top p{padding:0;margin-top:19px;line-height:1.95}.local-columns{display:block;margin-top:33px}.local-item{margin-top:26px;padding-top:22px;display:grid;grid-template-columns:34px 1fr;column-gap:13px}.local-item .icon{grid-column:1;grid-row:1 / span 2;margin:0}.local-item h3{grid-column:2;font-size:15px;margin-bottom:7px}.local-item p{grid-column:2;font-size:12px}.privacy-note{font-size:11px;margin-top:25px}.closing{padding:58px 22px 54px}.closing .closing-brand{font-size:32px}.closing h2{font-size:21px}.closing p{font-size:12px}.closing .download-links{margin:24px 0 21px}.footer{padding:25px 22px 30px;font-size:10px;line-height:1.8;flex-direction:column;gap:6px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.download-links a{transition:none}}
+</style>
+<style>
+/* Capture layouts: text remains legible at the narrower GitHub README width. */
+html{scroll-behavior:auto}body{overflow:hidden}
+body[data-capture="hero"] #memory-art,body[data-capture="memory"] #hero-art{display:none}
+#hero-art,#memory-art{max-width:1600px}
+#hero-art{padding:64px 88px 64px}
+.hero-copy{max-width:1264px;grid-template-columns:1fr 370px;gap:70px}
+.hero-brand{font-size:38px;margin-bottom:32px}
+#hero-art h1{font-size:66px;line-height:1.42}
+.hero-note{max-width:none;font-size:24px;line-height:1.8}
+.hero-note strong{display:none}
+.hero-note .quiet-meta{font-size:20px;margin-top:26px;letter-spacing:.04em}
+.screen-desk{max-width:1264px;margin-top:50px;padding-bottom:12px}
+.window{padding:4px;background:#344035}
+.window img{border-radius:0;filter:none;opacity:1}
+.screen-caption{display:none}
+#memory-art{padding:88px 80px;min-height:0}
+.memory-grid{grid-template-columns:minmax(0,2.25fr) minmax(290px,1fr);gap:70px}
+.memory-copy .eyebrow{font-size:20px;letter-spacing:.07em;margin-bottom:25px}
+.memory-copy h2{font-size:48px;margin-bottom:30px;line-height:1.5}
+.memory-copy p{font-size:22px;line-height:1.9}
+.memory-copy .memory-detail,.memory-caption,.memory-foot{display:none}
+.memory-screen .window{padding:4px}
+@media(max-width:640px){
+  #hero-art{padding:32px 20px 32px}
+  .hero-copy{display:block}.hero-brand{font-size:25px;margin-bottom:23px}
+  #hero-art h1{font-size:36px;line-height:1.5}
+  .hero-note{font-size:15px;line-height:1.8;margin-top:17px}
+  .hero-note .quiet-meta{font-size:12px;margin-top:12px;letter-spacing:.04em}
+  .screen-desk{margin:28px -8px 0;padding:0}.window{padding:3px}
+  #memory-art{padding:32px 12px 30px}
+  .memory-grid{display:flex;gap:23px}
+  .memory-copy{padding:0 8px}.memory-copy .eyebrow{font-size:12px;margin-bottom:12px}
+  .memory-copy h2{font-size:29px;margin-bottom:0;line-height:1.55}
+  .memory-copy h2 br{display:inline}.memory-copy p{display:none}
+  .memory-screen .window{padding:3px}
+}
+</style>
+</head>
+<body>
+<main>
+<section id="hero-art" class="art" aria-labelledby="hero-title">
+  <div class="scene-grain"></div>
+  <div class="hero-copy">
+    <div><div class="hero-brand"><span class="brand-mark" aria-hidden="true"></span>LifeOS</div><h1 id="hero-title">坐一会儿。<br>写点今天的事。</h1></div>
+    <p class="hero-note">本地日记与个人记忆空间。<br><strong>日记、日程与随手记，<br>放在自己的书桌上。</strong><span class="quiet-meta">本地优先 · AI 可选</span></p>
+  </div>
+  <div class="screen-desk"><div class="window"><img src="../docs/images/readme/workspace.png" alt="LifeOS 完整落笔界面：日记、日程、摘录、自我探索、体系构建、习惯打卡和桌宠。作者指定原图，完整呈现。" width="1960" height="1308"></div></div>
+  <div class="screen-caption"><span>从一页空白开始。书桌可以按自己的习惯重新布置。</span><span>你的文字，你的空间。</span></div>
+</section>
+<section id="memory-art" class="art" aria-labelledby="memory-title">
+  <div class="scene-grain"></div>
+  <div class="memory-grid">
+    <div class="memory-screen"><div class="window"><img src="../docs/images/readme/journal.png" alt="LifeOS 流年完整阅读界面：左侧日期目录，右侧书本式日记。截图内容为虚构示例。" loading="eager"></div><p class="memory-caption">流年 · 沿日期回到原文。图中日记为虚构示例。</p></div>
+    <div class="memory-copy"><span class="eyebrow">留给以后的自己</span><h2 id="memory-title">过一阵子，<br>再读一遍。</h2><p>有时是找一句话，有时只是想看看，那段日子是怎样走过来的。沿日期翻阅，或循关键词，回到当时写下的原文。</p><p class="memory-detail">也可以抽取一页旧日。<br>想再读的地方，留下一枚彩笺。</p></div>
+  </div>
+  <div class="memory-foot"><span><i></i>日期目录与原文搜索</span><span><i></i>旧页、回声与线索</span><span><i></i>保存你的阅读书签</span></div>
+</section>
+</main>
+<script>
+const options = new URLSearchParams(location.search);
+document.body.dataset.capture = options.get('capture') || 'hero';
+if(options.get('lang') === 'en') {
+  document.documentElement.lang = 'en';
+  const copy = {
+    '#hero-title': 'Stay a while.<br>Write about today.',
+    '.hero-note': 'A local-first journal. <br>A space for your memories.<span class="quiet-meta">Your words stay local · AI optional</span>',
+    '.memory-copy .eyebrow': 'For your future self',
+    '#memory-title': 'Some time later,<br>read it again.',
+    '.memory-copy > p:not(.memory-detail)': 'Find a phrase. Return to a day. Read the words you wrote then, or let a memory draw bring an old page back.'
+  };
+  for(const [selector, html] of Object.entries(copy)) document.querySelector(selector).innerHTML = html;
+}
+</script>
+</body>
+</html>

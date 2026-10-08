@@ -22,15 +22,15 @@
 
 捕获时没有 renderer 错误，尺寸、文件大小与 SHA-256 记录在 [provenance.json](provenance.json)。
 
-## 专题图版
+## 夜间书桌主视觉
 
-`editorial/opening-*.png` 与 `reading-*.png` 是「私人文献 / Private papers」专题图版：在完整界面截图之外排入刊名、标题、序号和图注。主图使用作者提供的 `workspace.png`，阅读图版使用上表中的 `journal.png`。截图仅做等比例缩放，不裁切、不覆盖、不修改界面文字或内容；点击 README 图版可以查看各自的原始 PNG。
+`night/hero-*.png` 与 `memory-*.png` 在完整界面截图之外加入深绿桌面、斜向暖光、纹理与阴影。主图使用作者提供的 `workspace.png`，阅读主视觉使用上表中的 `journal.png`。界面截图只做等比例缩放，不裁切、不调色、不覆盖内容；窗口四周的留白保护截图的完整边缘。点击 README 图像可查看原始 PNG。
 
-图版分别提供中文、英文、浅色、深色以及手机专用构图。README 的 `picture` 元素根据视口宽度和颜色主题选择版本；替代文字与正文保留可检索的产品说明，下载链接使用原生文本。
+深色光影是 README 的外围视觉设计，不代表应用界面增加了夜间主题。图像提供中英文和独立的手机构图，GitHub 根据视口宽度选择对应版本。产品说明、下载链接和技术文档保留为可检索、可点击的原生文本。
 
-`scripts/design_readme_art.py` 使用 Pillow 和本机合法安装的华文宋体、Bodoni、微软雅黑生成图版，可通过 `--fonts` 指定字体目录。字体文件不随仓库分发。输入截图的 SHA-256、缩放后的完整矩形位置与输出尺寸记载于 [plates.json](editorial/plates.json)。
+设计源码为 `scripts/readme-night.html`。用本机已安装的 Electron 运行 `scripts/render_readme_night.cjs` 可生成图像。渲染只打开隐藏窗口，并阻断外网资源请求；临时 profile 与真实应用工作区隔离。渲染器检查原图的完整边界、显示比例和视口溢出。输出尺寸、来源 SHA-256 与画面中的原图位置见 [scenes.json](night/scenes.json)。
 
-ViVi 的来源与权利声明保留在 [VIVI-LICENSE.md](editorial/VIVI-LICENSE.md)。其他宠物和自然声沿用发行版的署名与许可。
+ViVi 的来源与权利声明保留在 [VIVI-LICENSE.md](VIVI-LICENSE.md)。其他宠物和自然声沿用发行版的署名与许可。
 
 ## 重新捕获演示界面
 

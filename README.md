@@ -1,85 +1,76 @@
 <a id="lifeos"></a>
 <a id="preview"></a>
-<a id="features"></a>
 
 <a href="docs/images/readme/workspace.png">
 <picture>
-  <source media="(max-width: 767px) and (prefers-color-scheme: dark)" srcset="docs/images/readme/editorial/opening-zh-dark-mobile.png" />
-  <source media="(max-width: 767px)" srcset="docs/images/readme/editorial/opening-zh-light-mobile.png" />
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme/editorial/opening-zh-dark.png" />
-  <img src="docs/images/readme/editorial/opening-zh-light.png" width="1200" alt="LifeOS · 私人文献。完整落笔书桌：日记、日程、摘录、自我探索、体系构建、习惯打卡与桌宠。点击查看原图。" />
+  <source media="(max-width: 767px)" srcset="docs/images/readme/night/hero-zh-mobile.png" />
+  <img src="docs/images/readme/night/hero-zh.png" width="1200" alt="LifeOS，一张安静的私人书桌。完整界面包含日记、日程、摘录、习惯打卡与桌宠；点击查看原图。" />
 </picture>
 </a>
 
-<br />
+LifeOS 是本地优先的日记与个人记忆空间。写下今天，翻阅往事，也把一些话留给未来的自己。基础写作与阅读无需配置 AI。
 
-**日记与个人记忆，保存在自己的电脑上。**
+**[下载 Windows](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-Setup-0.5.2.exe)** &nbsp; · &nbsp; **[macOS&nbsp;Apple&nbsp;Silicon](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-0.5.2-mac-arm64.dmg)** &nbsp; · &nbsp; **[macOS&nbsp;Intel](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-0.5.2-mac-x64.dmg)**
 
-LifeOS 把日常记录保存为可翻阅、可检索的私人文献。写下当天的事，保留当时的说法；日后回来，原文仍在。
-
-**[下载 v0.5.2 ↗](#download)** &nbsp; / &nbsp; [English](README.en.md) &nbsp; / &nbsp; [使用说明](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/PRODUCT_HELP.md)
-
-<sub>Windows / macOS · AI 可选 · [书桌原图](docs/images/readme/workspace.png)</sub>
+<sub>[v0.5.2](https://github.com/DurianLoop/LifeOS/releases/tag/v0.5.2) · [安装说明](#download) · [English](README.en.md) · [更新记录](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/RELEASE_v0.5.2.md)</sub>
 
 <br />
 
-### 01 &nbsp; 正文
+<a id="features"></a>
 
-在同一张书桌上写日记、记日程、存摘录。纸页可以移动、缩放，草稿与修订保存在本机；从前的日记，也可以导入。
+### 先写几行
+
+日记、日程和摘录放在同一张书桌上，纸页可以自由挪动、缩放。草稿与修订保存在本机，从前的日记也可以导入。打开一段雨声，喜欢的桌宠就在旁边。
 
 <br />
 
 <a href="docs/images/readme/journal.png">
 <picture>
-  <source media="(max-width: 767px) and (prefers-color-scheme: dark)" srcset="docs/images/readme/editorial/reading-zh-dark-mobile.png" />
-  <source media="(max-width: 767px)" srcset="docs/images/readme/editorial/reading-zh-light-mobile.png" />
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme/editorial/reading-zh-dark.png" />
-  <img src="docs/images/readme/editorial/reading-zh-light.png" width="1200" alt="02 · 查阅。流年的完整界面，以日期目录与书本形式阅读原文。图中日记为虚构示例。" />
+  <source media="(max-width: 767px)" srcset="docs/images/readme/night/memory-zh-mobile.png" />
+  <img src="docs/images/readme/night/memory-zh.png" width="1200" alt="流年的完整阅读界面：按日期翻阅日记，像翻书一样读原文。图中内容为虚构示例。" />
 </picture>
 </a>
 
-<br />
+### 回头翻翻
 
-### 02 &nbsp; 查阅
-
-沿日期翻阅，循关键词返回原文。记忆抽签则从另一处开始：抽取「旧页」「回声」或「线索」，读到计划之外的一页。想再读的地方，可以留下一枚彩笺。
+按日期翻页，用关键词找到原文。也可以抽一张记忆签，重读一篇没打算找的日记。想再读的地方，留下一枚彩笺。
 
 <details>
-<summary>另一种读法：记忆抽签</summary>
+<summary>看看记忆抽签</summary>
 
-<img src="docs/images/readme/memory.png" width="900" alt="记忆抽签机的原始界面，使用虚构示例日记" />
+<img src="docs/images/readme/memory.png" width="1000" alt="v0.5.2 记忆抽签界面，使用虚构示例日记" />
 
-新保存的日记可立即抽取，连续抽取避开近期结果。打开原页后，可以在书页与目录中保留彩色书签，也可随时取消。
+「旧页」「回声」「线索」三种抽法都能返回原文。新保存的日记可立即抽取，连续抽取避开近期结果；彩色书签在书页和目录中同步保留。
 
 </details>
 
 <br />
 
-### 03 &nbsp; 未启封
+### 晚一点，再打开
 
-收件人是未来的自己。漂流瓶封存文字、录音或视频，等注明的日期再打开。内容保存在本机，随工作区一起备份。
+给未来的自己写一封信，放进录音或视频，定好拆开的日期。漂流瓶保存在本机，随工作区一起备份。
 
 <details>
-<summary>查看漂流瓶</summary>
+<summary>看看漂流瓶</summary>
 
-<img src="docs/images/readme/bottles.png" width="1000" alt="漂流瓶：三封虚构未来来信的原始界面" />
+<img src="docs/images/readme/bottles.png" width="1000" alt="漂流瓶界面，展示三封虚构的未来来信" />
 
-漂流瓶是本地写给未来的内容，不是陌生人交换消息的服务。到期提醒需要 LifeOS 正在运行；完全退出期间不会弹出提醒，下次打开后可查看已到期的瓶子。
+漂流瓶是本地写给未来的内容。到期提醒需要 LifeOS 正在运行；完全退出期间不会弹出提醒，下次打开后可以查看已到期的瓶子。
 
 </details>
 
-### 04 &nbsp; 页边
+### 还有一点陪伴
 
-一只桌宠，几段自然声。ViVi 等角色可以待在应用里，也可以留在桌面；六段自然声可以离线播放。侧栏按自己的习惯排列，不常用的工具收进阁楼。
+六段自然声可以离线播放。ViVi 等桌宠可以留在应用里，也可以走到桌面上。侧栏按自己的习惯排列，不常用的功能收进阁楼。
 
 <details>
-<summary>查看桌宠与陪伴设置</summary>
+<summary>看看桌宠</summary>
 
-<img src="docs/images/readme/companion.png" width="1000" alt="灵犀：ViVi、已安装角色与宠物库" />
+<img src="docs/images/readme/companion.png" width="1000" alt="灵犀界面，包含 ViVi、已安装角色与宠物库" />
 
-在灵犀设置中选择独立桌面模式，并开启关闭主窗口后保留桌宠，即可在关闭主窗口后继续显示。通过托盘可重新打开 LifeOS，或完全退出。
+在灵犀设置中选择独立桌面模式，并开启关闭主窗口后保留桌宠。通过托盘可以重新打开 LifeOS，或完全退出。
 
-素材保留各自作者的署名与许可。[ViVi 来源说明](docs/images/readme/editorial/VIVI-LICENSE.md)。
+[ViVi 来源与许可](docs/images/readme/VIVI-LICENSE.md)
 
 </details>
 
@@ -87,77 +78,44 @@ LifeOS 把日常记录保存为可翻阅、可检索的私人文献。写下当�
 
 ---
 
-<a id="privacy"></a>
-
-### 保管与边界
-
-基础写作、阅读、搜索和自然声不依赖模型。AI 用于日记问答、「以前的我」、文言化、诗句推荐或桌宠聊天，可以按需接入。
-
-**使用云端 AI 时，相应的提问与文字会发送给你配置的服务。** Ollama Demo 可连接本机模型，需要自行安装 Ollama 并下载模型。公开纪念页需要选定内容、预览并主动发布。
-
-<details>
-<summary>AI 会接收哪些内容？</summary>
-
-- 日记问答与「以前的我」：本次问题及所选日记证据。
-- 文言化：本次提交的文字。
-- 个性化荐诗：当天日记等相关输入；自动荐诗需单独开启，开启后可自动发送当日正文。
-- 桌宠聊天：当前聊天与按需匹配的公开产品指南，不读取日记正文。
-
-支持模型 API、符合条件时的 CC Switch / Codex 配置，以及 Ollama Demo。安装包不含大模型。
-
-[AI 设置](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/AI设置与Codex接入.md) · [Ollama Demo](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/OLLAMA_DEMO.md)
-
-</details>
-
-<details>
-<summary>数据位置、备份与公开分享</summary>
-
-Windows 安装版：`%APPDATA%/LifeOS/workspace/`；macOS：`~/Library/Application Support/LifeOS/workspace/`。源码运行默认使用项目目录。
-
-工作区备份包含日记、修订、附件、草稿、偏好和漂流瓶媒体，建议保存到另一块磁盘。恢复前会进行校验，恢复操作需重启。Windows 桌面更新前保存草稿并创建安全备份；macOS 升级可重新下载安装包。
-
-公开纪念页需要另行配置托管服务。只有选定并发布的快照会上线，之后修改日记不会自动更新公开页；已发布内容可以撤回。[纪念页与二维码 →](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/纪念页与二维码.md)
-
-</details>
-
-<a id="faq"></a>
-
-<details>
-<summary>导入与导出</summary>
-
-内置导入器支持 Markdown、TXT、HTML、通用 JSON、CSV 和 Day One JSON。导入后可到流年中核对日期与原文。
-
-导出提供当前日记的 Markdown、JSON 或 CSV；完整保留修订、附件、草稿、偏好和漂流瓶媒体，请使用工作区备份。
-
-</details>
-
 <a id="download"></a>
 <a id="quick-start"></a>
 
-### 开始使用
+### 安装与开始
 
-**[Windows&nbsp;x64](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-Setup-0.5.2.exe)** &nbsp; / &nbsp; **[macOS&nbsp;·&nbsp;Apple&nbsp;Silicon](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-0.5.2-mac-arm64.dmg)** &nbsp; / &nbsp; **[macOS&nbsp;·&nbsp;Intel](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-0.5.2-mac-x64.dmg)**
+安装包已包含运行环境，无需另装 Python 或 Node.js。打开后即可写作，或导入已有的 Markdown、TXT、HTML、JSON、CSV 与 Day One JSON 日记。
 
-安装包已包含运行环境，无需另装 Python 或 Node.js。打开后即可写作或导入旧日记，AI 按需配置。
+- **Windows x64**：运行 `.exe` 安装程序。社区构建未进行代码签名，可能出现 SmartScreen 提示。
+- **macOS 11+**：选择对应芯片的 `.dmg`，将 LifeOS 拖入 Applications。当前为 ad-hoc 签名，未经 Apple 公证；核实来源后，可在「系统设置 → 隐私与安全性」中允许打开。
+- **Linux**：v0.5.2 暂无预构建安装包，可从源码运行。
 
-[发行文件与校验值](https://github.com/DurianLoop/LifeOS/releases/tag/v0.5.2) · [本版更新](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/RELEASE_v0.5.2.md) · [问题与建议](https://github.com/DurianLoop/LifeOS/issues)
+[全部安装包与校验值](https://github.com/DurianLoop/LifeOS/releases/tag/v0.5.2) · [问题与建议](https://github.com/DurianLoop/LifeOS/issues)
+
+<a id="privacy"></a>
+
+### 文字由你保管
+
+日记、草稿、修订与附件默认保存在本机。基础写作、阅读、搜索和自然声不依赖模型；**使用云端 AI 时，相应的提问与文字会发送给你配置的服务。**
 
 <details>
-<summary>平台与安装说明</summary>
+<summary>AI、备份与公开分享</summary>
 
-- **Windows x64**：运行 `.exe` 安装程序，从开始菜单打开 LifeOS。社区构建未进行代码签名，可能出现 SmartScreen 提示。
-- **macOS 11+**：选择对应芯片的 `.dmg`，将 LifeOS 拖入 Applications。当前为 ad-hoc 签名，未经 Apple 公证；核实下载来源后，可在「系统设置 → 隐私与安全性」中允许打开。
-- **Linux**：本版本暂无预构建安装包，可从源码运行。
-- **校验值**：Release 提供 `SHA256SUMS.txt`（Windows）和 `SHA256SUMS-macos-v0.5.2.txt`（macOS）。
+**按需接入 AI。** 日记问答与「以前的我」会发送本次问题及所选日记证据；文言化会发送提交的文字；个性化荐诗可能包含当天日记；自动荐诗需单独开启，开启后可自动发送当日正文。桌宠聊天使用当前对话与按需匹配的公开产品指南，不读取日记正文。[AI 设置](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/AI设置与Codex接入.md)
+
+**本地模型。** Ollama Demo 需要自行安装 Ollama 并下载模型，安装包不含大模型。[Ollama Demo](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/OLLAMA_DEMO.md)
+
+**保留完整备份。** 工作区备份包含日记、修订、附件、草稿、偏好和漂流瓶媒体，建议另存一份到其他磁盘。Windows 安装版数据位于 `%APPDATA%/LifeOS/workspace/`，macOS 位于 `~/Library/Application Support/LifeOS/workspace/`。源码运行默认使用项目目录。
+
+**公开分享由你发起。** 纪念页需要另行配置托管服务，选定内容、预览并主动发布。只公开选定的快照，之后修改日记不会自动同步；已发布内容可以撤回。[纪念页与二维码](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/纪念页与二维码.md)
 
 </details>
 
 <a id="source"></a>
 
 <details>
-<summary>源码运行与构建</summary>
+<summary>从源码运行</summary>
 
-**main 首页介绍 v0.5.2，main 的应用源码仍是较早版本。** 请使用发行版安装包，或显式检出 v0.5.2。环境要求：Python 3.11+、Node.js 20+、Git。
+main 首页介绍 v0.5.2，main 的应用源码仍是较早版本。请显式检出发行标签。环境要求：Python 3.11+、Node.js 20+、Git。
 
 ```bash
 git clone --branch v0.5.2 --depth 1 https://github.com/DurianLoop/LifeOS.git
@@ -176,25 +134,13 @@ macOS / Linux：
 bash setup_desktop.sh
 ```
 
-安装脚本创建独立的 `desktop/.venv` 环境并检查 Electron。后续使用 `start_desktop.bat` / `bash start_desktop.sh` 启动；向 setup 脚本追加 `--no-launch` 可只安装不启动。
+安装脚本创建独立的 `desktop/.venv` 并检查 Electron。后续使用 `start_desktop.bat` / `bash start_desktop.sh` 启动；向 setup 脚本追加 `--no-launch` 可只安装不启动。
 
 浏览器模式先安装 `requirements.txt`，再运行 `start.bat` / `bash start.sh`。
-
-构建 Windows 安装包需在 `desktop/python-runtime/` 放入 x64 CPython，并在该环境安装 `requirements.txt` 和 Pillow。嵌入式 Python 需在 `._pth` 中启用 `import site` 与 `Lib/site-packages`，然后执行：
-
-```powershell
-cd desktop
-npm ci
-npm run dist:win -- --publish=never
-```
-
-产物位于 `desktop/dist/`。本机工作区、密钥、运行环境与构建产物不应加入 Git。
 
 </details>
 
 <br />
-
----
 
 <sub>LifeOS · [个人、非商业用途许可](LICENSE.md) · [第三方桌宠](https://github.com/DurianLoop/LifeOS/tree/v0.5.2/app/assets/pets) · [自然声来源](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/WHITE_NOISE.md)</sub>
 
