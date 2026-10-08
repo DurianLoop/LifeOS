@@ -1,0 +1,51 @@
+/* Keep chapter navigation available and anchor offsets consistent. */
+:root { --navigation-height: 88px; }
+html { scroll-padding-top: var(--navigation-height); }
+.site-header {
+  position: fixed;
+  height: var(--navigation-height);
+  z-index: 40;
+  background: #111813;
+  transition: background-color .2s, box-shadow .2s;
+}
+.site-header.is-at-top:not(:has(.menu-toggle[aria-expanded="true"])) { background: transparent; }
+.site-header.is-scrolled,
+.site-header:has(.menu-toggle[aria-expanded="true"]) {
+  background: #111813f5;
+  box-shadow: 0 1px 0 #aeb79d24;
+  backdrop-filter: blur(14px);
+}
+.header-source {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  font-size: 12px;
+  white-space: nowrap;
+  color: #c4c8bd;
+}
+.header-source:hover { color: var(--lime); }
+.mobile-nav {
+  top: calc(100% - 1px);
+  max-height: calc(100svh - var(--navigation-height) - 18px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+/* Only the inset screenshot needs space; full-width sections meet the header. */
+.workspace-anchor { display: flow-root; margin-top: 68px; scroll-margin-top: 12px; }
+.workspace-anchor > .real-workspace { margin-top: 0; }
+.download-resources {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0 26px;
+}
+@media (max-width: 1050px) {
+  .header-source { display: none; }
+}
+@media (max-width: 760px) {
+  :root { --navigation-height: 72px; }
+  .hero-cta { flex-wrap: wrap; row-gap: 14px; }
+  .workspace-anchor { margin-top: 37px; }
+  .download-resources { gap: 0 18px; }
+}

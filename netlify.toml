@@ -1,0 +1,6 @@
+[build]
+  command = "node promo/build.mjs"
+  publish = "promo/dist"
+
+[build.environment]
+  NODE_VERSION = "22"

@@ -1,0 +1,140 @@
+/* Small marks share one quiet line weight; larger drawings retain material detail. */
+.ui-icon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  overflow: visible;
+  vertical-align: middle;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.header-download,
+.plain-link,
+.download-release,
+.screen-dialog-foot a,
+.footer-bottom a,
+.image-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.header-download > span { margin-left: 5px; }
+.header-download .ui-icon,
+.release-pill .ui-icon,
+.plain-link .ui-icon,
+.download-release .ui-icon,
+.screen-dialog-foot .ui-icon,
+.footer-bottom .ui-icon,
+.image-open .ui-icon { width: 15px; height: 15px; }
+.release-pill > span:last-child,
+.text-link > span,
+.back-top > span { display: inline-flex; align-items: center; }
+.button .button-arrow {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 0;
+  transform: none;
+}
+.button-arrow .ui-icon { width: 23px; height: 23px; stroke-width: 1.1; }
+.button:hover .button-arrow { transform: none; }
+.button-arrow .ui-icon,
+.text-link .ui-icon,
+.plain-link .ui-icon,
+.header-download .ui-icon {
+  transition: transform .35s cubic-bezier(.2,.7,.2,1);
+}
+.button:hover .icon-diagonal,
+.text-link:hover .icon-diagonal,
+.plain-link:hover .icon-diagonal,
+.header-download:hover .icon-diagonal { transform: translate(2px,-2px); }
+.button:hover .icon-download { transform: translateY(2px); }
+.scroll-icon { display: flex; }
+.scroll-icon .ui-icon { width: 18px; height: 25px; stroke-width: 1; }
+.crosshair { display: flex; align-items: center; }
+.crosshair .ui-icon { width: 18px; height: 18px; stroke-width: .8; }
+.dialog-close { display: grid; place-items: center; }
+.dialog-close .ui-icon { width: 22px; height: 22px; stroke-width: 1.15; }
+.archive-index summary > i,
+.download-faq summary > span { display: inline-flex; align-items: center; }
+.archive-index details[open] summary > i,
+.download-faq details[open] summary > span { transform: none; }
+.icon-plus-vertical { transform-origin: 12px 12px; transition: opacity .25s, transform .25s; }
+details[open] > summary .icon-plus-vertical { opacity: 0; transform: scaleY(.3); }
+.forest-play { width: 26px; height: 26px; border-color: #a6b492; }
+.forest-play .ui-icon { width: 15px; height: 15px; stroke-width: 1.3; }
+.forest-play .icon-play { margin-left: 1px; }
+.forest-play .icon-pause,
+.forest-preview[aria-pressed="true"] .icon-play { display: none; }
+.forest-preview[aria-pressed="true"] .icon-pause { display: block; }
+.manifesto-symbol .icon-asterism,
+.draw-star .icon-asterism,
+.download-spark .icon-asterism { width: 1em; height: 1em; display: block; }
+.icon-asterism * { vector-effect: non-scaling-stroke; stroke-width: 1.05; }
+.download-spark .icon-asterism { margin: 0 auto; }
+
+/* Woven ribbon slips: a turned edge, stitched selvedge, and a slight central crease. */
+.floating-bookmark,
+.paper-bookmark,
+.mini-bookmarks i {
+  background: none;
+  clip-path: none;
+  overflow: visible;
+  filter: drop-shadow(2px 6px 4px #08100835);
+}
+.ribbon-mark { display: block; width: 100%; height: 100%; overflow: visible; }
+.floating-bookmark { width: 27px; height: 79px; }
+.bookmark-one { filter: drop-shadow(2px 8px 5px #050c0a65); }
+.bookmark-two { width: 20px; height: 58px; }
+.paper-bookmark { top: -8px; width: 15px; height: 51px; }
+.mini-bookmarks { gap: 4px; align-items: flex-start; }
+.mini-bookmarks i { width: 12px; height: 38px; }
+.mini-bookmarks i:nth-child(2) { height: 32px; margin-top: 5px; background: none; }
+.mini-bookmarks i:nth-child(3) { height: 39px; background: none; transform: rotate(8deg); }
+
+/* The privacy vignette is a bound personal folio, not a security badge. */
+.privacy-symbol { width: 172px; }
+.privacy-symbol .archive-emblem { width: 172px; height: 172px; fill: none; stroke: none; }
+.privacy-symbol .mono { margin-top: 3px; font-size: 6px; letter-spacing: .18em; color: #6f815d; }
+
+@media (max-width: 1050px) {
+  .privacy-symbol { width: 138px; }
+  .privacy-symbol .archive-emblem { width: 138px; height: 138px; }
+}
+@media (max-width: 760px) {
+  .floating-bookmark { width: 19px; height: 55px; }
+  .bookmark-two { width: 15px; height: 43px; }
+  .paper-bookmark { top: -6px; right: 16px; width: 12px; height: 39px; }
+  .mini-bookmarks { gap: 3px; }
+  .mini-bookmarks i { width: 10px; height: 33px; }
+  .mini-bookmarks i:nth-child(2) { height: 28px; }
+  .mini-bookmarks i:nth-child(3) { height: 34px; }
+  .privacy-symbol { width: 99px; opacity: .85; }
+  .privacy-symbol .archive-emblem { width: 99px; height: 99px; }
+  .privacy-symbol .mono { margin-top: 1px; font-size: 4.5px; letter-spacing: .12em; }
+  .image-open { gap: 6px; }
+  .image-open .ui-icon { width: 11px; height: 11px; }
+  .header-download { gap: 7px; }
+  .header-download > span { margin-left: 0; }
+  .manifesto-symbol .icon-asterism { width: 48px; height: 48px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .button-arrow .ui-icon,
+  .text-link .ui-icon,
+  .plain-link .ui-icon,
+  .header-download .ui-icon,
+  .icon-plus-vertical { transition: none; }
+  .button:hover .ui-icon,
+  .text-link:hover .ui-icon,
+  .plain-link:hover .ui-icon,
+  .header-download:hover .ui-icon { transform: none; }
+}
+body[data-motion="paused"] .ui-icon { transition: none; }
+body[data-motion="paused"] .button:hover .ui-icon,
+body[data-motion="paused"] .text-link:hover .ui-icon,
+body[data-motion="paused"] .plain-link:hover .ui-icon,
+body[data-motion="paused"] .header-download:hover .ui-icon { transform: none; }
