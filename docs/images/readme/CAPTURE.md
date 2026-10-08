@@ -22,11 +22,13 @@
 
 捕获时没有 renderer 错误，尺寸、文件大小与 SHA-256 记录在 [provenance.json](provenance.json)。
 
-## 字标
+## 专题图版
 
-`editorial/masthead-light.svg` 和 `masthead-dark.svg` 是 README 的明暗字标，仅含 LifeOS 字样、分隔线与色标。字形已转为矢量路径，无外部字体或图像依赖。字体文件不随仓库分发。
+`editorial/opening-*.png` 与 `reading-*.png` 是「私人文献 / Private papers」专题图版：在完整界面截图之外排入刊名、标题、序号和图注。主图使用作者提供的 `workspace.png`，阅读图版使用上表中的 `journal.png`。截图仅做等比例缩放，不裁切、不覆盖、不修改界面文字或内容；点击 README 图版可以查看各自的原始 PNG。
 
-`scripts/design_readme_cover.py` 可重新生成字标，需要 fontTools 及本机合法安装的字体。默认使用 Bodoni，可通过 `--font` 指定其他本机字体。
+图版分别提供中文、英文、浅色、深色以及手机专用构图。README 的 `picture` 元素根据视口宽度和颜色主题选择版本；替代文字与正文保留可检索的产品说明，下载链接使用原生文本。
+
+`scripts/design_readme_art.py` 使用 Pillow 和本机合法安装的华文宋体、Bodoni、微软雅黑生成图版，可通过 `--fonts` 指定字体目录。字体文件不随仓库分发。输入截图的 SHA-256、缩放后的完整矩形位置与输出尺寸记载于 [plates.json](editorial/plates.json)。
 
 ViVi 的来源与权利声明保留在 [VIVI-LICENSE.md](editorial/VIVI-LICENSE.md)。其他宠物和自然声沿用发行版的署名与许可。
 

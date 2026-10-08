@@ -1,54 +1,59 @@
 <a id="lifeos"></a>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme/editorial/masthead-dark.svg" />
-  <img src="docs/images/readme/editorial/masthead-light.svg" width="1200" alt="LifeOS" />
-</picture>
-
-### That was then.
-
-Memory may change its account. A journal keeps the words. LifeOS is a local-first journal and a space for personal memories: record what happened and how you saw it at the time. Later, read it again, search for something, or come across a page you had not meant to find.
-
-**[Windows](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-Setup-0.5.2.exe)** &nbsp; / &nbsp; **[macOS&nbsp;·&nbsp;Apple&nbsp;Silicon](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-0.5.2-mac-arm64.dmg)** &nbsp; / &nbsp; **[macOS&nbsp;·&nbsp;Intel](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-0.5.2-mac-x64.dmg)**
-
-<sub>[v0.5.2](https://github.com/DurianLoop/LifeOS/releases/tag/v0.5.2) · Runtime included · AI optional &nbsp; / &nbsp; [中文](README.md) · [Installation](#download) · [Source](#source)</sub>
-
-<br />
-
 <a id="preview"></a>
 <a id="features"></a>
 
-<p align="right"><a href="docs/images/readme/workspace.png"><img src="docs/images/readme/workspace.png" width="900" alt="LifeOS writing view: the empty desk selected by the project author, with journal, schedule, quotations, self-exploration, personal frameworks, habit tracking, and a companion. Click to view the original image." /></a></p>
-<p align="right"><sub>01 &nbsp; Write / Arrange the desk around your own habits.</sub></p>
-
-### The first draft
-
-You can write something down before you know what to make of it. Journals, plans, and quotations share one desk. Paper panels can be moved and resized; drafts and revisions stay on your computer. Your older journals can come along, too.
+<a href="docs/images/readme/workspace.png">
+<picture>
+  <source media="(max-width: 767px) and (prefers-color-scheme: dark)" srcset="docs/images/readme/editorial/opening-en-dark-mobile.png" />
+  <source media="(max-width: 767px)" srcset="docs/images/readme/editorial/opening-en-light-mobile.png" />
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme/editorial/opening-en-dark.png" />
+  <img src="docs/images/readme/editorial/opening-en-light.png" width="1200" alt="LifeOS — Private papers. An editorial opening with the complete, uncropped writing workspace." />
+</picture>
+</a>
 
 <br />
 
-### Reading again
+LifeOS is a local-first journal for writing, reading, and revisiting personal records. Entries and revisions stay on your computer. AI is optional.
 
-Browse by date, or follow a keyword back to the original text. The memory draw offers another way to read: draw an old page, an echo, or a clue, then open the source entry. Leave a colorful bookmark where you want to return.
+[Download v0.5.2](#download) &nbsp; · &nbsp; [中文](README.md) &nbsp; · &nbsp; [User guide](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/PRODUCT_HELP.md) &nbsp; · &nbsp; [Release notes](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/RELEASE_v0.5.2.md)
 
-<p><a href="docs/images/readme/journal.png"><img src="docs/images/readme/journal.png" width="760" alt="Journal: a book-style reading view, with a date index on the left and the original entry on the right. The content is fictional demo text." /></a></p>
+<sub>[View original workspace](docs/images/readme/workspace.png)</sub>
 
-<sub>02 &nbsp; Read / Every return begins with the original words.</sub>
+<br />
+
+### 01 / Writing
+
+Write journals, plans, and quotations on movable, resizable paper panels. Drafts and revisions stay local, and existing journals can be imported.
+
+<br />
+
+<a href="docs/images/readme/journal.png">
+<picture>
+  <source media="(max-width: 767px) and (prefers-color-scheme: dark)" srcset="docs/images/readme/editorial/reading-en-dark-mobile.png" />
+  <source media="(max-width: 767px)" srcset="docs/images/readme/editorial/reading-en-light-mobile.png" />
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme/editorial/reading-en-dark.png" />
+  <img src="docs/images/readme/editorial/reading-en-light.png" width="1200" alt="LifeOS journal reading view with a date index and the original entry. The journal content is fictional." />
+</picture>
+</a>
+
+<br />
+
+### 02 / Reading
+
+Browse by date, search for a phrase, or let the memory draw choose an old page, an echo, or a clue. Open the source entry and leave a colorful bookmark where you want to return.
 
 <details>
-<summary>Memory draws and the v0.5.2 update</summary>
+<summary>Memory draws</summary>
 
 <img src="docs/images/readme/memory.png" width="900" alt="The original memory-draw interface, using fictional journal entries" />
 
-Newly saved entries are available to draw immediately. Consecutive draws avoid recent results, and returning keeps the current page. Open the original entry to leave a colorful bookmark on both the page and in the contents. Bookmarks survive restarts and can be removed at any time.
-
-This release also refines the Chinese labels “拾诗” and “旧笺”, the slim ambient-audio slider, and the companion layout. [Full release notes →](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/RELEASE_v0.5.2.md)
+Newly saved entries are available immediately. Consecutive draws avoid recent results, and returning keeps the current page. Bookmarks appear on the page and in the contents, survive restarts, and can be removed at any time.
 
 </details>
 
 <br />
 
-### To: yourself
+### 03 / Unopened
 
 Write a letter, then give it an opening date. Drift bottles can hold text, audio, or video until the time you choose. Their contents stay on your computer and are included in workspace backups.
 
@@ -61,7 +66,7 @@ Drift bottles are local letters to your future self, not a message exchange with
 
 </details>
 
-### Beyond the desk
+### 04 / In the margins
 
 Six nature recordings play offline. ViVi and other pets can stay inside the app or on your desktop. Choose the order and visibility of sidebar features, and put less-used tools in the Attic.
 
@@ -191,4 +196,4 @@ Build output is written to `desktop/dist/`. Keep local workspaces, credentials, 
 
 <sub>LifeOS · [Personal, non-commercial license](LICENSE.md) · [Third-party companions](https://github.com/DurianLoop/LifeOS/tree/v0.5.2/app/assets/pets) · [Nature recording sources](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/WHITE_NOISE.md)</sub>
 
-<sub>The lead image was supplied and selected by the project author and is shown in full, unaltered. Other feature screenshots are from v0.5.2 and use fictional journals and letters. [Image sources](docs/images/readme/CAPTURE.md) · [Back to top](#lifeos)</sub>
+<sub>Journal entries and letters in the feature previews are fictional. [Image sources](docs/images/readme/CAPTURE.md) · [Back to top](#lifeos)</sub>

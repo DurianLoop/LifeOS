@@ -1,56 +1,63 @@
 <a id="lifeos"></a>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme/editorial/masthead-dark.svg" />
-  <img src="docs/images/readme/editorial/masthead-light.svg" width="1200" alt="LifeOS" />
-</picture>
-
-### 当时如此。
-
-记忆会改口，日记保留原句。LifeOS 是本地优先的日记与个人记忆空间：记录当天的事，保存当时的说法；日后翻阅、检索，也偶尔读到计划之外的一页。
-
-**[Windows](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-Setup-0.5.2.exe)** &nbsp; / &nbsp; **[macOS&nbsp;·&nbsp;Apple&nbsp;Silicon](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-0.5.2-mac-arm64.dmg)** &nbsp; / &nbsp; **[macOS&nbsp;·&nbsp;Intel](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-0.5.2-mac-x64.dmg)**
-
-<sub>[v0.5.2](https://github.com/DurianLoop/LifeOS/releases/tag/v0.5.2) · 运行环境已包含 · AI 可选 &nbsp; / &nbsp; [English](README.en.md) · [安装说明](#download) · [源码](#source)</sub>
-
-<br />
-
 <a id="preview"></a>
 <a id="features"></a>
 
-<p align="right"><a href="docs/images/readme/workspace.png"><img src="docs/images/readme/workspace.png" width="900" alt="LifeOS 落笔界面：作者选定的空白书桌，包含日记、日程、摘录、自我探索、体系构建、习惯打卡与桌宠。点击查看原图。" /></a></p>
-<p align="right"><sub>01 &nbsp; 落笔 / 书桌可以按自己的习惯重新布置。</sub></p>
-
-### 原稿
-
-一件事还没有结论，也可以先记下来。日记、日程和摘录放在同一张书桌上；纸页可以移动、缩放，草稿与修订保存在本机。从前的日记，也可以一起带进来。
+<a href="docs/images/readme/workspace.png">
+<picture>
+  <source media="(max-width: 767px) and (prefers-color-scheme: dark)" srcset="docs/images/readme/editorial/opening-zh-dark-mobile.png" />
+  <source media="(max-width: 767px)" srcset="docs/images/readme/editorial/opening-zh-light-mobile.png" />
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme/editorial/opening-zh-dark.png" />
+  <img src="docs/images/readme/editorial/opening-zh-light.png" width="1200" alt="LifeOS · 私人文献。完整落笔书桌：日记、日程、摘录、自我探索、体系构建、习惯打卡与桌宠。点击查看原图。" />
+</picture>
+</a>
 
 <br />
 
-### 重读
+**日记与个人记忆，保存在自己的电脑上。**
 
-沿日期翻阅，循关键词回到原文。记忆抽签提供另一种读法：抽取「旧页」「回声」或「线索」，再从结果打开原页。想再读的地方，可以留下一枚彩笺。
+LifeOS 把日常记录保存为可翻阅、可检索的私人文献。写下当天的事，保留当时的说法；日后回来，原文仍在。
 
-<p><a href="docs/images/readme/journal.png"><img src="docs/images/readme/journal.png" width="760" alt="流年：以书本形式阅读日记，左侧为日期目录，右侧为原文。内容为虚构演示。" /></a></p>
+**[下载 v0.5.2 ↗](#download)** &nbsp; / &nbsp; [English](README.en.md) &nbsp; / &nbsp; [使用说明](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/PRODUCT_HELP.md)
 
-<sub>02 &nbsp; 流年 / 每一次回看，都从原文开始。</sub>
+<sub>Windows / macOS · AI 可选 · [书桌原图](docs/images/readme/workspace.png)</sub>
+
+<br />
+
+### 01 &nbsp; 正文
+
+在同一张书桌上写日记、记日程、存摘录。纸页可以移动、缩放，草稿与修订保存在本机；从前的日记，也可以导入。
+
+<br />
+
+<a href="docs/images/readme/journal.png">
+<picture>
+  <source media="(max-width: 767px) and (prefers-color-scheme: dark)" srcset="docs/images/readme/editorial/reading-zh-dark-mobile.png" />
+  <source media="(max-width: 767px)" srcset="docs/images/readme/editorial/reading-zh-light-mobile.png" />
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme/editorial/reading-zh-dark.png" />
+  <img src="docs/images/readme/editorial/reading-zh-light.png" width="1200" alt="02 · 查阅。流年的完整界面，以日期目录与书本形式阅读原文。图中日记为虚构示例。" />
+</picture>
+</a>
+
+<br />
+
+### 02 &nbsp; 查阅
+
+沿日期翻阅，循关键词返回原文。记忆抽签则从另一处开始：抽取「旧页」「回声」或「线索」，读到计划之外的一页。想再读的地方，可以留下一枚彩笺。
 
 <details>
-<summary>记忆抽签与 v0.5.2 更新</summary>
+<summary>另一种读法：记忆抽签</summary>
 
 <img src="docs/images/readme/memory.png" width="900" alt="记忆抽签机的原始界面，使用虚构示例日记" />
 
-新保存的日记可立即抽取，连续抽取避开近期结果；返回时保留当前一页。打开原页后，书页与目录会留下彩色书签，重启后保留，也可随时取消。
-
-本版还优化了「拾诗」「旧笺」命名、白噪音细滑条和灵犀布局。[完整更新说明 →](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/RELEASE_v0.5.2.md)
+新保存的日记可立即抽取，连续抽取避开近期结果。打开原页后，可以在书页与目录中保留彩色书签，也可随时取消。
 
 </details>
 
 <br />
 
-### 收件人：自己
+### 03 &nbsp; 未启封
 
-写完一封信，再注明拆信日期。漂流瓶可以封存文字、录音或视频，等约定的时间再打开。内容保存在本机，随工作区一起备份。
+收件人是未来的自己。漂流瓶封存文字、录音或视频，等注明的日期再打开。内容保存在本机，随工作区一起备份。
 
 <details>
 <summary>查看漂流瓶</summary>
@@ -61,9 +68,9 @@
 
 </details>
 
-### 书桌之外
+### 04 &nbsp; 页边
 
-六段自然声可以离线播放。ViVi 等桌宠可以待在应用里，也可以留在桌面；侧栏的功能顺序和显示方式由你安排。不常用的工具，收进阁楼即可。
+一只桌宠，几段自然声。ViVi 等角色可以待在应用里，也可以留在桌面；六段自然声可以离线播放。侧栏按自己的习惯排列，不常用的工具收进阁楼。
 
 <details>
 <summary>查看桌宠与陪伴设置</summary>
@@ -82,7 +89,7 @@
 
 <a id="privacy"></a>
 
-### 文字默认保存在本机
+### 保管与边界
 
 基础写作、阅读、搜索和自然声不依赖模型。AI 用于日记问答、「以前的我」、文言化、诗句推荐或桌宠聊天，可以按需接入。
 
@@ -127,13 +134,13 @@ Windows 安装版：`%APPDATA%/LifeOS/workspace/`；macOS：`~/Library/Applicati
 <a id="download"></a>
 <a id="quick-start"></a>
 
-### 使用与下载
+### 开始使用
 
 **[Windows&nbsp;x64](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-Setup-0.5.2.exe)** &nbsp; / &nbsp; **[macOS&nbsp;·&nbsp;Apple&nbsp;Silicon](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-0.5.2-mac-arm64.dmg)** &nbsp; / &nbsp; **[macOS&nbsp;·&nbsp;Intel](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-0.5.2-mac-x64.dmg)**
 
-安装包已包含运行环境，无需另装 Python 或 Node.js。首次打开，可以写下第一篇，也可以导入旧日记；AI 配置不是开始使用的前提。
+安装包已包含运行环境，无需另装 Python 或 Node.js。打开后即可写作或导入旧日记，AI 按需配置。
 
-[发行文件与校验值](https://github.com/DurianLoop/LifeOS/releases/tag/v0.5.2) · [使用说明](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/PRODUCT_HELP.md) · [问题与建议](https://github.com/DurianLoop/LifeOS/issues)
+[发行文件与校验值](https://github.com/DurianLoop/LifeOS/releases/tag/v0.5.2) · [本版更新](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/RELEASE_v0.5.2.md) · [问题与建议](https://github.com/DurianLoop/LifeOS/issues)
 
 <details>
 <summary>平台与安装说明</summary>
@@ -191,4 +198,4 @@ npm run dist:win -- --publish=never
 
 <sub>LifeOS · [个人、非商业用途许可](LICENSE.md) · [第三方桌宠](https://github.com/DurianLoop/LifeOS/tree/v0.5.2/app/assets/pets) · [自然声来源](https://github.com/DurianLoop/LifeOS/blob/v0.5.2/docs/WHITE_NOISE.md)</sub>
 
-<sub>主图由项目作者提供并选定，完整保留原图。其余功能截图来自 v0.5.2，日记与来信均为虚构示例。[图像来源](docs/images/readme/CAPTURE.md) · [回到顶部](#lifeos)</sub>
+<sub>演示日记与来信均为虚构内容。[图像来源](docs/images/readme/CAPTURE.md) · [回到顶部](#lifeos)</sub>
