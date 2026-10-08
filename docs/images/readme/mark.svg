@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" role="img" aria-labelledby="title">
+  <title id="title">LifeOS — a page worth keeping</title>
+  <rect x="2" y="2" width="92" height="92" rx="25" fill="#F4EFE6" stroke="#D8CDBD"/>
+  <path d="M24 27c8-3 16-2 24 3 8-5 16-6 24-3v43c-8-3-16-2-24 3-8-5-16-6-24-3V27Z" fill="#FFFCF7" stroke="#8C705A" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M48 31v40M31 40c3-.4 6 .2 10 2M31 49c3-.4 6 .2 10 2M31 58c3-.4 6 .2 10 2M55 53c4-2 7-2.4 10-2M55 62c4-2 7-2.4 10-2" stroke="#B6A58E" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M57 24h9v21l-4.5-4-4.5 4V24Z" fill="#8C9B84"/>
+  <circle cx="75" cy="22" r="5" fill="#C59172"/>
+</svg>

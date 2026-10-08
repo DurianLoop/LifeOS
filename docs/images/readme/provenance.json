@@ -1,0 +1,51 @@
+{
+  "source_tag": "v0.5.2",
+  "source_commit": "1ca8858ea3fcb752b7af065aa0de8f4c11ff514a",
+  "capture_date": "2026-10-08",
+  "capture_method": "Electron webContents.capturePage",
+  "synthetic_diaries": 8,
+  "synthetic_letters": 3,
+  "real_user_diaries_read": 0,
+  "model_calls": 0,
+  "renderer_errors": [],
+  "blocked_external_origins": [
+    "https://codexpet.top"
+  ],
+  "files": [
+    {
+      "name": "bottles.png",
+      "width": 1600,
+      "height": 1100,
+      "bytes": 1090789,
+      "sha256": "cbabb8e0a963000a76c9355036e725ad76dae90edc60106319dd074ad340c239"
+    },
+    {
+      "name": "companion.png",
+      "width": 1600,
+      "height": 1100,
+      "bytes": 994146,
+      "sha256": "bed43c9519c6d0bc992bd190600ff1c6e6de6d2be91f42d474bfc5c771b88d88"
+    },
+    {
+      "name": "desk.png",
+      "width": 1600,
+      "height": 1100,
+      "bytes": 158094,
+      "sha256": "b45428d7f420867964482ea1920c1d1ce9553a0f9f44113b2598ee70435a2f2f"
+    },
+    {
+      "name": "journal.png",
+      "width": 1600,
+      "height": 1100,
+      "bytes": 354802,
+      "sha256": "691560c4326f63b89528f1b1aa6d956dda8bbc6badf5537afc156cf2b31e5228"
+    },
+    {
+      "name": "memory.png",
+      "width": 1600,
+      "height": 1100,
+      "bytes": 613520,
+      "sha256": "1432db4d054a5b3aeb635e85ab463ab6d2c4c7b6692d574bb58f90040ecc6652"
+    }
+  ]
+}
