@@ -1,5 +1,11 @@
 # LifeOS v0.3
 
+> **纪念页历史源码分支 `codex/lifeos-memorial`**
+>
+> 旧纪念页站点：[courageous-parfait-f859b3.netlify.app](https://courageous-parfait-f859b3.netlify.app/)。页面在 [`memorial-site/`](memorial-site/)，后端在 [`netlify/functions/`](netlify/functions/)。
+>
+> 本分支保存 2026-09-28 的历史源码及部署配置。站点对应关系、线上文件校验与函数版本差异见[旧网站源码归档](docs/旧网站源码归档.md)。新版产品官网源码见 [`codex/lifeos-website`](https://github.com/DurianLoop/LifeOS/tree/codex/lifeos-website)。
+
 LifeOS is a local-first journal and personal memory workspace, with an editable writing desk, journal book, and desktop companion.
 
 ## New in v0.3
