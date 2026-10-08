@@ -2,15 +2,21 @@
 
 正式网址：**https://lifeos-diary.netlify.app/**
 
-本目录是 LifeOS v0.5.2 的静态宣传网站，包含真实产品界面、功能介绍、GitHub 源码入口与 Windows / macOS 下载链接。使用原生 HTML、CSS 和 JavaScript，无第三方运行时、在线字体或构建依赖。
+本目录包含 LifeOS v0.5.2 的产品宣传网站，以及可直接使用的 [随身日记 PWA](https://lifeos-diary.netlify.app/app/)（手机版 v0.1）。宣传页提供真实产品界面、功能介绍、GitHub 源码入口与 Windows / macOS 下载链接；手机版支持本机文字日记、离线翻阅、JSON 备份与可选 AI 问答。前端使用原生 HTML、CSS 和 JavaScript，无第三方运行时、在线字体或构建依赖；AI 请求由 Netlify 函数转发。
+
+手机版的 iPhone 安装方法、数据与隐私边界、桌面日记交换方式见 [随身日记说明](app/README.md)。
 
 ## 本地预览
 
-在仓库根目录运行 `node promo/serve.mjs`，打开 http://127.0.0.1:4173/ 。
+在仓库根目录运行 `node promo/serve.mjs`，打开 http://127.0.0.1:4173/ 。手机版入口为 http://127.0.0.1:4173/app/ ，本地服务器也提供相同的 AI 网关路由。
+
+`LIFEOS_PROMO_PORT` 可调整预览端口，`LIFEOS_PROMO_DIST=1` 可改为预览构建产物。验证离线使用和缓存升级时，请先构建并使用产物预览。
 
 ## 构建与部署
 
-运行 `node promo/build.mjs`，生成 `promo/dist/`。构建脚本只复制明确列出的公开静态文件，不包含开发说明、预览服务器或其他应用目录。
+运行 `node promo/build.mjs`，生成 `promo/dist/`。构建脚本只复制明确列出的 40 个公开静态文件，不包含开发说明、预览服务器或其他应用目录，并按手机版资源内容生成 Service Worker 缓存版本。
+
+手机版自动检查命令：`node --test --experimental-test-isolation=none tests/mobile-*.test.mjs`。
 
 仓库根目录的 `netlify.toml` 已指定构建命令和发布目录。Netlify 站点名为 `lifeos-diary`，站点 ID 为 `07817627-cc67-497b-82e7-fb5cf9516223`。
 
@@ -18,10 +24,10 @@
 
 ```sh
 node promo/build.mjs
-netlify deploy --no-build --prod --dir=promo/dist --site=07817627-cc67-497b-82e7-fb5cf9516223
+netlify deploy --no-build --prod --dir=promo/dist --functions=netlify/functions --site=07817627-cc67-497b-82e7-fb5cf9516223
 ```
 
-首次上线使用独立静态部署，目前未连接 Git 自动部署。配置和源文件保存在 `codex/lifeos-website` 分支。
+目前未连接 Git 自动部署。配置和源文件保存在 `codex/lifeos-website` 分支。更新必须包含 `--functions=netlify/functions`，不可再使用仅上传静态文件的旧部署脚本，否则 AI 网关可能不在部署中。
 
 ## 内容与素材
 
@@ -29,7 +35,7 @@ netlify deploy --no-build --prod --dir=promo/dist --site=07817627-cc67-497b-82e7
 
 产品标识使用作者提供的柔和书页素材：导航、页脚和浏览器标签使用静态 PNG，下载区使用翻页 GIF。GIF 仅在图标可见且页面处于前台时播放；暂停动效、系统减少动态效果或页面隐藏时切换为静态 PNG，无 JavaScript 时也显示静态图。
 
-宣传页不读取用户日记、不调用 AI，也不生成模拟产品数据。下载与发行说明链接固定到 v0.5.2；版本更新时应同步核对内容和资源地址。
+宣传页不读取用户日记、不调用 AI，也不生成模拟产品数据。手机版 `/app/` 单独管理本机日记，仅在用户预览摘录并确认后调用可选 AI 服务。下载与发行说明链接固定到桌面版 v0.5.2；版本更新时应同步核对内容和资源地址。
 
 ## 页面交互
 

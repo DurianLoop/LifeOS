@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f4f1e8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="LifeOS">
+  <meta name="description" content="口袋里的 LifeOS。离线写日记、翻阅旧页，带着自己的记录向 AI 提问。">
+  <title>LifeOS · 随身日记</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 5c-3-2-6-2-9-1v15c3-1 6-1 9 1 3-2 6-2 9-1V4c-3-1-6-1-9 1Zm0 0v15"/></symbol>
+    <symbol id="i-ask" viewBox="0 0 24 24"><path d="M5 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-9l-5 3v-3a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="M8 9h8M8 13h5"/></symbol>
+    <symbol id="i-self" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24"><path d="m15 4 5 5M4 20l5-1L21 7a2 2 0 0 0-4-4L5 15l-1 5Z"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M4 17v4h16v-4"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+  </defs></svg>
+  <div class="app-shell">
+    <header class="masthead"><a href="#today" class="brand" aria-label="LifeOS 今天"><img src="./icons/icon-192.png" alt="" width="32" height="32"><span>LifeOS<span class="edition">随身日记</span></span></a><span class="connection" id="connection">本机保存</span></header>
+    <div class="critical hidden" id="storage-error" role="alert"></div>
+    <noscript><p class="notice">请启用 JavaScript 以使用本机日记存储。<a href="../">返回官网</a></p></noscript>
+    <main id="main">
+      <section id="view-today" class="view" aria-labelledby="today-heading">
+        <div class="dateline"><span id="today-date"></span><span class="micro">A PAGE OF YOUR OWN</span></div>
+        <div class="intro"><div><p class="eyebrow">日常，自有回声。</p><h1 id="today-heading">把今天，<br>轻轻写下。</h1><p class="intro-copy">不必完整，也不必漂亮。<br>留几行给此刻的自己。</p></div><div class="book-art" aria-hidden="true"><span class="book-orbit"></span><img src="./icons/icon-512.png" width="112" height="112" alt=""><span class="book-caption">WRITE / KEEP / RETURN</span></div></div>
+        <button class="primary write-today" id="write-today"><svg><use href="#i-pen"/></svg><span>写今天</span><svg><use href="#i-arrow"/></svg></button>
+        <button class="draft-banner hidden" id="resume-draft"><span><small>一页未完</small><strong id="draft-label">继续上次的草稿</strong></span><svg><use href="#i-arrow"/></svg></button>
+        <div class="small-note"><span class="status-dot"></span><span id="offline-ready">文字保存在这台设备，无需登录。</span></div>
+        <section class="recent-section" aria-labelledby="recent-heading"><div class="section-head"><div><span class="eyebrow">THE DAYS WE KEEP</span><h2 id="recent-heading">最近写下的</h2></div><a href="#archive" class="text-link">全部旧页 <span id="entry-count">00</span></a></div><div id="recent-list" class="entry-list"></div></section>
+        <aside id="install-nudge" class="install-nudge"><p>让 LifeOS 留在主屏幕</p><span>下次想写，轻轻一点就到。</span><button class="text-link" id="show-install">查看安装方法 <svg><use href="#i-arrow"/></svg></button></aside>
+      </section>
+
+      <section id="view-archive" class="view" aria-labelledby="archive-heading" hidden><div class="page-heading"><span class="eyebrow">YOUR PERSONAL ARCHIVE</span><h1 id="archive-heading">旧页</h1><p>那些写下来的日子，都在这里。</p></div><div class="search-field"><svg><use href="#i-search"/></svg><input id="archive-search" type="search" placeholder="寻找一个词、一段往事" aria-label="搜索日记" autocomplete="off"></div><div class="archive-tools"><label>按月 <input id="archive-month" type="month" aria-label="按月筛选日记"></label><button class="text-link" id="clear-filter">全部日期</button><button class="text-link" id="write-another">补写一页</button></div><p id="archive-count" class="meta"></p><div id="archive-list" class="entry-list"></div></section>
+
+      <section id="view-ask" class="view" aria-labelledby="ask-heading" hidden><div class="page-heading"><span class="eyebrow">REFLECTION, WITH CONTEXT</span><h1 id="ask-heading">问自己</h1><p>带着真实的记录，换一个角度看自己。</p></div><p class="notice">先选旧页，再确认发送。AI 只会收到你的问题与本次选定的摘录。</p><label class="field-label" for="question">此刻，你想知道什么？</label><textarea id="question" rows="4" maxlength="2000" placeholder="例如：从这些记录里，能看见哪些让我恢复精力的事情？"></textarea><div class="section-head compact"><h2>带上几页旧日</h2><span id="evidence-count" class="meta">0 / 6 页</span></div><input id="evidence-search" type="search" placeholder="按关键词寻找相关记录" aria-label="筛选问答参考日记"><div id="evidence-list" class="evidence-list"></div><p id="ai-config-hint" class="meta"></p><button class="primary full-width" id="review-question">预览本次发送内容 <svg><use href="#i-arrow"/></svg></button><p class="small-note">AI 可选，需联网并配置自己的 API Key。<a href="#settings">去配置</a></p><div id="answer-panel" class="answer-panel" hidden><span class="eyebrow">ANOTHER WAY TO SEE</span><h2>这一次的回声</h2><p class="meta" id="answer-question"></p><div id="answer-text" class="answer-text"></div><div id="answer-sources" class="source-links"></div><p class="meta">回答仅供自我反思，请结合原文判断。</p></div></section>
+
+      <section id="view-settings" class="view" aria-labelledby="settings-heading" hidden><div class="page-heading"><span class="eyebrow">YOUR SPACE, YOUR CHOICES</span><h1 id="settings-heading">我的</h1><p>记录留在身边，选择握在手里。</p></div>
+        <section class="settings-section"><div class="section-head"><h2>装进口袋</h2><img class="settings-icon" src="./icons/icon-192.png" width="44" height="44" alt="LifeOS 书页图标"></div><p>用 iPhone 的 Safari 打开此页，点击「分享」，选择「添加到主屏幕」，再点「添加」。</p><p class="meta">若从微信等应用打开，请先用 Safari 打开。首次联网打开后，等待离线就绪，再从主屏幕启动。</p><button id="native-install" class="secondary hidden">安装 LifeOS</button><p id="install-state" class="meta"></p></section>
+        <section class="settings-section"><div class="section-head"><h2>日记与备份</h2><span id="storage-summary" class="meta"></span></div><p>日记、草稿和回收站保存在当前浏览器或主屏幕应用中。与电脑暂不自动同步，可通过文件导入导出。</p><p class="notice">清理网站数据、移除应用或系统回收存储可能丢失记录。建议定期导出备份；Safari 与主屏幕应用中的数据也可能独立，安装后请确认旧页是否已带入。</p><div class="button-row"><button id="export-backup" class="secondary"><svg><use href="#i-download"/></svg>导出备份</button><button id="import-backup" class="secondary">导入日记</button></div><input id="import-file" type="file" accept=".json,application/json" hidden><p class="meta">支持本手机版备份、LifeOS 桌面版 JSON 日记导出。此次版本仅导入文字日记，不包含附件。</p><p id="import-result" role="status" class="meta"></p><button id="persist-storage" class="text-link">请求保留本机存储</button><p id="persist-result" role="status" class="meta"></p></section>
+        <section class="settings-section"><h2>AI，按需而来</h2><p>使用你自己的模型服务，费用由服务商按你的账户计费。Key 仅保留在本次打开期间，关闭后需重新填写。</p><form id="ai-settings"><label class="field-label" for="provider">模型服务</label><select id="provider"><option value="deepseek">DeepSeek</option><option value="openai">OpenAI</option><option value="qwen">通义千问（中国站）</option></select><label class="field-label" for="model">模型名称</label><input id="model" maxlength="128" autocomplete="off" spellcheck="false" value="deepseek-chat" required><label class="field-label" for="api-key">API Key</label><input id="api-key" type="password" autocomplete="off" spellcheck="false" placeholder="仅用于这次打开，不写入备份" maxlength="512"><p class="meta">确认提问后，Key、问题与所选摘录经本站 Netlify 函数转发给你选择的服务商；本站不主动保存请求正文或 Key。</p><div class="button-row"><button type="submit" class="secondary">应用配置</button><button type="button" id="clear-key" class="text-link">清除本次 Key</button></div><p id="settings-status" role="status" class="meta"></p></form></section>
+        <section class="settings-section"><div class="section-head"><h2>回收站</h2><span class="meta">可恢复</span></div><div id="trash-list"></div></section>
+        <footer class="about"><img src="./icons/icon-192.png" width="32" height="32" alt=""><p>LifeOS · 随身日记 <span class="meta">v0.1</span></p><span>把今日写下，让来日重逢。</span><div><a href="../">产品官网</a><a href="https://github.com/DurianLoop/LifeOS/tree/codex/lifeos-website/promo/app" target="_blank" rel="noopener noreferrer">开源代码</a></div></footer>
+      </section>
+    </main>
+  </div>
+  <nav class="tabbar" aria-label="主导航"><a href="#today" data-tab="today" aria-current="page"><svg><use href="#i-sun"/></svg><span>今天</span></a><a href="#archive" data-tab="archive"><svg><use href="#i-book"/></svg><span>旧页</span></a><a href="#ask" data-tab="ask"><svg><use href="#i-ask"/></svg><span>问自己</span></a><a href="#settings" data-tab="settings"><svg><use href="#i-self"/></svg><span>我的</span></a></nav>
+
+  <dialog id="writer" class="sheet" aria-labelledby="writer-heading"><form id="writer-form"><header class="sheet-header"><button class="icon-button" id="close-writer" type="button" aria-label="收起并保留草稿"><svg><use href="#i-close"/></svg></button><span id="draft-status" class="meta" role="status">草稿保存在本机</span><button id="save-entry" class="primary small" type="submit">收笔保存</button></header><div class="sheet-body"><span class="eyebrow">ONE DAY, ONE PAGE</span><h2 id="writer-heading">落笔</h2><label class="field-label" for="entry-date">这一天</label><input id="entry-date" type="date" required><label class="sr-only" for="entry-title">日记标题</label><input id="entry-title" class="title-input" maxlength="200" placeholder="为这一天，留个题目（可选）"><label class="sr-only" for="entry-body">日记正文</label><textarea id="entry-body" class="writing-paper" placeholder="从一个小片刻开始……" maxlength="50000" required></textarea><div class="writer-bottom"><span id="word-count" class="meta">0 字</span><button type="button" id="discard-draft" class="text-link">舍弃草稿</button></div><p id="writer-error" class="error" role="alert"></p></div></form></dialog>
+  <dialog id="reader" class="sheet" aria-labelledby="reader-title"><header class="sheet-header"><button class="icon-button" id="close-reader" aria-label="关闭日记"><svg><use href="#i-close"/></svg></button><span class="micro">A DAY, REMEMBERED</span><button id="edit-entry" class="secondary small">继续编辑</button></header><article class="sheet-body reading"><time id="reader-date" class="eyebrow"></time><h2 id="reader-title"></h2><div id="reader-body" class="prose"></div><details id="history-details"><summary>查看历史版本</summary><div id="history-list"></div></details><div class="reader-bottom"><span class="meta">原文保存在本机</span><button id="delete-entry" class="text-link danger">移到回收站</button></div></article></dialog>
+  <dialog id="send-review" class="sheet review-sheet" aria-labelledby="review-title"><header class="sheet-header"><button class="icon-button" id="close-review" aria-label="关闭发送预览"><svg><use href="#i-close"/></svg></button><span class="micro">YOU CHOOSE WHAT TO SHARE</span></header><div class="sheet-body"><h2 id="review-title">只发送这些。</h2><p class="meta" id="review-destination"></p><h3>你的问题</h3><p class="prose" id="review-question-text"></p><h3>本次参考的旧页</h3><p class="meta">每页默认取前 1,600 字，你可以调整摘录。全部摘录最多 10,000 字。</p><div id="review-evidence"></div><button class="primary full-width" id="send-question">确认并向 AI 提问</button><button class="secondary full-width hidden" id="cancel-question">停止等待</button><p id="send-status" role="status" class="meta"></p></div></dialog>
+  <dialog id="confirm-dialog" class="confirm-dialog" aria-labelledby="confirm-title"><h2 id="confirm-title"></h2><p id="confirm-copy"></p><div class="button-row"><button class="secondary" id="confirm-no">取消</button><button class="primary" id="confirm-yes">确认</button></div></dialog>
+  <p id="toast" class="toast" role="status" aria-live="polite" hidden></p>
+</body>
+</html>

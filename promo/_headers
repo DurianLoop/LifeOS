@@ -2,3 +2,14 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Cache-Control: public, max-age=0, must-revalidate
+
+/app/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+/app/sw.js
+  Cache-Control: no-cache
+  Service-Worker-Allowed: /app/
+
+/.netlify/functions/*
+  Cache-Control: no-store

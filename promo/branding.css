@@ -17,3 +17,8 @@ img.brand-mark {
 @media (max-width: 760px) {
   .download-spark .product-brand { width: 88px; height: 88px; }
 }
+.hero-cta { flex-wrap: wrap; gap: 14px; }
+.hero-cta .button-outline { border: 1px solid #c4cfac66; color: #e2e8d7; background: transparent; }
+.mobile-app-download { margin: 0 auto 28px; }
+.mobile-app-download .button { min-width: 250px; justify-content: center; }
+.mobile-app-download p { font-size: 11px; color: #5b7140; margin-top: 12px; line-height: 1.8; }
