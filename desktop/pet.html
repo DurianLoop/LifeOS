@@ -9,6 +9,7 @@ let activeCommand=null,configured=false,frameDue=0,frameRemaining=null;
 const seenCommands=new Set(),pendingCommands=new Map();
 const scripts=new Map();
 function loadScript(url){if(!scripts.has(url))scripts.set(url,new Promise((resolve,reject)=>{const script=document.createElement('script');script.src=url;script.onload=resolve;script.onerror=()=>reject(new Error('桌宠组件未能加载'));document.head.append(script)}));return scripts.get(url)}
+const nativePet=value=>['vivi-gif','dsh-webm'].includes(value?.renderer);
 const selected=()=>activeCommand?.action||null,isV2=()=>Number(meta?.version)===2;
 function setState(next,ms=0,force=false){if(selected()&&!force){next=selected();ms=0}stop();state=Object.hasOwn(ROW,next)?next:'idle';look=-1;frame=0;until=ms?Date.now()+ms:0;paint();animate()}
 function paint(){
@@ -57,7 +58,7 @@ function applySettings(patch){
   if(vivi){
     if(previous.motion!==meta.motion)vivi.setMotion(meta.motion!==false);
     if(previous.visible!==meta.visible)vivi.setVisible(meta.visible!==false);
-    if(patch.vivi&&JSON.stringify(previous.vivi)!==JSON.stringify(meta.vivi))vivi.setSettings({...meta.vivi,scale:1});
+    if(meta.renderer==='vivi-gif'&&patch.vivi&&JSON.stringify(previous.vivi)!==JSON.stringify(meta.vivi))vivi.setSettings({...meta.vivi,scale:1});
     if(previous.scale!==meta.scale)resizeSprite();
   }else{paint();if(previous.motion!==meta.motion||previous.visible!==meta.visible)animate()}
 }
@@ -69,18 +70,19 @@ async function applyConfig(next){
     next={...next,...settingsOverlay};const previous=meta,changed=meta?.id!==next.id||meta?.sprite!==next.sprite||meta?.renderer!==next.renderer;
     if(!changed&&!next.frameMap&&previous?.frameMap)next.frameMap=previous.frameMap;
     if(changed)configured=false;
-    if(changed&&next.renderer!=='vivi-gif'){const image=new Image();image.src=next.sprite;await image.decode();if(request!==sequence)return;next={...next,frameMap:scanFrames(image,next.version)}}
-    if(changed){stop();activeCommand=null;vivi?.destroy();vivi=null;viviSize='';root.replaceChildren();paintedAsset='';if(next.renderer==='vivi-gif')root.style.backgroundImage='';}
-    if(next.renderer==='vivi-gif'){
-      await loadScript(next.viviScript);if(request!==sequence)return;
-      if(!document.querySelector('[data-vivi-css]')){const sheet=document.createElement('link');sheet.rel='stylesheet';sheet.href=next.viviCSS;sheet.dataset.viviCss='true';document.head.append(sheet)}
+    if(changed&&!nativePet(next)){const image=new Image();image.src=next.sprite;await image.decode();if(request!==sequence)return;next={...next,frameMap:scanFrames(image,next.version)}}
+    if(changed){stop();activeCommand=null;vivi?.destroy();vivi=null;viviSize='';root.replaceChildren();paintedAsset='';if(nativePet(next))root.style.backgroundImage='';}
+    if(nativePet(next)){
+      await loadScript(next.renderer==='dsh-webm'?next.nativeScript:next.viviScript);if(request!==sequence)return;
+      const css=next.renderer==='dsh-webm'?next.nativeCSS:next.viviCSS;if(![...document.querySelectorAll('link')].some(sheet=>sheet.href===css)){const sheet=document.createElement('link');sheet.rel='stylesheet';sheet.href=css;document.head.append(sheet)}
       meta={...next,...settingsOverlay};
       if(!vivi){
-        vivi=window.lifeosViVi.mount(root,{...next,slug:next.id,actions:next.viviActions},{mode:'companion',interactive:false,width:root.clientWidth,height:root.clientHeight,position:next.position,settings:{...next.settings,...next.vivi,scale:1},bounds:()=>({width:meta.workArea.width,height:meta.workArea.height}),onPosition:point=>petBridge.position(point),onError:error=>petBridge.failed(error.message)});
+        const renderer=next.renderer==='dsh-webm'?window.lifeosDSH:window.lifeosViVi;
+        vivi=renderer.mount(root,{...next,slug:next.id,actions:next.renderer==='dsh-webm'?next.nativeActions:next.viviActions},{mode:'companion',interactive:false,width:root.clientWidth,height:root.clientHeight,position:next.position,settings:{...next.settings,...(next.renderer==='vivi-gif'?next.vivi:{}),scale:1},bounds:()=>({width:meta.workArea.width,height:meta.workArea.height}),onPosition:point=>petBridge.position(point),onError:error=>petBridge.failed(error.message)});
       }
       await vivi.ready;if(request!==sequence)return;meta={...meta,...settingsOverlay};
       if(changed||JSON.stringify(previous?.workArea)!==JSON.stringify(next.workArea))vivi.setPosition(next.position.x,next.position.y);
-      resizeSprite();vivi.setMotion(meta.motion!==false);if(changed||JSON.stringify(previous?.vivi)!==JSON.stringify(meta.vivi))vivi.setSettings({...meta.vivi,scale:1});vivi.setVisible(meta.visible!==false);
+      resizeSprite();vivi.setMotion(meta.motion!==false);if(next.renderer==='vivi-gif'&&(changed||JSON.stringify(previous?.vivi)!==JSON.stringify(meta.vivi)))vivi.setSettings({...meta.vivi,scale:1});vivi.setVisible(meta.visible!==false);
     }else{
       meta={...next,...settingsOverlay};if(changed)setState('idle');else paint();animate();
     }

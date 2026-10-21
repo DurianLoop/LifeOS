@@ -13,7 +13,8 @@ const platformBinary = process.platform === 'win32' ? 'electron.exe'
   : process.platform === 'darwin' ? 'Electron.app/Contents/MacOS/Electron' : 'electron';
 
 function fixture(t) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'LifeOS setup 中文 '));
+  // macOS /var aliases /private/var; Node resolves modules to the real path.
+  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'LifeOS setup 中文 ')));
   const desktop = path.join(root, 'desktop');
   fs.mkdirSync(desktop);
   fs.writeFileSync(path.join(root, 'requirements.txt'), 'qrcode\n');

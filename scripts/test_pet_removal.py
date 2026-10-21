@@ -24,6 +24,7 @@ class RemovalTests(unittest.TestCase):
                  'PET_SLUG':re.compile(r'^[a-z0-9][a-z0-9-]{1,110}$'),'product':Settings(self.root),'pet_frame_map':lambda *a:[[0]]*9,
                  'PET_CATALOG_CACHE':{'status':'snapshot','checked_at':None},'pet_catalog':lambda *a:[],
                  'SOURCE_ROOT':self.base/'resources','vivi_pet':type('ViVi',(),{'SLUG':'vivi--durianloop','bundled_item':staticmethod(lambda *args:None)})(),
+                 'dsh_pet':type('DSH',(),{'SLUG':'dsh-pet--pc2005-cloud','bundled_item':staticmethod(lambda *args:None)})(),
                  'pet_fetch_bytes':lambda *a:(_ for _ in ()).throw(AssertionError('reinstalling a bundled pet must stay offline'))}
         exec(code,self.ns)
     def tearDown(self):self.tmp.cleanup()

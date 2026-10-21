@@ -9,14 +9,14 @@ html[data-copy-mode="poetic"]{--sidebar-font:var(--type-serif)}
 .sidebarRooms .navText{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sidebarRooms .roomBtn{flex:none}.sidebarRooms .atticNavToggle.has-active{color:var(--dream-accent)}
 .sidebarEditBar{flex:none;padding-top:10px;margin-top:8px;border-top:1px solid var(--line)}.sidebarEditBar[hidden]{display:none!important}
-.sidebarEditBar button{border:0;background:none;color:var(--muted);font:10px/1.4 var(--type-sans);min-height:34px;padding:5px 3px;cursor:pointer}
-.sidebarTweakEdit{min-height:40px;border:1px solid var(--line);background:transparent;color:var(--ink);font:12px var(--type-sans);padding:8px 12px;text-align:left;cursor:pointer}.sidebarTweakEdit:hover{background:var(--paper2)}
+.sidebarEditBar button{border:0;background:none;color:var(--muted);font:var(--text-caption)/1.4 var(--type-sans);min-height:34px;padding:5px 3px;cursor:pointer}
+.sidebarTweakEdit{min-height:40px;border:1px solid var(--line);background:transparent;color:var(--ink);font:var(--text-label) var(--type-sans);padding:8px 12px;text-align:left;cursor:pointer}.sidebarTweakEdit:hover{background:var(--paper2)}
 .sidebarEditActions{display:flex;align-items:center;justify-content:space-between;gap:5px}
 #sidebarDone{background:var(--ink);color:var(--paper);padding:6px 10px;border-radius:3px}
-.sidebarEditStatus{font:10px/1.7 var(--type-sans);color:var(--muted);overflow-wrap:anywhere}
+.sidebarEditStatus{font:var(--text-caption)/1.7 var(--type-sans);color:var(--muted);overflow-wrap:anywhere}
 .sidebarEditStatus:not(:empty){padding:3px 2px 9px}.sidebarEditStatus.is-error{color:#9b5849}
-.sidebarEditHint{font:10px/1.8 var(--type-sans);margin:0 6px 13px;color:var(--muted)}
-.sidebarGrip{margin-left:auto;opacity:.35;font:17px/1 var(--type-sans);color:var(--muted);flex:none;letter-spacing:-.1em}
+.sidebarEditHint{font:var(--text-caption)/1.8 var(--type-sans);margin:0 6px 13px;color:var(--muted)}
+.sidebarGrip{margin-left:auto;opacity:.35;font:var(--text-reading)/1 var(--type-sans);color:var(--muted);flex:none;letter-spacing:-.1em}
 .sidebarEditing .sidebarRooms .roomBtn[data-sidebar-item]{cursor:grab;position:relative;touch-action:none;user-select:none;border-radius:4px}
 .sidebarEditing .sidebarRooms .roomBtn[data-sidebar-item]:hover{background:color-mix(in srgb,var(--dream-accent) 6%,transparent)}
 .sidebarEditing .sidebarRooms .roomBtn.active{border-bottom-color:transparent;box-shadow:none}
@@ -28,7 +28,7 @@ body.sidebarDraggingActive,body.sidebarDraggingActive *{cursor:grabbing!importan
 .sidebarEditing .sidebarDropBefore:before{content:'';position:absolute;left:9px;right:7px;top:-2px;height:2px;background:var(--dream-accent);pointer-events:none}
 .sidebarEditing .sidebarDropEnd:after{content:'';display:block;height:2px;background:var(--dream-accent);margin:3px 7px 0 9px;pointer-events:none}
 .sidebarEditing .sidebarDropZone{background:color-mix(in srgb,var(--dream-accent) 5%,transparent)}
-.sidebarDropEmpty{display:block;min-height:54px;padding:17px 10px;border:1px dashed var(--line);font:10px/1.8 var(--type-sans);color:var(--muted);margin:6px 2px}
+.sidebarDropEmpty{display:block;min-height:54px;padding:17px 10px;border:1px dashed var(--line);font:var(--text-caption)/1.8 var(--type-sans);color:var(--muted);margin:6px 2px}
 .sidebarDragGhost{position:fixed;left:0;top:0;z-index:500;box-sizing:border-box;display:flex;align-items:center;gap:11px;padding:8px 9px;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:9px;box-shadow:0 14px 35px #14232b2b,0 3px 7px #14232b14;pointer-events:none;will-change:transform}
 .sidebarDragGhost .uiIcon{display:grid;width:20px;height:20px}.sidebarDragGhost .navText{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sidebarDragGhost .sidebarGrip{display:inline}
 .sidebarDropEmpty[hidden]{display:none}

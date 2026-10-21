@@ -1,0 +1,6 @@
+.dshPetStage{position:relative;display:block;width:100%;height:100%;pointer-events:none;overflow:hidden}
+.dshPetVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center bottom;background:transparent;pointer-events:none}
+.dshPetVideo[hidden]{display:none}
+.petSourceLink{color:inherit;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+.petPageInstalled .petSourceLink,.petPageCard .petSourceLink{display:block;margin-top:4px;font:var(--text-caption)/1.5 var(--type-mono)}
+#petPageByline:has(.petSourceLink){white-space:normal;overflow:visible}

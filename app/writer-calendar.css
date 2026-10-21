@@ -39,7 +39,7 @@
   border-radius: 3px;
   padding: 4px;
   background: transparent;
-  font-size: 16px !important;
+  font-size: var(--text-ui) !important;
 }
 .i2CalendarYear { width: 72px; text-align: center; appearance: textfield; }
 .i2CalendarYear::-webkit-outer-spin-button,
@@ -49,7 +49,7 @@
 .i2CalendarWeekdays,
 .i2CalendarWeek { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
 .i2CalendarDays { display: grid; gap: 3px; }
-.i2CalendarWeekdays { margin: 12px 0 7px; color: var(--muted, #877e72); font: 10px var(--type-mono, monospace); }
+.i2CalendarWeekdays { margin: 12px 0 7px; color: var(--muted, #877e72); font: var(--text-caption) var(--type-mono, monospace); }
 .i2CalendarWeekdays span { text-align: center; }
 .i2CalendarDay {
   position: relative;
@@ -62,7 +62,7 @@
   border: 1px solid transparent;
   border-radius: 5px;
   background: transparent;
-  font-size: 14px !important;
+  font-size: var(--text-label) !important;
   font-variant-numeric: tabular-nums;
 }
 .i2CalendarDay.is-adjacent { color: var(--muted, #877e72); opacity: .5; }
@@ -87,7 +87,7 @@
 .i2WriterCalendar :focus-visible { outline: 2px solid var(--dream-accent, #776985); outline-offset: 2px; }
 .i2CalendarFoot { display: flex; justify-content: space-between; gap: 12px; margin-top: 10px; border-top: 1px solid var(--line, #d7cec1); padding-top: 10px; }
 .i2CalendarFoot button,
-.i2CalendarStatus button { padding: 3px 0; border: 0; background: transparent; font: 11px var(--type-mono, monospace) !important; }
+.i2CalendarStatus button { padding: 3px 0; border: 0; background: transparent; font: var(--text-caption) var(--type-mono, monospace) !important; }
 .i2CalendarClose { color: var(--muted, #877e72) !important; }
 .i2CalendarStatus { text-align: center; padding-top: 7px; }
 .i2CalendarStatus[hidden] { display: none; }

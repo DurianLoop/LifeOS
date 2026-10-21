@@ -55,7 +55,7 @@
   }
 
   .i2WriterAsideRight .i2CellHead label {
-    font-size: 17px;
+    font-size: var(--text-reading);
   }
 
   .i2WriterAsideRight .i2HabitList {
@@ -64,7 +64,7 @@
   }
 
   .i2WriterAsideRight .i2HabitList label {
-    font-size: 13px;
+    font-size: var(--text-label);
   }
 
   .i2WriterAsideRight .i2HabitNote {
@@ -104,7 +104,7 @@
   }
 
   .i2WriterAsideRight .i2WriterPreviewPanel p {
-    font-size: 13px;
+    font-size: var(--text-label);
     line-height: 1.65;
   }
 
@@ -120,7 +120,7 @@
   .i2WriterLive span {
     grid-column: 1 / -1;
     color: var(--muted);
-    font: 9px var(--type-mono);
+    font: var(--text-caption) var(--type-mono);
     letter-spacing: .12em;
   }
 
@@ -133,7 +133,7 @@
   .i2WriterLive p {
     margin: 0;
     color: var(--muted);
-    font: 9px var(--type-mono);
+    font: var(--text-caption) var(--type-mono);
   }
 
   .i2WriterLive p {
@@ -190,7 +190,7 @@
   .i2WriterLive span { display: none; }
   .i2WriterLive strong { font: 400 30px var(--type-serif); }
   .i2WriterLive small,
-  .i2WriterLive p { margin: 0; color: var(--muted); font: 9px var(--type-mono); }
+  .i2WriterLive p { margin: 0; color: var(--muted); font: var(--text-caption) var(--type-mono); }
   .i2WriterAsideRight .i2WriterMore { width: auto; margin: 0; }
 }
 
@@ -215,35 +215,35 @@
   border: 0;
   background: transparent;
   color: var(--muted);
-  font: 700 15px/1 var(--type-mono);
+  font: 700 var(--text-ui)/1 var(--type-mono);
   letter-spacing: .08em;
   cursor: pointer;
 }
 .i2CellTune:hover,.i2CellTune:focus-visible { color: var(--ink); outline: 1px solid var(--line-dark); outline-offset: 2px; }
 .i2CustomCell { min-height: 170px; }
 .i2DeskCellEditor { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.i2DeskCellEditor summary { display: grid; gap: 4px; padding: 13px 0; cursor: pointer; font: 600 13px var(--type-sans); list-style: none; }
+.i2DeskCellEditor summary { display: grid; gap: 4px; padding: 13px 0; cursor: pointer; font: 600 var(--text-label) var(--type-sans); list-style: none; }
 .i2DeskCellEditor summary::-webkit-details-marker { display: none; }
-.i2DeskCellEditor summary::after { content: '+'; position: absolute; right: 0; font: 400 18px/1 var(--type-mono); }
+.i2DeskCellEditor summary::after { content: '+'; position: absolute; right: 0; font: 400 var(--text-reading)/1 var(--type-mono); }
 .i2DeskCellEditor[open] summary::after { content: '−'; }
 .i2DeskCellEditor summary { position: relative; }
-.i2DeskCellEditor summary small,.i2DeskCellEditorBody>p { color: var(--muted); font: 10px/1.55 var(--type-mono); letter-spacing: .02em; }
+.i2DeskCellEditor summary small,.i2DeskCellEditorBody>p { color: var(--muted); font: var(--text-caption)/1.55 var(--type-mono); letter-spacing: .02em; }
 .i2DeskCellEditorBody { padding: 0 0 14px; }
 .i2DeskCellEditorBody>p { margin: 0 0 12px; }
 .i2DeskCellRows { display: grid; gap: 9px; max-height: 42vh; overflow: auto; padding-right: 3px; }
 .i2DeskCellRow { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 8px; padding: 10px; border: 1px solid var(--line); background: color-mix(in srgb,var(--paper) 78%,transparent); }
 .i2DeskCellRowTop { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; }
-.i2DeskCellRowTop>label { display: flex; align-items: center; gap: 5px; font-size: 11px; }
-.i2DeskCellRowTop>span { color: var(--muted); font: 9px var(--type-mono); }
+.i2DeskCellRowTop>label { display: flex; align-items: center; gap: 5px; font-size: var(--text-caption); }
+.i2DeskCellRowTop>span { color: var(--muted); font: var(--text-caption) var(--type-mono); }
 .i2DeskCellRowTop>div { display: flex; gap: 2px; margin-left: auto; }
 .i2DeskCellRowTop button { width: 22px; height: 20px; padding: 0; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; }
 .i2DeskCellRowTop button:disabled { opacity: .35; cursor: default; }
 .i2DeskCellRowTop .i2DeskRemove { color: var(--danger,#9b504c); }
-.i2DeskCellRow>label { display: grid; gap: 3px; color: var(--muted); font: 9px var(--type-mono); }
+.i2DeskCellRow>label { display: grid; gap: 3px; color: var(--muted); font: var(--text-caption) var(--type-mono); }
 .i2DeskCellRow>label:last-child { grid-column: 1 / -1; }
-.i2DeskCellRow .input { min-width: 0; height: 29px; padding: 5px 7px; font: 12px var(--type-sans); }
+.i2DeskCellRow .input { min-width: 0; height: 29px; padding: 5px 7px; font: var(--text-label) var(--type-sans); }
 .i2DeskCellActions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 11px; }
-.i2DeskCellActions button { min-height: 29px; padding: 5px 8px; border: 1px solid var(--line-dark); background: transparent; color: var(--ink); font: 11px var(--type-sans); cursor: pointer; }
+.i2DeskCellActions button { min-height: 29px; padding: 5px 8px; border: 1px solid var(--line-dark); background: transparent; color: var(--ink); font: var(--text-caption) var(--type-sans); cursor: pointer; }
 .i2DeskCellActions .primary { margin-left: auto; }
 @media (max-width: 760px) { .i2DeskCellRows { max-height: none; } .i2DeskCellRow { grid-template-columns: 1fr; } .i2DeskCellRow>label:last-child { grid-column: auto; } }
 
@@ -251,10 +251,10 @@
    accordion or an extra apply step. */
 .i2DeskCellEditor { border: 1px solid var(--line); background: color-mix(in srgb, var(--paper2) 52%, transparent); padding: 14px; }
 .i2DeskEditorHead { display: flex; align-items: flex-start; gap: 10px; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
-.i2DeskEditorHead>div>span { color: var(--dream-accent); font: 9px var(--type-mono); letter-spacing: .12em; }
-.i2DeskEditorHead h3 { margin: 5px 0 3px; font: 400 20px var(--type-serif); }
-.i2DeskEditorHead p { margin: 0; color: var(--muted); font: 10px/1.55 var(--type-serif); }
-.i2DeskEditorHead>button { flex: 0 0 auto; border: 0; border-bottom: 1px solid var(--line-dark); background: transparent; padding: 3px 0; color: var(--muted); font: 10px var(--type-mono); cursor: pointer; }
+.i2DeskEditorHead>div>span { color: var(--dream-accent); font: var(--text-caption) var(--type-mono); letter-spacing: .12em; }
+.i2DeskEditorHead h3 { margin: 5px 0 3px; font: 400 var(--text-subtitle) var(--type-serif); }
+.i2DeskEditorHead p { margin: 0; color: var(--muted); font: var(--text-caption)/1.55 var(--type-serif); }
+.i2DeskEditorHead>button { flex: 0 0 auto; border: 0; border-bottom: 1px solid var(--line-dark); background: transparent; padding: 3px 0; color: var(--muted); font: var(--text-caption) var(--type-mono); cursor: pointer; }
 .i2DeskEditorHead>button:hover { color: var(--ink); border-color: var(--dream-accent); }
 .i2DeskCellRows { display: grid; gap: 8px; max-height: 48vh; overflow: auto; padding: 12px 3px 2px 0; }
 .i2DeskCellRow { display: grid; gap: 7px 8px; padding: 10px; border: 1px solid var(--line); background: color-mix(in srgb, var(--paper) 82%, transparent); transition: border-color .16s, background .16s, opacity .16s; }
@@ -262,12 +262,12 @@
 .i2DeskCellRow.is-hidden { opacity: .52; }
 .i2DeskCellRow.is-dragging { opacity: .34; border-style: dashed; }
 .i2DeskCellRowTop { display: flex; align-items: center; gap: 7px; min-width: 0; }
-.i2DeskCellRowTop strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); font: 400 15px var(--type-serif); }
-.i2DeskCellRowTop>span { color: var(--muted); font: 8px var(--type-mono); }
+.i2DeskCellRowTop strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); font: 400 var(--text-ui) var(--type-serif); }
+.i2DeskCellRowTop>span { color: var(--muted); font: var(--text-caption) var(--type-mono); }
 .i2DeskCellRowTop>div { display: flex; gap: 2px; margin-left: auto; }
-.i2DragHandle { flex: 0 0 auto; border: 0; background: transparent; padding: 0 2px; color: var(--dream-accent); font: 16px/1 var(--type-mono); cursor: grab; }
+.i2DragHandle { flex: 0 0 auto; border: 0; background: transparent; padding: 0 2px; color: var(--dream-accent); font: var(--text-ui)/1 var(--type-mono); cursor: grab; }
 .i2DragHandle:active { cursor: grabbing; }
-.i2DeskVisibility { display: flex; align-items: center; gap: 4px; margin-left: auto; color: var(--muted); font: 9px var(--type-mono); white-space: nowrap; cursor: pointer; }
+.i2DeskVisibility { display: flex; align-items: center; gap: 4px; margin-left: auto; color: var(--muted); font: var(--text-caption) var(--type-mono); white-space: nowrap; cursor: pointer; }
 .i2DeskVisibility input { accent-color: var(--dream-accent); }
 .i2DeskCellRowTop button:not(.i2DragHandle) { width: 22px; height: 21px; padding: 0; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; }
 .i2DeskCellRowTop button:not(.i2DragHandle):hover { border-color: var(--dream-accent); }
@@ -275,12 +275,12 @@
 .i2DeskCellControls { display: grid; grid-template-columns: minmax(0,1.35fr) minmax(0,.8fr) minmax(0,.8fr); gap: 6px; }
 .i2DeskCellControls { grid-template-columns: 1fr 1fr; }
 .i2DeskCellControls label:first-child { grid-column: 1 / -1; }
-.i2DeskCellRow>label,.i2DeskCellControls label { display: grid; gap: 3px; color: var(--muted); font: 8px var(--type-mono); }
-.i2DeskCellRow .input { min-width: 0; height: 29px; padding: 5px 7px; border-color: var(--line); background: color-mix(in srgb, var(--paper) 72%, transparent); font: 12px var(--type-sans); }
+.i2DeskCellRow>label,.i2DeskCellControls label { display: grid; gap: 3px; color: var(--muted); font: var(--text-caption) var(--type-mono); }
+.i2DeskCellRow .input { min-width: 0; height: 29px; padding: 5px 7px; border-color: var(--line); background: color-mix(in srgb, var(--paper) 72%, transparent); font: var(--text-label) var(--type-sans); }
 .i2DeskCellActions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 11px; }
-.i2DeskCellActions button { min-height: 29px; padding: 5px 8px; border: 1px solid var(--line-dark); background: transparent; color: var(--ink); font: 10px var(--type-sans); cursor: pointer; }
+.i2DeskCellActions button { min-height: 29px; padding: 5px 8px; border: 1px solid var(--line-dark); background: transparent; color: var(--ink); font: var(--text-caption) var(--type-sans); cursor: pointer; }
 .i2DeskCellActions button:hover { border-color: var(--dream-accent); }
-.i2DeskCellActions small { color: var(--muted); font: 9px var(--type-mono); }
+.i2DeskCellActions small { color: var(--muted); font: var(--text-caption) var(--type-mono); }
 .i2WriterGrid .i2CellStyle-paper { background: color-mix(in srgb, var(--paper) 95%, var(--dream-accent) 5%); }
 .i2WriterGrid .i2CellSize-compact { min-height: 170px; }
 .i2WriterGrid .i2CellSize-standard { min-height: 250px; }
@@ -302,7 +302,7 @@
 /* PC keeps the writing desk wide; layout controls live below the grid rather
    than inside a thin secondary rail. */
 .i2WriterStageIntro { display: grid; gap: 6px; min-width: 0; }
-.i2WriterStageIntro>button { width: max-content; border: 0; border-bottom: 1px solid var(--line-dark); background: transparent; color: var(--dream-accent); padding: 0 0 3px; font: 10px var(--type-mono); cursor: pointer; }
+.i2WriterStageIntro>button { width: max-content; border: 0; border-bottom: 1px solid var(--line-dark); background: transparent; color: var(--dream-accent); padding: 0 0 3px; font: var(--text-caption) var(--type-mono); cursor: pointer; }
 .i2WriterStageIntro>button:hover { color: var(--ink); }
 .i2WriterGrid .i2WriterCell { cursor: text; }
 .i2WriterGrid .i2WriterCell:focus-visible { outline: 2px solid var(--dream-accent); outline-offset: -2px; }
@@ -317,29 +317,29 @@
 .i2DeskLayoutOpen .i2WriterGrid .i2DiaryCell { min-height: 360px; }
 .i2DeskCellEditor.is-open { animation: i2Fade .18s ease both; }
 .i2DeskTemplateArea { margin-top: 17px; padding-top: 16px; border-top: 1px solid var(--line); }
-.i2DeskTemplateHead span { display: block; color: var(--dream-accent); font: 9px var(--type-mono); letter-spacing: .12em; }
-.i2DeskTemplateHead p { margin: 5px 0 0; color: var(--muted); font: 12px/1.55 var(--type-serif); }
+.i2DeskTemplateHead span { display: block; color: var(--dream-accent); font: var(--text-caption) var(--type-mono); letter-spacing: .12em; }
+.i2DeskTemplateHead p { margin: 5px 0 0; color: var(--muted); font: var(--text-label)/1.55 var(--type-serif); }
 .i2DeskTemplateSave { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; margin-top: 11px; }
-.i2DeskTemplateSave .input { min-width: 0; height: 34px; font: 13px var(--type-serif); }
-.i2DeskTemplateSave button,.i2DeskTemplateCard button { border: 1px solid var(--line-dark); background: transparent; color: var(--ink); padding: 6px 10px; font: 10px var(--type-mono); cursor: pointer; }
+.i2DeskTemplateSave .input { min-width: 0; height: 34px; font: var(--text-label) var(--type-serif); }
+.i2DeskTemplateSave button,.i2DeskTemplateCard button { border: 1px solid var(--line-dark); background: transparent; color: var(--ink); padding: 6px 10px; font: var(--text-caption) var(--type-mono); cursor: pointer; }
 .i2DeskTemplateSave button:hover,.i2DeskTemplateCard button:hover { border-color: var(--dream-accent); color: var(--dream-accent); }
 .i2DeskTemplates { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; margin-top: 11px; }
 .i2DeskTemplateCard { display: grid; grid-template-columns: 1fr auto auto; gap: 4px 7px; align-items: center; padding: 9px 10px; border: 1px solid var(--line); background: color-mix(in srgb, var(--paper) 80%, transparent); }
-.i2DeskTemplateCard strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 400 15px var(--type-serif); }
-.i2DeskTemplateCard span { grid-column: 1 / -1; color: var(--muted); font: 9px var(--type-mono); }
+.i2DeskTemplateCard strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 400 var(--text-ui) var(--type-serif); }
+.i2DeskTemplateCard span { grid-column: 1 / -1; color: var(--muted); font: var(--text-caption) var(--type-mono); }
 .i2DeskTemplateCard button { padding: 3px 7px; }
 .i2DeskTemplateCard button:last-child { color: var(--danger, #9b504c); }
-.i2DeskTemplatesEmpty { grid-column: 1 / -1; margin: 0; color: var(--muted); font: 12px var(--type-serif); }
+.i2DeskTemplatesEmpty { grid-column: 1 / -1; margin: 0; color: var(--muted); font: var(--text-label) var(--type-serif); }
 .i2HabitCell .i2CellHead { align-items: center; }
 .i2HabitCell .i2CellTune { margin-left: auto; }
 .i2HabitEditor { margin: 8px 15px 14px; padding: 12px; border-top: 1px solid var(--line); background: color-mix(in srgb, var(--paper2) 62%, transparent); }
-.i2HabitEditor p { margin: 0 0 9px; color: var(--muted); font: 11px/1.55 var(--type-serif); }
+.i2HabitEditor p { margin: 0 0 9px; color: var(--muted); font: var(--text-caption)/1.55 var(--type-serif); }
 .i2HabitEditorRows { display: grid; gap: 6px; }
 .i2HabitEditorRow { display: grid; grid-template-columns: minmax(0,1fr) 28px; gap: 5px; align-items: center; }
-.i2HabitEditorRow .input { min-width: 0; height: 30px; padding: 5px 7px; font: 12px var(--type-serif); }
+.i2HabitEditorRow .input { min-width: 0; height: 30px; padding: 5px 7px; font: var(--text-label) var(--type-serif); }
 .i2HabitEditorRow button { width: 28px; height: 28px; border: 1px solid var(--line); background: transparent; color: var(--danger, #9b504c); cursor: pointer; }
 .i2HabitEditorActions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
-.i2HabitEditorActions button { min-height: 30px; padding: 5px 9px; border: 1px solid var(--line-dark); background: transparent; color: var(--ink); font: 10px var(--type-mono); cursor: pointer; }
+.i2HabitEditorActions button { min-height: 30px; padding: 5px 9px; border: 1px solid var(--line-dark); background: transparent; color: var(--ink); font: var(--text-caption) var(--type-mono); cursor: pointer; }
 .i2HabitEditorActions button.primary { background: var(--dream-accent); border-color: var(--dream-accent); color: var(--paper); }
 .i2HabitEditorActions button:hover { border-color: var(--dream-accent); }
 .i2DeskFocus .i2WriterStage { width: min(1600px, 100%); max-width: none; padding-inline: clamp(24px, 5vw, 96px); margin: 0 auto; }
@@ -396,7 +396,7 @@
   background: transparent;
   color: var(--ink);
   padding: 0 2px 2px;
-  font: 400 19px var(--type-serif);
+  font: 400 var(--text-reading) var(--type-serif);
 }
 .i2CellTitleInput:focus { outline: 0; border-color: var(--ink); }
 .i2CellActions { display: flex; align-items: center; gap: 3px; margin-left: auto; }
@@ -417,7 +417,7 @@
 .i2CellEdit:focus-visible,
 .i2CellRemove:hover,
 .i2CellRemove:focus-visible { border-color: var(--line-dark); color: var(--ink); outline: 0; }
-.i2CellRemove { color: var(--danger, #9b504c); font-size: 20px; }
+.i2CellRemove { color: var(--danger, #9b504c); font-size: var(--text-subtitle); }
 .i2CellRemove:disabled { opacity: .25; cursor: not-allowed; }
 .i2DeskInlineEdit .i2CellEdit,
 .i2DeskInlineEdit .i2CellRemove { display: inline-flex; }
@@ -432,7 +432,7 @@
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   color: var(--ink);
-  font: 400 19px/1.78 var(--type-serif);
+  font: 400 var(--text-reading)/1.78 var(--type-serif);
   outline: 0;
   cursor: text;
 }
@@ -453,7 +453,7 @@
 .i2WriterGrid.is-focused-cell .i2WriterCell.is-active-cell .i2CellEditor { min-height: min(58vh, 600px); padding: 12px 26px 28px; }
 @media (max-width: 760px) {
   .i2WriterCell .i2CellEditor { min-height: 154px; padding-inline: 15px; }
-  .i2CellTitleInput { width: min(150px, 48%); font-size: 18px; }
+  .i2CellTitleInput { width: min(150px, 48%); font-size: var(--text-reading); }
   .i2WriterGrid.is-focused-cell .i2WriterCell.is-active-cell .i2CellEditor { min-height: 58vh; padding-inline: 18px; }
 }
 
@@ -579,7 +579,7 @@
     padding-bottom: 14px;
     border-bottom: 1px solid var(--line);
   }
-  .i2ToolDrawerHead span { color: var(--dream-accent); font: 9px var(--type-mono); letter-spacing: .12em; }
+  .i2ToolDrawerHead span { color: var(--dream-accent); font: var(--text-caption) var(--type-mono); letter-spacing: .12em; }
   .i2ToolDrawerHead h3 { margin: 5px 0 0; font: 400 24px var(--type-serif); }
   .i2ToolDrawerHead button { border: 0; background: transparent; color: var(--muted); font: 24px/1 var(--type-serif); cursor: pointer; }
   .i2ToolDrawerHead button:hover { color: var(--ink); }
@@ -622,7 +622,7 @@
   }
   #writerToolDrawer .i2DeskTemplateArea { margin-top: 16px; }
   #writerToolDrawer .i2ToolDrawerHead h3 { font-size: calc(24px * var(--life-font-scale)); }
-  #writerToolDrawer .i2ToolDrawerHead span { font-size: calc(9px * var(--life-font-scale)); }
+  #writerToolDrawer .i2ToolDrawerHead span { font-size: var(--text-caption); }
 }
 
 @media (min-width: 981px) and (max-width: 1279px) {
@@ -663,7 +663,7 @@
 }
 .i2FocusToolbar[hidden] { display: none; }
 .i2FocusToolbarActions { display: flex; align-items: center; gap: 4px; min-width: 0; flex-wrap: wrap; }
-.i2FocusToolbarActions button { min-width: 28px; height: 28px; padding: 3px 7px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; font: 13px var(--type-mono); }
+.i2FocusToolbarActions button { min-width: 28px; height: 28px; padding: 3px 7px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; font: var(--text-label) var(--type-mono); }
 .i2FocusToolbarActions button:hover,
 .i2FocusToolbarActions button:focus-visible { border-color: var(--dream-accent); outline: 0; }
 .i2FocusToolbarActions span { flex: 1 1 20px; }
@@ -715,10 +715,10 @@
   text-align: left;
   cursor: pointer;
 }
-.i2DateJump b { font: 400 18px var(--type-serif); letter-spacing: -.01em; }
+.i2DateJump b { font: 400 var(--text-reading) var(--type-serif); letter-spacing: -.01em; }
 .i2DateJump small {
   color: var(--muted);
-  font: 9px var(--type-mono);
+  font: var(--text-caption) var(--type-mono);
   white-space: nowrap;
 }
 .i2DateJump:hover b,
@@ -741,12 +741,12 @@
 .i2DatePickerHead,
 .i2DatePickerActions { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .i2DatePickerHead { padding-bottom: 11px; border-bottom: 1px solid var(--line); }
-.i2DatePickerHead strong { font: 400 18px var(--type-serif); }
-.i2DatePickerHead small { color: var(--muted); font: 9px var(--type-mono); }
+.i2DatePickerHead strong { font: 400 var(--text-reading) var(--type-serif); }
+.i2DatePickerHead small { color: var(--muted); font: var(--text-caption) var(--type-mono); }
 .i2DatePickerClose { border: 0; background: transparent; color: var(--muted); font: 22px/1 var(--type-serif); cursor: pointer; }
 .i2DatePickerClose:hover { color: var(--ink); }
 .i2DatePickerFields { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: 8px; margin: 14px 0; }
-.i2DatePickerFields label { display: grid; gap: 5px; color: var(--muted); font: 9px var(--type-mono); }
+.i2DatePickerFields label { display: grid; gap: 5px; color: var(--muted); font: var(--text-caption) var(--type-mono); }
 .i2DatePickerFields input {
   position: static !important;
   inset: auto !important;
@@ -758,13 +758,13 @@
   border-radius: 0;
   background: var(--paper2);
   color: var(--ink);
-  font: 15px var(--type-serif);
+  font: var(--text-ui) var(--type-serif);
   opacity: 1 !important;
   cursor: text !important;
 }
 .i2DatePickerFields input:focus { outline: 1px solid var(--dream-accent); outline-offset: 1px; }
 .i2DatePickerActions { justify-content: flex-end; padding-top: 11px; border-top: 1px solid var(--line); }
-.i2DatePickerActions button { min-height: 32px; padding: 6px 10px; border: 1px solid var(--line-dark); background: transparent; color: var(--ink); font: 10px var(--type-mono); cursor: pointer; }
+.i2DatePickerActions button { min-height: 32px; padding: 6px 10px; border: 1px solid var(--line-dark); background: transparent; color: var(--ink); font: var(--text-caption) var(--type-mono); cursor: pointer; }
 .i2DatePickerActions button:hover,
 .i2DatePickerActions button:focus-visible { border-color: var(--dream-accent); outline: 0; }
 .i2DatePickerActions .primary { border-color: var(--dream-accent); background: var(--dream-accent); color: var(--paper); }
@@ -806,7 +806,7 @@
 
 @media (max-width: 760px) {
   .i2DateNavigator label.i2DateJumpWrap { min-width: 124px; padding-inline: 2px; }
-  .i2DateJump b { font-size: 14px; }
+  .i2DateJump b { font-size: var(--text-label); }
   .i2DateJump small { display: none; }
   .i2DatePicker { position: fixed; top: calc(var(--life-titlebar-h, 58px) + 12px); left: 50%; }
 }
@@ -892,7 +892,7 @@
   min-width: 0;
   line-height: 1.4;
   font-family: var(--type-serif);
-  font-size: calc(15px * var(--life-font-scale)) !important;
+  font-size: var(--text-ui) !important;
 }
 .i2HabitCell .i2HabitList label > span {
   min-width: 0;
@@ -910,7 +910,7 @@
   margin: 0;
   overflow: visible;
   font-family: var(--type-serif);
-  font-size: calc(16px * var(--life-font-scale)) !important;
+  font-size: var(--text-ui) !important;
   line-height: 1.65 !important;
 }
 body.writerImmersive .i2WriterGrid .i2HabitCell .i2HabitNote:empty { min-height: 0 !important; }
@@ -920,7 +920,7 @@ body.writerImmersive .i2WriterGrid .i2HabitCell .i2HabitNote:focus { min-height:
   padding-inline: calc(7px * var(--life-font-scale));
   border-bottom: 1px solid transparent;
   border-radius: 0;
-  font-size: calc(14px * var(--life-font-scale)) !important;
+  font-size: var(--text-label) !important;
   transition: color .16s ease, background .16s ease, border-color .16s ease;
 }
 
@@ -967,7 +967,7 @@ body.writerImmersive .i2WriterGrid .i2HabitCell .i2HabitNote:focus { min-height:
   border-radius: 0;
   background: color-mix(in srgb, var(--paper2) 42%, transparent);
   font-family: var(--type-serif);
-  font-size: calc(13px * var(--life-font-scale)) !important;
+  font-size: var(--text-label) !important;
 }
 .i2HabitEditorRow .input:focus {
   border-color: var(--dream-accent);
@@ -982,7 +982,7 @@ body.writerImmersive .i2WriterGrid .i2HabitCell .i2HabitNote:focus { min-height:
   border-bottom: 1px solid transparent;
   background: transparent;
   color: var(--danger, #9b504c);
-  font-size: calc(20px * var(--life-font-scale)) !important;
+  font-size: var(--text-subtitle) !important;
   cursor: pointer;
   transition: background .16s ease, border-color .16s ease;
 }
@@ -999,7 +999,7 @@ body.writerImmersive .i2WriterGrid .i2HabitCell .i2HabitNote:focus { min-height:
   padding: calc(6px * var(--life-font-scale)) calc(10px * var(--life-font-scale));
   border: 1px solid var(--line-dark);
   background: transparent;
-  font-size: calc(12px * var(--life-font-scale)) !important;
+  font-size: var(--text-label) !important;
   transition: color .16s ease, background .16s ease, border-color .16s ease;
 }
 .i2HabitEditorActions button:hover,
@@ -1250,7 +1250,7 @@ body:not(.writerImmersive) .page { outline: 0 !important; }
     background: transparent;
     color: var(--muted);
     padding: 6px 7px;
-    font: calc(10px * var(--life-font-scale)) var(--type-mono);
+    font: var(--text-caption) var(--type-mono);
     cursor: pointer;
   }
   body.writerImmersive .i2WriterViewCompact button.active,
@@ -1281,7 +1281,7 @@ body:not(.writerImmersive) .page { outline: 0 !important; }
     background: transparent;
     color: var(--muted);
     padding: 6px 7px;
-    font: calc(10px * var(--life-font-scale)) var(--type-mono);
+    font: var(--text-caption) var(--type-mono);
     cursor: pointer;
   }
   body.writerImmersive .i2WriterViewCompact button.active,
@@ -1348,11 +1348,11 @@ body:not(.writerImmersive) .page { outline: 0 !important; }
   }
   body.writerImmersive .i2WriterGrid[data-view="year"]:not(.is-focused-cell):not(.is-arranging) .i2CellEditor {
     padding: 3px 13px 11px;
-    font-size: calc(16px * var(--life-font-scale)) !important;
+    font-size: var(--text-ui) !important;
     line-height: 1.62;
   }
   body.writerImmersive .i2WriterGrid[data-view="year"]:not(.is-focused-cell):not(.is-arranging) .i2CellHead label {
-    font-size: calc(17px * var(--life-font-scale)) !important;
+    font-size: var(--text-reading) !important;
   }
 
   body.writerImmersive #writerViewDescription {

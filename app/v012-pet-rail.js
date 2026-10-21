@@ -18,7 +18,7 @@
   function configureSprite(el,item,rows){const key=`${item.asset_url}|${rows}`;if(el.dataset.spriteAsset===key)return;if(el.textContent)el.textContent='';el.style.backgroundImage=`url("${item.asset_url}")`;el.style.backgroundSize=`800% ${rows*100}%`;el.dataset.spriteAsset=key}
   function paint(el,item=current()){
     if(!el)return;if(!item){el.textContent='✦';el.style.backgroundImage='';return}
-    if(item.renderer==='vivi-gif'){window.lifeosPetRenderers.paint(el,item,{mode:'preview',motion:pet.motion});return;}window.lifeosPetRenderers?.release(el);
+    if(window.lifeosPetRenderers?.special(item)){window.lifeosPetRenderers.paint(el,item,{mode:'preview',motion:pet.motion});return;}window.lifeosPetRenderers?.release(el);
     const count=Number(item.spriteVersionNumber)===2?11:9,once=actionFrames.get(item.slug);let state=selectedState(item),requested=ROWS[state]??0,row=item.frame_map?.[requested]?.length===0?Math.max(0,item.frame_map.findIndex(cells=>cells.length)):requested,cells=item.frame_map?.[row]?.length?item.frame_map[row]:[0,1,2,3,4,5,6,7],frame=Math.max(0,pet.frame-(once?.startFrame||0));
     if(once&&frame>=cells.length){actionFrames.delete(item.slug);actions.finish(item.slug,once.requestId);state=item.slug===pet.active?pet.state:'idle';requested=ROWS[state]??0;row=item.frame_map?.[requested]?.length===0?Math.max(0,item.frame_map.findIndex(cells=>cells.length)):requested;cells=item.frame_map?.[row]?.length?item.frame_map[row]:[0,1,2,3,4,5,6,7];frame=pet.frame;}
     const column=cells[frame%cells.length];
@@ -30,9 +30,10 @@
     if(broadcast){const detail={type:'pet-action',detail:{state:pet.state,slug:pet.active}};window.dispatchEvent(new CustomEvent('lifeos:event',{detail}));}
   }
   function runFrames(){clearTimeout(pet.timer);const tick=()=>{if(STATE.feature!==FEATURE){pet.timer=null;return}if(pet.motion&&!document.hidden){pet.frame+=1;if(pet.state!=='idle'){const row=ROWS[pet.state],count=current()?.frame_map?.[row]?.length||8;if(pet.frame-pet.stateStart>=count)pet.state='idle';}paintAll()}pet.timer=setTimeout(tick,pet.state==='waiting'?240:155)};pet.timer=setTimeout(tick,pet.state==='waiting'?240:155)}
-  function absorb(data){pet.catalog=data.catalog||[];pet.installed=data.installed||[];pet.active=data.active_slug||pet.installed[0]?.slug||'';pet.catalog.filter(item=>item.renderer==='vivi-gif').forEach(item=>actions.register(item.slug,item.actions.map(action=>[action.id,action.label])));}
+  function absorb(data){pet.catalog=data.catalog||[];pet.installed=data.installed||[];pet.active=data.active_slug||pet.installed[0]?.slug||'';pet.catalog.filter(item=>window.lifeosPetRenderers?.special(item)).forEach(item=>actions.register(item.slug,item.actions.map(action=>[action.id,action.label])));}
   const targetAttrs=(item)=>`data-pet-target="${esc(item.slug)}" tabindex="0" role="button" aria-haspopup="menu" aria-label="${esc(item.localized_names?.zh||item.name||item.slug)}，选择动作" title="右键选择动作"`;
-  function installedHTML(){return pet.installed.map(item=>`<article class="petPageInstalled ${item.slug===pet.active?'active':''}"><span class="petPageMini" data-pet-mini="${esc(item.slug)}" ${targetAttrs(item)}></span><div><b>${esc(item.name)}</b><small>${esc(item.author)} · ${esc(item.license)}</small></div><div><button data-pet-activate="${esc(item.slug)}" type="button">${item.slug===pet.active?'正在陪伴':'使用'}</button><button class="quiet" data-pet-uninstall="${esc(item.slug)}" type="button">移除</button></div></article>`).join('')||'<p class="petPageEmpty">还没有可用桌宠</p>'}
+  const sourceHTML=item=>item?.renderer==='dsh-webm'?`<a class="petSourceLink" href="https://github.com/PC2005-cloud/dsh-pet" target="_blank" rel="noopener noreferrer">原作 · github.com/PC2005-cloud/dsh-pet</a>`:'';
+  function installedHTML(){return pet.installed.map(item=>`<article class="petPageInstalled ${item.slug===pet.active?'active':''}"><span class="petPageMini" data-pet-mini="${esc(item.slug)}" ${targetAttrs(item)}></span><div><b>${esc(item.name)}</b><small>${esc(item.author)} · ${esc(item.license)}</small>${sourceHTML(item)}</div><div><button data-pet-activate="${esc(item.slug)}" type="button">${item.slug===pet.active?'正在陪伴':'使用'}</button><button class="quiet" data-pet-uninstall="${esc(item.slug)}" type="button">移除</button></div></article>`).join('')||'<p class="petPageEmpty">还没有可用桌宠</p>'}
   function catalogHTML(){
     const q=pet.query.trim().toLowerCase(),categories=[...new Set(pet.catalog.map(x=>x.primary_category).filter(Boolean))].sort();
     if(pet.category!=='all'&&!categories.includes(pet.category))pet.category='all';
@@ -41,7 +42,7 @@
     const count=$('#petPageCount');if(count)count.textContent=`${Math.min(filtered.length,pet.limit)} / ${filtered.length}`;
     const cards=filtered.slice(0,pet.limit).map(item=>{
       const local=pet.installed.find(x=>x.slug===item.slug),sprite=resource(item.slug),preview=!sprite&&item.preview_url?`<img class="petPagePreview" src="${esc(item.preview_url)}" alt="" loading="lazy">`:`<span class="petPagePreview petPagePreviewSprite" data-pet-catalog-mini="${esc(item.slug)}" aria-hidden="true"></span>`;
-      return `<article class="petPageCard"><figure ${targetAttrs(item)}>${preview}</figure><div><span>${esc(item.primary_category||'Community')}</span><h3>${esc(item.localized_names?.zh||item.name||item.slug)}</h3><p>${esc(item.description||`${item.author||'Community'} 的桌宠`)}</p><small>${esc(item.author||'community')} · ${esc(item.license||'see upstream')}</small></div>${local?`<button data-pet-activate="${esc(item.slug)}" type="button">${item.slug===pet.active?'正在使用':'使用'}</button>`:`<button data-pet-install="${esc(item.slug)}" type="button">下载到本机</button>`}</article>`;
+      return `<article class="petPageCard"><figure ${targetAttrs(item)}>${preview}</figure><div><span>${esc(item.primary_category||'Community')}</span><h3>${esc(item.localized_names?.zh||item.name||item.slug)}</h3><p>${esc(item.description||`${item.author||'Community'} 的桌宠`)}</p><small>${esc(item.author||'community')} · ${esc(item.license||'see upstream')}</small>${sourceHTML(item)}</div>${local?`<button data-pet-activate="${esc(item.slug)}" type="button">${item.slug===pet.active?'正在使用':'使用'}</button>`:`<button data-pet-install="${esc(item.slug)}" type="button">下载到本机</button>`}</article>`;
     }).join('')||'<p class="petPageEmpty">没有符合的桌宠</p>';
     return cards+(filtered.length>pet.limit?'<button class="petPageMore" data-pet-more type="button">加载更多</button>':'');
   }
@@ -53,7 +54,7 @@
       image.addEventListener('error',failed,{once:true});if(image.complete&&!image.naturalWidth)failed();
     });paintAll();
   }
-  function refreshPieces(){const now=current(),hero=$('#petPageSprite');$('#petPageName').textContent=now?.name||'还没有桌宠';$('#petPageByline').textContent=now?`${now.author} · ${now.license}`:'打开宠物库下载';if(now){hero.dataset.petTarget=now.slug;hero.setAttribute?.('aria-label',`${now.name}，选择动作`)}else{hero.removeAttribute?.('data-pet-target');window.lifeosPetRenderers?.release(hero);}$('#petPageInstalled').innerHTML=installedHTML();paintCatalog();window.dispatchEvent(new CustomEvent('lifeos:pet-current',{detail:now}));}
+  function refreshPieces(){const now=current(),hero=$('#petPageSprite');$('#petPageName').textContent=now?.name||'还没有桌宠';$('#petPageByline').innerHTML=now?`${esc(now.author)} · ${esc(now.license)} ${sourceHTML(now)}`:'打开宠物库下载';if(now){hero.dataset.petTarget=now.slug;hero.setAttribute?.('aria-label',`${now.name}，选择动作`)}else{hero.removeAttribute?.('data-pet-target');window.lifeosPetRenderers?.release(hero);}$('#petPageInstalled').innerHTML=installedHTML();paintCatalog();window.dispatchEvent(new CustomEvent('lifeos:pet-current',{detail:now}));}
   async function refresh(){const data=await get('/api/pets/catalog');await preloadSprites(data.installed||[]);absorb(data);if(STATE.feature===FEATURE)refreshPieces();window.dispatchEvent(new Event('lifeos:pets-changed'))}
   function columnsIcon(count){const width=count===1?14:count===2?6:2.5,gap=count===1?0:count===2?2:1.4,start=5;return `<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.35" aria-hidden="true">${Array.from({length:count},(_,i)=>`<rect x="${start+i*(width+gap)}" y="5" width="${width}" height="14" rx=".4"/>`).join('')}</svg>`}
   async function renderPetPage(){
@@ -61,7 +62,7 @@
     return pageWrap(`<section class="petPage" data-columns="${pet.columns}" aria-labelledby="petPageTitle">
       <header class="petPageHero"><h1 id="petPageTitle">灵犀</h1></header>
       <section class="petPageControl">
-        <div class="petPageHeroPet"><span id="petPageSprite" class="petPageSprite" ${now?targetAttrs(now):'aria-hidden="true"'}></span><b id="petPageName">${esc(now?.name||'还没有桌宠')}</b><small id="petPageByline">${esc(now?`${now.author} · ${now.license}`:'打开宠物库下载')}</small></div>
+        <div class="petPageHeroPet"><span id="petPageSprite" class="petPageSprite" ${now?targetAttrs(now):'aria-hidden="true"'}></span><b id="petPageName">${esc(now?.name||'还没有桌宠')}</b><small id="petPageByline">${esc(now?`${now.author} · ${now.license}`:'打开宠物库下载')} ${sourceHTML(now)}</small></div>
         <div class="petPageControlBody"><p id="petPageMood" role="status">${esc(mood())}</p><div class="petPageButtons"><button id="petPageSurprise" type="button">一起随机翻页</button><label><input id="petPageMotion" type="checkbox" ${pet.motion?'checked':''}> 播放动效</label></div></div>
       </section>
       <section class="petPageSection"><div class="petPageSectionHead"><h2>已安装</h2></div><div id="petPageInstalled">${installedHTML()}</div></section>
@@ -75,7 +76,7 @@
       chat:slug===pet.active?()=>window.dispatchEvent(new Event('lifeos:open-pet-chat')):null,
       prepare:async action=>{
         if(action===null||resource(slug))return;
-        if(item.renderer==='vivi-gif'){previews.set(slug,await window.lifeosPetRenderers.prepare(item));anchor.innerHTML=`<span class="petPagePreview petPagePreviewSprite" data-pet-catalog-mini="${esc(slug)}" aria-hidden="true"></span>`;return;}
+        if(window.lifeosPetRenderers?.special(item)){previews.set(slug,await window.lifeosPetRenderers.prepare(item));anchor.innerHTML=`<span class="petPagePreview petPagePreviewSprite" data-pet-catalog-mini="${esc(slug)}" aria-hidden="true"></span>`;return;}
         anchor.setAttribute('aria-busy','true');
         try{
           const prepared=await window.lifeosPetSprites.prepare({...item,asset_url:`https://raw.githubusercontent.com/legeling/awesome-codex-pet/main/pets/${encodeURIComponent(slug)}/spritesheet.webp`});

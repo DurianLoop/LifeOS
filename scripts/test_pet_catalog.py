@@ -40,6 +40,7 @@ class PetCatalogTests(unittest.TestCase):
             "PET_SLUG": re.compile(r"^[a-z0-9][a-z0-9-]{1,110}$"),
             "ROOT": self.root, "pet_local_items": lambda: [{"slug": self.active}],
             "SOURCE_ROOT":self.root,"vivi_pet":type('ViVi',(),{'bundled_item':staticmethod(lambda *args:None)})(),
+            "dsh_pet":type('DSH',(),{'bundled_item':staticmethod(lambda *args:None)})(),
             "product": type("Product", (), {"get_setting": lambda _, *args: self.active})(),
         }
         exec(compile(FUNCTIONS, "backend/server.py", "exec"), self.ns)

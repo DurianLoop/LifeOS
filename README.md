@@ -1,6 +1,14 @@
-# LifeOS v0.5.2
+# LifeOS v0.5.3
 
 LifeOS is a local-first journal and personal memory workspace, with an editable writing desk, journal book, and desktop companion.
+
+## New in v0.5.3
+
+- **Comfortable type:** consistent sizes for body text, labels, captions and headings throughout the journal, writing desk, settings, pet library and archive tools. Font preferences scale once, including nested text.
+- **Room to read:** calmer heading proportions, readable helper text, flexible controls and responsive page margins. Large text stays usable in narrow windows.
+- **DSH companion:** 106 original transparent animations, complete one-shot playback, click and drag reactions, offline restore and desktop mode. Code is MIT; the upstream animations and prompts prohibit commercial use. [Attribution and terms](docs/DSH_PET.md).
+
+[Release notes](docs/RELEASE_v0.5.3.md) · [v0.5.3 release](https://github.com/DurianLoop/LifeOS/releases/tag/v0.5.3)
 
 ## New in v0.5.2
 
@@ -58,7 +66,7 @@ LifeOS is a local-first journal and personal memory workspace, with an editable 
 
 ## Windows download
 
-Download [LifeOS-Setup-0.5.2.exe](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.2/LifeOS-Setup-0.5.2.exe) from the [v0.5.2 release](https://github.com/DurianLoop/LifeOS/releases/tag/v0.5.2). Python is included. This community build is unsigned.
+Download [LifeOS-Setup-0.5.3.exe](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.3/LifeOS-Setup-0.5.3.exe) from the [v0.5.3 release](https://github.com/DurianLoop/LifeOS/releases/tag/v0.5.3). Python is included. This community build is unsigned.
 
 Installed app data is stored under `%APPDATA%/LifeOS/workspace/`; startup diagnostics are under `%APPDATA%/LifeOS/logs/desktop.log`. Back up the workspace folder to preserve journals, revisions and settings. Source runs continue to use the repository folder.
 
@@ -97,3 +105,5 @@ The installer, blockmap and update metadata are written to `desktop/dist/`. Keep
 ## License and pet assets
 
 Application code uses the repository license. Bundled pet assets retain their upstream attribution and licenses in `app/assets/pets/`. Gallery pet packages are downloaded only when explicitly installed.
+
+**DSH 小鲸** is available in the companion room with all 106 original transparent animations. Original: [PC2005-cloud/dsh-pet](https://github.com/PC2005-cloud/dsh-pet). Its code is MIT; its animation assets prohibit commercial use and require the original link in introductions, displays and distributions. See [integration and asset terms](docs/DSH_PET.md).

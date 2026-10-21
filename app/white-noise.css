@@ -219,7 +219,7 @@ html[data-motion="off"] .whiteNoiseGlow::after {
   min-width: 34px;
   text-align: right;
   color: var(--ink);
-  font-size: 11px;
+  font-size: var(--text-caption);
   font-variant-numeric: tabular-nums;
 }
 
@@ -227,14 +227,14 @@ html[data-motion="off"] .whiteNoiseGlow::after {
   display: block;
   margin-top: 7px;
   color: var(--muted);
-  font: 10px/1.55 var(--serif);
+  font: var(--text-caption)/1.55 var(--serif);
 }
 
 .whiteNoiseCredits {
   display: inline-block;
   margin-top: 5px;
   color: var(--muted);
-  font: 10px/1.55 var(--serif);
+  font: var(--text-caption)/1.55 var(--serif);
   text-decoration: underline;
   text-underline-offset: 3px;
 }

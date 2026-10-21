@@ -31,6 +31,7 @@ function createPetController({BrowserWindow,Tray,Menu,nativeImage,screen,store,r
   const actionIds=slug=>{
     if(slug===meta?.id)return new Set(actionChoices().map(([id])=>id));
     if(slug==='vivi--durianloop')try{return viviIds??=(new Set(JSON.parse(fs.readFileSync(path.join(resourceRoot,'app','assets','pets','vivi','pet.json'),'utf8')).actions.map(row=>row.id)))}catch{}
+    if(slug==='dsh-pet--pc2005-cloud')try{return new Set(JSON.parse(fs.readFileSync(path.join(resourceRoot,'app','assets','pets','dsh-pet','pet.json'),'utf8')).actions.map(row=>row.id))}catch{}
     return standardIds;
   };
   const snapshot=()=>({ok:true,settings:{...settings,vivi:{...settings.vivi}},choices:{},commands:Object.fromEntries([...commands].map(([slug,command])=>[slug,{...command}])),status:{visible:Boolean(petWindow&&!petWindow.isDestroyed()&&petWindow.isVisible()),ready,error,slug:meta?.id||null}});
@@ -109,14 +110,15 @@ function createPetController({BrowserWindow,Tray,Menu,nativeImage,screen,store,r
         const changedPet=meta?.id!==item.id||meta?.renderer!==item.renderer;
         if(changedPet){const command=commands.get(meta?.id);if(command?.active)completeAction({slug:meta.id,requestId:command.requestId});}
         if(!path.isAbsolute(item.sprite))throw new Error('桌宠图片路径无效');
-        const metadataActions=Array.isArray(item.actions)?item.actions.filter(row=>Array.isArray(row)&&typeof row[0]==='string'&&typeof row[1]==='string').slice(0,50):null;
+        const metadataActions=Array.isArray(item.actions)?item.actions.filter(row=>Array.isArray(row)&&typeof row[0]==='string'&&typeof row[1]==='string').slice(0,200):null;
         let viviActions=null;
         if(item.renderer==='vivi-gif'){
           const manifest=Array.isArray(item.viviActions)?{actions:item.viviActions}:await fetchJSON(new URL(item.manifest_url,base()).href);
           viviActions=(manifest.actions||[]).filter(row=>/^[a-z0-9_-]+$/.test(row.id)&&/^[a-z0-9]+\.gif$/.test(row.asset)).map(row=>({...row,asset_url:pathToFileURL(path.join(path.dirname(item.sprite),row.asset)).href}));
           if(stopped||request!==sequence||settings.mode!=='desktop')return snapshot();
         }
-        meta={...item,actions:metadataActions,viviActions,viviScript:pathToFileURL(path.join(resourceRoot,'app','vivi-pet.js')).href,viviCSS:pathToFileURL(path.join(resourceRoot,'app','vivi-pet.css')).href,sprite:pathToFileURL(item.sprite).href,backendOrigin:base(),manifest_url:item.manifest_url?new URL(item.manifest_url,base()).href:undefined,asset_url:item.asset_url?new URL(item.asset_url,base()).href:undefined};
+        const nativeActions=item.renderer==='dsh-webm'?(item.nativeActions||[]).filter(row=>/^anim-[a-f0-9]{12}$/.test(row.id)&&/^anim-[a-f0-9]{12}\.webm$/.test(row.asset)).map(row=>({...row,asset_url:pathToFileURL(path.join(path.dirname(item.sprite),row.asset)).href})):null;
+        meta={...item,nativeActions,nativeScript:pathToFileURL(path.join(resourceRoot,'app','dsh-pet.js')).href,nativeCSS:pathToFileURL(path.join(resourceRoot,'app','dsh-pet.css')).href,actions:metadataActions,viviActions,viviScript:pathToFileURL(path.join(resourceRoot,'app','vivi-pet.js')).href,viviCSS:pathToFileURL(path.join(resourceRoot,'app','vivi-pet.css')).href,sprite:pathToFileURL(item.sprite).href,backendOrigin:base(),manifest_url:item.manifest_url?new URL(item.manifest_url,base()).href:undefined,asset_url:item.asset_url?new URL(item.asset_url,base()).href:undefined};
         if(changedPet){hiddenEdge=null;resizeWindow();}
         if(!petWindow||petWindow.isDestroyed()){
           ready=false;const target=new BrowserWindow({...bounded(position),title:'LifeOS 桌宠',transparent:true,frame:false,resizable:false,skipTaskbar:true,alwaysOnTop:settings.alwaysOnTop,show:false,hasShadow:false,webPreferences:{preload:path.join(desktopDir,'pet-preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true,backgroundThrottling:false}});
@@ -178,8 +180,9 @@ function createPetController({BrowserWindow,Tray,Menu,nativeImage,screen,store,r
   function openMenu(){
     const slug=meta?.id;
     const template=[{label:meta?.name||'桌宠',enabled:false},{label:'和它聊聊',click:()=>safely(()=>onOpen({chat:true}))},{type:'separator'},
-      ...[...actionChoices(),[null,'恢复自动']].map(([id,label],index)=>({label,enabled:id===null||meta?.renderer==='vivi-gif'||meta?.frameMap?.[index]?.length!==0,click:()=>safely(()=>selectAction({slug,action:id}))})),
+      ...[...actionChoices(),[null,'恢复自动']].map(([id,label],index)=>({label,enabled:id===null||['vivi-gif','dsh-webm'].includes(meta?.renderer)||meta?.frameMap?.[index]?.length!==0,click:()=>safely(()=>selectAction({slug,action:id}))})),
       {type:'separator'},{label:'打开 LifeOS',click:()=>safely(()=>onOpen({}))},{label:'桌宠设置',click:()=>safely(()=>onOpen({settings:true}))},{label:'隐藏桌宠',click:()=>safely(()=>setSettings({visible:false}))},{label:'退出 LifeOS',click:onQuit}];
+    if(meta?.renderer==='dsh-webm')template.splice(1,0,{label:'原作：https://github.com/PC2005-cloud/dsh-pet（素材禁止商用）',enabled:false});
     Menu.buildFromTemplate(template).popup({window:petWindow});
   }
   function onReady(){ready=true;error='';if(settings.mode==='desktop'&&settings.visible&&!stopped)petWindow?.showInactive();notify();}
@@ -188,7 +191,7 @@ function createPetController({BrowserWindow,Tray,Menu,nativeImage,screen,store,r
   function dragMove(point){if(!drag||!Number.isFinite(point?.x)||!Number.isFinite(point?.y))return;const bounds=bounded({x:drag.x+point.x-drag.screenX,y:drag.y+point.y-drag.screenY});moveWindow(bounds.x,bounds.y);}
   function dragEnd(){if(!drag||!petWindow)return;drag=null;const [x,y]=petWindow.getPosition();position={x,y};save(POSITION_KEY,position);}
   function moveCompanion(point){
-    if(!petWindow||meta?.renderer!=='vivi-gif'||!Number.isFinite(point?.x)||!Number.isFinite(point?.y))return;
+    if(!petWindow||!['vivi-gif','dsh-webm'].includes(meta?.renderer)||!Number.isFinite(point?.x)||!Number.isFinite(point?.y))return;
     hiddenEdge=point.hiddenEdge==='left'||point.hiddenEdge==='right'?point.hiddenEdge:null;
     const area=activeArea||screen.getPrimaryDisplay().workArea,size=dimensions();
     const minX=hiddenEdge?-size.width+24:0,maxX=hiddenEdge?area.width-24:area.width-size.width;

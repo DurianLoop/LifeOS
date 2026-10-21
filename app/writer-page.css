@@ -18,7 +18,7 @@ body.writerImmersive .i2Desk form#writerForm { grid-template-columns: minmax(0, 
   min-width: 0;
   max-width: 420px;
   margin: 0;
-  font: 12px var(--type-serif);
+  font: var(--text-label) var(--type-serif);
   color: var(--muted);
 }
 .i2WriterPageTitle > span { flex: 0 0 auto; }
@@ -32,7 +32,7 @@ body.writerImmersive .i2Desk form#writerForm { grid-template-columns: minmax(0, 
   border-bottom: 1px solid transparent;
   border-radius: 0;
   background: transparent;
-  font: 14px var(--type-serif);
+  font: var(--text-label) var(--type-serif);
 }
 .i2Desk .i2WriterPageTitle .input:hover { border-bottom-color: var(--line); }
 .i2Desk #writerToolDrawer { background: var(--paper) !important; backdrop-filter: none; }
@@ -42,7 +42,7 @@ body.writerImmersive .i2Desk form#writerForm { grid-template-columns: minmax(0, 
 .i2Desk #writerToolDrawer #writerResetCells {
   padding: 3px 0;
   color: var(--muted);
-  font: 11px var(--type-serif);
+  font: var(--text-caption) var(--type-serif);
 }
 .i2Desk .i2DateNavigator {
   display: flex;
@@ -74,7 +74,7 @@ body.writerImmersive .i2Desk form#writerForm { grid-template-columns: minmax(0, 
 .i2Desk #writerDateJump span {
   flex: 0 0 auto;
   color: var(--ink);
-  font: 13px/1.5 var(--type-mono);
+  font: var(--text-label)/1.5 var(--type-mono);
   letter-spacing: .03em;
 }
 .i2Desk #writerDateJump b {
@@ -84,13 +84,13 @@ body.writerImmersive .i2Desk form#writerForm { grid-template-columns: minmax(0, 
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--muted);
-  font: 400 13px/1.5 var(--type-serif);
+  font: 400 var(--text-label)/1.5 var(--type-serif);
 }
 .i2Desk #writerDateJump i {
   flex: 0 0 auto;
   align-self: center;
   margin: 0;
-  font: 14px/1 var(--type-serif);
+  font: var(--text-label)/1 var(--type-serif);
   color: var(--muted);
 }
 
@@ -115,7 +115,7 @@ body.writerImmersive .i2Desk form#writerForm { grid-template-columns: minmax(0, 
   border-radius: 0;
   background: transparent !important;
   box-shadow: none !important;
-  font: 12px/1.4 var(--type-serif);
+  font: var(--text-label)/1.4 var(--type-serif);
   color: var(--muted);
 }
 .i2Desk #writerToday:hover,
@@ -166,7 +166,7 @@ body.writerImmersive .i2Desk form#writerForm { grid-template-columns: minmax(0, 
 }
 .i2Desk .i2WriterStageIntro:empty { display: none; }
 .i2Desk .i2WriterGrid.i2FreeLayout:not(.is-focused-cell) { margin-top: 6px; }
-.i2Desk .i2ArrangeHint { font-size: 10px; color: var(--muted); }
+.i2Desk .i2ArrangeHint { font-size: var(--text-caption); color: var(--muted); }
 .i2Desk #writerToolDrawer .i2DeskTemplateArea { margin-top: 0; padding-top: 0; border-top: 0; }
 .i2Desk .i2DeskTemplateHead {
   display: flex;
@@ -174,13 +174,13 @@ body.writerImmersive .i2Desk form#writerForm { grid-template-columns: minmax(0, 
   justify-content: space-between;
   gap: 8px;
 }
-.i2Desk .i2DeskTemplateHead h3 { margin: 0; font: 400 20px/1.4 var(--type-serif); }
+.i2Desk .i2DeskTemplateHead h3 { margin: 0; font: 400 var(--text-subtitle)/1.4 var(--type-serif); }
 .i2Desk .i2DeskTemplateHead button {
   padding: 3px 0;
   border: 0;
   background: transparent;
   color: var(--muted);
-  font: 11px var(--type-serif);
+  font: var(--text-caption) var(--type-serif);
 }
 .i2ChapterPresets {
   display: grid;
@@ -199,7 +199,7 @@ body.writerImmersive .i2Desk form#writerForm { grid-template-columns: minmax(0, 
   border-color: var(--dream-accent);
   color: var(--dream-accent);
 }
-.i2ChapterPresets button span { display: block; margin-top: 8px; font: 12px var(--type-serif); }
+.i2ChapterPresets button span { display: block; margin-top: 8px; font: var(--text-label) var(--type-serif); }
 .i2LayoutThumbnail { display: block; width: 100%; height: 62px; color: var(--dream-accent); }
 .i2LayoutThumbnail rect {
   fill: color-mix(in srgb, currentColor 8%, transparent);
@@ -208,7 +208,7 @@ body.writerImmersive .i2Desk form#writerForm { grid-template-columns: minmax(0, 
   vector-effect: non-scaling-stroke;
 }
 .i2ChapterCustom { margin-top: 16px; border-block: 1px solid var(--line); padding-block: 12px; }
-.i2ChapterCustom summary { cursor: pointer; font: 13px var(--type-serif); }
+.i2ChapterCustom summary { cursor: pointer; font: var(--text-label) var(--type-serif); }
 .i2ChapterCells { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .i2ChapterCells label {
   display: inline-flex;
@@ -218,7 +218,7 @@ body.writerImmersive .i2Desk form#writerForm { grid-template-columns: minmax(0, 
   padding: 5px 8px;
   border: 1px solid var(--line);
   color: var(--muted);
-  font: 12px var(--type-serif);
+  font: var(--text-label) var(--type-serif);
   cursor: pointer;
 }
 .i2ChapterCells label:has(:checked) { color: var(--ink); border-color: var(--line-dark); }
@@ -233,7 +233,7 @@ body.writerImmersive .i2Desk form#writerForm { grid-template-columns: minmax(0, 
   padding: 10px;
 }
 .i2DeskTemplateCard .i2LayoutThumbnail { height: 46px; }
-.i2Desk .i2DeskTemplateCard strong { font-size: 13px; }
+.i2Desk .i2DeskTemplateCard strong { font-size: var(--text-label); }
 .i2Desk .i2DeskTemplateArea [hidden] { display: none !important; }
 .i2Desk.i2ChapterOpen #writerToolDrawer > :is(.i2WriterLive, .i2WriterQuick, .i2WriterMore, .i2WriterPreviewPanel) {
   display: none !important;
@@ -245,11 +245,11 @@ body.writerImmersive .i2Desk form#writerForm { grid-template-columns: minmax(0, 
   .i2Desk .i2WriterHeadSpacer { display: none; }
   .i2Desk .i2DateNavigator { gap: 5px; }
   .i2Desk #writerDateJump { gap: 7px; }
-  .i2Desk #writerDateJump :is(span, b) { font-size: 12px; }
+  .i2Desk #writerDateJump :is(span, b) { font-size: var(--text-label); }
   .i2Desk .i2WriterCommands { gap: 6px; }
   .i2Desk .i2WriterCommands #writerDraftState { display: none; }
   .i2Desk .i2WriterCommands #writerRead { display: none !important; }
-  .i2Desk #writerToday { font-size: 11px; }
+  .i2Desk #writerToday { font-size: var(--text-caption); }
   .i2Desk .i2WriterStageTop { flex-wrap: wrap; }
   .i2Desk .i2WriterPageTitle { flex-basis: 100%; max-width: none; }
   .i2Desk .i2WriterTools { justify-content: flex-start; margin-left: 0; max-width: 100%; overflow-x: auto; }

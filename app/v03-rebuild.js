@@ -4,7 +4,7 @@
   'use strict';
 
   const FONT_KEY = 'lifeos.font.size.v03';
-  const FONT_SCALE = {default: 1.12, large: 1.28, xlarge: 1.45};
+  const FONT_SCALE = {default: 1, large: 1.125, xlarge: 1.25};
 
   function readFontSize() {
     const value = localStorage.getItem(FONT_KEY);
@@ -25,7 +25,7 @@
     if (!panel || document.querySelector('#v03FontSize')) return;
     const field = document.createElement('label');
     field.className = 'tweakField v03FontField';
-    field.innerHTML = '<span>字体大小</span><div><select id="v03FontSize" aria-label="字体大小"><option value="default">大 · 默认</option><option value="large">更大</option><option value="xlarge">特大</option></select></div>';
+    field.innerHTML = '<span>字体大小</span><div><select id="v03FontSize" aria-label="字体大小"><option value="default">舒适 · 默认</option><option value="large">大字</option><option value="xlarge">特大</option></select></div>';
     const anchor = panel.querySelector('#atticOpen');
     if (anchor) anchor.parentNode.insertBefore(field, anchor);
     else panel.append(field);

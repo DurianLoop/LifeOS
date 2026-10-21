@@ -230,7 +230,7 @@ body.writerImmersive .i2Desk:has(.i2WriterGrid.i2FreeLayout) {
   width: 26px;
   height: 26px;
   margin: 0;
-  font: 18px/1 var(--type-mono);
+  font: var(--text-reading)/1 var(--type-mono);
   cursor: grab;
 }
 

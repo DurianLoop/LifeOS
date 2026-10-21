@@ -2,7 +2,7 @@
 (() => {
   'use strict';
   const mounted=new Map();
-  const special=item=>item?.renderer==='vivi-gif';
+  const special=item=>['vivi-gif','dsh-webm'].includes(item?.renderer);
   async function prepare(item){
     if(!special(item))return window.lifeosPetSprites.prepare(item);
     window.lifeosPetActions.register(item.slug,(item.actions||[]).map(action=>[action.id,action.label]));
@@ -16,9 +16,11 @@
     if(!special(item)){release(element);return null;}
     let entry=mounted.get(element);
     if(entry?.slug!==item.slug){release(element);element.textContent='';element.style.backgroundImage='';
-      const runtime=window.lifeosViVi.mount(element,item,{...options,mode:options.mode||'preview',width:options.width||element.clientWidth||144,height:options.height||element.clientHeight||156});
+      delete element.dataset.spriteReady;
+      const renderer=item.renderer==='dsh-webm'?window.lifeosDSH:window.lifeosViVi;
+      const runtime=renderer.mount(element,item,{...options,mode:options.mode||'preview',width:options.width||element.clientWidth||144,height:options.height||element.clientHeight||156});
       entry={runtime,slug:item.slug,ready:false,lastRequest:null,motion:undefined,visible:undefined,options};mounted.set(element,entry);
-      runtime.ready.then(()=>{if(mounted.get(element)!==entry)return;entry.ready=true;element.dataset.spriteReady='true';apply(element,entry,entry.options);entry.options.onReady?.();}).catch(()=>{if(mounted.get(element)!==entry)return;element.dataset.spriteReady='false';element.textContent='✦';});
+      runtime.ready.then(()=>{if(mounted.get(element)!==entry)return;entry.ready=true;element.dataset.spriteReady='true';delete element.dataset.loadError;apply(element,entry,entry.options);entry.options.onReady?.();}).catch(error=>{if(mounted.get(element)!==entry)return;element.dataset.spriteReady='false';element.dataset.loadError=error.message;element.textContent='✦';});
     }
     entry.options=options;
     if(entry.ready)apply(element,entry,options);return entry.runtime;

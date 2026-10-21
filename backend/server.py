@@ -18,7 +18,7 @@ from engine import import_pipeline
 from engine import sync_engine
 from engine import p2_core, p2_sync, crypto_vault, poetry_engine, memorial
 from connectors import CONNECTORS
-from backend import ai_providers, ai_control, attic, product_help, vivi_pet, memory_lottery
+from backend import ai_providers, ai_control, attic, product_help, vivi_pet, dsh_pet, memory_lottery
 from backend.secret_store import set_secret, delete_secret
 from backend.bottles import BottleAPI
 APP=SOURCE_ROOT/'app'
@@ -106,7 +106,7 @@ def pet_catalog(force=False):
                 if PET_CATALOG_CACHE['items']:
                     PET_CATALOG_CACHE.update({'at':now,'status':status})
                     return PET_CATALOG_CACHE['items']
-                raw=[{'slug':x['slug'],'name':x['name'],'author':x['author'],'license':x['license'],'description':x['description'],'spriteVersionNumber':x['spriteVersionNumber'],'primary_category':'Installed'} for x in pet_local_items()]
+                raw=[{'slug':x['slug'],'name':x['name'],'author':x['author'],'license':x['license'],'description':x['description'],'spriteVersionNumber':x['spriteVersionNumber'],'primary_category':'Installed'} for x in pet_local_items() if not x.get('renderer')]
         if status=='online':
             # A read-only cache folder does not stop the current online gallery.
             temporary=None
@@ -146,6 +146,9 @@ def pet_package_items(include_removed=False):
     if vivi_pet.SLUG not in removed:
         vivi=vivi_pet.bundled_item(ROOT,SOURCE_ROOT)
         if vivi:found.append(vivi);seen.add(vivi['slug'])
+    if dsh_pet.SLUG not in removed:
+        dsh=dsh_pet.bundled_item(ROOT,SOURCE_ROOT)
+        if dsh:found.append(dsh);seen.add(dsh['slug'])
     folders=list(PET_ASSET_ROOT.iterdir())
     bundled=APP/'assets'/'pets'
     if bundled.resolve()!=PET_ASSET_ROOT.resolve() and bundled.exists(): folders+=list(bundled.iterdir())
@@ -174,6 +177,8 @@ def pet_status(force=False):
     catalog=pet_catalog(force)
     vivi=vivi_pet.bundled_item(ROOT,SOURCE_ROOT)
     if vivi and not any(p['slug']==vivi['slug'] for p in catalog):catalog=[vivi,*catalog]
+    dsh=dsh_pet.bundled_item(ROOT,SOURCE_ROOT)
+    if dsh and not any(p['slug']==dsh['slug'] for p in catalog):catalog=[dsh,*catalog]
     return {'catalog':catalog,'installed':installed,'active_slug':active,'content_access':False,'source':'awesome-codex-pet','source_url':'https://github.com/legeling/awesome-codex-pet','catalog_status':PET_CATALOG_CACHE['status'],'catalog_checked_at':PET_CATALOG_CACHE['checked_at']}
 
 def install_pet(slug):
@@ -1188,11 +1193,12 @@ class Handler(BottleAPI, SimpleHTTPRequestHandler):
             if path=='/api/pets/desktop':
                 status=pet_status(); item=next((x for x in status['installed'] if x['slug']==status['active_slug']),None)
                 if not item: return self.send_json({'pet':None})
-                filename='sit.gif' if item.get('renderer')=='vivi-gif' else 'spritesheet.webp'
+                filename=Path(item['asset_url']).name
                 sprite=PET_ASSET_ROOT/item['folder']/filename
                 if not sprite.exists():sprite=APP/'assets/pets'/item['folder']/filename
                 info={'id':item['slug'],'name':item['name'],'version':item.get('spriteVersionNumber',1),'frameMap':item.get('frame_map'),'sprite':str(sprite.resolve())}
                 if item.get('renderer')=='vivi-gif':info.update(renderer='vivi-gif',manifest_url=item['manifest_url'],asset_url=item['asset_url'],actions=[[action['id'],action['label']] for action in item['actions']],viviActions=item['actions'],settings=item.get('settings',{}))
+                if item.get('renderer')=='dsh-webm':info.update(renderer='dsh-webm',manifest_url=item['manifest_url'],asset_url=item['asset_url'],actions=[[action['id'],action['label']] for action in item['actions']],nativeActions=item['actions'],settings=item['settings'],behavior=item['behavior'],defaultAction=item['defaultAction'],source_url=item['source_url'])
                 return self.send_json({'pet':info})
             if path=='/api/entries':
                 return self.send_json({'items':product.list_entries(int(q.get('limit',['1000'])[0]),ROOT)})

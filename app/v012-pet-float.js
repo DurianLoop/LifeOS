@@ -10,7 +10,7 @@
   async function current(){const r=await fetch('/api/pets/catalog',{cache:'no-store'});if(r.ok===false)throw new Error('桌宠目录暂不可用');const d=await r.json();return(d.installed||[]).find(x=>x.slug===d.active_slug)||(d.installed||[])[0]||null}
   function point(){try{return JSON.parse(localStorage.getItem(key)||'null')}catch{return null}}
   function clamp(x,y){const el=$('#lifePetFloat'),w=el?.offsetWidth||spriteW,h=el?.offsetHeight||spriteH;return{x:Math.max(0,Math.min(viewportWidth()-w,x)),y:Math.max(0,Math.min(viewportHeight()-h,y))}}
-  function readySprite(){if(pet?.renderer==='vivi-gif')return $('#lifePetFloatSprite')?.dataset.spriteReady==='true';return Boolean(pet?.asset_url&&loadedAsset===pet.asset_url)}
+  function readySprite(){if(window.lifeosPetRenderers?.special(pet))return $('#lifePetFloatSprite')?.dataset.spriteReady==='true';return Boolean(pet?.asset_url&&loadedAsset===pet.asset_url)}
   function avoidReaderFooter(q,w,h){
     const footer=$('.jbPageFoot'),r=footer?.getBoundingClientRect();
     if(!r||r.width<=0||r.height<=0||r.top>=viewportHeight()||r.bottom<=0)return q;
@@ -30,19 +30,19 @@
     const q=avoidReaderFooter(clamp(Number.isFinite(p?.x)?p.x:viewportWidth()-w-28,Number.isFinite(p?.y)?p.y:viewportHeight()-h-28),w,h);
     el.style.left=q.x+'px';el.style.top=q.y+'px';
     const show=ready&&!q.blocked;el.hidden=!show;el.inert=!show;el.style.pointerEvents=show?'':'none';el.dataset.spriteReady=String(readySprite());
-    if(pet?.renderer==='vivi-gif'){const runtime=window.lifeosPetRenderers.get($('#lifePetFloatSprite'));runtime?.setVisible(show);runtime?.setMotion(motion);}
+    if(window.lifeosPetRenderers?.special(pet)){const runtime=window.lifeosPetRenderers.get($('#lifePetFloatSprite'));runtime?.setVisible(show);runtime?.setMotion(motion);}
     if(show){if(timer===null&&motion&&!document.hidden)animate()}else{stop();closeMenu()}
     requestAnimationFrame(placePetPanels);
   }
   function prepareSprite(){const el=$('#lifePetFloatSprite');if(!el||!pet)return null;const rows=isV2()?11:9,cellW=el.clientWidth||spriteW,cellH=el.clientHeight||spriteH;if(loadedAsset!==pet.asset_url||el.dataset.rows!==String(rows)||el.dataset.cellW!==String(cellW)||el.dataset.cellH!==String(cellH)){el.style.backgroundImage='url("'+pet.asset_url+'")';el.style.backgroundSize=(cellW*8)+'px '+(cellH*rows)+'px';el.dataset.rows=String(rows);el.dataset.cellW=String(cellW);el.dataset.cellH=String(cellH);loadedAsset=pet.asset_url}return{el,rows,cellW,cellH}}
   function paint(){
-    const element=$('#lifePetFloatSprite');if(pet?.renderer==='vivi-gif'){
-      window.lifeosPetRenderers.paint(element,pet,{mode:'companion',width:element.clientWidth||spriteW*scale,height:element.clientHeight||spriteH*scale,motion,visible:visibleWanted&&placement==='in_app',position:preferredPosition||undefined,positionElement:$('#lifePetFloat'),bounds:()=>({width:viewportWidth(),height:viewportHeight()}),settings:{...window.lifeosViViSettings?.get(),scale:1},onReady:position,onPosition:()=>{if(!drag)placePetPanels();}});return;
+    const element=$('#lifePetFloatSprite');if(window.lifeosPetRenderers?.special(pet)){
+      window.lifeosPetRenderers.paint(element,pet,{mode:'companion',width:element.clientWidth||spriteW*scale,height:element.clientHeight||spriteH*scale,motion,visible:visibleWanted&&placement==='in_app',position:preferredPosition||undefined,positionElement:$('#lifePetFloat'),bounds:()=>({width:viewportWidth(),height:viewportHeight()}),settings:{...(pet.renderer==='vivi-gif'?window.lifeosViViSettings?.get():pet.settings),scale:1},onReady:position,onPosition:()=>{if(!drag)placePetPanels();}});return;
     }window.lifeosPetRenderers?.release(element);const sprite=prepareSprite();if(!sprite)return;const {el,rows,cellW,cellH}=sprite,usingLook=isV2()&&look>=0&&!oneShot,requested=usingLook?9+Math.floor(look/8):ROWS[state],row=pet?.frame_map?.[requested]?.length===0?Math.max(0,pet.frame_map.findIndex(cells=>cells.length)):requested,cells=pet?.frame_map?.[row]?.length?pet.frame_map[row]:[0,1,2,3,4,5,6,7],column=usingLook&&row===requested?look%8:cells[frame%cells.length];el.style.backgroundPosition='-'+(column*cellW)+'px -'+(row*cellH)+'px';el.dataset.petAction=state}
-  function setState(next,ms=0,{force=false}={}){if(pet?.renderer==='vivi-gif'){paint();if(!actions.selected(pet.slug))window.lifeosPetRenderers.get($('#lifePetFloatSprite'))?.playOnce(next,{duration:ms}).catch(()=>{});return;}if(oneShot&&!force)return;state=ROWS[next]===undefined?'idle':next;frame=0;look=-1;stateUntil=ms?Date.now()+ms:0;paint()}
+  function setState(next,ms=0,{force=false}={}){if(window.lifeosPetRenderers?.special(pet)){paint();if(!actions.selected(pet.slug))window.lifeosPetRenderers.get($('#lifePetFloatSprite'))?.playOnce(next,{duration:ms}).catch(()=>{});return;}if(oneShot&&!force)return;state=ROWS[next]===undefined?'idle':next;frame=0;look=-1;stateUntil=ms?Date.now()+ms:0;paint()}
   function stop(){clearTimeout(timer);timer=null}
-  function animate(){stop();if(pet?.renderer==='vivi-gif')return;const tick=()=>{timer=null;if(!$('#lifePetFloat')||$('#lifePetFloat').hidden||!motion||document.hidden)return;if(!drag&&oneShot){if(frame+1>=oneShot.cells){const id=oneShot.requestId;oneShot=null;setState('idle',0,{force:true});actions.finish(pet.slug,id);}else frame+=1;}else{if(!drag&&stateUntil&&Date.now()>=stateUntil)setState('idle');if(!isV2()||look<0)frame+=1;}paint();timer=setTimeout(tick,state==='waiting'&&!oneShot?240:140)};timer=setTimeout(tick,state==='waiting'&&!oneShot?240:140)}
-  function perform(action,meta={}){if(pet?.renderer==='vivi-gif'){paint();return;}oneShot=null;setState(action||'idle',0,{force:true});if(action){const requested=ROWS[state],row=pet?.frame_map?.[requested]?.length===0?Math.max(0,pet.frame_map.findIndex(cells=>cells.length)):requested;oneShot={action:state,requestId:meta.requestId,cells:pet?.frame_map?.[row]?.length||8};}if(motion&&!document.hidden&&visibleWanted&&placement==='in_app')animate();}
+  function animate(){stop();if(window.lifeosPetRenderers?.special(pet))return;const tick=()=>{timer=null;if(!$('#lifePetFloat')||$('#lifePetFloat').hidden||!motion||document.hidden)return;if(!drag&&oneShot){if(frame+1>=oneShot.cells){const id=oneShot.requestId;oneShot=null;setState('idle',0,{force:true});actions.finish(pet.slug,id);}else frame+=1;}else{if(!drag&&stateUntil&&Date.now()>=stateUntil)setState('idle');if(!isV2()||look<0)frame+=1;}paint();timer=setTimeout(tick,state==='waiting'&&!oneShot?240:140)};timer=setTimeout(tick,state==='waiting'&&!oneShot?240:140)}
+  function perform(action,meta={}){if(window.lifeosPetRenderers?.special(pet)){paint();return;}oneShot=null;setState(action||'idle',0,{force:true});if(action){const requested=ROWS[state],row=pet?.frame_map?.[requested]?.length===0?Math.max(0,pet.frame_map.findIndex(cells=>cells.length)):requested;oneShot={action:state,requestId:meta.requestId,cells:pet?.frame_map?.[row]?.length||8};}if(motion&&!document.hidden&&visibleWanted&&placement==='in_app')animate();}
   function resumeAtlasAction(resume){if(oneShot){state=oneShot.action;frame=resume?.requestId===oneShot.requestId?resume.frame:0;look=-1;paint();if(motion)animate();return true;}return false;}
   async function refresh(){
     const sequence=++refreshSequence;
@@ -111,7 +111,7 @@
   function bindDrag(){
     const el=$('#lifePetFloat'),sprite=$('#lifePetFloatSprite'),cancelHold=()=>{clearTimeout(touchHold);touchHold=null};
     sprite.addEventListener('pointerdown',event=>{
-      if(pet?.renderer==='vivi-gif'){if(event.button!==0||el.hidden||!readySprite())return;closeMenu();const runtime=window.lifeosPetRenderers.get(sprite);if(runtime?.beginDrag({x:event.clientX,y:event.clientY})){drag={vivi:true};sprite.setPointerCapture?.(event.pointerId);event.preventDefault();}return;}
+      if(window.lifeosPetRenderers?.special(pet)){if(event.button!==0||el.hidden||!readySprite())return;closeMenu();const runtime=window.lifeosPetRenderers.get(sprite);if(runtime?.beginDrag({x:event.clientX,y:event.clientY})){drag={vivi:true};sprite.setPointerCapture?.(event.pointerId);event.preventDefault();}return;}
       if(event.button!==0||el.hidden||!readySprite())return;closeMenu();sprite.setPointerCapture?.(event.pointerId);
       drag={dx:event.clientX-el.offsetLeft,dy:event.clientY-el.offsetTop,lastX:event.clientX,moved:false,position:null,resume:oneShot?{requestId:oneShot.requestId,frame}:null};setState('running-right',0,{force:true});el.classList.add('dragging');event.preventDefault();
       if(event.pointerType==='touch')touchHold=setTimeout(()=>{if(drag&&!drag.moved){const resume=drag.resume;drag=null;el.classList.remove('dragging');if(!resumeAtlasAction(resume))setState('idle');openMenu()}touchHold=null},520);
@@ -146,7 +146,7 @@
     placement=settings.mode||'in_app';scale=settings.scale||1;
     if(typeof settings.motion==='boolean'&&settings.motion!==motion){motion=settings.motion;localStorage.setItem('lifeos.pet.motion',String(motion));}
     if(scale!==previousScale)applySize();
-    const runtime=window.lifeosPetRenderers?.get($('#lifePetFloatSprite'));runtime?.setSettings({...settings.vivi,scale:1});
+    const runtime=window.lifeosPetRenderers?.get($('#lifePetFloatSprite'));if(pet?.renderer==='vivi-gif')runtime?.setSettings({...settings.vivi,scale:1});
     const show=settings.visible!==false;
     if(previous!==placement||show!==previousVisible)setVisible(show);
     else if(runtime){runtime.setMotion(motion);if(scale!==previousScale)requestAnimationFrame(placePetPanels);}

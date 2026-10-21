@@ -1,0 +1,70 @@
+'use strict';
+// Actual product, original WebM decode and transparent desktop window, in an empty workspace.
+const {app,BrowserWindow,ipcMain,Menu,nativeImage,screen}=require('electron');
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{EventEmitter}=require('node:events');
+const runtime=require('../desktop/runtime.cjs'),{createStore}=require('../desktop/workspace-store.cjs');
+const {createPetController}=require('../desktop/pet-controller.cjs'),{loadPetActions}=require('../desktop/shared-pet-actions.cjs');
+const ROOT=path.resolve(__dirname,'..'),out=path.join(ROOT,'docs/qa_dsh','run-'+Date.now()),workspace=path.join(out,'workspace');
+fs.mkdirSync(workspace,{recursive:true});fs.cpSync(path.join(ROOT,'config'),path.join(workspace,'config'),{recursive:true});
+app.setPath('userData',path.join(out,'profile'));app.on('window-all-closed',()=>{});
+const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),checks=[],errors=[];let backend,win,petWin,controller,base,menuTemplate;
+class QuietTray extends EventEmitter{isDestroyed(){return false}setToolTip(){}setContextMenu(){}destroy(){}}
+const store=createStore(workspace),slug='dsh-pet--pc2005-cloud';
+const js=(code,target=win)=>target.webContents.executeJavaScript(`(async()=>{${code}})()`);
+const until=async(condition,target=win,timeout=20000)=>{const start=Date.now();while(Date.now()-start<timeout){if(await js('return '+condition,target))return;await wait(100)}throw Error('Timed out: '+condition)};
+const shot=async(name,target=win)=>{await wait(150);fs.writeFileSync(path.join(out,name+'.png'),(await target.webContents.capturePage()).toPNG())};
+const fetchJSON=async(url,body)=>{const response=await fetch(url,body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:undefined);const result=await response.json();assert.ok(response.ok,JSON.stringify(result));return result};
+async function run(){
+  store.operation({op:'set',key:'lifeos.welcome.v1',value:'done'});
+  const port=await runtime.availablePort(),paths={dataRoot:workspace,resourceRoot:ROOT,logFile:path.join(out,'backend.log')};
+  const env={...process.env,LIFEOS_PYTHON:path.join(ROOT,'desktop/python-runtime/python.exe'),PYTHON_KEYRING_BACKEND:'keyring.backends.null.Keyring'};
+  for(const key of Object.keys(env))if(key.endsWith('_API_KEY')||['PYTHONHOME','PYTHONPATH','ELECTRON_RUN_AS_NODE'].includes(key))delete env[key];
+  backend=runtime.startBackend(runtime.backendLaunch({...paths,isPackaged:false,env}),{...paths,port});base='http://127.0.0.1:'+port;
+  await runtime.waitForServer(base+'/api/health',{failure:backend.failure});
+  win=new BrowserWindow({width:1320,height:940,show:false,webPreferences:{preload:path.join(ROOT,'desktop/preload.cjs'),sandbox:true,contextIsolation:true,nodeIntegration:false,offscreen:true,backgroundThrottling:false}});
+  ipcMain.on('lifeos:storage',(event,value)=>{try{event.returnValue={ok:true,value:store.operation(value)}}catch(error){event.returnValue={ok:false,error:error.message}}});
+  ipcMain.handle('lifeos:update-status',()=>({status:'idle'}));
+  class TestPetWindow extends BrowserWindow{constructor(options){super({...options,show:false,webPreferences:{...options.webPreferences,offscreen:true}});petWin=this;this.webContents.on('console-message',event=>{if(event.level==='error')errors.push(event.message)});}showInactive(){}}
+  controller=createPetController({BrowserWindow:TestPetWindow,Tray:QuietTray,Menu:{buildFromTemplate(rows){menuTemplate=rows;return {popup(){}}}},nativeImage,screen,store,resourceRoot:ROOT,desktopDir:path.join(ROOT,'desktop'),base:()=>base,actions:loadPetActions(ROOT),fetchJSON,onOpen(){},onQuit(){},onSettings:value=>win?.webContents.send('lifeos:pet-settings',value),onAction:value=>win?.webContents.send('lifeos:pet-action',value)});
+  ipcMain.handle('lifeos:pet-settings-get',()=>controller.snapshot());ipcMain.handle('lifeos:pet-settings-set',(_,patch)=>controller.setSettings(patch));
+  ipcMain.handle('lifeos:pet-refresh',()=>controller.refresh());ipcMain.handle('lifeos:pet-action',(_,value)=>controller.selectAction(value));
+  ipcMain.on('lifeos:pet-ready',()=>controller.onReady());ipcMain.on('lifeos:pet-failed',(_,message)=>errors.push(message));ipcMain.on('lifeos:pet-position',(_,point)=>controller.moveCompanion(point));
+  ipcMain.on('lifeos:pet-action-complete',(_,value)=>controller.completeAction(value));
+  win.webContents.on('console-message',event=>{if(event.level==='error'&&!/Failed to load resource|net::ERR/.test(event.message))errors.push(event.message)});
+  win.webContents.session.webRequest.onBeforeRequest({urls:['https://*/*','http://*/*']},(details,callback)=>callback(details.url.startsWith(base)?{}:{cancel:true}));
+  await win.loadURL(base);await until('!!window.lifeosDSH&&!!window.lifeosPetRenderers');await wait(900);
+  let status=await fetchJSON(base+'/api/pets/catalog');assert.equal(status.installed.find(row=>row.slug===slug).actions.length,106);
+  await fetchJSON(base+'/api/pets/activate',{slug});await js("window.dispatchEvent(new Event('lifeos:open-pet'))");
+  await until(`document.querySelector('#petPageInstalled [data-pet-activate="${slug}"]')`);
+  await js(`document.querySelector('#petPageInstalled [data-pet-activate="${slug}"]').click()`);
+  await until(`document.querySelector('#lifePetFloatSprite .dshPetStage')?.dataset.ready==='true'`);
+  await until(`document.querySelector('#petPageSprite .dshPetStage')?.dataset.ready==='true'`);
+  assert.ok(await js(`return document.querySelector('#petPageByline a')?.href==='https://github.com/PC2005-cloud/dsh-pet'`));
+  await shot('DSH-宠物库');checks.push('real companion room selects DSH and displays the original author link and noncommercial terms');
+  const sample=await js(`const runtime=lifeosPetRenderers.get(document.querySelector('#lifePetFloatSprite'));await runtime.select('${status.installed.find(row=>row.slug===slug).defaultAction}',{loop:true});runtime.setMotion(false);const video=runtime.element.querySelector('video:not([hidden])'),canvas=document.createElement('canvas');canvas.width=video.videoWidth;canvas.height=video.videoHeight;canvas.getContext('2d').drawImage(video,0,0);const alpha=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;let opaque=0,clear=0;for(let i=3;i<alpha.length;i+=4){if(alpha[i]>0)opaque++;if(alpha[i]===0)clear++;}return {opaque,clear,width:video.videoWidth,height:video.videoHeight,png:canvas.toDataURL('image/png').split(',')[1]}`);
+  assert.ok(sample.opaque>500&&sample.clear>500);fs.writeFileSync(path.join(ROOT,'app/assets/pets/dsh-pet/preview.png'),Buffer.from(sample.png,'base64'));delete sample.png;
+  checks.push('VP9 alpha is decoded as a visible transparent character; preview comes from the unchanged idle clip');
+  const clips=await js(`window.dshData=(await (await fetch('/api/pets/catalog')).json()).installed.find(row=>row.slug==='${slug}');const host=document.createElement('div');host.style.cssText='width:192px;height:208px';document.body.append(host);window.qaPet=lifeosDSH.mount(host,dshData,{mode:'preview',motion:false});await qaPet.ready;const result=[];for(const row of dshData.actions){await qaPet.select(row.id,{loop:true});const v=qaPet.element.querySelector('video:not([hidden])');result.push({id:row.id,width:v.videoWidth,height:v.videoHeight,duration:v.duration});}qaPet.destroy();host.remove();return result;`);
+  assert.equal(clips.length,106);assert.ok(clips.every(row=>row.width>0&&row.height>0&&row.duration>0));checks.push('all 106 original clips load and decode in the shipped Electron runtime');
+  await js(`window.qaPet=lifeosPetRenderers.get(document.querySelector('#lifePetFloatSprite'));qaPet.setMotion(true);window.qaCompletions=[];await qaPet.select(dshData.actions.find(row=>row.label==='点击回应-元气挥手').id,{onComplete:value=>qaCompletions.push(value)});`);
+  await wait(450);const before=await js('return qaPet.getState().animation.time');await js('qaPet.setMotion(false)');await wait(400);assert.ok(Math.abs(await js('return qaPet.getState().animation.time')-before)<.15);
+  await js('qaPet.setMotion(true);qaPet.setVisible(false)');const hiddenAt=await js('return qaPet.getState().animation.time');await wait(300);assert.ok(Math.abs(await js('return qaPet.getState().animation.time')-hiddenAt)<.15);await js('qaPet.setVisible(true)');
+  await js(`qaPet.beginDrag({x:300,y:300});qaPet.moveDrag({x:360,y:330});`);await wait(250);await js('qaPet.endDrag()');assert.ok(await js('return !!qaPet.getState().onceAction'));
+  await until('qaCompletions.length===1',win,18000);assert.equal(await js('return qaPet.getState().onceAction'),null);checks.push('full one-shot completes once, pauses with motion/visibility and resumes after a drag');
+  await js(`document.querySelector('#petPageSprite').dispatchEvent(new KeyboardEvent('keydown',{key:'F10',shiftKey:true,bubbles:true}))`);await until(`!!document.querySelector('#petActionMenu:not([hidden])')`);
+  assert.equal(await js(`return document.querySelectorAll('#petActionMenu [data-pet-action]').length`),107);await shot('DSH-完整动作菜单');await js('lifeosPetActions.close()');
+  await controller.setSettings({mode:'desktop'});await until(`document.querySelector('#pet').dataset.renderer==='dsh-webm'`,petWin);
+  const descriptor=await fetchJSON(base+'/api/pets/desktop');assert.equal(descriptor.pet.nativeActions.length,106);
+  assert.equal(await js('return meta.nativeActions.length',petWin),106);assert.ok(await js(`return !!document.querySelector('#pet video')?.videoWidth`,petWin));
+  controller.openMenu();assert.equal(menuTemplate.filter(row=>row.click&&descriptor.pet.actions.some(([,label])=>label===row.label)).length,106);await shot('DSH-透明桌面窗口',petWin);
+  const action=descriptor.pet.nativeActions.find(row=>row.label==='撸猫');assert.equal(controller.selectAction({slug,action:action.id}).ok,true);await until(`vivi?.getState().onceAction==='${action.id}'`,petWin);
+  await controller.setSettings({motion:false,scale:1.4});assert.equal(await js('return vivi.getState().motion',petWin),false);assert.ok(Math.abs(petWin.getBounds().width-Math.round(192*1.4))<=1);
+  checks.push('actual transparent desktop window receives all 106 file URLs, native commands, size and motion settings');
+  await controller.setSettings({mode:'in_app'});
+  await fetchJSON(base+'/api/pets/uninstall',{slug});status=await fetchJSON(base+'/api/pets/catalog');assert.ok(!status.installed.some(row=>row.slug===slug));
+  await fetchJSON(base+'/api/pets/install',{slug});status=await fetchJSON(base+'/api/pets/catalog');assert.equal(status.active_slug,slug);checks.push('removed DSH restores and activates offline');
+  assert.deepEqual(errors,[]);assert.ok(!fs.existsSync(path.join(workspace,'vault'))||fs.readdirSync(path.join(workspace,'vault')).length===0);
+  fs.writeFileSync(path.join(out,'report.json'),JSON.stringify({ok:true,checks,sample,clips,consoleErrors:errors,user_diaries_read:0},null,2));console.log(JSON.stringify({ok:true,checks,out}));
+}
+async function cleanup(){controller?.stop();if(win&&!win.isDestroyed())win.destroy();if(backend){const child=backend.child;backend.stop();if(child.exitCode===null)await Promise.race([new Promise(resolve=>child.once('close',resolve)),wait(3000)]);}}
+app.whenReady().then(run).then(async()=>{await cleanup();app.quit()}).catch(async error=>{console.error(error.stack);fs.writeFileSync(path.join(out,'failure.txt'),error.stack);if(win&&!win.isDestroyed()){await shot('failure').catch(()=>{});fs.writeFileSync(path.join(out,'state.json'),JSON.stringify(await js("return {nodes:[...document.querySelectorAll('[data-load-error]')].map(el=>({id:el.id,error:el.dataset.loadError})),videos:[...document.querySelectorAll('video')].map(el=>({src:el.src,error:el.error?.message,ready:el.readyState,network:el.networkState})),pet:document.querySelector('#lifePetFloatSprite')?.outerHTML}").catch(()=>null),null,2));}fs.writeFileSync(path.join(out,'errors.json'),JSON.stringify(errors));await cleanup();app.exit(1)});

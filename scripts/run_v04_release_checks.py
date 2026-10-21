@@ -25,8 +25,8 @@ import time
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / 'docs' / 'qa_v052'
-VERSION = '0.5.2'
+OUT = ROOT / 'docs' / 'qa_v053'
+VERSION = '0.5.3'
 CODE_DIRECTORIES = ('app', 'backend', 'cloud', 'connectors', 'desktop', 'engine',
                     'importers', 'memorial-site', 'mobile', 'netlify', 'scripts')
 SKIP_DIRECTORIES = {'.git', '.venv', 'node_modules', '__pycache__', 'python-runtime',
@@ -280,6 +280,7 @@ def main():
             ('pet-catalog', [sys.executable, 'scripts/test_pet_catalog.py']),
             ('pet-removal', [sys.executable, 'scripts/test_pet_removal.py']),
             ('vivi-pet', [sys.executable, 'scripts/test_vivi_pet.py']),
+            ('dsh-pet', [sys.executable, 'scripts/test_dsh_pet.py']),
             ('product-help', [sys.executable, 'scripts/test_product_help.py']),
             ('memory-lottery', [sys.executable, '-m', 'unittest', 'scripts.test_memory_lottery', '-v']),
             ('memory-draw-ui', [node, 'scripts/test_memory_draw.mjs']),
