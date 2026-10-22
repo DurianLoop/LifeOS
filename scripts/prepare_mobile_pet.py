@@ -1,6 +1,6 @@
 """Create transparent, timed canvas atlases from the attributed DSH originals.
 
-iOS WKWebView does not preserve VP9 alpha consistently. The source WebM files
+Mobile WebViews do not preserve VP9 alpha consistently. The source WebM files
 remain unchanged; generated atlases live only in the mobile resource bundle.
 """
 from pathlib import Path

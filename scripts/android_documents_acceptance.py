@@ -21,7 +21,17 @@ def tap(node):
         return True
     return False
 
-adb('push', str(fixture), '/sdcard/Download/LifeOS-native-import.txt')
+adb('wait-for-device')
+for attempt in range(30):
+    try:
+        adb('shell', 'mkdir', '-p', '/sdcard/Download')
+        adb('push', str(fixture), '/sdcard/Download/LifeOS-native-import.txt')
+        print('Synthetic document available in Downloads', flush=True)
+        break
+    except subprocess.SubprocessError:
+        if attempt == 29:
+            raise
+        time.sleep(2)
 saved, selected, opened = False, False, False
 for _ in range(700):
     try:

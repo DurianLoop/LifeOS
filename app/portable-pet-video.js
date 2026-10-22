@@ -1,7 +1,7 @@
-/* A transparent canvas playback clock for iOS, with pause, seek and ended. */
+/* Transparent mobile canvas playback, with pause, seek and ended. */
 (() => {
   'use strict';
-  if(!/LifeOSMobile\/ios/.test(navigator.userAgent))return;
+  if(!/LifeOSMobile\/(?:ios|android)/.test(navigator.userAgent))return;
   window.lifeosPortablePetVideo=()=>{
     const canvas=document.createElement('canvas'),context=canvas.getContext('2d');
     let url='',manifest=null,pages=[],time=0,playing=false,last=0,raf=0,generation=0;

@@ -12,14 +12,14 @@ Android requires Java 17 and an Android SDK; Briefcase can install these.
 ```sh
 python -m pip install briefcase==0.4.6
 python scripts/prepare_mobile_resources.py
+python -m pip install imageio-ffmpeg==0.6.0 Pillow
+python scripts/prepare_mobile_pet.py
 cd mobile
 briefcase create android --no-input
 python ../scripts/configure_android_project.py
 briefcase build android --no-input
 briefcase run android
 # On macOS:
-python -m pip install imageio-ffmpeg==0.6.0 Pillow==13.0.0
-python ../scripts/prepare_mobile_pet.py
 briefcase create iOS --no-input
 briefcase build iOS --no-input
 briefcase run iOS --no-input -d auto
