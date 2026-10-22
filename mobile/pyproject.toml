@@ -35,7 +35,7 @@ chaquopy.defaultConfig.staticProxy("toga_android.widgets.internal.webview", "lif
 manifest_application_extra_content = 'android:usesCleartextTraffic="true"'
 
 [tool.briefcase.app.lifeosmobile.iOS]
-requires = ["toga-iOS==0.5.7", "cryptography==46.0.3", "Pillow==11.3.0"]
+requires = ["toga-iOS==0.5.7", "cryptography==47.0.0", "Pillow==13.0.0"]
 supported = true
 info.NSAppTransportSecurity.NSAllowsLocalNetworking = true
 info.NSLocalNetworkUsageDescription = "连接你在设置中指定的局域网 AI 或同步服务"
