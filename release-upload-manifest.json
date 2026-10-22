@@ -28,6 +28,21 @@
       "name": "LifeOS-0.6.0-ios-simulator-arm64.zip",
       "bytes": 484889458,
       "sha256": "a3e9dcba378c62e5c146a5bb7d0c90b0bfe615fa8933d79c975454a9d01048d1"
+    },
+    {
+      "name": "LifeOS-0.6.0-android.apk",
+      "bytes": 498361296,
+      "sha256": "be62405699e46baf35429820c61b8e2064c29d9bbbc772d7c2f6bd20787757fe"
     }
-  ]
+  ],
+  "android_transfer": {
+    "name": "LifeOS-0.6.0-android-transfer.json",
+    "sha256": "0340cb88a0603dd833d0a957d2c19a883f588a2a69c50a0fbd893a055c9c9818",
+    "source_sha256": "868eb94e389b8a1637fca2e3c5ce1742537c454bee7ffd738db6acffb04c262f"
+  },
+  "source_archive": {
+    "name": "LifeOS-0.6.0-source.zip",
+    "bytes": 249508291,
+    "sha256": "c0e40aaf03f4356c633cfce45d3521cdb99448233ceb07328dfa5707847eb08f"
+  }
 }

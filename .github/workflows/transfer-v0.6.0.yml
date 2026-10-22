@@ -12,6 +12,7 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
+      - run: git fetch --depth=1 origin tag v0.6.0
       - uses: actions/download-artifact@v4
         with:
           github-token: ${{ github.token }}
@@ -30,6 +31,13 @@ jobs:
           run-id: 39800222943
           name: ios-v0.6.0
           path: packages/ios
+      - name: Verify provenance and transfer to the existing draft
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: 39800222943
+          name: android-v0.6.0
+          path: packages/android
       - name: Verify provenance and transfer to the existing draft
         env:
           GH_TOKEN: ${{ github.token }}

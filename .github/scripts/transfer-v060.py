@@ -1,9 +1,11 @@
 """Transfer public packages from successful native CI; leave publication local."""
 from pathlib import Path
+import base64
 import concurrent.futures
 import hashlib
 import json
 import os
+import subprocess
 import time
 import urllib.error
 import urllib.parse
@@ -28,6 +30,34 @@ release_id = manifest['draft_release_id']
 release = api('/releases/' + str(release_id))
 assert release['draft'] and release['tag_name'] == 'v0.6.0'
 assert release['target_commitish'] == manifest['commit']
+patch_asset = next(asset for asset in release['assets'] if asset['name'] == manifest['android_transfer']['name'])
+class Redirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, request, fp, code, message, response_headers, url):
+        redirected = super().redirect_request(request, fp, code, message, response_headers, url)
+        redirected.remove_header('Authorization')
+        return redirected
+request = urllib.request.Request(patch_asset['url'], headers={**headers, 'Accept': 'application/octet-stream'})
+with urllib.request.build_opener(Redirect()).open(request, timeout=120) as response:
+    patch_data = response.read()
+assert hashlib.sha256(patch_data).hexdigest() == manifest['android_transfer']['sha256']
+patch = json.loads(patch_data)
+assert patch['format'] == 'lifeos-public-apk-records-v1' and not patch['private_credentials_included']
+unsigned = Path('packages/android/LifeOS-0.6.0.apk')
+with unsigned.open('rb') as stream:
+    assert hashlib.file_digest(stream, 'sha256').hexdigest() == patch['source_sha256']
+signed = Path('packages/android/LifeOS-0.6.0-android.apk')
+with unsigned.open('rb') as original, signed.open('wb') as output:
+    for operation in patch['operations']:
+        if 'literal' in operation:
+            output.write(base64.b64decode(operation['literal']))
+        else:
+            assert 0 <= operation['offset'] <= unsigned.stat().st_size - operation['length']
+            original.seek(operation['offset'])
+            output.write(original.read(operation['length']))
+assert signed.stat().st_size == patch['target_bytes']
+with signed.open('rb') as stream:
+    assert hashlib.file_digest(stream, 'sha256').hexdigest() == patch['target_sha256']
+print('Reconstructed the exact locally signed APK; no private credentials used', flush=True)
 packages = []
 for item in manifest['server_assets']:
     files = list(Path('packages').rglob(item['name']))
@@ -37,6 +67,16 @@ for item in manifest['server_assets']:
     with file.open('rb') as stream:
         assert hashlib.file_digest(stream, 'sha256').hexdigest() == item['sha256']
     packages.append((file, item))
+source_meta = manifest['source_archive']
+source_zip = Path('packages') / source_meta['name']
+subprocess.run(['git', 'archive', '--format=zip', '--prefix=LifeOS-0.6.0/',
+                '--output=' + str(source_zip), manifest['commit']], check=True)
+with source_zip.open('rb') as stream:
+    source_matches = hashlib.file_digest(stream, 'sha256').hexdigest() == source_meta['sha256']
+if source_matches:
+    packages.append((source_zip, source_meta))
+else:
+    print('The exact source archive will be transferred by the local publisher', flush=True)
 
 def transfer(pair):
     file, item = pair
@@ -66,4 +106,5 @@ def transfer(pair):
 
 with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
     result = list(pool.map(transfer, packages))
+api('/releases/assets/' + str(patch_asset['id']), 'DELETE')
 print(json.dumps({'ok': True, 'draft_release_id': release_id, 'verified_assets': result}))
