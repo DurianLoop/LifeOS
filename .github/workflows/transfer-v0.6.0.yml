@@ -1,0 +1,36 @@
+name: Transfer verified v0.6.0 assets
+on:
+  push:
+    branches: [codex/v0.6.0-publish]
+  workflow_dispatch:
+permissions:
+  actions: read
+  contents: write
+jobs:
+  transfer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: 39800222845
+          name: macos-installer-arm64
+          path: packages/mac-arm64
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: 39800222845
+          name: macos-installer-x64
+          path: packages/mac-x64
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: 39800222943
+          name: ios-v0.6.0
+          path: packages/ios
+      - name: Verify provenance and transfer to the existing draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python .github/scripts/transfer-v060.py

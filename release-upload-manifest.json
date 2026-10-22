@@ -1,0 +1,33 @@
+{
+  "commit": "58756d1abb66af18660725bd16476429732583b5",
+  "draft_release_id": 420886917,
+  "mac_run": 39800222845,
+  "mobile_run": 39800222943,
+  "server_assets": [
+    {
+      "name": "LifeOS-0.6.0-mac-arm64.dmg",
+      "bytes": 274672996,
+      "sha256": "0c1be2bf8712d289cd3e90dae441065108dd6617f7b900a7abaf847bcbe16b10"
+    },
+    {
+      "name": "LifeOS-0.6.0-mac-arm64.zip",
+      "bytes": 231713177,
+      "sha256": "bfacf8efafcb818b0b9ef32f33937ad9164edbe20b036ca3021730b0a11136ee"
+    },
+    {
+      "name": "LifeOS-0.6.0-mac-x64.dmg",
+      "bytes": 274866227,
+      "sha256": "671cd0cc65ad78f361c87a43434af018ae9ae82f2fed817b15e9f7e88e96b6b8"
+    },
+    {
+      "name": "LifeOS-0.6.0-mac-x64.zip",
+      "bytes": 238733892,
+      "sha256": "28cc789df2c4bfe1f20161e68cb2a7dab94cac046bf510f7bf4756e69bf17120"
+    },
+    {
+      "name": "LifeOS-0.6.0-ios-simulator-arm64.zip",
+      "bytes": 484889458,
+      "sha256": "a3e9dcba378c62e5c146a5bb7d0c90b0bfe615fa8933d79c975454a9d01048d1"
+    }
+  ]
+}
