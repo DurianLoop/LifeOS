@@ -62,6 +62,10 @@ class AcceptanceApp(LifeOS):
         try:
             await self.wait_js('!!window.lifeosMobile && typeof openFeature === "function" && !!window.lifeosJournalBook')
             assert await self.js('window.lifeosMobile.platform') == self.platform
+            await self.js("window.__qaText=null;lifeosMobile.requestText('输入验收','原生输入').then(value=>window.__qaText={value});null")
+            await self.wait_js('!!document.querySelector(".mobileTextDialog[open]")')
+            await self.js("document.querySelector('.mobileTextDialog button[type=submit]').click();null")
+            assert (await self.wait_js('window.__qaText'))['value'] == '原生输入'
             await self.js("document.querySelector('[data-welcome=skip]')?.click(); localStorage.setItem('lifeos.qa.restart','native-persistence'); null")
             await self.js("window.__qa=null;fetch('/api/entries/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({journal_date:'2026-10-01',title:'Native acceptance fixture',sections:{'日记':'Offline native acceptance. 本地日记，重启后仍然保存。'}})}).then(r=>r.json()).then(r=>window.__qa=r).catch(e=>window.__qa={error:String(e)});null")
             saved = await self.wait_js('window.__qa')
@@ -113,10 +117,13 @@ class AcceptanceApp(LifeOS):
             export.write_text('LifeOS native export acceptance', encoding='utf-8')
             self.export(export, 'text/plain')
             if self.platform == 'ios':
+                for _ in range(50):
+                    if self._share_controller.presentingViewController is not None:
+                        break
+                    await asyncio.sleep(0.2)
+                assert self._share_controller.presentingViewController is not None
+                self._share_controller.dismissViewControllerAnimated_completion_(True, None)
                 await asyncio.sleep(0.5)
-                root = self.main_window._impl.native.rootViewController
-                assert root.presentedViewController is not None
-                root.dismissViewControllerAnimated_completion_(True, None)
             else:
                 for _ in range(300):
                     if getattr(self, '_last_export_completed', None) == export.name:

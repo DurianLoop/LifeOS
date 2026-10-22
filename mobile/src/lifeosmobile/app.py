@@ -108,6 +108,7 @@ class LifeOS(toga.App):
             from rubicon.objc import ObjCClass
             url = ObjCClass('NSURL').fileURLWithPath(str(path))
             controller = ObjCClass('UIActivityViewController').alloc().initWithActivityItems_applicationActivities_([url], None)
+            self._share_controller = controller
             root = self.main_window._impl.native.rootViewController
             if controller.popoverPresentationController:
                 controller.popoverPresentationController.sourceView = root.view

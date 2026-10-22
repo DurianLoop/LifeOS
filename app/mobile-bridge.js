@@ -20,6 +20,14 @@
     return reply;
   };
   window.lifeosMobile={platform,storage,version:'0.6.0'};
+  window.lifeosMobile.requestText=(message,value='')=>new Promise(resolve=>{
+    const dialog=document.createElement('dialog'),form=document.createElement('form'),label=document.createElement('label'),input=document.createElement('input'),actions=document.createElement('div'),cancel=document.createElement('button'),submit=document.createElement('button');
+    dialog.className='mobileTextDialog';form.method='dialog';label.textContent=message;input.value=value;input.autocomplete='off';input.spellcheck=false;input.setAttribute('aria-label',message);
+    cancel.type='button';cancel.textContent='取消';submit.type='submit';submit.textContent='确定';cancel.className=submit.className='productAction';actions.append(cancel,submit);form.append(label,input,actions);dialog.append(form);document.body.append(dialog);
+    const finish=value=>{dialog.remove();resolve(value)};
+    cancel.onclick=()=>finish(null);dialog.addEventListener('cancel',event=>{event.preventDefault();finish(null)});form.onsubmit=event=>{event.preventDefault();finish(input.value)};
+    dialog.showModal();input.focus();
+  });
   document.documentElement.dataset.platform=platform;
   async function exportFile(url,name){
     const response=await fetch(url);if(!response.ok)throw Error('无法读取导出文件');
