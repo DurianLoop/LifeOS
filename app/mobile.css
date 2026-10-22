@@ -4,7 +4,12 @@ html[data-platform] body { padding-top:env(safe-area-inset-top);padding-bottom:e
 html[data-platform] :is(button,.productAction,.roomBtn,.linkBtn) { min-height:44px;touch-action:manipulation; }
 html[data-platform] :is(input,textarea,select) { font-size:max(16px,1em); }
 html[data-platform] .kbd { display:none; }
-html[data-platform] .rail { top:env(safe-area-inset-top);bottom:env(safe-area-inset-bottom); }
+@media(min-width:881px){html[data-platform] .rail { top:env(safe-area-inset-top);bottom:env(safe-area-inset-bottom); }}
+@media(max-width:880px){
+ html[data-platform] body:not(.sidebarEditing) .rail {top:auto;bottom:0;height:calc(80px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom)}
+ html[data-platform] body:not(.sidebarEditing) .rail .rooms {height:80px}
+ html[data-platform] body:not(.writerImmersive) .shell {height:calc(100dvh - var(--life-titlebar-h) - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
+}
 html[data-platform] .topbar { top:env(safe-area-inset-top); }
 html[data-platform] :is(.modal,.overlay,.writerOverlay) { max-height:100dvh;overflow:auto; }
 html[data-platform] :is(table,pre) { max-width:100%;overflow:auto; }

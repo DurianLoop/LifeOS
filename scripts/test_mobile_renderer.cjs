@@ -25,7 +25,7 @@ async function run(){
    if(name==='Ask My Life'){await js('openAsk();document.querySelector("#askModal").classList.remove("open")');checks.push({width,name,modal:true});continue}
    await js('openFeature('+JSON.stringify(name)+')');await until('!document.querySelector("#view .loading")');await wait(100);
    const value=await js('({page:STATE.feature,text:document.querySelector("#view").innerText.slice(0,500),overflow:document.documentElement.scrollWidth-innerWidth,shellOverflow:document.querySelector(".shell").scrollWidth-document.querySelector(".shell").clientWidth})');
-   assert.equal(value.page,name);assert.ok(!value.text.includes('Could not render this module'),JSON.stringify(value));
+   assert.equal(value.page,name==='Other'?'Attic':name);assert.ok(!value.text.includes('Could not render this module'),JSON.stringify(value));
    checks.push({width,name,...value});
    if(value.overflow>4||value.shellOverflow>4)console.log('OVERFLOW '+JSON.stringify({width,name,...value}));
    if(['Home','Journal','Time Capsule','Daily Poetry','Pet Shelf','Analytics'].includes(name))fs.writeFileSync(path.join(out,width+'-'+name.replaceAll(' ','-')+'.png'),(await win.webContents.capturePage()).toPNG());

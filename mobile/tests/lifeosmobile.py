@@ -43,7 +43,7 @@ class AcceptanceApp(LifeOS):
                 await asyncio.sleep(0.15)
                 result = await self.js('JSON.stringify({page:STATE.feature,text:document.querySelector("#view").innerText,overflow:document.documentElement.scrollWidth-innerWidth})')
                 result = json.loads(result)
-                assert result['page'] == name and result['text'].strip(), result
+                assert result['page'] == ('Attic' if name == 'Other' else name) and result['text'].strip(), result
                 assert 'Could not render this module' not in result['text'], result
                 assert result['overflow'] <= 4, (name, result['overflow'])
                 rendered.append(name)
