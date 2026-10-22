@@ -35,6 +35,7 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
       - name: Run full application in Android emulator
+        timeout-minutes: 12
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
@@ -42,7 +43,7 @@ jobs:
           arch: x86_64
           profile: pixel_6
           disable-animations: true
-          script: cd mobile && briefcase run android --test --no-input -d emulator-5554
+          script: cd mobile && timeout 600 briefcase run android --test --no-input -d emulator-5554; result=$?; adb logcat -d > logs/android-logcat.txt; adb shell screencap -p /sdcard/acceptance.png; adb pull /sdcard/acceptance.png logs/android-screen.png; exit $result
       - name: Rebuild clean distribution without test fixtures
         working-directory: mobile
         run: |
@@ -84,13 +85,13 @@ jobs:
       - name: Build and run native simulator acceptance
         working-directory: mobile
         run: |
-          briefcase build iOS --test --no-input -d "$LIFEOS_IOS_DEVICE"
+          briefcase build iOS --test --no-input
           briefcase run iOS --test --no-input -d "$LIFEOS_IOS_DEVICE"
       - name: Build source and simulator distribution
         working-directory: mobile
         run: |
           briefcase update iOS --no-input
-          briefcase build iOS --no-input -d "$LIFEOS_IOS_DEVICE"
+          briefcase build iOS --no-input
           mkdir -p dist
           APP=$(find build -path '*Debug-iphonesimulator/LifeOS.app' -type d -print -quit)
           test -n "$APP"
