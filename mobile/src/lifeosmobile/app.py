@@ -49,6 +49,7 @@ class LifeOS(toga.App):
             ])
             if getattr(self, 'testing', False):
                 print('LIFEOS_NATIVE_QA_FAILED', flush=True)
+                print('>>>>>>>>>> EXIT 1 <<<<<<<<<<', flush=True)
 
     async def after_ready(self):
         pass

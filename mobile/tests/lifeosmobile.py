@@ -67,9 +67,11 @@ class AcceptanceApp(LifeOS):
             target.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
             print('LIFEOS_ACCEPTANCE_REPORT=' + json.dumps(report), flush=True)
             print('LIFEOS_NATIVE_QA_PASSED', flush=True)
+            print('>>>>>>>>>> EXIT 0 <<<<<<<<<<', flush=True)
         except Exception:
             traceback.print_exc()
             print('LIFEOS_NATIVE_QA_FAILED', flush=True)
+            print('>>>>>>>>>> EXIT 1 <<<<<<<<<<', flush=True)
         self.exit()
 
 

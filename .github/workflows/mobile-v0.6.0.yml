@@ -55,6 +55,16 @@ jobs:
           name: android-v0.6.0
           if-no-files-found: error
           path: mobile/dist/*
+      - name: Collect official signing tool for local release signing
+        run: |
+          mkdir -p mobile/signing-tool
+          TOOL=$(find "$ANDROID_HOME/build-tools" -path '*/lib/apksigner.jar' | sort -V | tail -1)
+          test -n "$TOOL"
+          cp "$TOOL" mobile/signing-tool/apksigner.jar
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-signing-tool
+          path: mobile/signing-tool/apksigner.jar
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -83,6 +93,7 @@ jobs:
         working-directory: mobile
         run: briefcase create iOS --no-input
       - name: Build and run native simulator acceptance
+        timeout-minutes: 12
         working-directory: mobile
         run: |
           briefcase build iOS --test --no-input
@@ -96,6 +107,11 @@ jobs:
           APP=$(find build -path '*Debug-iphonesimulator/LifeOS.app' -type d -print -quit)
           test -n "$APP"
           ditto -c -k --keepParent "$APP" dist/LifeOS-0.6.0-ios-simulator-arm64.zip
+      - name: Capture native simulator screen
+        if: always()
+        run: |
+          mkdir -p mobile/logs
+          xcrun simctl io booted screenshot mobile/logs/ios-screen.png || true
       - uses: actions/upload-artifact@v4
         with:
           name: ios-v0.6.0

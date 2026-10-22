@@ -17,8 +17,6 @@ requires = ["certifi==2026.10.19", "qrcode==8.2"]
 permission.camera = "为未来的自己录制漂流瓶视频或拍摄附件"
 permission.microphone = "为未来的自己录制漂流瓶语音"
 permission.photo_library = "选择要保存在日记中的照片与视频"
-test_success_regex = "LIFEOS_NATIVE_QA_PASSED"
-test_failure_regex = "LIFEOS_NATIVE_QA_FAILED"
 
 [tool.briefcase.app.lifeosmobile.android]
 requires = ["toga-android==0.5.7", "cryptography==42.0.8", "Pillow==11.0.0"]
