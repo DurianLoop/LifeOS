@@ -109,7 +109,7 @@ class AcceptanceApp(LifeOS):
                 assert result.get('ok'), (action, result)
             await self.js("window.__qaAlpha=(()=>{const source=__qaPet.element.querySelector('.dshPetVideo:not([hidden])'),canvas=document.createElement('canvas');canvas.width=source.videoWidth;canvas.height=source.videoHeight;const context=canvas.getContext('2d');context.drawImage(source,0,0);const data=context.getImageData(0,0,canvas.width,canvas.height).data;let transparent=0,visible=0;for(let i=3;i<data.length;i+=4){if(data[i]===0)transparent++;if(data[i]>0)visible++}return{transparent,visible}})();null")
             alpha = await self.js('window.__qaAlpha')
-            assert alpha['transparent'] > 0 and alpha['visible'] > 0, alpha
+            assert alpha['transparent'] > alpha['visible'] * 0.1 and alpha['visible'] > 0, alpha
             await self.js('__qaPet.destroy();null')
             # A native document export opens the real platform sheet. Android
             # CI's accessibility driver saves it through DocumentsUI.

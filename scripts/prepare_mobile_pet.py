@@ -21,7 +21,7 @@ def convert(row, folder, ffmpeg):
     destination.mkdir(parents=True, exist_ok=True)
     command = [ffmpeg, '-v', 'error', '-c:v', 'libvpx-vp9', '-i', str(source),
                '-vf', f'fps={FPS},scale={SIZE[0]}:{SIZE[1]}', '-f', 'rawvideo', '-pix_fmt', 'rgba', 'pipe:1']
-    count, pages, tile = 0, [], None
+    count, pages, tile, transparent = 0, [], None, None
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
         while True:
             data = process.stdout.read(SIZE[0] * SIZE[1] * 4)
@@ -32,24 +32,29 @@ def convert(row, folder, ffmpeg):
             if count % 64 == 0:
                 tile = Image.new('RGBA', (SIZE[0] * 8, SIZE[1] * 8))
             frame = Image.frombytes('RGBA', SIZE, data)
+            if count == 0:
+                transparent = frame.getchannel('A').histogram()[0]
+                if not SIZE[0] * SIZE[1] * 0.1 < transparent < SIZE[0] * SIZE[1]:
+                    raise RuntimeError('Source animation alpha was not decoded: ' + row['id'])
             tile.paste(frame, ((count % 8) * SIZE[0], ((count % 64) // 8) * SIZE[1]))
             count += 1
             if count % 64 == 0:
-                name = f'page-{len(pages)}.webp'
-                tile.save(destination / name, format='WEBP', quality=84, method=4)
+                name = f'page-{len(pages)}.png'
+                tile.save(destination / name, format='PNG', compress_level=6)
                 pages.append(name)
                 tile = None
         error = process.stderr.read().decode('utf-8', 'replace')
         if process.wait() != 0:
             raise RuntimeError(error)
     if tile is not None:
-        name = f'page-{len(pages)}.webp'
-        tile.save(destination / name, format='WEBP', quality=84, method=4)
+        name = f'page-{len(pages)}.png'
+        tile.save(destination / name, format='PNG', compress_level=6)
         pages.append(name)
     if not count:
         raise RuntimeError('Animation has no frames')
     value = {'width': SIZE[0], 'height': SIZE[1], 'columns': 8, 'per_page': 64,
-             'fps': FPS, 'frames': count, 'pages': pages, 'source_sha256': hashlib.sha256(source.read_bytes()).hexdigest()}
+             'fps': FPS, 'frames': count, 'pages': pages, 'first_frame_transparent': transparent,
+             'source_sha256': hashlib.sha256(source.read_bytes()).hexdigest()}
     (destination / 'animation.json').write_text(json.dumps(value), encoding='utf-8')
     print(row['id'], count, flush=True)
 
