@@ -43,8 +43,10 @@ for _ in range(700):
             or n.get('text', '').upper() == 'SAVE') and n.get('enabled') == 'true'), None)
         choose = next((n for n in nodes if 'Native import acceptance' in
             n.get('text', '') + n.get('content-desc', '')), None)
-        item = next((n for n in nodes if 'LifeOS-native-im' in
-            n.get('text', '') + n.get('content-desc', '')), None)
+        # A file card has a separate preview button whose accessibility label
+        # also contains the filename. Select the filename, never that button.
+        item = next((n for n in nodes if 'LifeOS-native-im' in n.get('text', '')
+            and n.get('resource-id', '').endswith(':id/title')), None)
         if save is not None:
             saved = tap(save) or saved
             print('Tapped native save', flush=True)
@@ -62,7 +64,7 @@ for _ in range(700):
                 tap(downloads)
             elif drawer is not None:
                 tap(drawer)
-        if saved and selected:
+        if saved and selected and not any('documentsui' in n.get('package', '') for n in nodes):
             # The app reads the saved content URI back and compares every byte
             # before it exposes the import input to this driver.
             (OUT / 'ANDROID_DOCUMENTS_ACCEPTANCE.json').write_text(json.dumps({'ok': True,
