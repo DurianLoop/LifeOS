@@ -29,29 +29,29 @@ for _ in range(700):
         xml = ET.fromstring(adb('shell', 'cat', '/sdcard/lifeos-acceptance-ui.xml'))
         (OUT / 'android-documents-ui.xml').write_bytes(ET.tostring(xml))
         nodes = list(xml.iter('node'))
-        for node in nodes:
-            identity = node.get('resource-id', '')
-            text = node.get('text', '')
-            description = node.get('content-desc', '')
-            if ('action_menu_save' in identity or text.upper() == 'SAVE') and node.get('enabled') == 'true':
-                saved = tap(node) or saved
-                print('Tapped native save', flush=True)
-                break
-            if saved and 'Native import acceptance' in text + description:
-                opened = tap(node) or opened
-                print('Opened native import picker', flush=True)
-                break
-            if opened and ('LifeOS-native-import' in text + description):
-                selected = tap(node)
-                break
-            if opened and text in ('Downloads', 'Download') and 'documentsui' in node.get('package', ''):
-                tap(node)
-                break
-        else:
-            if opened and any('documentsui' in n.get('package', '') for n in nodes):
-                drawer = next((n for n in nodes if n.get('content-desc') in ('Show roots', 'Open navigation drawer')), None)
-                if drawer is not None:
-                    tap(drawer)
+        save = next((n for n in nodes if ('action_menu_save' in n.get('resource-id', '')
+            or n.get('text', '').upper() == 'SAVE') and n.get('enabled') == 'true'), None)
+        choose = next((n for n in nodes if 'Native import acceptance' in
+            n.get('text', '') + n.get('content-desc', '')), None)
+        item = next((n for n in nodes if 'LifeOS-native-im' in
+            n.get('text', '') + n.get('content-desc', '')), None)
+        if save is not None:
+            saved = tap(save) or saved
+            print('Tapped native save', flush=True)
+        elif saved and choose is not None:
+            opened = tap(choose) or opened
+            print('Opened native import picker', flush=True)
+        elif opened and item is not None:
+            selected = tap(item)
+        elif opened and any('documentsui' in n.get('package', '') for n in nodes):
+            downloads = next((n for n in nodes if n.get('text') in ('Downloads', 'Download')
+                and n.get('clickable') == 'true'), None)
+            drawer = next((n for n in nodes if n.get('content-desc') in
+                ('Show roots', 'Open navigation drawer')), None)
+            if downloads is not None:
+                tap(downloads)
+            elif drawer is not None:
+                tap(drawer)
         if saved and selected:
             # The app reads the saved content URI back and compares every byte
             # before it exposes the import input to this driver.
