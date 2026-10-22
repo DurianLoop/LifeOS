@@ -1,7 +1,7 @@
 /* The desktop workspace owns drafts and preferences, independent of its URL. */
 (() => {
   'use strict';
-  const native=window.localStorage,bridge=window.lifeosDesktop?.storage;
+  const native=window.localStorage,bridge=window.lifeosDesktop?.storage||window.lifeosMobile?.storage;
   const known=storage=>{for(let i=0;i<storage.length;i++)if(/^lifeos[.:]/.test(storage.key(i)||''))return true;return false;};
   if(!bridge){try{window.lifeosVisitContext={existing:known(native),storageError:false};}catch{window.lifeosVisitContext={existing:true,storageError:true};}return;}
   let failure=null;

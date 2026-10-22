@@ -1,21 +1,40 @@
-# LifeOS Mobile · P2
+# LifeOS Mobile v0.6.0
 
-Mobile is intentionally a **capture and companion surface**, not a compressed
-copy of the 141-system desktop laboratory.
+The native apps bundle the full desktop web application and Python engine.
+Journals, SQLite, revisions, attachments, preferences, imports, exports,
+encryption and backups run in the private application sandbox, offline.
 
-Primary surfaces: Today, Write, Memory Inbox, Ask, Me.
+## Build
 
-The `www/` app runs as a PWA/static web app and is also the Capacitor webDir.
-Capacitor 8.5.x is pinned for iOS/Android project generation. Native signing,
-provisioning and store submission require the product owner's Apple/Google
-credentials.
+Use Python 3.13 and Briefcase 0.4.6. iOS requires macOS and Xcode.
+Android requires Java 17 and an Android SDK; Briefcase can install these.
 
-Photo capture uses an `<input capture>` path and voice capture uses
-`MediaRecorder`; both land in Memory Inbox first. This keeps capture reversible:
-accepting an item creates a normal Entry + Revision later on Desktop.
+```sh
+python -m pip install briefcase==0.4.6
+python scripts/prepare_mobile_resources.py
+cd mobile
+briefcase create android --no-input
+briefcase build android --no-input
+briefcase run android
+# On macOS:
+briefcase create iOS --no-input
+briefcase build iOS --no-input -d auto
+briefcase run iOS --no-input -d auto
+```
 
-## Offline and account portability
+Run native acceptance with `briefcase run <platform> --test --update`.
+Production builds must be updated and rebuilt without `--test`.
+The generated resources directory is ignored; its bundle manifest records all
+public resource digests. Private workspace data is never a build input.
 
-Mobile queues failed network writes in IndexedDB and retries them in the foreground after reconnect/login. This covers journal operations and Memory Inbox captures; conflicts remain queued for explicit resolution instead of being discarded.
+iOS v0.6.0 delivers source and an Apple Silicon simulator app only.
+No iPhone installation package or TestFlight distribution is included.
 
-The Me surface also exposes tenant-scoped cloud export and destructive account deletion. Account deletion requires password re-authentication plus the exact confirmation phrase `DELETE MY LIFEOS`.
+Desktop tray, desktop overlay, close-to-tray and desktop auto-updater do not
+exist on iOS/Android. The companion stays inside the app. Due bottles remain
+visible when opened. Network AI and LAN endpoints are supported; desktop
+Codex/CC Switch executables cannot run on a phone.
+
+`www/` and `capacitor.config.json` retain the historical P2 companion source.
+The v0.6.0 native build uses `src/` and `pyproject.toml`. The separate website
+PWA remains in `promo/app/`, retaining its existing storage format.

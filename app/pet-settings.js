@@ -60,7 +60,7 @@
         <label class="petSettingRow"><span>靠边藏起</span><input type="checkbox" data-vivi-setting="edgeHide"></label>
         <label class="petSettingRow"><span>拖动动作</span><select data-vivi-setting="dragAction" aria-label="ViVi 拖动动作"><option value="fly">飞起来</option><option value="interact">摸摸</option><option value="sweat">流汗</option><option value="jump">跳跃</option></select></label>
       </div>
-      <p id="petSettingsHint" role="status">${bridge?.petSetSettings?'':'桌面模式需桌面客户端'}</p>
+      <p id="petSettingsHint" role="status">${window.lifeosMobile?'在应用中陪伴你；手机系统不提供桌面悬浮窗与托盘。':bridge?.petSetSettings?'':'桌面模式需桌面客户端'}</p>
     </section>`);
     const motion=$('#petPageMotion')?.closest('label');if(motion){motion.classList.add('petSettingMotion');$('#petMotionSetting').append(motion);}
     $('#petFloatToggle')?.remove();

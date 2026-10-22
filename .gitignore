@@ -18,6 +18,10 @@
 /mobile/node_modules/
 /mobile/ios/
 /mobile/android/
+/mobile/build/
+/mobile/dist/
+/mobile/logs/
+/mobile/src/lifeosmobile/resources/
 /node_modules/
 /.npm-cache/
 /.netlify-cli/

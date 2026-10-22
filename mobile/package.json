@@ -1,7 +1,7 @@
 {
   "name":"lifeos-mobile",
   "private":true,
-  "version":"1.0.0-p2",
+  "version":"0.6.0",
   "scripts":{"cap:sync":"npx cap sync","ios":"npx cap open ios","android":"npx cap open android","add:ios":"npx cap add ios","add:android":"npx cap add android"},
   "dependencies":{"@capacitor/core":"8.5.0","@capacitor/android":"8.5.0","@capacitor/ios":"8.5.0"},
   "devDependencies":{"@capacitor/cli":"8.5.0"}

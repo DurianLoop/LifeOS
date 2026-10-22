@@ -1,0 +1,18 @@
+/* The full archive keeps its paper palette; touch controls gain space. */
+html[data-platform] { -webkit-text-size-adjust:100%; }
+html[data-platform] body { padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom); }
+html[data-platform] :is(button,.productAction,.roomBtn,.linkBtn) { min-height:44px;touch-action:manipulation; }
+html[data-platform] :is(input,textarea,select) { font-size:max(16px,1em); }
+html[data-platform] .kbd { display:none; }
+html[data-platform] .rail { top:env(safe-area-inset-top);bottom:env(safe-area-inset-bottom); }
+html[data-platform] .topbar { top:env(safe-area-inset-top); }
+html[data-platform] :is(.modal,.overlay,.writerOverlay) { max-height:100dvh;overflow:auto; }
+html[data-platform] :is(table,pre) { max-width:100%;overflow:auto; }
+@media(max-width:600px){
+ html[data-platform] .topbar{padding-inline:14px;gap:8px;height:auto;min-height:60px;flex-wrap:wrap}
+ html[data-platform] .crumb{letter-spacing:.04em}
+ html[data-platform] .topActions{gap:2px;flex-wrap:wrap}
+ html[data-platform] .healthRow{grid-template-columns:1fr}
+ html[data-platform] .petSettingsPanel{max-width:calc(100vw - 24px)}
+ html[data-platform] :is(.featureModal,.readerModal,.writerModal){width:100%;max-width:100%;margin:0}
+}

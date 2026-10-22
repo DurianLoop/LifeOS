@@ -1,0 +1,107 @@
+name: Native mobile v0.6.0 acceptance
+on:
+  push:
+    branches: [codex/v0.6.0]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: mobile-v0.6.0-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - run: python -m pip install briefcase==0.4.6
+      - run: python scripts/prepare_mobile_resources.py
+      - name: Create Android project
+        working-directory: mobile
+        run: briefcase create android --no-input
+      - name: Build native acceptance app
+        working-directory: mobile
+        run: briefcase build android --test --no-input
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Run full application in Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          script: cd mobile && briefcase run android --test --no-input -d emulator-5554
+      - name: Rebuild clean distribution without test fixtures
+        working-directory: mobile
+        run: |
+          briefcase update android --no-input
+          briefcase build android --no-input
+          briefcase package android -p apk --no-input
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-v0.6.0
+          if-no-files-found: error
+          path: mobile/dist/*
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-native-logs
+          path: mobile/logs/
+  ios:
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install briefcase==0.4.6
+      - run: python scripts/prepare_mobile_resources.py
+      - name: Select available iPhone simulator
+        run: |
+          python - <<'PY'
+          import json,os,subprocess
+          devices=json.loads(subprocess.check_output(['xcrun','simctl','list','devices','available','-j']))['devices']
+          candidates=[d for values in devices.values() for d in values if 'iPhone' in d['name']]
+          assert candidates
+          with open(os.environ['GITHUB_ENV'],'a') as f:f.write('LIFEOS_IOS_DEVICE='+candidates[-1]['udid']+'\n')
+          PY
+      - name: Create iOS simulator project
+        working-directory: mobile
+        run: briefcase create iOS --no-input
+      - name: Build and run native simulator acceptance
+        working-directory: mobile
+        run: |
+          briefcase build iOS --test --no-input -d "$LIFEOS_IOS_DEVICE"
+          briefcase run iOS --test --no-input -d "$LIFEOS_IOS_DEVICE"
+      - name: Build source and simulator distribution
+        working-directory: mobile
+        run: |
+          briefcase update iOS --no-input
+          briefcase build iOS --no-input -d "$LIFEOS_IOS_DEVICE"
+          mkdir -p dist
+          APP=$(find build -path '*Debug-iphonesimulator/LifeOS.app' -type d -print -quit)
+          test -n "$APP"
+          ditto -c -k --keepParent "$APP" dist/LifeOS-0.6.0-ios-simulator-arm64.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios-v0.6.0
+          if-no-files-found: error
+          path: mobile/dist/*
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ios-native-logs
+          path: mobile/logs/
