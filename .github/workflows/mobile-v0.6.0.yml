@@ -35,7 +35,7 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
       - name: Run full application in Android emulator
-        timeout-minutes: 12
+        timeout-minutes: 25
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
@@ -43,7 +43,7 @@ jobs:
           arch: x86_64
           profile: pixel_6
           disable-animations: true
-          script: cd mobile && timeout 600 briefcase run android --test --no-input -d emulator-5554; result=$?; adb logcat -d > logs/android-logcat.txt; adb shell screencap -p /sdcard/acceptance.png; adb pull /sdcard/acceptance.png logs/android-screen.png; exit $result
+          script: cd mobile && mkdir -p logs && timeout 1320 briefcase run android --test --no-input -d emulator-5554; result=$?; adb logcat -d > logs/android-logcat.txt; adb shell screencap -p /sdcard/acceptance.png; adb pull /sdcard/acceptance.png logs/android-screen.png; exit $result
       - name: Rebuild clean distribution without test fixtures
         working-directory: mobile
         run: |
@@ -95,7 +95,7 @@ jobs:
         working-directory: mobile
         run: briefcase create iOS --no-input
       - name: Build and run native simulator acceptance
-        timeout-minutes: 12
+        timeout-minutes: 25
         working-directory: mobile
         run: |
           briefcase build iOS --test --no-input

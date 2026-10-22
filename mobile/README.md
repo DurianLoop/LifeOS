@@ -17,8 +17,10 @@ briefcase create android --no-input
 briefcase build android --no-input
 briefcase run android
 # On macOS:
+python -m pip install imageio-ffmpeg==0.6.0 Pillow==13.0.0
+python ../scripts/prepare_mobile_pet.py
 briefcase create iOS --no-input
-briefcase build iOS --no-input -d auto
+briefcase build iOS --no-input
 briefcase run iOS --no-input -d auto
 ```
 

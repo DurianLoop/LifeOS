@@ -3,6 +3,23 @@ from android.content import Intent
 from android.webkit import PermissionRequest, ValueCallback, WebChromeClient, WebView
 from java import Override, jboolean, jvoid, static_proxy
 from java.lang import String
+from androidx.activity import OnBackPressedCallback
+import asyncio
+import mimetypes
+
+
+class LifeOSBack(static_proxy(OnBackPressedCallback)):
+    def __init__(self, app):
+        self.app = app
+        super().__init__(True)
+
+    @Override(jvoid, [])
+    def handleOnBackPressed(self):
+        async def back():
+            handled = await self.app.web.evaluate_javascript('window.lifeosMobile?.back() || false')
+            if not handled:
+                self.app._impl.native.moveTaskToBack(True)
+        asyncio.create_task(back())
 
 
 class LifeOSChrome(static_proxy(WebChromeClient)):
@@ -18,7 +35,14 @@ class LifeOSChrome(static_proxy(WebChromeClient)):
         self.pending_file = callback
         intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
         intent.addCategory(Intent.CATEGORY_OPENABLE)
-        types = [str(value) for value in params.getAcceptTypes() if value]
+        types = []
+        for value in params.getAcceptTypes():
+            for item in str(value).split(','):
+                item = item.strip()
+                if item.startswith('.'):
+                    item = mimetypes.guess_type('file' + item)[0] or 'application/octet-stream'
+                if '/' in item and item not in types:
+                    types.append(item)
         intent.setType(types[0] if len(types) == 1 else '*/*')
         if len(types) > 1:
             from java import jarray
@@ -62,3 +86,5 @@ def configure(app):
     view.getSettings().setMediaPlaybackRequiresUserGesture(False)
     view.getSettings().setAllowFileAccess(False)
     view.getSettings().setAllowContentAccess(True)
+    app.back_callback = LifeOSBack(app)
+    app._impl.native.getOnBackPressedDispatcher().addCallback(app._impl.native, app.back_callback)

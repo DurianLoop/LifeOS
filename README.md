@@ -1,6 +1,15 @@
-# LifeOS v0.5.3
+# LifeOS v0.6.0
 
 LifeOS is a local-first journal and personal memory workspace, with an editable writing desk, journal book, and desktop companion.
+
+## New in v0.6.0
+
+- **The full archive on mobile:** Android and iOS now bundle the desktop application and local Python engine, including writing, reading, search, imports, revisions, attachments, encryption, backup, poetry, memory draw and pets. No desktop server is required.
+- **Native device storage:** drafts and preferences survive changing local ports; imports use system document selection and exports use the native document provider or share sheet. Touch targets and safe areas adapt to phones and tablets.
+- **macOS on both architectures:** Apple Silicon and Intel builds retain the PC workflows. Mobile companions stay inside the application; desktop tray, overlays and executable integrations remain desktop capabilities.
+- **iOS delivery:** source and an Apple Silicon simulator app. This release does not distribute an iPhone installation package.
+
+[Release notes](docs/RELEASE_v0.6.0.md) · [Mobile build instructions](mobile/README.md) · [v0.6.0 release](https://github.com/DurianLoop/LifeOS/releases/tag/v0.6.0)
 
 ## New in v0.5.3
 
@@ -66,7 +75,7 @@ LifeOS is a local-first journal and personal memory workspace, with an editable 
 
 ## Windows download
 
-Download [LifeOS-Setup-0.5.3.exe](https://github.com/DurianLoop/LifeOS/releases/download/v0.5.3/LifeOS-Setup-0.5.3.exe) from the [v0.5.3 release](https://github.com/DurianLoop/LifeOS/releases/tag/v0.5.3). Python is included. This community build is unsigned.
+Download [LifeOS-Setup-0.6.0.exe](https://github.com/DurianLoop/LifeOS/releases/download/v0.6.0/LifeOS-Setup-0.6.0.exe) from the [v0.6.0 release](https://github.com/DurianLoop/LifeOS/releases/tag/v0.6.0). The same release provides macOS arm64/x64 installers, an Android APK, and the iOS simulator build. Python is included. Windows and macOS community builds are not notarized; the Android APK is signed with the local release key.
 
 Installed app data is stored under `%APPDATA%/LifeOS/workspace/`; startup diagnostics are under `%APPDATA%/LifeOS/logs/desktop.log`. Back up the workspace folder to preserve journals, revisions and settings. Source runs continue to use the repository folder.
 

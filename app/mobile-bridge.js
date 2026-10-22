@@ -3,11 +3,21 @@
   'use strict';
   const platform=/LifeOSMobile\/(android|ios)/.exec(navigator.userAgent)?.[1];
   if(!platform)return;
+  let persisted=null;
   const storage=command=>{
+    // Navigation repeatedly saves unchanged preferences. A value enters this
+    // cache only after the private engine confirms a durable write/snapshot.
+    if(command.op==='set'&&persisted&&persisted[command.key]===command.value)return {ok:true,value:null};
     const request=new XMLHttpRequest();request.open('POST','/_mobile/storage',false);
     request.setRequestHeader('Content-Type','application/json');request.send(JSON.stringify(command));
     if(request.status!==200)throw new Error('草稿保存失败，请重试');
-    return JSON.parse(request.responseText);
+    const reply=JSON.parse(request.responseText);
+    if(reply.ok){
+      if(command.op==='snapshot'||command.op==='import')persisted={...reply.value};
+      else if(command.op==='set'&&persisted)persisted[command.key]=command.value;
+      else if(command.op==='remove'&&persisted)delete persisted[command.key];
+    }else persisted=null;
+    return reply;
   };
   window.lifeosMobile={platform,storage,version:'0.6.0'};
   document.documentElement.dataset.platform=platform;
@@ -35,5 +45,16 @@
     if(this.hasAttribute('download')){exportFile(this.href,this.download).catch(error=>alert(error.message));return}
     originalClick.call(this);
   };
-  document.addEventListener('visibilitychange',()=>{window.dispatchEvent(new Event('lifeos:mobile-lifecycle'))});
+  window.lifeosMobile.back=()=>{
+    const dialog=document.querySelector('dialog[open]');if(dialog){if(dialog.dispatchEvent(new Event('cancel',{cancelable:true})))dialog.close();return true}
+    const ask=document.querySelector('#askModal.open');if(ask){closeAsk();return true}
+    if(document.body.classList.contains('productDockOpen')){setProductDock(false);return true}
+    if(document.querySelector('#mobileMorePanel.open')){closeMobileMore();return true}
+    if(typeof STATE!=='undefined'&&STATE.feature!=='Home'){const previous=STATE.feature;history.back();setTimeout(()=>{if(STATE.feature===previous)openFeature('Home')},200);return true}
+    return false;
+  };
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden)void window.lifeosPrepareToClose?.();
+    window.dispatchEvent(new Event('lifeos:mobile-lifecycle'));
+  });
 })();

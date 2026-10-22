@@ -39,7 +39,7 @@ class LifeOS(toga.App):
                     if operation == 'export':
                         self.export(path, mime)
                     elif operation == 'restart':
-                        self.web.url = 'about:blank'
+                        self.web.url = None
                         url = await asyncio.to_thread(self.runtime.restart)
                         self.web.url = url
                 except queue.Empty:
@@ -62,7 +62,7 @@ class LifeOS(toga.App):
         if self.runtime and parsed.scheme == 'http' and parsed.netloc == self.runtime.authority:
             return True
         if url == 'about:blank':
-            return True
+            return False
         if parsed.scheme in ('https', 'http', 'mailto'):
             if self.platform == 'android':
                 from android.content import Intent

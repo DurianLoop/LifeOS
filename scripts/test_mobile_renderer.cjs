@@ -34,6 +34,6 @@ async function run(){
  await win.loadURL(url);await until('!!window.lifeosStorage');assert.equal(await js("localStorage.getItem('lifeos.qa')"),'persist');
  const overflow=checks.filter(x=>x.overflow>4||x.shellOverflow>4);const report={ok:!errors.length&&!overflow.length,checks,errors,overflow,user_diaries_read:0};
  fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({ok:report.ok,pages:checks.length,errors,overflow:overflow.length,out}));
- assert.ok(report.ok);win.destroy();child.kill();app.quit();
+ assert.ok(report.ok);win.destroy();child.kill();app.exit(0);
 }
 app.whenReady().then(run).catch(error=>{console.error(error.stack);if(win&&!win.isDestroyed())win.destroy();child?.kill();app.exit(1)});

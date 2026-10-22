@@ -9,7 +9,11 @@ class AcceptanceApp(LifeOS):
     testing = True
 
     async def js(self, code):
-        return await self.web.evaluate_javascript(code)
+        # WKWebView can return NSNull / NSDictionary wrappers. A JSON string
+        # gives both native engines the same Python primitives, including null.
+        value = await self.web.evaluate_javascript(
+            'JSON.stringify({value:(0,eval)(' + json.dumps(code) + ')})')
+        return json.loads(value).get('value')
 
     async def wait_js(self, expression, seconds=30):
         for _ in range(seconds * 5):
@@ -53,8 +57,22 @@ class AcceptanceApp(LifeOS):
                 rendered.append(name)
             await self.js("window.dispatchEvent(new Event('lifeos:open-pet'));null")
             await self.wait_js('!!document.querySelector("#petSettingsToggle")')
+            # Decode every original DSH action in the actual OS WebView. iOS
+            # uses generated transparent atlases; Android uses the source VP9.
+            await self.js("window.__qaPetReady=false;fetch('/assets/pets/dsh-pet/pet.json').then(r=>r.json()).then(m=>{window.__qaPetManifest=m;const host=document.createElement('div');document.body.append(host);window.__qaPet=lifeosDSH.mount(host,{...m,manifest_url:location.origin+'/assets/pets/dsh-pet/pet.json'},{motion:false});return __qaPet.ready}).then(()=>window.__qaPetReady=true).catch(e=>window.__qaPetReady=String(e));null")
+            assert await self.wait_js('window.__qaPetReady') is True
+            actions = await self.js('__qaPetManifest.actions.map(x=>x.id)')
+            assert len(actions) == 106
+            for action in actions:
+                await self.js("window.__qaAction=null;__qaPet.select(" + json.dumps(action) + ",{loop:true}).then(ok=>window.__qaAction={ok}).catch(e=>window.__qaAction={error:String(e)});null")
+                result = await self.wait_js('window.__qaAction')
+                assert result.get('ok'), (action, result)
+            await self.js("window.__qaAlpha=(()=>{const source=__qaPet.element.querySelector('.dshPetVideo:not([hidden])'),canvas=document.createElement('canvas');canvas.width=source.videoWidth;canvas.height=source.videoHeight;const context=canvas.getContext('2d');context.drawImage(source,0,0);const data=context.getImageData(0,0,canvas.width,canvas.height).data;let transparent=0,visible=0;for(let i=3;i<data.length;i+=4){if(data[i]===0)transparent++;if(data[i]>0)visible++}return{transparent,visible}})();null")
+            alpha = await self.js('window.__qaAlpha')
+            assert alpha['transparent'] > 0 and alpha['visible'] > 0, alpha
+            await self.js('__qaPet.destroy();null')
             # Recreate WebView origin session; durable state is outside Web storage.
-            self.web.url = 'about:blank'
+            self.web.url = None
             await asyncio.sleep(0.3)
             self.web.url = self.runtime.url
             await self.wait_js('!!window.lifeosMobile && !!window.lifeosStorage')
@@ -64,7 +82,8 @@ class AcceptanceApp(LifeOS):
             assert any(x.get('title') == 'Native acceptance fixture' for x in entries['items']), entries
             report = {'ok': True, 'platform': self.platform, 'pages': rendered,
                       'native_webview': True, 'embedded_python': True,
-                      'offline_save': True, 'origin_independent_drafts': True}
+                      'offline_save': True, 'origin_independent_drafts': True,
+                      'dsh_actions_decoded': len(actions), 'dsh_transparency': alpha}
             target = self.paths.data / 'NATIVE_ACCEPTANCE.json'
             target.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
             print('LIFEOS_ACCEPTANCE_REPORT=' + json.dumps(report), flush=True)
