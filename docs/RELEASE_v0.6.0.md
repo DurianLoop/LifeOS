@@ -21,3 +21,5 @@ work offline. The bundled DSH pet assets prohibit commercial use and retain
 their upstream notices.
 
 Acceptance reports and SHA-256 checksums accompany the release assets.
+
+See [the platform parity and acceptance scope](PLATFORM_PARITY_v0.6.0.md).
