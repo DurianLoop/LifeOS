@@ -110,3 +110,7 @@
 }
 @media(max-width:380px){.hero h1{font-size:42px}.hero .button{font-size:10px;gap:12px}.hero-cta{gap:15px}.hero-description{font-size:11px}.manifesto-title{font-size:33px}.workspace-notes h3{font-size:20px}.workspace-notes p{font-size:11px}.company-grid h3{font-size:18px}.company-grid p{font-size:10px}.sound-feature p{font-size:12px}.mode-facts h3{font-size:20px}.memory-product>.draw-star{font-size:31px}.download h2{font-size:36px}}
 @media(prefers-reduced-motion:reduce){.workspace-image:hover img{transform:none}.memory-screen{transform:rotate(2deg)}}
+
+.native-mobile-downloads{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:18px auto}.native-mobile-downloads .button{min-height:56px}.native-mobile-downloads small{display:block;font-size:12px;opacity:.72;margin-top:5px}.native-platform-note{max-width:660px;margin:20px auto!important;font-size:14px!important;line-height:1.85!important;opacity:.8}
+
+.native-mobile-downloads .button{font-size:15px}.native-mobile-downloads .button>span{font-size:17px}@media(max-width:760px){.native-mobile-downloads{max-width:330px;display:grid;grid-template-columns:1fr}.native-mobile-downloads .button{width:100%}}
