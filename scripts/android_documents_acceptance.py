@@ -27,18 +27,21 @@ for _ in range(700):
     try:
         adb('shell', 'uiautomator', 'dump', '/sdcard/lifeos-acceptance-ui.xml')
         xml = ET.fromstring(adb('shell', 'cat', '/sdcard/lifeos-acceptance-ui.xml'))
+        (OUT / 'android-documents-ui.xml').write_bytes(ET.tostring(xml))
         nodes = list(xml.iter('node'))
         for node in nodes:
             identity = node.get('resource-id', '')
             text = node.get('text', '')
             description = node.get('content-desc', '')
-            if 'action_menu_save' in identity and node.get('enabled') == 'true':
+            if ('action_menu_save' in identity or text.upper() == 'SAVE') and node.get('enabled') == 'true':
                 saved = tap(node) or saved
+                print('Tapped native save', flush=True)
                 break
-            if saved and 'Native import acceptance' in description:
+            if saved and 'Native import acceptance' in text + description:
                 opened = tap(node) or opened
+                print('Opened native import picker', flush=True)
                 break
-            if opened and text == 'LifeOS-native-import.txt':
+            if opened and ('LifeOS-native-import' in text + description):
                 selected = tap(node)
                 break
             if opened and text in ('Downloads', 'Download') and 'documentsui' in node.get('package', ''):
