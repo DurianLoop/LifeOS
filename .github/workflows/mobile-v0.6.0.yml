@@ -26,6 +26,7 @@ jobs:
       - name: Create Android project
         working-directory: mobile
         run: briefcase create android --no-input
+      - run: python scripts/configure_android_project.py
       - name: Build native acceptance app
         working-directory: mobile
         run: briefcase build android --test --no-input
@@ -43,7 +44,7 @@ jobs:
           arch: x86_64
           profile: pixel_6
           disable-animations: true
-          script: cd mobile && mkdir -p logs && timeout 1320 briefcase run android --test --no-input -d emulator-5554; result=$?; adb logcat -d > logs/android-logcat.txt; adb shell screencap -p /sdcard/acceptance.png; adb pull /sdcard/acceptance.png logs/android-screen.png; exit $result
+          script: bash scripts/run_android_acceptance.sh
       - name: Rebuild clean distribution without test fixtures
         working-directory: mobile
         run: |
@@ -99,7 +100,9 @@ jobs:
         working-directory: mobile
         run: |
           briefcase build iOS --test --no-input
-          briefcase run iOS --test --no-input -d "$LIFEOS_IOS_DEVICE"
+          mkdir -p logs
+          set -o pipefail
+          briefcase run iOS --test --no-input -d "$LIFEOS_IOS_DEVICE" 2>&1 | tee logs/native-acceptance.txt
       - name: Build source and simulator distribution
         working-directory: mobile
         run: |

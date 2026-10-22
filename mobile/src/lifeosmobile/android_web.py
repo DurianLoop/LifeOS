@@ -3,18 +3,18 @@ from android.content import Intent
 from android.webkit import PermissionRequest, ValueCallback, WebChromeClient, WebView
 from java import Override, jboolean, jvoid, static_proxy
 from java.lang import String
-from androidx.activity import OnBackPressedCallback
+from java import dynamic_proxy
+from java.lang import Runnable
 import asyncio
 import mimetypes
 
 
-class LifeOSBack(static_proxy(OnBackPressedCallback)):
+class LifeOSBack(dynamic_proxy(Runnable)):
     def __init__(self, app):
         self.app = app
-        super().__init__(True)
+        super().__init__()
 
-    @Override(jvoid, [])
-    def handleOnBackPressed(self):
+    def run(self):
         async def back():
             handled = await self.app.web.evaluate_javascript('window.lifeosMobile?.back() || false')
             if not handled:
@@ -87,4 +87,9 @@ def configure(app):
     view.getSettings().setAllowFileAccess(False)
     view.getSettings().setAllowContentAccess(True)
     app.back_callback = LifeOSBack(app)
-    app._impl.native.getOnBackPressedDispatcher().addCallback(app._impl.native, app.back_callback)
+    # Chaquopy proxies require a no-argument Java superclass constructor;
+    # AndroidX's callback has only a boolean constructor, so a tiny Java
+    # adapter owns that constructor and calls our standard Runnable proxy.
+    from life.lifeos.nativebridge import LifeOSBackCallback
+    app.native_back_callback = LifeOSBackCallback(app.back_callback)
+    app._impl.native.getOnBackPressedDispatcher().addCallback(app._impl.native, app.native_back_callback)

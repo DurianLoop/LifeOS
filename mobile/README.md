@@ -14,6 +14,7 @@ python -m pip install briefcase==0.4.6
 python scripts/prepare_mobile_resources.py
 cd mobile
 briefcase create android --no-input
+python ../scripts/configure_android_project.py
 briefcase build android --no-input
 briefcase run android
 # On macOS:

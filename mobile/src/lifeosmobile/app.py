@@ -93,6 +93,16 @@ class LifeOS(toga.App):
                     stream.flush()
                 finally:
                     stream.close()
+                if getattr(self, 'testing', False):
+                    stream = self._impl.native.getContentResolver().openInputStream(data.getData())
+                    try:
+                        received = bytearray()
+                        while (value := stream.read()) != -1:
+                            received.append(value)
+                        assert bytes(received) == path.read_bytes()
+                    finally:
+                        stream.close()
+                self._last_export_completed = path.name
             self._impl.start_activity(intent, on_complete=completed)
         elif self.platform == 'ios':
             from rubicon.objc import ObjCClass
