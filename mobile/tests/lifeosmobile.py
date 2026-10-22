@@ -23,7 +23,7 @@ class AcceptanceApp(LifeOS):
         try:
             await self.wait_js('!!window.lifeosMobile && typeof openFeature === "function" && !!window.lifeosJournalBook')
             assert await self.js('window.lifeosMobile.platform') == self.platform
-            await self.js("document.querySelector('.welcomeDismiss')?.click(); localStorage.setItem('lifeos.qa.restart','native-persistence'); null")
+            await self.js("document.querySelector('[data-welcome=skip]')?.click(); localStorage.setItem('lifeos.qa.restart','native-persistence'); null")
             await self.js("window.__qa=null;fetch('/api/entries/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({journal_date:'2026-10-01',title:'Native acceptance fixture',sections:{'日记':'Offline native acceptance. 本地日记，重启后仍然保存。'}})}).then(r=>r.json()).then(r=>window.__qa=r).catch(e=>window.__qa={error:String(e)});null")
             saved = await self.wait_js('window.__qa')
             assert saved.get('ok'), saved

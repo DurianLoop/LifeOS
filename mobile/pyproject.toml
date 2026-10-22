@@ -13,7 +13,7 @@ formal_name = "LifeOS"
 description = "Private offline journal and living archive"
 sources = ["src/lifeosmobile"]
 test_sources = ["tests"]
-requires = ["certifi==2026.10.19", "qrcode==8.2", "cryptography==46.0.3", "Pillow==11.3.0"]
+requires = ["certifi==2026.10.19", "qrcode==8.2"]
 permission.camera = "为未来的自己录制漂流瓶视频或拍摄附件"
 permission.microphone = "为未来的自己录制漂流瓶语音"
 permission.photo_library = "选择要保存在日记中的照片与视频"
@@ -21,7 +21,7 @@ test_success_regex = "LIFEOS_NATIVE_QA_PASSED"
 test_failure_regex = "LIFEOS_NATIVE_QA_FAILED"
 
 [tool.briefcase.app.lifeosmobile.android]
-requires = ["toga-android==0.5.7"]
+requires = ["toga-android==0.5.7", "cryptography==42.0.8", "Pillow==11.0.0"]
 version_code = 600
 build_gradle_dependencies = [
     "androidx.appcompat:appcompat:1.7.1",
@@ -35,7 +35,7 @@ chaquopy.defaultConfig.staticProxy("toga_android.widgets.internal.webview", "lif
 manifest_application_extra_content = 'android:usesCleartextTraffic="true"'
 
 [tool.briefcase.app.lifeosmobile.iOS]
-requires = ["toga-iOS==0.5.7"]
+requires = ["toga-iOS==0.5.7", "cryptography==46.0.3", "Pillow==11.3.0"]
 supported = true
 info.NSAppTransportSecurity.NSAllowsLocalNetworking = true
 info.NSLocalNetworkUsageDescription = "连接你在设置中指定的局域网 AI 或同步服务"
