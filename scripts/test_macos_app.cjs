@@ -30,7 +30,7 @@ const expectedFile = path.join(output, 'expected.json');
 const uiStateFile = path.join(workspace, '.lifeos', 'ui-state.json');
 const fixture = {
   date: '2099-01-05', title: 'macOS packaged journal QA',
-  text: 'LifeOS macOS 0.5.3 synthetic journal. 今天仅用于安装包验收。',
+  text: 'LifeOS macOS 0.6.0 synthetic journal. 今天仅用于安装包验收。',
   draftDate: '2099-01-06', draftText: 'LifeOS macOS synthetic draft survives a normal close',
 };
 const checks = [], backendChildren = [], blockedRequests = [], rendererErrors = [], startupTimeline = [];
@@ -390,7 +390,7 @@ try {
     assert.ok(fs.existsSync(expectedFile) && fs.existsSync(uiStateFile), 'restart requires first-run evidence');
   }
   packaged = JSON.parse(fs.readFileSync(path.join(asar, 'package.json'), 'utf8'));
-  assert.equal(packaged.version, '0.5.3');
+  assert.equal(packaged.version, '0.6.0');
   const sourcePackage = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'desktop', 'package.json'), 'utf8'));
   assert.equal(process.versions.electron, sourcePackage.build.electronVersion, 'harness and final package use the configured Electron runtime');
   const bundledPython = path.join(resources, 'python', 'bin', 'python3');

@@ -35,6 +35,10 @@ class LifeOS(toga.App):
                     operation, path, mime = self.runtime.commands.get_nowait()
                     if operation == 'export':
                         self.export(path, mime)
+                    elif operation == 'restart':
+                        self.web.url = 'about:blank'
+                        url = await asyncio.to_thread(self.runtime.restart)
+                        await self.web.load_url(url)
                 except queue.Empty:
                     pass
                 await asyncio.sleep(0.2)

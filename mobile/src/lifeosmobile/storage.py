@@ -14,6 +14,7 @@ class WorkspaceStorage:
         self.previous = self.path.with_name(self.path.name + '.previous')
         self.lock = threading.RLock()
         self.state = {'format': 1, 'items': {}, 'migratedOrigins': [], 'removed': {}}
+        damaged = False
         for source in (self.path, self.previous):
             if source.exists():
                 try:
@@ -24,8 +25,12 @@ class WorkspaceStorage:
                     self.state.update(value)
                     break
                 except (ValueError, OSError):
+                    damaged = True
                     if source == self.previous:
                         raise RuntimeError('无法读取草稿存储，请从备份恢复')
+        else:
+            if damaged:
+                raise RuntimeError('无法读取草稿存储，请从备份恢复')
 
     @staticmethod
     def validate(items):

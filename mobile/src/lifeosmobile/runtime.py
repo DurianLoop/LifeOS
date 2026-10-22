@@ -104,6 +104,9 @@ class MobileRuntime:
                         data = self.body_json()
                         if path == '/_mobile/storage':
                             return self.send_json({'ok': True, 'value': runtime.storage.command(data)})
+                        if path == '/_mobile/restart':
+                            runtime.commands.put(('restart', None, None))
+                            return self.send_json({'ok': True})
                         if path == '/_mobile/export':
                             content = base64.b64decode(data['base64'], validate=True)
                             name = Path(str(data.get('name') or 'LifeOS-export')).name
@@ -124,7 +127,7 @@ class MobileRuntime:
                     super().log_message(fmt, *args)
 
         self.server = ThreadingHTTPServer(('127.0.0.1', 0), MobileHandler)
-        self.server.daemon_threads = True
+        self.server.daemon_threads = False
         self.authority = f'127.0.0.1:{self.server.server_port}'
         self.origin = 'http://' + self.authority
         self.url = self.origin + '/_mobile/start?token=' + self.token
@@ -136,3 +139,18 @@ class MobileRuntime:
         if self.server:
             self.server.shutdown()
             self.server.server_close()
+        backend = sys.modules.get('backend.server')
+        if backend and getattr(backend, 'REFRESH_WORKER', None):
+            backend.REFRESH_WORKER.stop(timeout=30)
+            if backend.REFRESH_WORKER.thread.is_alive():
+                raise RuntimeError('档案索引仍在写入，请稍后重试')
+
+    def restart(self):
+        self.stop()
+        # iOS cannot spawn another process. After all requests and indexing have
+        # stopped, reload the engine so restore recovery sees the new workspace.
+        for name in list(sys.modules):
+            if name.split('.')[0] in ('engine', 'backend', 'connectors', 'importers'):
+                del sys.modules[name]
+        self.token = secrets.token_urlsafe(32)
+        return self.start()

@@ -20,10 +20,12 @@
     const result=await fetch('/_mobile/export',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({base64,name:name||(encoded?decodeURIComponent(encoded):'LifeOS-export'),type:blob.type})});
     const data=await result.json();if(!data.ok)throw Error(data.error||'导出未完成');
   }
+  window.lifeosMobile.exportFile=exportFile;
+  window.lifeosMobile.restart=async()=>{const result=await fetch('/_mobile/restart',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});return result.json()};
   document.addEventListener('click',event=>{
     const anchor=event.target.closest?.('a[href]');if(!anchor)return;
     const url=anchor.href;
-    if(anchor.hasAttribute('download')||/\/api\/(?:backup\/download|export|memorial\/qr)/.test(url)){
+    if(anchor.hasAttribute('download')||/\/api\/(?:backups?\/download|export|attachment\?|memorial\/qr)/.test(url)){
       event.preventDefault();event.stopImmediatePropagation();
       exportFile(url,anchor.download).catch(error=>{if(window.toast)window.toast(error.message);else alert(error.message)});
     }

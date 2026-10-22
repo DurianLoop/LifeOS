@@ -32,12 +32,19 @@ class AcceptanceApp(LifeOS):
             assert len(names) >= 142, names
             rendered = []
             for name in names:
+                if name == 'Ask My Life':
+                    await self.js('openAsk();null')
+                    await self.wait_js('document.querySelector("#askModal").classList.contains("open")')
+                    await self.js('document.querySelector("#askModal").classList.remove("open");null')
+                    rendered.append(name)
+                    continue
                 await self.js('openFeature(' + json.dumps(name) + ');null')
                 await self.wait_js('!document.querySelector("#view .loading")')
                 await asyncio.sleep(0.15)
                 result = await self.js('JSON.stringify({page:STATE.feature,text:document.querySelector("#view").innerText,overflow:document.documentElement.scrollWidth-innerWidth})')
                 result = json.loads(result)
                 assert result['page'] == name and result['text'].strip(), result
+                assert 'Could not render this module' not in result['text'], result
                 assert result['overflow'] <= 4, (name, result['overflow'])
                 rendered.append(name)
             for name in ('Attic', 'Attic Review', 'Attic Organize', 'Attic Observe', 'AI Settings', 'Serendipity'):
