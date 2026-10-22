@@ -28,7 +28,10 @@ class LifeOS(toga.App):
         try:
             self.runtime = MobileRuntime(self.paths.data, self.platform)
             url = await asyncio.to_thread(self.runtime.start)
-            await self.web.load_url(url)
+            # The session bootstrap redirects after setting its HttpOnly cookie.
+            # Navigation delegates may replace Toga's single load future during
+            # that redirect; readiness is checked against the document by QA.
+            self.web.url = url
             await self.after_ready()
             while True:
                 try:
@@ -38,7 +41,7 @@ class LifeOS(toga.App):
                     elif operation == 'restart':
                         self.web.url = 'about:blank'
                         url = await asyncio.to_thread(self.runtime.restart)
-                        await self.web.load_url(url)
+                        self.web.url = url
                 except queue.Empty:
                     pass
                 await asyncio.sleep(0.2)

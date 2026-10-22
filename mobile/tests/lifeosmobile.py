@@ -54,7 +54,9 @@ class AcceptanceApp(LifeOS):
             await self.js("window.dispatchEvent(new Event('lifeos:open-pet'));null")
             await self.wait_js('!!document.querySelector("#petSettingsToggle")')
             # Recreate WebView origin session; durable state is outside Web storage.
-            await self.web.load_url(self.runtime.url)
+            self.web.url = 'about:blank'
+            await asyncio.sleep(0.3)
+            self.web.url = self.runtime.url
             await self.wait_js('!!window.lifeosMobile && !!window.lifeosStorage')
             assert await self.js("localStorage.getItem('lifeos.qa.restart')") == 'native-persistence'
             await self.js("window.__qa=null;fetch('/api/entries').then(r=>r.json()).then(r=>window.__qa=r);null")

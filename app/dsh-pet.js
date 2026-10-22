@@ -50,7 +50,7 @@
     }
     async function play(id,{once=false,loop=false,onComplete,turn=false}={}){
       const descriptor=table.get(id);if(!descriptor||destroyed)return false;
-      const sequence=++generation,video=document.createElement('video');
+      const sequence=++generation,video=window.lifeosPortablePetVideo?.()||document.createElement('video');
       video.className='dshPetVideo';video.muted=true;video.playsInline=true;video.preload='auto';video.setAttribute('aria-hidden','true');video.hidden=true;stage.append(video);
       const session={descriptor,video,once,loop,onComplete,turn};
       try{
