@@ -97,11 +97,15 @@ export async function snapshot(){
 export async function exportWorkspace(){
   const data=await snapshot();data.assets=data.assets.map(asset=>({...asset,data:bytesToBase64(new Uint8Array(asset.data))}));return data;
 }
+// Revisions are snapshots, not nested entries. Backup validation may add an
+// empty revisions array or reorder object fields without changing any content.
+const importFields=entry=>[entry.date,entry.kind||'daily',entry.title??'',entry.body??'',entry.tags||[],entry.attachments||[],Boolean(entry.bookmarked),entry.deletedAt||null];
+const importContent=entry=>[importFields(entry),(entry.revisions||[]).map(rev=>[importFields(rev),rev.createdAt??null,rev.updatedAt??null])];
 export function importPlan(incoming,existing,strategy='keep'){
   const known=new Map(existing.map(e=>[identity(e),e])),ids=new Map(existing.map(e=>[e.id,e]));const additions=[],replacements=[],conflicts=[];let skipped=0;
   for(const entry of incoming){
     const match=ids.get(entry.id)||(!entry.deletedAt?known.get(identity(entry)):null);
-    if(match){const same=['date','body','title','kind','tags','attachments','deletedAt','revisions','bookmarked'].every(k=>JSON.stringify(match[k]??(k==='kind'?'daily':k==='attachments'||k==='tags'||k==='revisions'?[]:k==='bookmarked'?false:null))===JSON.stringify(entry[k]??(k==='kind'?'daily':k==='attachments'||k==='tags'||k==='revisions'?[]:k==='bookmarked'?false:null)));
+    if(match){const same=JSON.stringify(importContent(match))===JSON.stringify(importContent(entry));
       if(same){skipped++;continue;}conflicts.push({incoming:entry,local:match});
       if(strategy==='replace'&&!match.deletedAt){const history=[...(entry.revisions||[]),...(match.revisions||[]),((({revisions,...rest})=>rest)(match))];const next={...entry,id:match.id,createdAt:match.createdAt,updatedAt:nextTimestamp(match.updatedAt),revisions:history.slice(-MAX.revisions)};replacements.push(next);known.delete(identity(match));known.set(identity(next),next);ids.set(next.id,next);}else skipped++;
     }else{additions.push(entry);ids.set(entry.id,entry);if(!entry.deletedAt)known.set(identity(entry),entry);}

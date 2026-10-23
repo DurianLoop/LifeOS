@@ -70,6 +70,22 @@ test('import replace retains original history; conflicts and stale previews neve
   const draft=(await db.all('drafts')).find(x=>x.body==='导入未收笔');assert.equal(draft.entryId,null);
 });
 
+test('reimporting an unchanged full backup skips identical history but detects changed historical text',async()=>{
+  const original=await db.saveEntry({date:'2026-04-03',body:'需要逐字保留的第一版'});
+  const revised=await db.saveEntry({...original,body:'目前的第二版'},{expectedUpdatedAt:original.updatedAt});
+  const restored=await normalizeBackup(JSON.parse(JSON.stringify(await db.exportWorkspace())));
+  const local=await db.entries({deleted:true});
+  const same=db.importPlan(restored.entries,local);
+  assert.equal(same.conflicts.length,0);
+  assert.equal(same.additions.length,0);
+  assert.equal(same.skipped,local.length);
+  const incoming=restored.entries.find(e=>e.id===revised.id);
+  incoming.revisions[0]=Object.fromEntries(Object.entries(incoming.revisions[0]).reverse());
+  assert.equal(db.importPlan([incoming],local).conflicts.length,0);
+  incoming.revisions[0].body='另一份备份中不同的历史原文';
+  assert.equal(db.importPlan([incoming],local).conflicts.length,1);
+});
+
 test('asset collision rolls back imported records and never replaces existing bytes',async()=>{
   const asset=(await db.all('assets'))[0],incoming=entry('2026-05-01');
   await assert.rejects(db.applyImport({entries:[incoming],assets:[{...asset,sha256:'other'}]}),/标识冲突/);
