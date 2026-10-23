@@ -1,0 +1,11 @@
+{
+  "family": "Noto Serif SC",
+  "weight": 400,
+  "license": "SIL OFL 1.1",
+  "source": "https://github.com/google/fonts/tree/main/ofl/notoserifsc",
+  "source_sha256": "050080d9255a86808f2945bffac582b31ef32bc36411ce29563b4961670c66f9",
+  "derivation": "Static weight 400; GB2312, Latin, punctuation, and application interface characters; WOFF2. Other glyphs use the device serif fallback.",
+  "glyph_codepoints": 7851,
+  "bytes": 1383248,
+  "sha256": "1a241b92e0e53578237b0a648aacf6e78f9125530bcb9486102ab5794b7699a7"
+}

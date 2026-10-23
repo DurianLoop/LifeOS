@@ -23,7 +23,7 @@ const files = [
   'app/index.html', 'app/model.js',
   'app/sw.js', 'app/manifest.webmanifest', 'app/icons/icon-192.png',
   'app/icons/icon-512.png', 'app/icons/icon-maskable.png', 'app/icons/apple-touch-icon.png',
-  'app/pocket.js', 'app/pocket.css', 'app/domain.js', 'app/workspace.js',
+  'app/pocket.js', 'app/pocket.css', 'app/paper-grain.svg', 'app/fonts/lifeos-book-serif.woff2', 'app/fonts/OFL.txt', 'app/fonts/SOURCE.json', 'app/domain.js', 'app/workspace.js',
   'app/transfer.js', 'app/views.js', 'app/questions.js', 'app/companion.js', 'app/media/poems.json',
   ...['rain','fire','ocean','forest','stream','night'].flatMap(name => ['ogg','m4a'].map(ext=>`app/media/audio/${name}.${ext}`)),
   'app/media/audio/ATTRIBUTION.html', 'app/media/audio/SOURCES.json', 'app/media/vivi/LICENSE.md',

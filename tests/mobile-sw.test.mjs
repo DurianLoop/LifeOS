@@ -6,7 +6,7 @@ import vm from 'node:vm';
 const source = await readFile(new URL('../promo/app/sw.js', import.meta.url), 'utf8');
 const site = 'https://lifeos-diary.netlify.app';
 const root = `${site}/app/`;
-const shell = ['index.html','pocket.css','pocket.js','domain.js','workspace.js','transfer.js','views.js','questions.js','companion.js','model.js','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png','icons/icon-maskable.png','icons/apple-touch-icon.png','media/poems.json','media/vivi/sit.gif'].map(path=>`${root}${path}`);
+const shell = ['index.html','pocket.css','paper-grain.svg','fonts/lifeos-book-serif.woff2','pocket.js','domain.js','workspace.js','transfer.js','views.js','questions.js','companion.js','model.js','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png','icons/icon-maskable.png','icons/apple-touch-icon.png','media/poems.json','media/vivi/sit.gif'].map(path=>`${root}${path}`);
 
 function harness({ offline = false, failAsset = null, seed = {} } = {}) {
   const handlers = new Map(), network = [], matches = [], additions = [], deletions = [];

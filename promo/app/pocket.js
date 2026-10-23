@@ -111,6 +111,13 @@ async function openWriter(entry=null,draft=null,kind='daily'){
     const cell=el('section','paper-cell');cell.id='paper-'+id;const name=el('label','',label);name.htmlFor='cell-'+id;name.append(el('small','',`0${i+1} / PAPER`));const area=el('textarea');area.id='cell-'+id;area.placeholder=placeholder;area.maxLength=200000;area.value=blocks[id]||'';area.addEventListener('input',dirty);cell.append(name,area);return cell;
   }));drawPaperTabs();showCell();applyWriterMode();updateWriterCount();text('#writer-error','');text('#draft-status',draft?'已恢复本机草稿':'草稿自动保存在本机');await renderAttachments('#writer-attachments',writer.attachments,{remove:id=>{writer.attachments=writer.attachments.filter(x=>x!==id);dirty();renderAttachments('#writer-attachments',writer.attachments,{remove:removeWriterAsset}).catch(e=>notify(err(e)));}});$('#writer').showModal();
 }
+// The six paper windows use the same durable writer as the main action.
+on('.desk-grid','click',async event=>{
+  const target=event.target.closest('[data-start-cell]');if(!target)return;
+  const entry=active().find(e=>e.kind==='daily'&&e.date===localDate());
+  const draft=entry?null:state.drafts.filter(d=>d.kind==='daily'&&d.date===localDate()).sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt))[0];
+  await openWriter(entry,draft);paperMode=true;activeCell=target.dataset.startCell;applyWriterMode();showCell();
+});
 function removeWriterAsset(id){writer.attachments=writer.attachments.filter(x=>x!==id);dirty();return renderAttachments('#writer-attachments',writer.attachments,{remove:removeWriterAsset});}
 async function closeWriter(){if(writerBusy||attachmentBusy)return notify('正在保存，请稍候。');try{lockWriter(true);await flushDraft();$('#writer').close();writer=null;await refresh();broadcast();}catch(error){text('#writer-error',err(error));text('#draft-status','草稿尚未保存');}finally{lockWriter(false);}}
 for(const selector of ['#entry-kind','#entry-date','#entry-title','#entry-body','#entry-tags'])on(selector,'input',dirty);
@@ -201,7 +208,7 @@ on('#attic-tabs','click',event=>{const b=event.target.closest('[data-attic]');if
 on('#draw-modes','click',event=>{const b=event.target.closest('[data-mode]');if(!b)return;drawMode=b.dataset.mode;$$('#draw-modes button').forEach(n=>n.setAttribute('aria-pressed',String(n===b)));text('#draw-mode-note',({page:'从本机日记和周记中，重逢一篇原文。',echo:'从真实文字里，抽出一句旧日的回声。',thread:'遇见一页，再循共同标签找到相关的几页。'})[drawMode]);});
 on('#draw-memory','click',async()=>{
   const result=drawMemory(active(),drawMode,state.history.map(x=>x.id));if(!result)return notify('先写一篇日记，或导入旧记录，旧日才能来相遇。');
-  const root=$('#draw-stage');root.replaceChildren(el('span','draw-seal','遇'),el('p','eyebrow',result.entry.date),el('h2','',result.entry.title||'那一日'),el('blockquote','',result.quote),button('回到完整原文 ↗',()=>openReader(result.entry.id)));
+  const root=$('#draw-stage'),excerpt=el('div','draw-excerpt prose');renderProse(excerpt,result.quote);root.replaceChildren(el('span','draw-seal','遇'),el('p','eyebrow',result.entry.date),el('h2','',result.entry.title||'那一日'),excerpt,button('回到完整原文 ↗',()=>openReader(result.entry.id)));
   for(const related of result.related)root.append(button(`${related.date} · ${related.title||'无题'} ↗`,()=>openReader(related.id)));
   if(drawMode==='thread'&&!result.related.length)root.append(el('p','meta','这一页还没有共同标签的相关原文，可以在写作时补上标签。'));
   state.history=[...state.history,{id:result.entry.id,mode:drawMode,at:stamp()}].slice(-40);await db.setMeta('draw-history',state.history);renderDrawHistory();broadcast();
@@ -279,7 +286,7 @@ async function offline(){
   catch{text('#offline-ready','本机可保存 · 离线缓存待重试');}
 }
 async function start(){
-  text('#today-date',new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long'}));connection();route();
+  text('#today-date',new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'}));connection();route();
   const installed=matchMedia('(display-mode: standalone)').matches||navigator.standalone; text('#install-state',installed?'正在主屏幕应用中使用。':'当前在浏览器中。添加主屏幕后可独立打开。');
   try{await db.openWorkspace();state.ready=true;state.prefs=preferences(await db.getMeta('appearance',{}));applyPrefs();await refresh();await ai.load();await companion.load();
     try{const response=await fetch('./media/poems.json');if(response.ok){const value=await response.json();if(Array.isArray(value)&&value.length)poems=value.map(p=>({...p,body:p.lines.join('\n')}));renderPoem();}}catch{}
