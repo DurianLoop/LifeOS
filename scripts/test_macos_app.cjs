@@ -186,11 +186,17 @@ async function verifyEditMenu() {
     assert.ok(edit.submenu.items.find(item => String(item.role || '').toLowerCase() === role)?.enabled,
       'actual Edit menu enables ' + role);
   }
-  mainWindow.show(); app.focus({steal: true}); mainWindow.focus();
+  // The writer schedules its initial title focus after rendering. Wait for that
+  // handoff before creating a different editor, then verify the Cocoa window
+  // and Chromium responder both own focus before exercising native actions.
+  await until(() => js(`document.activeElement?.id==='writerTitle'`), 'writer initial focus');
+  mainWindow.show(); app.focus({steal: true}); mainWindow.focus(); mainWindow.webContents.focus();
+  await until(() => mainWindow.isFocused() && mainWindow.webContents.isFocused(), 'native editor window focus');
   const marker = 'LifeOS native macOS copy and paste QA';
   await js(`(()=>{const field=document.createElement('textarea');field.id='lifeosQaClipboard';
     field.style.cssText='position:fixed;left:24px;bottom:24px;z-index:99999;width:360px;height:48px';
     field.value=${JSON.stringify(marker)};document.body.append(field);field.focus();field.select();return true})()`);
+  await until(() => js(`(()=>{const f=document.querySelector('#lifeosQaClipboard');return document.hasFocus()&&document.activeElement===f&&f.selectionStart===0&&f.selectionEnd===f.value.length})()`), 'selected native clipboard editor');
   Menu.sendActionToFirstResponder('copy:');
   await until(() => clipboard.readText() === marker, 'native menu copy', 10000);
   await js(`(()=>{const field=document.querySelector('#lifeosQaClipboard');field.value='';field.focus();return true})()`);
