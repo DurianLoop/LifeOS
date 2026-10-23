@@ -32,7 +32,7 @@ def main():
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source, target)
         manifest.append({'path': name, 'bytes': source.stat().st_size, 'sha256': hashlib.sha256(source.read_bytes()).hexdigest()})
-    (OUT / 'bundle-manifest.json').write_text(json.dumps({'version': '0.6.0', 'files': manifest}, indent=2), encoding='utf-8')
+    (OUT / 'bundle-manifest.json').write_text(json.dumps({'version': '0.6.1', 'files': manifest}, indent=2), encoding='utf-8')
     print(json.dumps({'ok': True, 'resources': len(manifest), 'bytes': sum(x['bytes'] for x in manifest)}))
 
 

@@ -1,0 +1,78 @@
+name: Build and verify macOS v0.6.1
+
+on:
+  push:
+    branches: [codex/v0.6.1]
+    paths: ['desktop/**', 'backend/**', 'engine/**', 'app/**', 'config/**', 'scripts/**', '.github/workflows/macos-v0.6.1.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macos-v0.6.1-release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: macOS ${{ matrix.arch }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: arm64
+            runner: macos-15
+          - arch: x64
+            runner: macos-15-intel
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - name: Audit clean release source
+        run: python3 scripts/public_release_audit.py
+      - name: Prepare native embedded Python
+        run: python3 scripts/prepare_macos_python.py --arch '${{ matrix.arch }}'
+      - name: Install desktop dependencies
+        run: npm ci --prefix desktop --no-audit --no-fund
+      - name: Desktop regressions
+        env:
+          LIFEOS_TEST_PYTHON: ${{ github.workspace }}/desktop/python-runtime/bin/python3
+        run: npm test --prefix desktop
+      - name: Build native application
+        working-directory: desktop
+        run: npx electron-builder --mac --dir --${{ matrix.arch }} --config electron-builder.mac.cjs --publish never
+      - name: Verify direct executable before archiving
+        run: |
+          MAC_APP=$(find desktop/dist -maxdepth 2 -name LifeOS.app -type d -print -quit)
+          python3 scripts/verify_macos_package.py --arch '${{ matrix.arch }}' --native-app "$MAC_APP"
+      - name: Build DMG and ZIP
+        run: python3 scripts/package_macos_installers.py --arch '${{ matrix.arch }}'
+      - name: Verify final native installers
+        run: python3 scripts/verify_macos_package.py --arch '${{ matrix.arch }}'
+      - name: Prepare architecture metadata
+        run: mv desktop/dist/latest-mac.yml desktop/dist/latest-mac-${{ matrix.arch }}.yml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-installer-${{ matrix.arch }}
+          if-no-files-found: error
+          path: |
+            desktop/dist/LifeOS-0.6.1-mac-${{ matrix.arch }}.dmg
+            desktop/dist/LifeOS-0.6.1-mac-${{ matrix.arch }}.zip
+            desktop/dist/latest-mac-${{ matrix.arch }}.yml
+            desktop/dist/MACOS_RELEASE_VALIDATION-${{ matrix.arch }}.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: macos-qa-${{ matrix.arch }}
+          if-no-files-found: ignore
+          path: desktop/dist/qa-macos-${{ matrix.arch }}/

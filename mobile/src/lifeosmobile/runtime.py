@@ -83,8 +83,15 @@ class MobileRuntime:
                 if not self.authorized():
                     return self.send_json({'error': 'Native session required'}, 403)
                 if parsed.path == '/_mobile/status':
-                    return self.send_json({'ok': True, 'platform': runtime.platform, 'version': '0.6.0',
+                    return self.send_json({'ok': True, 'platform': runtime.platform, 'version': '0.6.1',
                                            'offline': True, 'export': True, 'overlay': False})
+                if parsed.path in ('/', '/index.html'):
+                    # The authenticated host owns platform detection, including
+                    # accessibility/browser previews without a custom UA.
+                    html = (runtime.resources / 'app/index.html').read_text(encoding='utf-8')
+                    platform = runtime.platform if runtime.platform in ('android', 'ios') else ''
+                    html = html.replace('<html ', f'<html data-native-platform="{platform}" ', 1)
+                    return self.send_binary(html.encode('utf-8'), 'text/html; charset=utf-8')
                 return super().do_GET()
 
             def do_HEAD(self):

@@ -1,7 +1,7 @@
 /* Transparent mobile canvas playback, with pause, seek and ended. */
 (() => {
   'use strict';
-  if(!/LifeOSMobile\/(?:ios|android)/.test(navigator.userAgent))return;
+  if(!window.lifeosMobile)return;
   window.lifeosPortablePetVideo=()=>{
     const canvas=document.createElement('canvas'),context=canvas.getContext('2d');
     let url='',manifest=null,pages=[],time=0,playing=false,last=0,raf=0,generation=0;

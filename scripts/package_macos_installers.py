@@ -18,4 +18,4 @@ with tempfile.TemporaryDirectory(prefix='lifeos-dmg-source-') as folder:
     subprocess.run(['ditto', str(app), str(staging / 'LifeOS.app')], check=True)
     (staging / 'Applications').symlink_to('/Applications', target_is_directory=True)
     subprocess.run(['hdiutil', 'create', '-volname', 'LifeOS', '-srcfolder', str(staging),
-        '-ov', '-format', 'UDZO', str(dist / f'LifeOS-0.6.0-mac-{args.arch}.dmg')], check=True)
+        '-ov', '-format', 'UDZO', str(dist / f'LifeOS-0.6.1-mac-{args.arch}.dmg')], check=True)

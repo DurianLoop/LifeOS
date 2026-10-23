@@ -71,6 +71,14 @@ class AcceptanceApp(LifeOS):
             saved = await self.wait_js('window.__qa')
             assert saved.get('ok'), saved
             entry = saved['result']['entry_id']
+            # Exercise the new mobile directory rather than only rendering pages.
+            await self.js('lifeosMobile.openLibrary();null')
+            assert await self.js('document.querySelector("#mobileLibrary").open')
+            await self.js('document.querySelector("[data-category=全部]").click();null')
+            assert await self.js('document.querySelectorAll(".mobileLibraryRow").length') == await self.js('FEATURES.length')
+            await self.js('document.querySelector(".mobileLibrarySearch").value="备份";document.querySelector(".mobileLibrarySearch").dispatchEvent(new Event("input"));null')
+            assert '备份与恢复' in await self.js('document.querySelector(".mobileLibraryResults").innerText')
+            await self.js('document.querySelector("#mobileLibrary").close();null')
             # Actual rendering of every original feature plus the added poetry page.
             names = await self.js('FEATURES.map(x=>x.name)')
             assert len(names) >= 142, names

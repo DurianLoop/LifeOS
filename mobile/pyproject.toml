@@ -1,7 +1,7 @@
 [tool.briefcase]
 project_name = "LifeOS"
 bundle = "life.lifeos"
-version = "0.6.0"
+version = "0.6.1"
 url = "https://lifeos-diary.netlify.app"
 license = "LicenseRef-LifeOS-NonCommercial"
 license-files = ["../LICENSE.md"]
@@ -20,7 +20,7 @@ permission.photo_library = "选择要保存在日记中的照片与视频"
 
 [tool.briefcase.app.lifeosmobile.android]
 requires = ["toga-android==0.5.7", "cryptography==42.0.8", "Pillow==11.0.0"]
-version_code = 600
+version_code = 601
 build_gradle_dependencies = [
     "androidx.appcompat:appcompat:1.7.1",
     "androidx.constraintlayout:constraintlayout:2.2.1",

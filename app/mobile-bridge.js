@@ -1,7 +1,8 @@
 /* Native mobile capabilities, loaded before workspace storage and feature code. */
 (() => {
   'use strict';
-  const platform=/LifeOSMobile\/(android|ios)/.exec(navigator.userAgent)?.[1];
+  const detected=document.documentElement.dataset.nativePlatform;
+  const platform=['android','ios'].includes(detected)?detected:/LifeOSMobile\/(android|ios)/.exec(navigator.userAgent)?.[1];
   if(!platform)return;
   let persisted=null;
   const storage=command=>{
@@ -19,7 +20,7 @@
     }else persisted=null;
     return reply;
   };
-  window.lifeosMobile={platform,storage,version:'0.6.0'};
+  window.lifeosMobile={platform,storage,version:'0.6.1'};
   window.lifeosMobile.requestText=(message,value='')=>new Promise(resolve=>{
     const dialog=document.createElement('dialog'),form=document.createElement('form'),label=document.createElement('label'),input=document.createElement('input'),actions=document.createElement('div'),cancel=document.createElement('button'),submit=document.createElement('button');
     dialog.className='mobileTextDialog';form.method='dialog';label.textContent=message;input.value=value;input.autocomplete='off';input.spellcheck=false;input.setAttribute('aria-label',message);

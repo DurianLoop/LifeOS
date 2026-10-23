@@ -31,6 +31,9 @@ def main():
                     raw = response.read()
                     return json.loads(raw) if 'application/json' in response.headers.get('Content-Type', '') else raw
             assert request('/api/health')['ok']
+            html = request('/').decode('utf-8')
+            assert 'data-native-platform="android"' in html
+            assert '/mobile-workbench.js' in html and '/mobile-workbench.css' in html
             for req in (urllib.request.Request(runtime.origin + '/api/entries'),
                         urllib.request.Request(runtime.origin + '/api/entries', headers={'Cookie': 'lifeos_native=' + runtime.token, 'Origin': 'https://untrusted.invalid'})):
                 try:

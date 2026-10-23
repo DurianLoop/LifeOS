@@ -30,7 +30,7 @@ def inspect_app(app: Path, arch: str) -> dict:
     resources = app / 'Contents' / 'Resources'
     with (app / 'Contents' / 'Info.plist').open('rb') as source:
         info = plistlib.load(source)
-    assert info['CFBundleShortVersionString'] == '0.6.0', info
+    assert info['CFBundleShortVersionString'] == '0.6.1', info
     assert info['NSCameraUsageDescription'] and info['NSMicrophoneUsageDescription']
     assert native in run('lipo', '-archs', str(app / 'Contents' / 'MacOS' / 'LifeOS')).split()
     python = resources / 'python' / 'bin' / 'python3'
@@ -155,10 +155,10 @@ def main():
     args = parser.parse_args()
     assert platform.system() == 'Darwin'
     # Acceptance runs on the candidate commit before the final release tag exists.
-    tagged = subprocess.run(['git', 'rev-parse', '--verify', 'refs/tags/v0.6.0'], cwd=ROOT,
+    tagged = subprocess.run(['git', 'rev-parse', '--verify', 'refs/tags/v0.6.1'], cwd=ROOT,
                             capture_output=True, text=True)
     if tagged.returncode == 0:
-        assert run('git', 'rev-parse', 'v0.6.0^{commit}', cwd=ROOT) == BASELINE
+        assert run('git', 'rev-parse', 'v0.6.1^{commit}', cwd=ROOT) == BASELINE
     subprocess.run(['git', 'merge-base', '--is-ancestor', BASELINE, 'HEAD'], cwd=ROOT, check=True)
     if args.native_app:
         with tempfile.TemporaryDirectory(prefix='lifeos-mac-preflight-') as folder:
@@ -168,8 +168,8 @@ def main():
             print(json.dumps(native_smoke(args.native_app.resolve(), Path(folder))))
         return
     dist = args.dist.resolve()
-    dmg = dist / f'LifeOS-0.6.0-mac-{args.arch}.dmg'
-    archive = dist / f'LifeOS-0.6.0-mac-{args.arch}.zip'
+    dmg = dist / f'LifeOS-0.6.1-mac-{args.arch}.dmg'
+    archive = dist / f'LifeOS-0.6.1-mac-{args.arch}.zip'
     assert dmg.is_file() and archive.is_file()
     checks = []
     with tempfile.TemporaryDirectory(prefix='lifeos-mac-validation-') as folder:
@@ -206,7 +206,7 @@ def main():
                         ignore=shutil.ignore_patterns('workspace', 'application-data', 'profile'))
     assets = [{'name': file.name, 'bytes': file.stat().st_size,
                'sha256': hashlib.sha256(file.read_bytes()).hexdigest()} for file in (dmg, archive)]
-    report = {'ok': True, 'tag': 'v0.6.0', 'release_baseline': BASELINE,
+    report = {'ok': True, 'tag': 'v0.6.1', 'release_baseline': BASELINE,
               'mac_build_commit': run('git', 'rev-parse', 'HEAD', cwd=ROOT),
               **info, 'checks': checks, 'assets': assets, 'external_model_calls': 0,
               'contains_user_memory': False,

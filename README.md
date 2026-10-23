@@ -1,3 +1,11 @@
+# LifeOS v0.6.1
+
+本轮补齐手机操作层：五项主导航、可搜索的全功能目录、明确的数据与设置入口，以及单列写作、阅读和全屏工作面板。修复悬浮伙伴遮挡导航。完整业务引擎继续在本机运行。
+
+手机网页独立更新于 https://lifeos-diary.netlify.app/app/ ，网页源码与验收说明位于 `codex/pocket-completeness` 分支；其浏览器数据与原生应用工作区独立，可使用文件交换。
+
+iOS 继续提供源码与 Apple Silicon 模拟器构建，不分发 iPhone 安装包。详见 [v0.6.1 说明](docs/RELEASE_v0.6.1.md)。
+
 # LifeOS v0.6.0
 
 LifeOS is a local-first journal and personal memory workspace, with an editable writing desk, journal book, and desktop companion.

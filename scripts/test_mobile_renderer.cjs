@@ -19,6 +19,14 @@ async function run(){
  await win.loadURL(url);await until('!!window.lifeosMobile&&!!window.lifeosJournalBook');await wait(600);
  await js("document.querySelector('[data-welcome=skip]')?.click();localStorage.setItem('lifeos.qa','persist')");
  const names=await js('FEATURES.map(x=>x.name)');assert.ok(names.length>=142);
+ await js('document.querySelector("[data-mobile-destination=library]").click()');
+ assert.equal(await js('document.querySelector("#mobileLibrary").open'),true);
+ await js('document.querySelector("[data-category=全部]").click()');
+ assert.equal(await js('document.querySelectorAll(".mobileLibraryResults .mobileLibraryRow").length'),names.length);
+ await js('document.querySelector(".mobileLibrarySearch").value="备份";document.querySelector(".mobileLibrarySearch").dispatchEvent(new Event("input"))');
+ assert.match(await js('document.querySelector(".mobileLibraryResults").innerText'),/备份与恢复/);
+ await js('document.querySelector("#mobileLibrary").close()');
+ assert.equal(await js('(()=>{const b=document.querySelector("[data-mobile-destination=library]"),r=b.getBoundingClientRect();return b.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))})()'),true,'pet must not obscure touch navigation');
  for(const width of [390,768]){
   win.setSize(width,1024);
   for(const name of names){
