@@ -1,0 +1,18 @@
+name: Transfer exact v0.6.1 source archive
+on:
+  push:
+    branches: [codex/v0.6.1-publish]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  transfer-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: git fetch --depth=1 origin tag v0.6.1
+      - name: Reproduce, verify and transfer the source archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python .github/scripts/transfer-source-v061.py

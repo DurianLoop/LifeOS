@@ -39,5 +39,10 @@
       "bytes": 498377680,
       "sha256": "c45eee3cf2ad4ff860ced5b6257e1247b98aa292d7e5d33f60eade99a6d3e941"
     }
-  ]
+  ],
+  "source_archive": {
+    "name": "LifeOS-0.6.1-source.zip",
+    "bytes": 249520214,
+    "sha256": "54715eb4d088be9d41b15d98207daf137e9a7ca4e9ff69db4b9fe836a8bb8012"
+  }
 }
