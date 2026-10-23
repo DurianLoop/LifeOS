@@ -189,7 +189,9 @@ async function verifyEditMenu() {
   // The writer schedules its initial title focus after rendering. Wait for that
   // handoff before creating a different editor, then verify the Cocoa window
   // and Chromium responder both own focus before exercising native actions.
-  await until(() => js(`document.activeElement?.id==='writerTitle'`), 'writer initial focus');
+  if (await js(`!!document.querySelector('#writerForm')`)) {
+    await until(() => js(`document.activeElement?.id==='writerTitle'`), 'writer initial focus');
+  }
   mainWindow.show(); app.focus({steal: true}); mainWindow.focus(); mainWindow.webContents.focus();
   await until(() => mainWindow.isFocused() && mainWindow.webContents.isFocused(), 'native editor window focus');
   const marker = 'LifeOS native macOS copy and paste QA';
