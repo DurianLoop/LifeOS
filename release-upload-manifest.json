@@ -1,0 +1,43 @@
+{
+  "commit": "fb1757b0222e94e347a08f921e57021098e2c076",
+  "mac_run": 39965754496,
+  "mobile_run": 39965754526,
+  "draft_release_id": 421949305,
+  "android_transfer": {
+    "name": "LifeOS-0.6.1-android-transfer.json",
+    "sha256": "3140ebf7ccd24790bcb23f564bb42f9e50cf11e32557718d6deec737b03a4a0a",
+    "source_sha256": "28f4dc078b6affda688eaed0276198dbfe3fbf70b723c5b5692a5f34a4508a73"
+  },
+  "server_assets": [
+    {
+      "name": "LifeOS-0.6.1-mac-arm64.dmg",
+      "bytes": 273934708,
+      "sha256": "82041b1a6b1b9dcd9c3ba3f42528c502c3c90257836d7725274794f263082927"
+    },
+    {
+      "name": "LifeOS-0.6.1-mac-arm64.zip",
+      "bytes": 231718860,
+      "sha256": "6c0edff68e4dcc48db95ed3da8e8b4a00e839e9bc6c9298c5ae2af9224e20a3d"
+    },
+    {
+      "name": "LifeOS-0.6.1-mac-x64.dmg",
+      "bytes": 276117269,
+      "sha256": "8548b0b7f981aa0abc601519705a358c160a076c82d72c19ab486d700eec85c8"
+    },
+    {
+      "name": "LifeOS-0.6.1-mac-x64.zip",
+      "bytes": 238739591,
+      "sha256": "43d7081c33d42da9cbd3b207d842aef6bdef8f6a2398f34ffa2482b7e2127b7b"
+    },
+    {
+      "name": "LifeOS-0.6.1-ios-simulator-arm64.zip",
+      "bytes": 484895589,
+      "sha256": "bb3fbe035492ab84aa18e9576dd8cae43283d51c400b940f4a34078816f03a01"
+    },
+    {
+      "name": "LifeOS-0.6.1-android.apk",
+      "bytes": 498377680,
+      "sha256": "c45eee3cf2ad4ff860ced5b6257e1247b98aa292d7e5d33f60eade99a6d3e941"
+    }
+  ]
+}

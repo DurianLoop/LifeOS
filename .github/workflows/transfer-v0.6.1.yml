@@ -1,0 +1,44 @@
+name: Transfer verified v0.6.1 assets
+on:
+  push:
+    branches: [codex/v0.6.1-publish]
+  workflow_dispatch:
+permissions:
+  actions: read
+  contents: write
+jobs:
+  transfer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - run: git fetch --depth=1 origin tag v0.6.1
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: 39965754496
+          name: macos-installer-arm64
+          path: packages/mac-arm64
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: 39965754496
+          name: macos-installer-x64
+          path: packages/mac-x64
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: 39965754526
+          name: ios-v0.6.1
+          path: packages/ios
+      - name: Retrieve the unsigned Android package
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: 39965754526
+          name: android-v0.6.1
+          path: packages/android
+      - name: Verify provenance and transfer to the existing draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python .github/scripts/transfer-v061.py
