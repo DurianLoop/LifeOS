@@ -95,6 +95,20 @@ function validatePayload(payload) {
   if (typeof payload.question !== 'string' || !payload.question.trim() || payload.question.length > 2000) {
     fail(400, 'invalid_question', '请输入问题，长度不超过 2,000 字。');
   }
+  if (payload.mode === 'companion') {
+    if (!Array.isArray(payload.evidence) || payload.evidence.length !== 0 || !Array.isArray(payload.messages) || payload.messages.length < 1 || payload.messages.length > 12) {
+      fail(400, 'invalid_chat', '伙伴聊天只接受本次聊天文字，不接收日记选材。');
+    }
+    let length = 0;
+    const messages = payload.messages.map(item => {
+      if (!item || !['user', 'assistant'].includes(item.role) || typeof item.content !== 'string' || !item.content.trim() || item.content.length > 24000) fail(400, 'invalid_chat', '聊天文字格式不正确。');
+      length += item.content.length;
+      return { role: item.role, content: item.content };
+    });
+    if (length > 40000 || messages.at(-1).role !== 'user' || messages.at(-1).content !== payload.question) fail(400, 'invalid_chat', '聊天文字过多或问题不一致。');
+    return { provider: payload.provider, model: payload.model, question: payload.question, evidence: [], messages };
+  }
+  if (payload.mode !== undefined && payload.mode !== 'reflection') fail(400, 'invalid_mode', '请求类型不受支持。');
   if (!Array.isArray(payload.evidence) || payload.evidence.length < 1 || payload.evidence.length > 6) {
     fail(400, 'invalid_evidence', '请选择 1–6 条日记摘录作为回答依据。');
   }
@@ -166,7 +180,7 @@ export function createHandler({ fetchImpl = globalThis.fetch, timeoutMs = 25000 
       if (typeof auth !== 'string' || !/^Bearer [\x21-\x7e]{8,1024}$/.test(auth)) {
         fail(401, 'invalid_key', '请填写你自己的 AI API key。');
       }
-      const { provider, model, question, evidence } = validatePayload(parseBody(event, headers));
+      const { provider, model, question, evidence, messages } = validatePayload(parseBody(event, headers));
       const controller = new AbortController();
       timer = setTimeout(() => controller.abort(), timeoutMs);
       const upstream = await fetchImpl(PROVIDERS[provider], {
@@ -176,7 +190,10 @@ export function createHandler({ fetchImpl = globalThis.fetch, timeoutMs = 25000 
         signal: controller.signal,
         body: JSON.stringify({
           model,
-          messages: [
+          messages: messages ? [
+            { role: 'system', content: '你是 LifeOS 的陪伴伙伴 ViVi，以温和、自然、简短的中文聊天。你只能看到本次聊天文字，不能读取日记，不要声称知道用户的经历。不要作医疗或心理诊断，不索取凭据。不要把自己当成人类，也不承诺永远陪伴。' },
+            ...messages,
+          ] : [
             { role: 'system', content: SYSTEM_PROMPT },
             { role: 'user', content: JSON.stringify({ question, evidence }) },
           ],

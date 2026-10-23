@@ -7,7 +7,7 @@ import { handler } from '../netlify/functions/mobile-ask.mjs';
 const source = dirname(fileURLToPath(import.meta.url));
 const root = process.env.LIFEOS_PROMO_DIST === '1' ? resolve(source, 'dist') : source;
 const port = Number(process.env.LIFEOS_PROMO_PORT || 4173);
-const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.gif': 'image/gif', '.ogg': 'audio/ogg', '.md': 'text/plain; charset=utf-8', '.webmanifest': 'application/manifest+json' };
+const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.gif': 'image/gif', '.ogg': 'audio/ogg', '.m4a': 'audio/mp4', '.json': 'application/json; charset=utf-8', '.md': 'text/plain; charset=utf-8', '.webmanifest': 'application/manifest+json' };
 
 const server = createServer(async (request, response) => {
   if (request.url === '/.netlify/functions/mobile-ask') {

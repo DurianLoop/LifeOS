@@ -1,27 +1,21 @@
-const CACHE = 'lifeos-pocket-v1';
-const ROOT = new URL('./', self.location.href);
-const FILES = ['index.html', 'styles.css', 'app.js', 'model.js', 'storage.js', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable.png', 'icons/apple-touch-icon.png'];
-const ASSETS = FILES.map(path => new URL(path, ROOT).href);
-
-self.addEventListener('install', event => {
-  // An incomplete shell never replaces a working offline version.
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
-});
-self.addEventListener('activate', event => {
-  event.waitUntil((async () => {
-    const names = await caches.keys();
-    await Promise.all(names.filter(name => name.startsWith('lifeos-pocket-') && name !== CACHE).map(name => caches.delete(name)));
-    await self.clients.claim();
-  })());
-});
-self.addEventListener('fetch', event => {
-  const url = new URL(event.request.url);
-  if (event.request.method !== 'GET' || event.request.headers.has('authorization') || url.origin !== ROOT.origin || !url.pathname.startsWith(ROOT.pathname)) return;
-  if (event.request.mode === 'navigate' && [ROOT.pathname, `${ROOT.pathname}index.html`].includes(url.pathname)) {
-    event.respondWith(caches.open(CACHE).then(async cache => (await cache.match(new URL('index.html', ROOT).href)) || fetch(event.request)));
-    return;
-  }
-  url.search = ''; url.hash = '';
-  if (!ASSETS.includes(url.href)) return;
-  event.respondWith(caches.open(CACHE).then(async cache => (await cache.match(url.href)) || fetch(event.request)));
+const CACHE='lifeos-pocket-v1';
+const ROOT=new URL('./',self.location.href);
+const FILES=['index.html','pocket.css','pocket.js','domain.js','workspace.js','transfer.js','views.js','questions.js','companion.js','model.js','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png','icons/icon-maskable.png','icons/apple-touch-icon.png','media/poems.json','media/vivi/sit.gif'];
+const OPTIONAL=[...['rain','fire','ocean','forest','stream','night'].flatMap(n=>['ogg','m4a'].map(ext=>`media/audio/${n}.${ext}`)),...['move','sleep','jump','relax','interact','start','sweat','hide','fly','die','special','special0','special1'].map(n=>`media/vivi/${n}.gif`),'media/audio/ATTRIBUTION.html','media/vivi/LICENSE.md','media/dsh/catalog.json','media/dsh/NOTICE.md',"media/dsh/anim-47d03061fd8c.webp","media/dsh/anim-2abdb7e92e82.webp","media/dsh/anim-4f74c11cf2c1.webp","media/dsh/anim-edbc797abb47.webp","media/dsh/anim-95d45f45508e.webp","media/dsh/anim-6affb83947ba.webp","media/dsh/anim-626a6651e9e1.webp","media/dsh/anim-1abe7c4481d3.webp","media/dsh/anim-379cfec06114.webp","media/dsh/anim-5d004816e43d.webp","media/dsh/anim-a026f5dc44f2.webp","media/dsh/anim-5a837fd2229b.webp","media/dsh/anim-43081dd0528e.webp","media/dsh/anim-e6472bbdb242.webp","media/dsh/anim-780c67b4dc83.webp","media/dsh/anim-4c80621ae4f2.webp","media/dsh/anim-c191bc7c5fcd.webp","media/dsh/anim-51b658e2ab5e.webp","media/dsh/anim-06b43873e9cb.webp","media/dsh/anim-6b4bc721cf28.webp","media/dsh/anim-307947b984ef.webp","media/dsh/anim-8c0f7b1e5ac8.webp","media/dsh/anim-d42c9a743c4f.webp","media/dsh/anim-588817adf175.webp","media/dsh/anim-5e3cee62bf5a.webp","media/dsh/anim-8ca81701a0b3.webp","media/dsh/anim-e77da58d470c.webp","media/dsh/anim-1cdac31079ac.webp","media/dsh/anim-32eded8b4223.webp","media/dsh/anim-953d68ca1326.webp","media/dsh/anim-e30452be8777.webp","media/dsh/anim-4a34c638ea9b.webp","media/dsh/anim-1415bd80f94b.webp","media/dsh/anim-c60e75db7559.webp","media/dsh/anim-e37afa103e68.webp","media/dsh/anim-5889cff6971f.webp","media/dsh/anim-130174a5806f.webp","media/dsh/anim-cd0474d15c7f.webp","media/dsh/anim-0c0166227768.webp","media/dsh/anim-56d0e5c5c186.webp","media/dsh/anim-9446f04251a9.webp","media/dsh/anim-08cbe0bc79a9.webp","media/dsh/anim-69ed8cd7f870.webp","media/dsh/anim-ae0114688db7.webp","media/dsh/anim-f1ca886dbe83.webp","media/dsh/anim-5b3f25958775.webp","media/dsh/anim-8e473b074a46.webp","media/dsh/anim-41cb9c5a60d8.webp","media/dsh/anim-eb1533b0b8b2.webp","media/dsh/anim-f338f5328e27.webp","media/dsh/anim-40ddb28a443b.webp","media/dsh/anim-50deba83a57f.webp","media/dsh/anim-4e66e7b28f1d.webp","media/dsh/anim-e98d4ca796f7.webp","media/dsh/anim-84fd288ba807.webp","media/dsh/anim-35fcf8191225.webp","media/dsh/anim-080258d0fa3b.webp","media/dsh/anim-92b06b85ab76.webp","media/dsh/anim-ffdd15b35609.webp","media/dsh/anim-de9869a8c7bf.webp","media/dsh/anim-0cd58455e2de.webp","media/dsh/anim-34c2b38fb6bf.webp","media/dsh/anim-6e6b6f4c71fa.webp","media/dsh/anim-29a3812f35c8.webp","media/dsh/anim-d3d5a25277d5.webp","media/dsh/anim-facfd1afaab7.webp","media/dsh/anim-65cad108e71d.webp","media/dsh/anim-cef840f5d2ee.webp","media/dsh/anim-a0af2db4eae7.webp","media/dsh/anim-e5f9ea2c87d0.webp","media/dsh/anim-2662eea55207.webp","media/dsh/anim-eb2f43dadafd.webp","media/dsh/anim-7740fa6b004c.webp","media/dsh/anim-df92f8cfaf20.webp","media/dsh/anim-0304f5f46a2e.webp","media/dsh/anim-aa28193f3a0b.webp","media/dsh/anim-ee4ade192190.webp","media/dsh/anim-6eaabc6c5712.webp","media/dsh/anim-6e0756a053b1.webp","media/dsh/anim-883adfe0011e.webp","media/dsh/anim-e686b66e0083.webp","media/dsh/anim-1c462308b734.webp","media/dsh/anim-c8de468684ae.webp","media/dsh/anim-95691aee0f02.webp","media/dsh/anim-49c0d89c0992.webp","media/dsh/anim-61c702c24fa0.webp","media/dsh/anim-c00d44612246.webp","media/dsh/anim-0d84e2120333.webp","media/dsh/anim-6ff25334dac4.webp","media/dsh/anim-bf904ff8f7a7.webp","media/dsh/anim-dd035a687e36.webp","media/dsh/anim-bafd79fc585d.webp","media/dsh/anim-186c48064605.webp","media/dsh/anim-499b64fd81be.webp","media/dsh/anim-26bf18c72287.webp","media/dsh/anim-d0c3a592b5b1.webp","media/dsh/anim-672ee68be5f3.webp","media/dsh/anim-52cdbcb79a90.webp","media/dsh/anim-8ab776b190a6.webp","media/dsh/anim-0ed7515025e8.webp","media/dsh/anim-017b1556ab63.webp","media/dsh/anim-68f9f8c6ea2b.webp","media/dsh/anim-ea4edc89d3bc.webp","media/dsh/anim-eb604d240d49.webp","media/dsh/anim-f80b8c116b42.webp","media/dsh/anim-9a1e07e58053.webp"];
+const ASSETS=FILES.map(path=>new URL(path,ROOT).href),MEDIA=OPTIONAL.map(path=>new URL(path,ROOT).href);
+self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS.map(url=>new Request(url,{cache:'reload'})))));});
+self.addEventListener('activate',event=>{event.waitUntil((async()=>{const names=await caches.keys();await Promise.all(names.filter(name=>name.startsWith('lifeos-pocket-')&&name!==CACHE).map(name=>caches.delete(name)));await self.clients.claim();})());});
+async function rangeResponse(response,header){
+  if(!header)return response;const bytes=await response.arrayBuffer(),match=/^bytes=(\d*)-(\d*)$/.exec(header);if(!match)return new Response(null,{status:416,headers:{'Content-Range':`bytes */${bytes.byteLength}`}});
+  const start=match[1]?Number(match[1]):Math.max(0,bytes.byteLength-Number(match[2])),end=match[1]?Math.min(bytes.byteLength-1,match[2]?Number(match[2]):bytes.byteLength-1):bytes.byteLength-1;
+  if(!Number.isSafeInteger(start)||!Number.isSafeInteger(end)||start>end||start>=bytes.byteLength)return new Response(null,{status:416,headers:{'Content-Range':`bytes */${bytes.byteLength}`}});
+  return new Response(bytes.slice(start,end+1),{status:206,headers:{'Content-Type':response.headers.get('Content-Type')||'application/octet-stream','Content-Range':`bytes ${start}-${end}/${bytes.byteLength}`,'Content-Length':String(end-start+1),'Accept-Ranges':'bytes'}});
+}
+self.addEventListener('fetch',event=>{
+  const url=new URL(event.request.url);if(event.request.method!=='GET'||event.request.headers.has('authorization')||url.origin!==ROOT.origin||!url.pathname.startsWith(ROOT.pathname))return;
+  if(event.request.mode==='navigate'&&[ROOT.pathname,ROOT.pathname+'index.html'].includes(url.pathname)){event.respondWith(caches.open(CACHE).then(async cache=>(await cache.match(new URL('index.html',ROOT).href))||fetch(event.request)));return;}
+  url.search='';url.hash='';if(!ASSETS.includes(url.href)&&!MEDIA.includes(url.href))return;
+  // Cache only this finite list of public assets. Diary blobs, exports and AI
+  // requests are never persisted in the service-worker cache.
+  event.respondWith((async()=>{const cache=await caches.open(CACHE);let response=await cache.match(url.href);if(!response){response=await fetch(new Request(url.href,{credentials:'same-origin'}));if(response.ok){try{await cache.put(url.href,response.clone());}catch{/* A full media cache never prevents playback. */}}}return rangeResponse(response,event.request.headers.get('range'));})());
 });

@@ -20,9 +20,16 @@ const files = [
   'assets/vivi-relax.gif', 'assets/vivi-LICENSE.md',
   'assets/screens/workspace.png', 'assets/screens/memory.jpg',
   'assets/screens/bottles.jpg', 'assets/screens/companion.png',
-  'app/index.html', 'app/styles.css', 'app/app.js', 'app/model.js', 'app/storage.js',
+  'app/index.html', 'app/model.js',
   'app/sw.js', 'app/manifest.webmanifest', 'app/icons/icon-192.png',
   'app/icons/icon-512.png', 'app/icons/icon-maskable.png', 'app/icons/apple-touch-icon.png',
+  'app/pocket.js', 'app/pocket.css', 'app/domain.js', 'app/workspace.js',
+  'app/transfer.js', 'app/views.js', 'app/questions.js', 'app/companion.js', 'app/media/poems.json',
+  ...['rain','fire','ocean','forest','stream','night'].flatMap(name => ['ogg','m4a'].map(ext=>`app/media/audio/${name}.${ext}`)),
+  'app/media/audio/ATTRIBUTION.html', 'app/media/audio/SOURCES.json', 'app/media/vivi/LICENSE.md',
+  ...['sit','move','sleep','jump','relax','interact','start','sweat','hide','fly','die','special','special0','special1'].map(name => `app/media/vivi/${name}.gif`),
+  'app/media/dsh/catalog.json','app/media/dsh/NOTICE.md',
+  ...JSON.parse(readFileSync(resolve(root,'app/media/dsh/catalog.json'),'utf8')).actions.map(row=>`app/media/dsh/${row.file}`),
 ];
 rmSync(output, { recursive: true, force: true });
 for (const file of files) {
@@ -31,7 +38,7 @@ for (const file of files) {
   copyFileSync(resolve(root, file), target);
 }
 const appVersion = createHash('sha256');
-for (const file of files.filter(file => file.startsWith('app/') && file !== 'app/sw.js')) appVersion.update(file).update(readFileSync(resolve(root, file)));
+for (const file of files.filter(file => file.startsWith('app/'))) appVersion.update(file).update(readFileSync(resolve(root, file)));
 const worker = readFileSync(resolve(output, 'app/sw.js'), 'utf8');
 writeFileSync(resolve(output, 'app/sw.js'), worker.replace(/lifeos-pocket-v1/, `lifeos-pocket-${appVersion.digest('hex').slice(0, 12)}`));
 console.log(`Built ${files.length} public website files in ${output}`);

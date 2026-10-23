@@ -19,6 +19,14 @@ function response(content = '和朋友散步让你感到开心。[1]') {
   return new Response(JSON.stringify({ choices: [{ message: { content } }] }), { status: 200 });
 }
 function parsed(result) { return JSON.parse(result.body); }
+test('companion chat sends only explicit turns and rejects diary evidence or system roles', async()=>{
+  let upstream;const handler=createHandler({fetchImpl:async(url,options)=>{upstream=JSON.parse(options.body);return response('慢慢来。');}});
+  const chat={provider:'deepseek',model:'deepseek-chat',mode:'companion',question:'今天想休息',evidence:[],messages:[{role:'user',content:'今天想休息'}]};
+  assert.equal((await handler(event(chat))).statusCode,200);assert.equal(upstream.messages.length,2);assert.equal(upstream.messages[1].content,chat.question);assert.match(upstream.messages[0].content,/不能读取|无法读取|没有.*日记/);
+  for(const changes of [{evidence:payload.evidence},{messages:[{role:'system',content:chat.question}]},{messages:[{role:'assistant',content:chat.question}]},{mode:'unknown'}]){
+    let called=false;const reject=createHandler({fetchImpl:async()=>{called=true;return response();}});assert.equal((await reject(event({...chat,...changes}))).statusCode,400);assert.equal(called,false);
+  }
+});
 async function rejectsWithoutFetch(request, status, code) {
   let called = false;
   const handler = createHandler({ fetchImpl: async () => { called = true; return response(); } });

@@ -11,6 +11,7 @@
 
 # Build and local tool output.
 /desktop/node_modules/
+/tests/node_modules/
 /desktop/dist/
 /desktop/server-dist/
 /desktop/python-runtime/

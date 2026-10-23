@@ -6,18 +6,15 @@ import vm from 'node:vm';
 const source = await readFile(new URL('../promo/app/sw.js', import.meta.url), 'utf8');
 const site = 'https://lifeos-diary.netlify.app';
 const root = `${site}/app/`;
-const shell = [
-  'index.html', 'styles.css', 'app.js', 'model.js', 'storage.js', 'manifest.webmanifest',
-  'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable.png', 'icons/apple-touch-icon.png',
-].map(path => `${root}${path}`);
+const shell = ['index.html','pocket.css','pocket.js','domain.js','workspace.js','transfer.js','views.js','questions.js','companion.js','model.js','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png','icons/icon-maskable.png','icons/apple-touch-icon.png','media/poems.json','media/vivi/sit.gif'].map(path=>`${root}${path}`);
 
 function harness({ offline = false, failAsset = null, seed = {} } = {}) {
   const handlers = new Map(), network = [], matches = [], additions = [], deletions = [];
   const stores = new Map(Object.entries(seed).map(([name, records]) => [name, new Map(Object.entries(records))]));
-  let claims = 0;
+  let claims = 0; const cacheModes=[];
   const fetch = async request => {
     const url = typeof request === 'string' ? request : request.url;
-    network.push(url);
+    network.push(url);cacheModes.push(request.cache);
     if (offline) throw new TypeError('Network unavailable');
     return new Response(`network:${url}`, { status: url === failAsset ? 404 : 200 });
   };
@@ -27,13 +24,14 @@ function harness({ offline = false, failAsset = null, seed = {} } = {}) {
       const records = stores.get(name);
       return {
         async addAll(urls) {
-          additions.push([...urls]);
+          additions.push(Array.from(urls,x=>typeof x==='string'?x:x.url));
           const responses = await Promise.all(urls.map(fetch));
           if (responses.some(response => !response.ok)) throw new TypeError('Cache addAll failed');
           // Like Cache.addAll, the batch is committed only after every fetch succeeds.
           const texts = await Promise.all(responses.map(response => response.text()));
-          urls.forEach((url, index) => records.set(url, texts[index]));
+          urls.forEach((url, index) => records.set(typeof url==='string'?url:url.url, texts[index]));
         },
+        async put(input,response){records.set(typeof input==='string'?input:input.url,await response.text());},
         async match(input) {
           const url = typeof input === 'string' ? input : input.url;
           matches.push(url);
@@ -49,7 +47,7 @@ function harness({ offline = false, failAsset = null, seed = {} } = {}) {
     addEventListener(name, callback) { handlers.set(name, callback); },
     clients: { async claim() { claims++; } },
   };
-  vm.runInNewContext(source, { self, caches, fetch, URL }, { filename: 'sw.js' });
+  vm.runInNewContext(source, { self, caches, fetch, URL, Request, Response }, { filename: 'sw.js' });
   async function lifecycle(name) {
     let work;
     handlers.get(name)({ waitUntil(promise) { assert.equal(work, undefined); work = promise; } });
@@ -62,23 +60,23 @@ function harness({ offline = false, failAsset = null, seed = {} } = {}) {
     handlers.get('fetch')({ request: input, respondWith(promise) { assert.equal(work, undefined); work = Promise.resolve(promise); } });
     return { handled: work !== undefined, response: work, input };
   }
-  return { lifecycle, request, stores, network, matches, additions, deletions, claims: () => claims };
+  return { lifecycle, request, stores, network, matches, additions, deletions, cacheModes, claims: () => claims };
 }
 
 function cachedSeed(extra = {}) {
   return { 'lifeos-pocket-v1': Object.fromEntries(shell.map(url => [url, `cached:${url}`])), ...extra };
 }
 
-test('install waits for all ten app assets and does not activate an incomplete shell', async () => {
+test('install waits for the complete app shell and does not activate an incomplete shell', async () => {
   const worker = harness();
   await worker.lifecycle('install');
   assert.equal(worker.additions.length, 1);
   assert.deepEqual(worker.additions[0], shell);
-  assert.deepEqual(worker.network, shell);
+  assert.deepEqual(worker.network, shell);assert.ok(worker.cacheModes.every(value=>value==='reload'));
   assert.deepEqual([...worker.stores.get('lifeos-pocket-v1').keys()], shell);
   assert.equal(worker.claims(), 0);
 
-  const failed = harness({ failAsset: `${root}storage.js`, seed: { 'lifeos-pocket-v0': { [`${root}index.html`]: 'working previous shell' } } });
+  const failed = harness({ failAsset: `${root}workspace.js`, seed: { 'lifeos-pocket-v0': { [`${root}index.html`]: 'working previous shell' } } });
   await assert.rejects(failed.lifecycle('install'), /Cache addAll failed/);
   assert.equal(failed.stores.get('lifeos-pocket-v1').size, 0);
   assert.equal(failed.stores.get('lifeos-pocket-v0').get(`${root}index.html`), 'working previous shell');
@@ -113,10 +111,10 @@ test('other app paths, external resources and all AI endpoint requests bypass th
     ['/app/entries/private.json', {}], ['/app/diary', { mode: 'navigate' }],
     ['/app/icons/not-allowlisted.png', {}], ['/app-other/app.js', {}],
     ['/app/sw.js', {}], ['/', { mode: 'navigate' }],
-    ['https://untrusted.example/app/app.js', {}],
+    ['https://untrusted.example/app/pocket.js', {}],
     ['/.netlify/functions/mobile-ask', {}],
     ['/.netlify/functions/mobile-ask', { method: 'POST', headers: { Authorization: 'Bearer fake-test-key' } }],
-    ['/app/app.js', { method: 'POST' }], ['/app/', { method: 'POST', mode: 'navigate' }],
+    ['/app/pocket.js', { method: 'POST' }], ['/app/', { method: 'POST', mode: 'navigate' }],
   ]) {
     assert.equal(worker.request(url, options).handled, false, `${options.method || 'GET'} ${url}`);
   }
@@ -126,22 +124,22 @@ test('other app paths, external resources and all AI endpoint requests bypass th
 
 test('Authorization-bearing requests bypass cache even for otherwise cacheable assets', () => {
   const worker = harness({ offline: true, seed: cachedSeed() });
-  for (const [url, mode] of [['/app/', 'navigate'], ['/app/index.html', 'navigate'], ['/app/app.js', 'cors']]) {
+  for (const [url, mode] of [['/app/', 'navigate'], ['/app/index.html', 'navigate'], ['/app/pocket.js', 'cors']]) {
     assert.equal(worker.request(url, { mode, headers: { Authorization: 'Bearer fake-test-key' } }).handled, false, url);
   }
   assert.deepEqual(worker.matches, []);
   assert.deepEqual(worker.network, []);
 });
 
-test('a missing shell asset falls back to network without caching response data', async () => {
+test('a missing public shell asset falls back to network and caches only the allowlisted file', async () => {
   const worker = harness();
-  for (const [url, mode] of [['/app/', 'navigate'], ['/app/app.js', 'cors']]) {
+  for (const [url, mode] of [['/app/', 'navigate'], ['/app/pocket.js', 'cors']]) {
     const request = worker.request(url, { mode });
     assert.equal(request.handled, true);
     assert.equal(await (await request.response).text(), `network:${site}${url}`);
   }
-  assert.deepEqual(worker.network, [`${root}`, `${root}app.js`]);
-  assert.equal(worker.stores.get('lifeos-pocket-v1').size, 0);
+  assert.deepEqual(worker.network, [`${root}`, `${root}pocket.js`]);
+  assert.equal(worker.stores.get('lifeos-pocket-v1').size, 1);
   assert.deepEqual(worker.additions, []);
 });
 
@@ -158,3 +156,10 @@ test('activation only removes older caches owned by this app and then claims cli
   assert.equal(worker.claims(), 1);
   assert.deepEqual(worker.network, []);
 });
+
+ test('optional public media is cached on demand and byte ranges work offline',async()=>{
+ const worker=harness();const url=`${root}media/audio/rain.ogg`;let response=await worker.request(url).response;assert.equal(response.status,200);
+ const original=await response.text();response=await worker.request(url,{headers:{Range:'bytes=2-6'}}).response;assert.equal(response.status,206);assert.equal(await response.text(),original.slice(2,7));assert.equal(response.headers.get('Content-Range'),`bytes 2-6/${original.length}`);assert.deepEqual(worker.network,[url]);
+ const invalid=await worker.request(url,{headers:{Range:'bytes=99999-'}}).response;assert.equal(invalid.status,416);
+ const offline=harness({offline:true,seed:{'lifeos-pocket-v1':{[url]:'0123456789'}}});assert.equal(await (await offline.request(url,{headers:{Range:'bytes=-3'}}).response).text(),'789');
+ });

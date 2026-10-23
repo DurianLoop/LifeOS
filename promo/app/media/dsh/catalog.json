@@ -1,0 +1,858 @@
+{
+  "defaultAction": "anim-92b06b85ab76",
+  "source": {
+    "repository": "https://github.com/PC2005-cloud/dsh-pet",
+    "commit": "15e59d2a42fa0d674720dd813480bc7aea786e86",
+    "asset_terms": "Code: MIT. Animation assets: open-source use permitted; commercial use prohibited. All introductions, displays and distributions of derivative works must link to https://github.com/PC2005-cloud/dsh-pet"
+  },
+  "actions": [
+    {
+      "id": "anim-47d03061fd8c",
+      "label": "三球抛接",
+      "group": "玩耍",
+      "file": "anim-47d03061fd8c.webp",
+      "frames": 120,
+      "sha256": "d18545fc515c6148590f7bbfe4ffdc9508e7ce01c80541e09e98e77339e53dbe"
+    },
+    {
+      "id": "anim-2abdb7e92e82",
+      "label": "下五子棋",
+      "group": "玩耍",
+      "file": "anim-2abdb7e92e82.webp",
+      "frames": 120,
+      "sha256": "8dd721d8c2d87459fd8e489afed1662474323638ad18e3be739f840571051bd2"
+    },
+    {
+      "id": "anim-4f74c11cf2c1",
+      "label": "东张西望",
+      "group": "互动与状态",
+      "file": "anim-4f74c11cf2c1.webp",
+      "frames": 120,
+      "sha256": "a9fbbe056d4e0a2312e30515c493e5b1d0b991230ccb46971054245ae66a33f5"
+    },
+    {
+      "id": "anim-edbc797abb47",
+      "label": "中秋赏月吃月饼",
+      "group": "时节",
+      "file": "anim-edbc797abb47.webp",
+      "frames": 120,
+      "sha256": "7e6a60ef3b45779a93067641d66db4d463cda77d30071d76d4ef7d91a7fbdbcb"
+    },
+    {
+      "id": "anim-95d45f45508e",
+      "label": "优雅女仆舞",
+      "group": "玩耍",
+      "file": "anim-95d45f45508e.webp",
+      "frames": 120,
+      "sha256": "5e3dc384c49794e87d902510579220ee83e5aee5119c2f64e96eedb3f3555024"
+    },
+    {
+      "id": "anim-6affb83947ba",
+      "label": "余额-分文不剩",
+      "group": "互动与状态",
+      "file": "anim-6affb83947ba.webp",
+      "frames": 120,
+      "sha256": "5aed54553ec44e6d12d04306b5feb3edfd939bb4268df1a4cc1916e72116c5dd"
+    },
+    {
+      "id": "anim-626a6651e9e1",
+      "label": "余额-数金皱眉",
+      "group": "互动与状态",
+      "file": "anim-626a6651e9e1.webp",
+      "frames": 120,
+      "sha256": "daeea36cae8824a60c01c37a8ed3d9d6f29142fbcb117d799c17e34949622b61"
+    },
+    {
+      "id": "anim-1abe7c4481d3",
+      "label": "余额-袋空如洗",
+      "group": "互动与状态",
+      "file": "anim-1abe7c4481d3.webp",
+      "frames": 120,
+      "sha256": "14e96283f2a6ebe6d43417f859cedb2f0137952fb4c21664cd9698a6b0cbd85e"
+    },
+    {
+      "id": "anim-379cfec06114",
+      "label": "余额-金袋叮当",
+      "group": "互动与状态",
+      "file": "anim-379cfec06114.webp",
+      "frames": 120,
+      "sha256": "107a8f7db238aa3ce7174d5b7fa2861343a7a5babfb32e13fa5fce9769f3e518"
+    },
+    {
+      "id": "anim-5d004816e43d",
+      "label": "余额-钱袋如常",
+      "group": "互动与状态",
+      "file": "anim-5d004816e43d.webp",
+      "frames": 120,
+      "sha256": "48b4a9f677efaa94c49adf575b3c285685808961afe843c42742c62e65c2f70b"
+    },
+    {
+      "id": "anim-a026f5dc44f2",
+      "label": "余额-钱袋满溢",
+      "group": "互动与状态",
+      "file": "anim-a026f5dc44f2.webp",
+      "frames": 120,
+      "sha256": "3d7cf6ff39f128245cedaca2af7e1ac91de7bd811c1e2f014a68d5381171c83e"
+    },
+    {
+      "id": "anim-5a837fd2229b",
+      "label": "偷吃零食被抓住",
+      "group": "小动作",
+      "file": "anim-5a837fd2229b.webp",
+      "frames": 120,
+      "sha256": "ca83b5dd5d9a9f493d9f8b5c0fd868bd17cc4c5b9c5ec8c87019c14b2d54c0dd"
+    },
+    {
+      "id": "anim-43081dd0528e",
+      "label": "写代码",
+      "group": "小动作",
+      "file": "anim-43081dd0528e.webp",
+      "frames": 120,
+      "sha256": "6ff0397426b43d1ce9de1c81a9bca834dda08de95a845d21198ff3ed43af51b8"
+    },
+    {
+      "id": "anim-e6472bbdb242",
+      "label": "写福字",
+      "group": "时节",
+      "file": "anim-e6472bbdb242.webp",
+      "frames": 120,
+      "sha256": "0eca299a44d02cd068688a1be2bde1d3033293f894796758f0a771c0220ed41c"
+    },
+    {
+      "id": "anim-780c67b4dc83",
+      "label": "凭空生花",
+      "group": "玩耍",
+      "file": "anim-780c67b4dc83.webp",
+      "frames": 120,
+      "sha256": "4ecd6cdfe520f7c3a9e440a701b068bd216628cf98e5898b22fa5605dd21c14c"
+    },
+    {
+      "id": "anim-4c80621ae4f2",
+      "label": "动物环绕",
+      "group": "玩耍",
+      "file": "anim-4c80621ae4f2.webp",
+      "frames": 120,
+      "sha256": "adffdc2ff9fdae37f0b6accaf984b55493f3b60e609f161022821118dc848cef"
+    },
+    {
+      "id": "anim-c191bc7c5fcd",
+      "label": "原地专心玩魔方",
+      "group": "玩耍",
+      "file": "anim-c191bc7c5fcd.webp",
+      "frames": 120,
+      "sha256": "e726e8a0873696e6b44f02b7439d844082eba4eb4fcd9e4a4f1702868f46f927"
+    },
+    {
+      "id": "anim-51b658e2ab5e",
+      "label": "原地小憩沉眠",
+      "group": "小动作",
+      "file": "anim-51b658e2ab5e.webp",
+      "frames": 120,
+      "sha256": "ac98e1da3c91182e44140c9ab8a4bcd0ea2d272efd62cfcf91a9af97addc0ad3"
+    },
+    {
+      "id": "anim-06b43873e9cb",
+      "label": "原地左转奔跑",
+      "group": "互动与状态",
+      "file": "anim-06b43873e9cb.webp",
+      "frames": 120,
+      "sha256": "a54f95a946f2144dbd46c404666bbbf2fd690d3cff5c0787b28664c3fbf48b7a"
+    },
+    {
+      "id": "anim-6b4bc721cf28",
+      "label": "原地敲击桌面互动",
+      "group": "小动作",
+      "file": "anim-6b4bc721cf28.webp",
+      "frames": 120,
+      "sha256": "0f97c920e68e8dc322bd2233859db05f0fc74a3f20d44ea30fe4d793bb6eaa3f"
+    },
+    {
+      "id": "anim-307947b984ef",
+      "label": "原地漂浮踏步",
+      "group": "互动与状态",
+      "file": "anim-307947b984ef.webp",
+      "frames": 120,
+      "sha256": "21742d67f5a22c466b2cdb8b2aaacd7a5e58b55a5a7700834c97686fe47d53a1"
+    },
+    {
+      "id": "anim-8c0f7b1e5ac8",
+      "label": "原地跳跃抓碎头顶物品",
+      "group": "玩耍",
+      "file": "anim-8c0f7b1e5ac8.webp",
+      "frames": 120,
+      "sha256": "01e5d283a51435476d5285795983ff141fdce721628b149b16cc1e0fbd9b39f3"
+    },
+    {
+      "id": "anim-d42c9a743c4f",
+      "label": "原地蹲下玩玩具汽车",
+      "group": "玩耍",
+      "file": "anim-d42c9a743c4f.webp",
+      "frames": 120,
+      "sha256": "bbbc431857ee3a1df82387db44a2320e449c9bd789b94dfe23c3e7a0c06476d1"
+    },
+    {
+      "id": "anim-588817adf175",
+      "label": "原地重力下蹲压缩",
+      "group": "小动作",
+      "file": "anim-588817adf175.webp",
+      "frames": 120,
+      "sha256": "fbb88352747ac300256750939df639bf4cea132a169c68abdd98b94f5f1d147d"
+    },
+    {
+      "id": "anim-5e3cee62bf5a",
+      "label": "变鸽子",
+      "group": "玩耍",
+      "file": "anim-5e3cee62bf5a.webp",
+      "frames": 120,
+      "sha256": "3a5bbf7462ce8fdbaec34653bbd2ed55ffa6bc1ae09bb4290310782c407c300a"
+    },
+    {
+      "id": "anim-8ca81701a0b3",
+      "label": "可爱宅舞",
+      "group": "玩耍",
+      "file": "anim-8ca81701a0b3.webp",
+      "frames": 120,
+      "sha256": "042e4f12942954b6141f9226aa179d773966f5a88807bf5b017ed83bd0b99532"
+    },
+    {
+      "id": "anim-e77da58d470c",
+      "label": "吃Token",
+      "group": "吃什么",
+      "file": "anim-e77da58d470c.webp",
+      "frames": 120,
+      "sha256": "23316358ba359e2d399fd45796fdfaf00e0c8e9fe9eb97709dd7a1287df2cb9f"
+    },
+    {
+      "id": "anim-1cdac31079ac",
+      "label": "吃冰淇淋融化",
+      "group": "吃什么",
+      "file": "anim-1cdac31079ac.webp",
+      "frames": 120,
+      "sha256": "bcba58447d27ffdfcc420287e2931cef9c3080847ecc0e0902305bb418d5dbd5"
+    },
+    {
+      "id": "anim-32eded8b4223",
+      "label": "吃午餐",
+      "group": "吃什么",
+      "file": "anim-32eded8b4223.webp",
+      "frames": 120,
+      "sha256": "1e05a66ae385496f71976044d95743d95f5d37c3b9d7418867a3ba05d0374e87"
+    },
+    {
+      "id": "anim-953d68ca1326",
+      "label": "吃大闸蟹",
+      "group": "吃什么",
+      "file": "anim-953d68ca1326.webp",
+      "frames": 120,
+      "sha256": "6764ca81f862add42338de51c2bf4515ae72a674e8c087fc14abc74d76edcc28"
+    },
+    {
+      "id": "anim-e30452be8777",
+      "label": "吃年糕",
+      "group": "时节",
+      "file": "anim-e30452be8777.webp",
+      "frames": 120,
+      "sha256": "82aa70e1cfc9843a18b07c16e54498193f1ae1e2165ff39c5ab35c28accecc5a"
+    },
+    {
+      "id": "anim-4a34c638ea9b",
+      "label": "吃早餐",
+      "group": "吃什么",
+      "file": "anim-4a34c638ea9b.webp",
+      "frames": 120,
+      "sha256": "580d596ad9194cec3d697dd1fb002413d166be7d8dee861bb42fc1e9c4d76503"
+    },
+    {
+      "id": "anim-1415bd80f94b",
+      "label": "吃晚餐",
+      "group": "吃什么",
+      "file": "anim-1415bd80f94b.webp",
+      "frames": 120,
+      "sha256": "79e2ebb83a913f62e1624a588f5eb05b01641ad18153b37e8b08d6fc946b323f"
+    },
+    {
+      "id": "anim-c60e75db7559",
+      "label": "吃汤圆",
+      "group": "时节",
+      "file": "anim-c60e75db7559.webp",
+      "frames": 120,
+      "sha256": "28f4c76195b08a77cafe6dd0a0f240cb2ab71be295086c1da5bbe034367915fe"
+    },
+    {
+      "id": "anim-e37afa103e68",
+      "label": "吃白饭",
+      "group": "吃什么",
+      "file": "anim-e37afa103e68.webp",
+      "frames": 120,
+      "sha256": "8a29faa6dca7ffcfaf70e94f567188fc995cc3ee091542690d2ebb9050d15de9"
+    },
+    {
+      "id": "anim-5889cff6971f",
+      "label": "吃粽子",
+      "group": "时节",
+      "file": "anim-5889cff6971f.webp",
+      "frames": 120,
+      "sha256": "d8f0259c0c5b28759d6ae27333edaafabde1155436a20f09443d2f6bf0981c3a"
+    },
+    {
+      "id": "anim-130174a5806f",
+      "label": "吃糖葫芦",
+      "group": "吃什么",
+      "file": "anim-130174a5806f.webp",
+      "frames": 120,
+      "sha256": "b1fdef9f69f100dc0b664bae666a5cad9f167d96abdb7d0c2b8553231b647748"
+    },
+    {
+      "id": "anim-cd0474d15c7f",
+      "label": "吃腊八粥",
+      "group": "时节",
+      "file": "anim-cd0474d15c7f.webp",
+      "frames": 120,
+      "sha256": "065ff8be289fbaceed0129fbbb03f5f9a88e5aadfa6073e0f772f9430b14da87"
+    },
+    {
+      "id": "anim-0c0166227768",
+      "label": "吃西瓜",
+      "group": "吃什么",
+      "file": "anim-0c0166227768.webp",
+      "frames": 120,
+      "sha256": "c8808e43f02352a41de259fc7a56f2c2d3aed2813d478ad1defec46bc7635878"
+    },
+    {
+      "id": "anim-56d0e5c5c186",
+      "label": "吃重阳糕",
+      "group": "时节",
+      "file": "anim-56d0e5c5c186.webp",
+      "frames": 120,
+      "sha256": "42e1d07eb8df5f310c965996522990b219fdf5f9ff50541dbc1d42aa1f7c2437"
+    },
+    {
+      "id": "anim-9446f04251a9",
+      "label": "吃长寿面",
+      "group": "吃什么",
+      "file": "anim-9446f04251a9.webp",
+      "frames": 120,
+      "sha256": "d123e7440663f7094d3436d25e49cce9c876cf29c27b5b3433f53c3e8da817c1"
+    },
+    {
+      "id": "anim-08cbe0bc79a9",
+      "label": "吃青团",
+      "group": "时节",
+      "file": "anim-08cbe0bc79a9.webp",
+      "frames": 120,
+      "sha256": "abdfbf68a9a3b1353afebcf69ffec07a3500aeafa5a46e9380f9c27c094d7e03"
+    },
+    {
+      "id": "anim-69ed8cd7f870",
+      "label": "吃饺子",
+      "group": "时节",
+      "file": "anim-69ed8cd7f870.webp",
+      "frames": 120,
+      "sha256": "e30043428bb3d1a5a90945302416813f7ef9b3b640dff4bf86266132afde83b0"
+    },
+    {
+      "id": "anim-ae0114688db7",
+      "label": "吹气球",
+      "group": "玩耍",
+      "file": "anim-ae0114688db7.webp",
+      "frames": 120,
+      "sha256": "6eb465020d4bca8f95953f46a303f14abb955c4296761b019160c33f30018871"
+    },
+    {
+      "id": "anim-f1ca886dbe83",
+      "label": "吹笛子",
+      "group": "玩耍",
+      "file": "anim-f1ca886dbe83.webp",
+      "frames": 120,
+      "sha256": "c223420b8f829819dbb9354b3f4f465ba71090a42a2b6c6a0d0c96dd9fef262d"
+    },
+    {
+      "id": "anim-5b3f25958775",
+      "label": "哈欠连天",
+      "group": "小动作",
+      "file": "anim-5b3f25958775.webp",
+      "frames": 120,
+      "sha256": "47f71f9813fb8171e0dd3d5cf81b9e0a6c3f878d15cb3494c49a068b91fd84bd"
+    },
+    {
+      "id": "anim-8e473b074a46",
+      "label": "堆雪人",
+      "group": "时节",
+      "file": "anim-8e473b074a46.webp",
+      "frames": 120,
+      "sha256": "1202641aed26066e2acb5ea019a1eb9289c81608d22a1eca3d054ec8a6d8b06f"
+    },
+    {
+      "id": "anim-41cb9c5a60d8",
+      "label": "大口吃零食",
+      "group": "吃什么",
+      "file": "anim-41cb9c5a60d8.webp",
+      "frames": 120,
+      "sha256": "8a0c2314a71d3c28f2e84e9d421b6dd9df16c0d14ffbe1cf994d71679a88f0de"
+    },
+    {
+      "id": "anim-eb1533b0b8b2",
+      "label": "女仆屈膝礼仪",
+      "group": "小动作",
+      "file": "anim-eb1533b0b8b2.webp",
+      "frames": 120,
+      "sha256": "8a0c50eb1ed643268b2e212c22090208402349aaae6cab1006b3ee9ec0c80352"
+    },
+    {
+      "id": "anim-f338f5328e27",
+      "label": "小幅度原地360度旋转展示",
+      "group": "小动作",
+      "file": "anim-f338f5328e27.webp",
+      "frames": 120,
+      "sha256": "b09fca1d36a5af72f3e0dcd521cab8fe0564d56f86e46c0e788f4bcb069ff687"
+    },
+    {
+      "id": "anim-40ddb28a443b",
+      "label": "小提琴演奏",
+      "group": "玩耍",
+      "file": "anim-40ddb28a443b.webp",
+      "frames": 120,
+      "sha256": "aea44b0e068694ff35fc82a7af92839492b55b6e132899e6deb992aba01a8d18"
+    },
+    {
+      "id": "anim-50deba83a57f",
+      "label": "工作状态-原地踱步张望",
+      "group": "互动与状态",
+      "file": "anim-50deba83a57f.webp",
+      "frames": 120,
+      "sha256": "1352a51cedb5aa0c3733020bfd8e809416aff46fb671341ccf4aa63c01ecbb21"
+    },
+    {
+      "id": "anim-4e66e7b28f1d",
+      "label": "工作状态-垂头叹气冒汗",
+      "group": "互动与状态",
+      "file": "anim-4e66e7b28f1d.webp",
+      "frames": 59,
+      "sha256": "6dea2aa7372e71994657c360717adea1441ad7528ec264e66ec6b6fe2491fd2e"
+    },
+    {
+      "id": "anim-e98d4ca796f7",
+      "label": "工作状态-忙碌点按",
+      "group": "互动与状态",
+      "file": "anim-e98d4ca796f7.webp",
+      "frames": 120,
+      "sha256": "6452635d8d856ce3fd854bcad1d2c62555b1f8fa9710606f6a2a6bdeacacab62"
+    },
+    {
+      "id": "anim-84fd288ba807",
+      "label": "工作状态-思考冒泡",
+      "group": "互动与状态",
+      "file": "anim-84fd288ba807.webp",
+      "frames": 120,
+      "sha256": "4fc1b97f4d47341c6e24ee73e2ecfd9c56c9efe41fbc533e02b4487f3d299f96"
+    },
+    {
+      "id": "anim-35fcf8191225",
+      "label": "工作状态-清点归档",
+      "group": "互动与状态",
+      "file": "anim-35fcf8191225.webp",
+      "frames": 120,
+      "sha256": "de0d19e997febbae210ea2731c12654f535aa1b927ca1993ca8f24666db92995"
+    },
+    {
+      "id": "anim-080258d0fa3b",
+      "label": "工作状态-雀跃庆祝",
+      "group": "互动与状态",
+      "file": "anim-080258d0fa3b.webp",
+      "frames": 120,
+      "sha256": "9b610f15f6faef37cd1b313c9241c892cedfdef98323283fc4e6f018e56537c6"
+    },
+    {
+      "id": "anim-92b06b85ab76",
+      "label": "待机呼吸休闲",
+      "group": "互动与状态",
+      "file": "anim-92b06b85ab76.webp",
+      "frames": 120,
+      "sha256": "85c44612c5bd5dec923937ec9a3946a9fcf31631b95fd65261408cfade15ccec"
+    },
+    {
+      "id": "anim-ffdd15b35609",
+      "label": "悠闲哼歌",
+      "group": "小动作",
+      "file": "anim-ffdd15b35609.webp",
+      "frames": 120,
+      "sha256": "142c85ac481e4d9f448fe2704f1c66b711ec53f4ce6739e1947b5741fc3cca44"
+    },
+    {
+      "id": "anim-de9869a8c7bf",
+      "label": "扑克魔术",
+      "group": "玩耍",
+      "file": "anim-de9869a8c7bf.webp",
+      "frames": 120,
+      "sha256": "e704fc2331db033572e2c1f16c5a2916122d4583819303d89857bb1c66e73461"
+    },
+    {
+      "id": "anim-0cd58455e2de",
+      "label": "打瞌睡被惊醒",
+      "group": "小动作",
+      "file": "anim-0cd58455e2de.webp",
+      "frames": 120,
+      "sha256": "8157014361302d899c2e1a1ce58cf8c8871f9dd514c844d0b72e585a0d3f90f2"
+    },
+    {
+      "id": "anim-34c2b38fb6bf",
+      "label": "抽陀螺",
+      "group": "玩耍",
+      "file": "anim-34c2b38fb6bf.webp",
+      "frames": 120,
+      "sha256": "b504ab2cb2236f8b5d4107ac5dfc54a6d74890ae6f94cd07e129925d17487cab"
+    },
+    {
+      "id": "anim-6e6b6f4c71fa",
+      "label": "拆礼物",
+      "group": "玩耍",
+      "file": "anim-6e6b6f4c71fa.webp",
+      "frames": 120,
+      "sha256": "dd72827d8446cb0877e578f0723ae02bf7386ffa6166814983eab43a161febd2"
+    },
+    {
+      "id": "anim-29a3812f35c8",
+      "label": "插茱萸赏菊",
+      "group": "时节",
+      "file": "anim-29a3812f35c8.webp",
+      "frames": 120,
+      "sha256": "1bee0ea9dbe107e9fd2e4b4c06942ace7642da881a2f70547fc4383f0418a5be"
+    },
+    {
+      "id": "anim-d3d5a25277d5",
+      "label": "摇扇纳凉",
+      "group": "小动作",
+      "file": "anim-d3d5a25277d5.webp",
+      "frames": 120,
+      "sha256": "aaf23617bf2806b9938fb99af8c889a0b90c6e77c87fe7b950e8a34f48b4a6a0"
+    },
+    {
+      "id": "anim-facfd1afaab7",
+      "label": "撸猫",
+      "group": "玩耍",
+      "file": "anim-facfd1afaab7.webp",
+      "frames": 120,
+      "sha256": "19ebae43b40f9567309cfcb38402a4511922e4708500bbae4ef5b1f4adc00d2e"
+    },
+    {
+      "id": "anim-65cad108e71d",
+      "label": "收红包",
+      "group": "时节",
+      "file": "anim-65cad108e71d.webp",
+      "frames": 120,
+      "sha256": "5d6ec9f06cec4b7cbc8d5622707d1213c1ceebb03f89657afd227985c1e23142"
+    },
+    {
+      "id": "anim-cef840f5d2ee",
+      "label": "放孔明灯",
+      "group": "时节",
+      "file": "anim-cef840f5d2ee.webp",
+      "frames": 120,
+      "sha256": "3cc58454e801a43f5157009ac7a361c4feec45b27081feda04e9819dd47ce52e"
+    },
+    {
+      "id": "anim-a0af2db4eae7",
+      "label": "放河灯",
+      "group": "时节",
+      "file": "anim-a0af2db4eae7.webp",
+      "frames": 120,
+      "sha256": "20f552a04bc6f29a4262d2702968bbc5fb4b1559646edc34fa63c89f3505673b"
+    },
+    {
+      "id": "anim-e5f9ea2c87d0",
+      "label": "放烟花",
+      "group": "时节",
+      "file": "anim-e5f9ea2c87d0.webp",
+      "frames": 120,
+      "sha256": "a98e943792a643697cb7b9d64cfb7aaf385a9d2ff04aaa214fbb0b679d640dea"
+    },
+    {
+      "id": "anim-2662eea55207",
+      "label": "放风筝",
+      "group": "玩耍",
+      "file": "anim-2662eea55207.webp",
+      "frames": 120,
+      "sha256": "37dea11b0e34cf8cf653362bc835830adb95caa4b83d87288e34fd02e816dbea"
+    },
+    {
+      "id": "anim-eb2f43dadafd",
+      "label": "整体换装试色",
+      "group": "小动作",
+      "file": "anim-eb2f43dadafd.webp",
+      "frames": 120,
+      "sha256": "de554e1e4200fb681146e9498fbc71b73ea0877b2384c85bfb11f2794f6b83f8"
+    },
+    {
+      "id": "anim-7740fa6b004c",
+      "label": "是啊，吃什么",
+      "group": "文字",
+      "file": "anim-7740fa6b004c.webp",
+      "frames": 120,
+      "sha256": "106f805215e41b9965fdeff5df275d20680711252e754d68ebaf4606a28598ae"
+    },
+    {
+      "id": "anim-df92f8cfaf20",
+      "label": "晨间刷牙",
+      "group": "小动作",
+      "file": "anim-df92f8cfaf20.webp",
+      "frames": 120,
+      "sha256": "4d38e143cebf55978e4d0f0a8d7f2f13058a004ce091b3da67ae20307f2273d5"
+    },
+    {
+      "id": "anim-0304f5f46a2e",
+      "label": "涮火锅",
+      "group": "吃什么",
+      "file": "anim-0304f5f46a2e.webp",
+      "frames": 120,
+      "sha256": "83b3e1107eb7904804fbeef1d0f8c325f78e63ee2c1690aee2bd5ed8b09b9a0f"
+    },
+    {
+      "id": "anim-aa28193f3a0b",
+      "label": "深度思考碎碎念",
+      "group": "文字",
+      "file": "anim-aa28193f3a0b.webp",
+      "frames": 120,
+      "sha256": "820c134649340cd85a45c41e4c86746313b57f92a604424e64b98ca955651f98"
+    },
+    {
+      "id": "anim-ee4ade192190",
+      "label": "点击回应-傲娇生气",
+      "group": "互动与状态",
+      "file": "anim-ee4ade192190.webp",
+      "frames": 120,
+      "sha256": "bc4f149eed3f8dbd4da5b906d9cb74b3f21f5d85ad474afcb7fa4792e692d02e"
+    },
+    {
+      "id": "anim-6eaabc6c5712",
+      "label": "点击回应-元气挥手",
+      "group": "互动与状态",
+      "file": "anim-6eaabc6c5712.webp",
+      "frames": 120,
+      "sha256": "8b2371e34d09615578e5c38440dd662ab432df96b08cbc193c99b46d8eb909b0"
+    },
+    {
+      "id": "anim-6e0756a053b1",
+      "label": "点击回应-害羞惊讶",
+      "group": "互动与状态",
+      "file": "anim-6e0756a053b1.webp",
+      "frames": 120,
+      "sha256": "3b7d0be28bfdc77dac89e46a21b4ca65b3989a8d627a7f7965bcba8d1c5c1732"
+    },
+    {
+      "id": "anim-883adfe0011e",
+      "label": "点击回应-开心跃动",
+      "group": "互动与状态",
+      "file": "anim-883adfe0011e.webp",
+      "frames": 120,
+      "sha256": "1a3954177fd87c6ff73f6ac065b386cdbfde81eca398ba87f0cdc65b195f1798"
+    },
+    {
+      "id": "anim-e686b66e0083",
+      "label": "点击回应-挠痒咯咯笑",
+      "group": "互动与状态",
+      "file": "anim-e686b66e0083.webp",
+      "frames": 120,
+      "sha256": "81b35d77ad815dbdd76aa3e0b5f8c74cb730bfeb32ab17afa8565950b560424f"
+    },
+    {
+      "id": "anim-1c462308b734",
+      "label": "照镜子",
+      "group": "小动作",
+      "file": "anim-1c462308b734.webp",
+      "frames": 120,
+      "sha256": "42a721a46b0a67b8c6662103106b98af2c82f19b6470aa4593da54b0c225a556"
+    },
+    {
+      "id": "anim-c8de468684ae",
+      "label": "玩水枪",
+      "group": "玩耍",
+      "file": "anim-c8de468684ae.webp",
+      "frames": 120,
+      "sha256": "f9f704bd88a3bf87272aacee95bdfaaf01a1caf76f551e343ad772a0f83fea7d"
+    },
+    {
+      "id": "anim-95691aee0f02",
+      "label": "玩游戏气急败坏",
+      "group": "玩耍",
+      "file": "anim-95691aee0f02.webp",
+      "frames": 120,
+      "sha256": "3bda63c1047a41d1fccf1d6458a385efd56632bfb1d160488aa778f4dfb8fa21"
+    },
+    {
+      "id": "anim-49c0d89c0992",
+      "label": "用鲸鱼尾巴拍打地面",
+      "group": "小动作",
+      "file": "anim-49c0d89c0992.webp",
+      "frames": 120,
+      "sha256": "b12d55f6462d2cee34ed98c7c70f9c25b15af1f5255d9e69f94b21c74636a20f"
+    },
+    {
+      "id": "anim-61c702c24fa0",
+      "label": "碎碎念-发呆碎碎念",
+      "group": "互动与状态",
+      "file": "anim-61c702c24fa0.webp",
+      "frames": 120,
+      "sha256": "29784ebeee13eb29b89b872b1f5a22e8d8de3365250ad65f5d64d1fefe0abbcd"
+    },
+    {
+      "id": "anim-c00d44612246",
+      "label": "碎碎念-对屏碎碎念",
+      "group": "互动与状态",
+      "file": "anim-c00d44612246.webp",
+      "frames": 120,
+      "sha256": "1cfba7d5e5bfddae845dc0299299aa8b318db791ce0dbae199e8beabee1723d5"
+    },
+    {
+      "id": "anim-0d84e2120333",
+      "label": "碎碎念-擦桌碎碎念",
+      "group": "互动与状态",
+      "file": "anim-0d84e2120333.webp",
+      "frames": 120,
+      "sha256": "4ed65424e342347b2a7ccf5f81102f9d4735063505a60251d4a23b44ef75ec65"
+    },
+    {
+      "id": "anim-6ff25334dac4",
+      "label": "穿针乞巧",
+      "group": "时节",
+      "file": "anim-6ff25334dac4.webp",
+      "frames": 120,
+      "sha256": "601218f4ea88290f512de1a95a8b0ed9093bc8d924e1fe1d8b18dc85999c67f5"
+    },
+    {
+      "id": "anim-bf904ff8f7a7",
+      "label": "舞狮头",
+      "group": "时节",
+      "file": "anim-bf904ff8f7a7.webp",
+      "frames": 120,
+      "sha256": "3a3234ae992c9018126848891bd0cab259c875170ed805aaf0350876573f4ac7"
+    },
+    {
+      "id": "anim-dd035a687e36",
+      "label": "荡秋千",
+      "group": "玩耍",
+      "file": "anim-dd035a687e36.webp",
+      "frames": 120,
+      "sha256": "5f43f707d5bcd034d9ec8fddf9b27b9ac7e6668f9c326baf4d5cf66d08b26e98"
+    },
+    {
+      "id": "anim-bafd79fc585d",
+      "label": "萌化小幽灵",
+      "group": "时节",
+      "file": "anim-bafd79fc585d.webp",
+      "frames": 120,
+      "sha256": "83fa8139334260449a16644315a395f9176a9913bd6c3eed2b8d997a0509a6e3"
+    },
+    {
+      "id": "anim-186c48064605",
+      "label": "蓝鲸现世",
+      "group": "玩耍",
+      "file": "anim-186c48064605.webp",
+      "frames": 120,
+      "sha256": "eb667c756ad33c3bb239e3eb2715548da2d77b99ae9f21ed02206d4a827a08ce"
+    },
+    {
+      "id": "anim-499b64fd81be",
+      "label": "蝴蝶蜜蜂环绕头顶开花",
+      "group": "玩耍",
+      "file": "anim-499b64fd81be.webp",
+      "frames": 120,
+      "sha256": "dacde58917488e7c77bf6e710e4624ac0dd8d0a76168123537e4adb50855934a"
+    },
+    {
+      "id": "anim-26bf18c72287",
+      "label": "螃蟹走路",
+      "group": "互动与状态",
+      "file": "anim-26bf18c72287.webp",
+      "frames": 120,
+      "sha256": "7c2bdc2fecc159521a0bcde1fe0fbf16b9b394b55f471fdeaf8062e66d43d6b3"
+    },
+    {
+      "id": "anim-d0c3a592b5b1",
+      "label": "被吓一跳",
+      "group": "小动作",
+      "file": "anim-d0c3a592b5b1.webp",
+      "frames": 120,
+      "sha256": "74428dd78d1ad59fac4c6ba809784905bb5c54cda5205bda6253d7a049b10182"
+    },
+    {
+      "id": "anim-672ee68be5f3",
+      "label": "被落叶淹没",
+      "group": "时节",
+      "file": "anim-672ee68be5f3.webp",
+      "frames": 120,
+      "sha256": "0ff83af491a6d7b7466361ebce5b206b5ff66d37f7162408460593fb89ff58d4"
+    },
+    {
+      "id": "anim-52cdbcb79a90",
+      "label": "被鼠标拖拽悬空反馈",
+      "group": "互动与状态",
+      "file": "anim-52cdbcb79a90.webp",
+      "frames": 120,
+      "sha256": "a6ac3d6853c58d1bbb22a1504bd8cb76b780cacd0365f3c77193d109ff0fa754"
+    },
+    {
+      "id": "anim-8ab776b190a6",
+      "label": "装点圣诞树",
+      "group": "时节",
+      "file": "anim-8ab776b190a6.webp",
+      "frames": 120,
+      "sha256": "84ce96527b008f2190c45daf65ff152e0ca3daf127ff38b9af8f8663059808bd"
+    },
+    {
+      "id": "anim-0ed7515025e8",
+      "label": "讨糖南瓜灯",
+      "group": "时节",
+      "file": "anim-0ed7515025e8.webp",
+      "frames": 120,
+      "sha256": "169d0ef7f4eeba157d1b20a28a0034e5473e9540bba97bec184e6b1502679895"
+    },
+    {
+      "id": "anim-017b1556ab63",
+      "label": "超大伸懒腰",
+      "group": "小动作",
+      "file": "anim-017b1556ab63.webp",
+      "frames": 120,
+      "sha256": "cc014be843b94ca10a6c3dc43132278783e8b630663463cdf487cc2e18f3ccea"
+    },
+    {
+      "id": "anim-68f9f8c6ea2b",
+      "label": "踢毽子",
+      "group": "玩耍",
+      "file": "anim-68f9f8c6ea2b.webp",
+      "frames": 120,
+      "sha256": "0541c33562a0e87acea6da52fcb16165bac5dd945284f5720ee4540e41ed952f"
+    },
+    {
+      "id": "anim-ea4edc89d3bc",
+      "label": "轻快摇摆舞",
+      "group": "玩耍",
+      "file": "anim-ea4edc89d3bc.webp",
+      "frames": 120,
+      "sha256": "1331a635eaa4df5310b9cb00cf8bd986e011440e9ece9279187c9d68292f0484"
+    },
+    {
+      "id": "anim-eb604d240d49",
+      "label": "轻快记录",
+      "group": "小动作",
+      "file": "anim-eb604d240d49.webp",
+      "frames": 120,
+      "sha256": "91d20aefc1034da3f3cb7febf32668001c6c3bf902d580ff9d2bbc6dd14614b5"
+    },
+    {
+      "id": "anim-f80b8c116b42",
+      "label": "骑木马",
+      "group": "玩耍",
+      "file": "anim-f80b8c116b42.webp",
+      "frames": 120,
+      "sha256": "ea0c058ce3039094c4b06eefba6104f9ebdc69497b8c03ba6f2106a07bdc4987"
+    },
+    {
+      "id": "anim-9a1e07e58053",
+      "label": "鲸鱼吐泡泡特效",
+      "group": "玩耍",
+      "file": "anim-9a1e07e58053.webp",
+      "frames": 120,
+      "sha256": "63fce6fc02a39968b66b8a8a5e84a985dfec4922560f082a9c0e48e2793cc565"
+    }
+  ]
+}

@@ -1,9 +1,9 @@
 {
   "id": "/app/",
-  "name": "LifeOS · 随身日记",
+  "name": "LifeOS · 随身档案",
   "short_name": "LifeOS",
   "lang": "zh-CN",
-  "description": "离线写下日常，翻阅旧页，带着个人记录向 AI 提问。",
+  "description": "日记、周记、书本、抽签、漂流瓶、拾诗与伙伴。把自己的日常，带在身边。",
   "start_url": "/app/#today",
   "scope": "/app/",
   "display": "standalone",
