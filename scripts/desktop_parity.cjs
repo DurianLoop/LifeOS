@@ -110,7 +110,7 @@ module.exports = async function desktopParity({window, js, until, screenshot, ou
   await js(`(()=>{const f=document.querySelector('#v03FontSize');f.value='default';f.dispatchEvent(new Event('change',{bubbles:true}));})()`);
   window.setContentSize(1020,684);
   await js(`(()=>{setProductDock(false);openFeature('Home')})()`);
-  const report={ok:true,platform:process.platform,arch:process.arch,renderer_sha256:assetHash.digest('hex'),fonts,pages,tools};
+  const report={ok:true,platform:process.platform,arch:process.arch,device_pixel_ratio:await js(`devicePixelRatio`),renderer_sha256:assetHash.digest('hex'),fonts,pages,tools};
   fs.writeFileSync(path.join(output,'DESKTOP_PARITY.json'),JSON.stringify(report,null,2)+'\n');
   return report;
 };

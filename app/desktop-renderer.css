@@ -26,7 +26,7 @@ html.desktopRenderer {
   --type-sans: "LifeOS UI", sans-serif;
   --serif: var(--type-serif);
   --sans: var(--type-sans);
-  /* Dates use the bundled UI's tabular numerals instead of SF Mono/Consolas. */
+  /* Dates use bundled tabular numerals instead of SF Mono/Consolas. */
   --type-mono: "LifeOS Mono", "LifeOS UI", monospace;
 }
 html.desktopRenderer :where(button, input:not([type="range"]):not([type="color"]):not([type="file"]), select, textarea) {
@@ -78,7 +78,7 @@ html.desktopRenderer :where(button, input, select, textarea, [contenteditable]):
   outline-offset: 3px;
 }
 /* A macOS overlay scrollbar must not change the width of a book or desk. */
-html.desktopRenderer, html.desktopRenderer * { scrollbar-width: auto; }
+html.desktopRenderer, html.desktopRenderer * { scrollbar-width: auto; scrollbar-color: auto; }
 html.desktopRenderer ::-webkit-scrollbar { width: 8px; height: 8px; }
 html.desktopRenderer ::-webkit-scrollbar-track { background: transparent; }
 html.desktopRenderer ::-webkit-scrollbar-thumb {

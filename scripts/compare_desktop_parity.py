@@ -14,6 +14,7 @@ for file in args.mac:
  mac=json.loads(file.read_text(encoding='utf-8'))
  assert mac['ok'] and mac['platform']=='darwin'
  assert mac['renderer_sha256']==windows['renderer_sha256'],'renderer assets differ'
+ assert mac['device_pixel_ratio']==windows['device_pixel_ratio'],'reference display scaling differs'
  assert mac['fonts']==windows['fonts'],'font availability differs'
  assert mac['tools']==windows['tools'],'tool catalog differs'
  assert [x['name'] for x in mac['pages']]==[x['name'] for x in windows['pages']]
