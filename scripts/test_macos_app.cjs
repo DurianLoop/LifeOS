@@ -29,9 +29,9 @@ const profile = path.join(applicationData, 'LifeOS');
 const expectedFile = path.join(output, 'expected.json');
 const uiStateFile = path.join(workspace, '.lifeos', 'ui-state.json');
 const fixture = {
-  date: '2099-01-05', title: 'macOS packaged journal QA',
-  text: 'LifeOS macOS 0.6.2 synthetic journal. 今天仅用于安装包验收。',
-  draftDate: '2099-01-06', draftText: 'LifeOS macOS synthetic draft survives a normal close',
+  date: '2099-01-05', title: '书桌边的一天',
+  text: '午后把书桌整理好，打开窗，让风穿过纸页。今天读完一章书，也记下了一点新的想法。明天继续，不着急。',
+  draftDate: '2099-01-06', draftText: '今天先留一句话，下一次打开时，再慢慢把它写完。',
 };
 const checks = [], backendChildren = [], blockedRequests = [], rendererErrors = [], startupTimeline = [];
 const startedAt = Date.now();
@@ -274,6 +274,13 @@ async function verifyUI(window) {
   mainWindow = window;
   await until(() => js(`window.lifeosV01Ready===true&&typeof openProductDock==='function'&&typeof api==='function'`), 'production UI readiness');
   await until(() => window.isVisible(), 'real Mac window is shown');
+  // Establish the same real window before the welcome action creates the
+  // first free-layout desk. Hosted Mac displays otherwise clamp the initial
+  // window while Windows preserves its larger startup size.
+  if(process.env.QA_FULL_PARITY==='1'){
+    window.setContentSize(1020,684);
+    await delay(200);
+  }
   assert.equal(await js(`lifeosDesktop.platform`), process.platform);
   assert.equal(await js(`typeof lifeosDesktop.storage`), 'function');
   assert.equal(await js(`typeof lifeosDesktop.windowControl`), 'function');

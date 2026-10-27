@@ -21,12 +21,13 @@ module.exports = async function desktopParity({window, js, until, screenshot, ou
   }
   fingerprint(appRoot);
   await js(`document.fonts.ready`);
-  const fonts = await js(`({serif:document.fonts.check('18px "LifeOS Book"','日记与生活'),sans:document.fonts.check('16px "LifeOS UI"','落笔与流年'),desktop:document.documentElement.classList.contains('desktopRenderer'),mobile:!!window.lifeosMobile})`);
-  assert.deepEqual(fonts, {serif:true,sans:true,desktop:true,mobile:false});
+  const fonts = await js(`({serif:document.fonts.check('18px "LifeOS Book"','日记与生活'),sans:document.fonts.check('16px "LifeOS UI"','落笔与流年'),mono:document.fonts.check('14px "LifeOS Mono"','2099-01-05'),desktop:document.documentElement.classList.contains('desktopRenderer'),mobile:!!window.lifeosMobile})`);
+  assert.deepEqual(fonts, {serif:true,sans:true,mono:true,desktop:true,mobile:false});
 
   const metrics = () => js(`(()=>{
     const selectors=['.lifeWindowBar','.rail','.shell','#view h1','#view h2','.i2DeskHead','.i2WriterStageTop','.i2WriterGrid','.i2WriterCell','.jbSpread','.jbIndexPage','.jbReadingPage','.memoryDrawHeader','.memoryDrawStage','.bottleHead','.bottleGrid','.atticHeader'];
-    const rows={};for(const selector of selectors){const nodes=[...document.querySelectorAll(selector)].filter(n=>n.getClientRects().length);rows[selector]=nodes.map(n=>{const r=n.getBoundingClientRect(),s=getComputedStyle(n);return {x:r.x,y:r.y,width:r.width,height:r.height,font:s.fontFamily,size:s.fontSize,line:s.lineHeight}})}
+    const dock=document.querySelector('#productDock.open');
+    const rows={};for(const selector of selectors){const nodes=[...document.querySelectorAll(selector)].filter(n=>n.getClientRects().length&&(!dock||['.lifeWindowBar','.rail'].includes(selector)||dock.contains(n)));rows[selector]=nodes.map(n=>{const r=n.getBoundingClientRect(),s=getComputedStyle(n);return {x:r.x,y:r.y,width:r.width,height:r.height,font:s.fontFamily,size:s.fontSize,line:s.lineHeight}})}
     return {width:innerWidth,height:innerHeight,bodyOverflow:document.documentElement.scrollWidth>innerWidth+1,rows};
   })()`);
   async function capture(name) {
@@ -39,7 +40,7 @@ module.exports = async function desktopParity({window, js, until, screenshot, ou
   }
   // Both OSes use this common real content size; no device emulation or
   // offscreen renderer substitutes for the actual native window.
-  window.setContentSize(1024, 684);
+  window.setContentSize(1020, 684);
   await js(`(()=>{setProductDock(false);openFeature('Home')})()`);
   await until(()=>js(`STATE.feature==='Home'&&!!document.querySelector('#view .homePage')`),'desktop home');
   await capture('home');
@@ -107,7 +108,7 @@ module.exports = async function desktopParity({window, js, until, screenshot, ou
   await js(`(()=>{const f=document.querySelector('#v03FontSize');f.value='xlarge';f.dispatchEvent(new Event('change',{bubbles:true}));})()`);
   await capture('writer-large-type');
   await js(`(()=>{const f=document.querySelector('#v03FontSize');f.value='default';f.dispatchEvent(new Event('change',{bubbles:true}));})()`);
-  window.setContentSize(1024,684);
+  window.setContentSize(1020,684);
   await js(`(()=>{setProductDock(false);openFeature('Home')})()`);
   const report={ok:true,platform:process.platform,arch:process.arch,renderer_sha256:assetHash.digest('hex'),fonts,pages,tools};
   fs.writeFileSync(path.join(output,'DESKTOP_PARITY.json'),JSON.stringify(report,null,2)+'\n');
