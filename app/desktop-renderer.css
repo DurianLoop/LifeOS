@@ -78,7 +78,7 @@ html.desktopRenderer :where(button, input, select, textarea, [contenteditable]):
   outline-offset: 3px;
 }
 /* A macOS overlay scrollbar must not change the width of a book or desk. */
-html.desktopRenderer, html.desktopRenderer * { scrollbar-width: auto; scrollbar-color: auto; }
+html.desktopRenderer, html.desktopRenderer * { scrollbar-width: auto !important; scrollbar-color: auto !important; }
 html.desktopRenderer ::-webkit-scrollbar { width: 8px; height: 8px; }
 html.desktopRenderer ::-webkit-scrollbar-track { background: transparent; }
 html.desktopRenderer ::-webkit-scrollbar-thumb {

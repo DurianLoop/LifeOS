@@ -48,6 +48,7 @@ module.exports = async function desktopParity({window, js, until, screenshot, ou
   await until(()=>js(`!!document.querySelector('#writerForm')&&!!document.querySelector('.i2WriterGrid')`),'six-cell desk');
   const cells = await js(`[...document.querySelectorAll('.i2WriterGrid .i2WriterCell:not(.i2Hidden)')].map(n=>n.dataset.key)`);
   assert.equal(cells.length,6,'Windows six-cell desk is present on each OS');
+  assert.equal(await js(`getComputedStyle(document.querySelector('.i2WriterStage')).scrollbarColor`),'auto','desktop scrollbars use the shared custom style');
   await capture('writer');
   await js(`document.querySelector('#writerCustomizeCells').click()`);
   assert.equal(await js(`document.querySelector('.i2Desk').classList.contains('i2DeskInlineEdit')`),true);
