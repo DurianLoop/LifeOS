@@ -1,0 +1,47 @@
+[
+  {
+    "file": "lifeos-serif.woff2",
+    "family": "Noto Serif SC",
+    "weights": [
+      400,
+      700
+    ],
+    "glyph_codepoints": 30928,
+    "license": "SIL OFL 1.1",
+    "source": "https://github.com/google/fonts/tree/main/ofl/notoserifsc",
+    "source_sha256": "050080d9255a86808f2945bffac582b31ef32bc36411ce29563b4961670c66f9",
+    "sha256": "59a4adb8f63c6d1a2772a405062e6f5e92e5e2e31d13c49fa72a1f740c2edf87",
+    "bytes": 11035176,
+    "derivation": "Full upstream character coverage; variable weight axis restricted to 400–700; WOFF2."
+  },
+  {
+    "file": "lifeos-sans.woff2",
+    "family": "Noto Sans SC",
+    "weights": [
+      400,
+      700
+    ],
+    "glyph_codepoints": 30890,
+    "license": "SIL OFL 1.1",
+    "source": "https://github.com/google/fonts/tree/main/ofl/notosanssc",
+    "source_sha256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da",
+    "sha256": "25a36af4ccad2f2505be9e00bfe73d0fe05620110f912c6d0a8ec1ec211a23d0",
+    "bytes": 7660988,
+    "derivation": "Full upstream character coverage; variable weight axis restricted to 400–700; WOFF2."
+  },
+  {
+    "file": "lifeos-mono.woff2",
+    "family": "Noto Sans Mono",
+    "weights": [
+      400,
+      700
+    ],
+    "license": "SIL OFL 1.1",
+    "source": "https://github.com/google/fonts/tree/main/ofl/notosansmono",
+    "source_sha256": "2cb2adb378a8f574213e23df697050b83c54c27df465a2015552740b2769a081",
+    "sha256": "d323c211080aa7ea02e696ddc9652af86e2d896a9122b6d8984cb947fdc72043",
+    "bytes": 238348,
+    "glyph_codepoints": 3490,
+    "derivation": "Full upstream glyph coverage; width 100; variable weights 400–700; WOFF2."
+  }
+]

@@ -20,8 +20,8 @@ fs.mkdirSync(requestedOutput, {recursive: true});
 // macOS temp paths expose both /var and /private/var. Node canonicalizes
 // module filenames, so use filesystem identity for all QA path comparisons.
 const output = fs.realpathSync(requestedOutput);
-const appPath = fs.realpathSync(path.resolve(process.env.MACOS_APP_PATH || 'desktop/dist/mac-arm64/LifeOS.app'));
-const resources = path.join(appPath, 'Contents', 'Resources');
+const appPath = fs.realpathSync(path.resolve(process.env.MACOS_APP_PATH || process.env.DESKTOP_APP_PATH || 'desktop/dist/mac-arm64/LifeOS.app'));
+const resources = process.platform === 'win32' ? path.join(appPath, 'resources') : path.join(appPath, 'Contents', 'Resources');
 const asar = path.join(resources, 'app.asar');
 const workspace = path.join(output, 'workspace');
 const applicationData = path.join(output, 'application-data');
@@ -30,7 +30,7 @@ const expectedFile = path.join(output, 'expected.json');
 const uiStateFile = path.join(workspace, '.lifeos', 'ui-state.json');
 const fixture = {
   date: '2099-01-05', title: 'macOS packaged journal QA',
-  text: 'LifeOS macOS 0.6.1 synthetic journal. 今天仅用于安装包验收。',
+  text: 'LifeOS macOS 0.6.2 synthetic journal. 今天仅用于安装包验收。',
   draftDate: '2099-01-06', draftText: 'LifeOS macOS synthetic draft survives a normal close',
 };
 const checks = [], backendChildren = [], blockedRequests = [], rendererErrors = [], startupTimeline = [];
@@ -61,7 +61,7 @@ app.on('will-finish-launching', () => trace('app-will-finish-launching'));
 app.on('ready', () => trace('app-ready', {ready: app.isReady()}));
 app.on('before-quit', () => trace('app-before-quit', {completed, failing}));
 app.on('quit', (_event, exitCode) => trace('app-quit', {exit_code: exitCode}));
-const watchdog = setTimeout(() => void fail(new Error('macOS packaged UI QA timed out')), 105000);
+const watchdog = setTimeout(() => void fail(new Error('packaged desktop UI QA timed out')), process.env.QA_FULL_PARITY==='1'?300000:105000);
 
 function diagnosticSnapshot() {
   const log = path.join(profile, 'logs', 'desktop.log');
@@ -177,6 +177,7 @@ function menuRoles(menu) {
 }
 
 async function verifyEditMenu() {
+  if(process.platform!=='darwin')return;
   const menu = Menu.getApplicationMenu();
   const edit = menu?.items.find(item => String(item.role || '').toLowerCase() === 'editmenu');
   assert.ok(edit?.submenu, 'actual Cocoa application menu has Edit');
@@ -217,6 +218,25 @@ async function openWriter(date) {
   await until(() => js(`!!document.querySelector('#writerForm')&&document.querySelector('#writerDate')?.value===${JSON.stringify(date)}&&!!document.querySelector('[data-rich-wsec="日记"]')`), 'rich writer for ' + date);
 }
 
+async function verifyWorkspaceMenu() {
+  if(process.platform!=='darwin')return;
+  const menu=Menu.getApplicationMenu();
+  const file=menu.items.find(item=>item.label==='文件');
+  assert.ok(file?.submenu,'native File menu is installed');
+  for(const [label,selector] of [['落笔','#writerForm'],['导入日记…','#importFiles'],['导出日记…','#exportScope']]){
+    const item=file.submenu.items.find(item=>item.label===label);
+    assert.ok(item?.enabled,label+' is available');
+    item.click();
+    await until(()=>js(`!!document.querySelector(${JSON.stringify(selector)})`),'native menu '+label);
+  }
+  const settings=menu.items[0].submenu.items.find(item=>item.label==='设置…');
+  assert.ok(settings?.enabled,'native settings command is available');
+  settings.click();
+  await until(()=>js(`!!document.querySelector('#tweaksPanel.open')`),'native menu settings');
+  await js(`document.querySelector('#allRail').click()`);
+  checks.push('real native File/App menus open the shared writer, import, export and appearance controls');
+}
+
 async function writeRich(text) {
   await js(`(()=>{const field=document.querySelector('[data-rich-wsec="日记"]');field.textContent=${JSON.stringify(text)};
     field.dispatchEvent(new Event('input',{bubbles:true}));return true})()`);
@@ -254,7 +274,7 @@ async function verifyUI(window) {
   mainWindow = window;
   await until(() => js(`window.lifeosV01Ready===true&&typeof openProductDock==='function'&&typeof api==='function'`), 'production UI readiness');
   await until(() => window.isVisible(), 'real Mac window is shown');
-  assert.equal(await js(`lifeosDesktop.platform`), 'darwin');
+  assert.equal(await js(`lifeosDesktop.platform`), process.platform);
   assert.equal(await js(`typeof lifeosDesktop.storage`), 'function');
   assert.equal(await js(`typeof lifeosDesktop.windowControl`), 'function');
   assert.equal(await js(`lifeosDesktop.storage({op:'snapshot'}).ok`), true, 'packaged preload executes trusted native storage IPC');
@@ -294,6 +314,11 @@ async function verifyUI(window) {
     checks.push('real writer save creates one canonical Markdown entry and revision, readable through both journal APIs');
     await until(() => js(`!document.querySelector('#productDock')?.classList.contains('open')`), 'successful save returns from writer');
     await checkJournal(saved.entry);
+    if(process.env.QA_FULL_PARITY==='1'){
+      await verifyWorkspaceMenu();
+      const report=await require('./desktop_parity.cjs')({window,js,until,screenshot,output,resources,sourcePath:saved.entry.source_path});
+      checks.push(`Windows desktop parity: ${report.pages.length} visual cases, ${report.tools.length} tool pages, bundled fonts and renderer fingerprint`);
+    }
     await openWriter(fixture.draftDate);
     await writeRich(fixture.draftText);
     await screenshot('first-draft-before-close');
@@ -385,7 +410,7 @@ app.on('browser-window-created', (_event, window) => {
 });
 
 try {
-  assert.equal(process.platform, 'darwin', 'this is an actual macOS runtime test, never a skipped Windows check');
+  assert.ok(['darwin','win32'].includes(process.platform), 'acceptance runs in a real desktop runtime');
   assert.ok(['first', 'restart'].includes(phase), 'QA_PHASE is first or restart');
   assert.ok(inside(output, workspace) && inside(output, applicationData));
   assert.ok(!inside(appPath, output) && output !== appPath, 'QA data must stay outside the final application');
@@ -398,10 +423,10 @@ try {
     assert.ok(fs.existsSync(expectedFile) && fs.existsSync(uiStateFile), 'restart requires first-run evidence');
   }
   packaged = JSON.parse(fs.readFileSync(path.join(asar, 'package.json'), 'utf8'));
-  assert.equal(packaged.version, '0.6.1');
+  assert.equal(packaged.version, '0.6.2');
   const sourcePackage = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'desktop', 'package.json'), 'utf8'));
   assert.equal(process.versions.electron, sourcePackage.build.electronVersion, 'harness and final package use the configured Electron runtime');
-  const bundledPython = path.join(resources, 'python', 'bin', 'python3');
+  const bundledPython = process.platform==='win32'?path.join(resources,'python','python.exe'):path.join(resources, 'python', 'bin', 'python3');
   assert.ok(fs.existsSync(bundledPython) || fs.existsSync(path.join(resources, 'lifeos-server')), 'final package includes its backend runtime');
   for (const key of Object.keys(process.env)) {
     if (/^LIFEOS_/i.test(key) || /(?:^|_)API_KEY$/i.test(key) || /^(?:PYTHONHOME|PYTHONPATH|ELECTRON_RUN_AS_NODE)$/i.test(key)) delete process.env[key];

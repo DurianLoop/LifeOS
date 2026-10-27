@@ -1,5 +1,6 @@
 const {contextBridge,ipcRenderer}=require('electron');
 contextBridge.exposeInMainWorld('lifeosDesktop',{
+  onCommand:fn=>{const h=(_,value)=>fn(value);ipcRenderer.on('lifeos:command',h);return()=>ipcRenderer.removeListener('lifeos:command',h)},
   windowControl:(action)=>ipcRenderer.invoke('lifeos:window-control',action),
   restart:()=>ipcRenderer.invoke('lifeos:restart'),
   petGetSettings:()=>ipcRenderer.invoke('lifeos:pet-settings-get'),

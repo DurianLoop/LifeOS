@@ -19,7 +19,7 @@ with tempfile.TemporaryDirectory(prefix='lifeos-dmg-source-') as folder:
     subprocess.run(['ditto', str(app), str(staging / 'LifeOS.app')], check=True)
     (staging / 'Applications').symlink_to('/Applications', target_is_directory=True)
     command = ['hdiutil', 'create', '-volname', 'LifeOS', '-srcfolder', str(staging),
-        '-ov', '-format', 'UDZO', str(dist / f'LifeOS-0.6.1-mac-{args.arch}.dmg')]
+        '-ov', '-format', 'UDZO', str(dist / f'LifeOS-0.6.2-mac-{args.arch}.dmg')]
     # Hosted macOS can briefly hold DiskImages resources after the ZIP build.
     # Retry only that transient failure; final installers still undergo the
     # complete mount, package identity and UI/restart verification.

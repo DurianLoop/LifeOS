@@ -1,0 +1,92 @@
+/* Both desktop packages use this exact renderer. Keep the Windows paper desk,
+   including its type metrics and control geometry, on every supported OS. */
+@font-face {
+  font-family: "LifeOS Mono";
+  src: url("/fonts/lifeos-mono.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: block;
+}
+@font-face {
+  font-family: "LifeOS Book";
+  src: url("/fonts/lifeos-serif.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: block;
+}
+@font-face {
+  font-family: "LifeOS UI";
+  src: url("/fonts/lifeos-sans.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: block;
+}
+html.desktopRenderer {
+  --type-serif: "LifeOS Book", serif;
+  --type-sans: "LifeOS UI", sans-serif;
+  --serif: var(--type-serif);
+  --sans: var(--type-sans);
+  /* Dates use the bundled UI's tabular numerals instead of SF Mono/Consolas. */
+  --type-mono: "LifeOS Mono", "LifeOS UI", monospace;
+}
+html.desktopRenderer :where(button, input:not([type="range"]):not([type="color"]):not([type="file"]), select, textarea) {
+  -webkit-appearance: none;
+  appearance: none;
+}
+html.desktopRenderer select:not([multiple]):not([size]) {
+  padding-right: 28px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m4 6 4 4 4-4' fill='none' stroke='%23756d7a' stroke-width='1.4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 14px;
+}
+html.desktopRenderer input:is([type="checkbox"], [type="radio"]) {
+  display: inline-grid;
+  place-content: center;
+  min-width: 1em;
+  min-height: 1em;
+  flex-shrink: 0;
+  border: 1px solid var(--muted);
+  background: transparent;
+  vertical-align: middle;
+  cursor: pointer;
+}
+html.desktopRenderer input[type="radio"] { border-radius: 50%; }
+html.desktopRenderer input:is([type="checkbox"], [type="radio"]):checked {
+  border-color: var(--dream-accent);
+  background: var(--dream-accent);
+}
+html.desktopRenderer input[type="checkbox"]:checked::after {
+  content: "";
+  width: .65em;
+  height: .38em;
+  margin-top: -.15em;
+  border-left: 1.5px solid var(--paper2);
+  border-bottom: 1.5px solid var(--paper2);
+  transform: rotate(-45deg);
+}
+html.desktopRenderer input[type="radio"]:checked::after {
+  content: "";
+  width: .4em;
+  height: .4em;
+  background: var(--paper2);
+  border-radius: 50%;
+}
+html.desktopRenderer input:disabled { cursor: default; opacity: .5; }
+html.desktopRenderer :where(button, input, select, textarea, [contenteditable]):focus-visible {
+  outline: 2px solid var(--dream-accent);
+  outline-offset: 3px;
+}
+/* A macOS overlay scrollbar must not change the width of a book or desk. */
+html.desktopRenderer, html.desktopRenderer * { scrollbar-width: auto; }
+html.desktopRenderer ::-webkit-scrollbar { width: 8px; height: 8px; }
+html.desktopRenderer ::-webkit-scrollbar-track { background: transparent; }
+html.desktopRenderer ::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background: var(--line);
+  background-clip: padding-box;
+}
+html.desktopRenderer ::-webkit-scrollbar-thumb:hover { background-color: var(--muted); }
+html.desktopRenderer ::-webkit-scrollbar-corner { background: transparent; }
+html.desktopRenderer ::-webkit-scrollbar-button { display: none; width: 0; height: 0; }

@@ -110,7 +110,7 @@ for(const isPackaged of [false,true])test(`${isPackaged?'packaged':'source'} mac
   f.ready.resolve();await flush();
   assert.equal(f.builtMenus.length,1);
   assert.equal(f.applicationMenus[0],f.builtMenus[0],'the constructed native menu is installed');
-  assert.deepEqual(Array.from(f.applicationMenus[0].template,item=>item.role),['appMenu','editMenu','windowMenu'],'Electron roles supply standard Mac editing, application and window shortcuts');
+  assert.deepEqual(Array.from(f.applicationMenus[0].template,item=>item.role||item.label),['appMenu','文件','editMenu','windowMenu'],'Mac menus expose the complete desktop workspace and standard editing/window shortcuts');
   assert.equal(f.windows.length,0,'menu creation does not bypass backend health');
   f.healthy.resolve();await flush();
   assert.equal(f.windows.length,1);assert.deepEqual(f.failures,[]);
