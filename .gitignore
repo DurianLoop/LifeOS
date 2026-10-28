@@ -21,6 +21,11 @@
 /mobile/build/
 /mobile/dist/
 /mobile/logs/
+/mobile/ios-native/.build/
+/mobile/ios-native/build/
+/mobile/ios-native/DerivedData/
+/mobile/ios-native/LifeOS.xcodeproj/
+/mobile/ios-native/TestResults.xcresult/
 /mobile/src/lifeosmobile/resources/
 /node_modules/
 /.npm-cache/

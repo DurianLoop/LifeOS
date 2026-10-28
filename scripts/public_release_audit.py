@@ -41,7 +41,7 @@ if (ROOT / '.env').exists() or (ROOT / '.lifeos').exists():
 
 secret_pattern = re.compile(r'\b(?:(?:sk|rk|pk)[_-][A-Za-z0-9_-]{20,}|gh[pousr]_[A-Za-z0-9]{25,}|github_pat_[A-Za-z0-9_]{30,})\b', re.IGNORECASE)
 for file in (ROOT / p for p in tracked):
-    if not file.is_file() or file.suffix.lower() not in {'.py', '.js', '.mjs', '.cjs', '.html', '.css', '.md', '.json', '.bat', '.sh', '.txt', '.toml', '.yml', '.yaml', '.example'}:
+    if not file.is_file() or file.suffix.lower() not in {'.py', '.js', '.mjs', '.cjs', '.swift', '.html', '.css', '.md', '.json', '.bat', '.sh', '.txt', '.toml', '.yml', '.yaml', '.example', '.xcprivacy'}:
         continue
     text = file.read_text(encoding='utf-8', errors='ignore')
     if secret_pattern.search(text):
