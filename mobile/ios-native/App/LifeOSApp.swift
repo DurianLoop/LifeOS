@@ -29,7 +29,7 @@ struct RootView:View {
                     JournalView(open:{selected=$0},edit:{editor=$0}).tabItem{Label("日记",systemImage:"book.closed")}.tag(Destination.journal)
                     SearchView(open:{selected=$0}).tabItem{Label("搜索",systemImage:"magnifyingglass")}.tag(Destination.search)
                     LibraryView(open:{selected=$0}).tabItem{Label("资料库",systemImage:"square.stack.3d.up")}.tag(Destination.library)
-                }.quietTabBar()
+                }
             }
         }
         .sheet(item:$selected){PageDetail(pageID:$0.id)}

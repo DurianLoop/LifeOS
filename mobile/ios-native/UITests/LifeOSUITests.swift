@@ -15,6 +15,12 @@ final class LifeOSUITests:XCTestCase {
         XCTAssertTrue(element.waitForExistence(timeout:3))
         XCTAssertTrue(element.isHittable)
     }
+    func selectTab(_ title:String){
+        let button=app.tabBars.buttons[title]
+        XCTAssertEqual(XCTWaiter.wait(for:[XCTNSPredicateExpectation(predicate:NSPredicate{_,_ in button.exists && button.isHittable},object:nil)],timeout:12),.completed)
+        button.tap()
+        XCTAssertEqual(XCTWaiter.wait(for:[XCTNSPredicateExpectation(predicate:NSPredicate{_,_ in button.isSelected},object:nil)],timeout:8),.completed)
+    }
     override func tearDownWithError()throws{
         if let app,let run=testRun,run.failureCount>0 {
             capture("failure")
@@ -56,21 +62,21 @@ final class LifeOSUITests:XCTestCase {
         capture("05-restarted-note")
     }
     func testSearchJournalAndLibrary() throws {
-        app.tabBars.buttons["搜索"].tap()
+        selectTab("搜索")
         let search=app.searchFields.firstMatch
         XCTAssertTrue(search.waitForExistence(timeout:5));search.tap();search.typeText("空白")
         XCTAssertTrue(app.buttons.containing(.staticText,identifier:"给生活留一点空白").firstMatch.waitForExistence(timeout:5))
         capture("06-search")
         search.typeText("\n")
         XCTAssertTrue(app.keyboards.firstMatch.waitForNonExistence(timeout:5))
-        app.tabBars.buttons["日记"].tap()
+        selectTab("日记")
         XCTAssertTrue(app.buttons["journal.read"].waitForExistence(timeout:5))
         capture("07-journal")
         app.buttons["journal.calendar"].tap()
         XCTAssertTrue(app.buttons["journal.calendar.done"].waitForExistence(timeout:5))
         capture("17-calendar")
         app.buttons["journal.calendar.done"].tap()
-        app.tabBars.buttons["资料库"].tap()
+        selectTab("资料库")
         XCTAssertTrue(app.buttons["library.addNotebook"].waitForExistence(timeout:5))
         capture("08-library")
         app.buttons["library.addNotebook"].tap()
@@ -86,13 +92,14 @@ final class LifeOSUITests:XCTestCase {
         XCTAssertTrue(app.staticTexts["给自己留一段没有安排的下午。"].waitForExistence(timeout:5))
         app.buttons["reader.menu"].tap();app.buttons["移到废纸篓"].tap()
         app.buttons["移到废纸篓"].firstMatch.tap()
-        app.tabBars.buttons["资料库"].tap();app.buttons["废纸篓"].tap()
+        XCTAssertTrue(app.buttons["reader.close"].waitForNonExistence(timeout:10))
+        selectTab("资料库");reveal(app.buttons["library.trash"]);app.buttons["library.trash"].tap()
         XCTAssertTrue(app.buttons["trash.restore.slow"].waitForExistence(timeout:5));capture("10-trash")
         app.buttons["trash.restore.slow"].tap()
         XCTAssertFalse(app.buttons["trash.restore.slow"].exists)
     }
     func testAppearanceAndNativeBackupPicker() throws {
-        app.tabBars.buttons["资料库"].tap();reveal(app.buttons["library.settings"]);app.buttons["library.settings"].tap()
+        selectTab("资料库");reveal(app.buttons["library.settings"]);app.buttons["library.settings"].tap()
         app.buttons["settings.appearance"].tap();app.buttons["深色"].tap()
         capture("11-dark-settings")
         app.navigationBars.buttons.element(boundBy:0).tap()

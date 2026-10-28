@@ -19,9 +19,6 @@ struct GlassControl:ViewModifier {
 }
 extension View {
     func glassControl()->some View{modifier(GlassControl())}
-    @ViewBuilder func quietTabBar()->some View {
-        if #available(iOS 26.0,*) {self.tabBarMinimizeBehavior(.onScrollDown)} else {self}
-    }
 }
 
 struct SectionCaption:View {

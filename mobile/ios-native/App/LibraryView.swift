@@ -26,7 +26,7 @@ struct LibraryView:View {
                 }header:{Text("笔记本")}footer:{Text("笔记只属于一个笔记本，也可以用多个标签串联。")}
                 if !store.allTags.isEmpty {Section("标签"){ForEach(store.allTags,id:\.self){tag in NavigationLink{PageCollection(title:"#"+tag,tag:tag,open:open)}label:{Label(tag,systemImage:"number")}}}}
                 Section {
-                    NavigationLink{TrashView()}label:{Label("废纸篓",systemImage:"trash")}
+                    NavigationLink{TrashView()}label:{Label("废纸篓",systemImage:"trash")}.accessibilityIdentifier("library.trash")
                     NavigationLink{TransferView()}label:{Label("导入与备份",systemImage:"arrow.up.arrow.down")}
                     NavigationLink{SettingsView()}label:{Label("外观与阅读",systemImage:"textformat.size")}.accessibilityIdentifier("library.settings")
                 }
