@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct NotesView:View {
     @EnvironmentObject private var store:LibraryStore
@@ -9,17 +10,16 @@ struct NotesView:View {
     var body:some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment:.leading,spacing:25){
+                VStack(alignment:.leading,spacing:22){
                     VStack(alignment:.leading,spacing:10){
                         Text(Date(),format:.dateTime.month(.wide).day().weekday(.wide)).font(.subheadline).foregroundStyle(.secondary)
-                        Text("把想法，\n安放在这里。").font(.system(.largeTitle,design:.serif).weight(.medium)).lineSpacing(4).fixedSize(horizontal:false,vertical:true)
-                        Text("一页笔记，一条线索。慢慢写，也慢慢想。").font(.subheadline).foregroundStyle(.secondary).lineSpacing(5)
+                        Text("留住一个想法。").font(.system(.title,design:.serif).weight(.medium)).lineSpacing(4).fixedSize(horizontal:false,vertical:true)
                     }.padding(.top,12)
                     if let notice=store.notice {
                         HStack(alignment:.top){Image(systemName:"info.circle");Text(notice).font(.caption).lineSpacing(4);Button{store.notice=nil}label:{Image(systemName:"xmark").font(.caption)}}.padding(16).background(Paper.surface,in:RoundedRectangle(cornerRadius:18))
                     }
                     Button(action:create){
-                        HStack(spacing:14){Image(systemName:"square.and.pencil").font(.title3);Text("新的一页").font(.body.weight(.medium));Spacer();Image(systemName:"plus").font(.body)}.padding(.horizontal,21).padding(.vertical,18)
+                        HStack(spacing:14){Image(systemName:"square.and.pencil").font(.title3);Text("新的一页").font(.body.weight(.medium));Spacer();Image(systemName:"plus").font(.body)}.padding(.horizontal,21).padding(.vertical,15)
                     }.foregroundStyle(Paper.accent).glassControl().accessibilityIdentifier("notes.create")
                     if !store.workspace.notebooks.isEmpty {
                         VStack(alignment:.leading,spacing:14){
@@ -27,7 +27,7 @@ struct NotesView:View {
                             ScrollView(.horizontal,showsIndicators:false){
                                 HStack(spacing:12){ForEach(store.workspace.notebooks){book in
                                     NavigationLink{PageCollection(title:book.name,notebook:book.id,open:open)}label:{
-                                        VStack(alignment:.leading,spacing:20){Image(systemName:book.symbol).font(.system(size:24,weight:.light)).foregroundStyle(Paper.accent)
+                                        VStack(alignment:.leading,spacing:14){Image(systemName:book.symbol).font(.system(size:24,weight:.light)).foregroundStyle(Paper.accent)
                                             VStack(alignment:.leading,spacing:5){Text(book.name).font(.subheadline.weight(.semibold));Text("\(store.active.filter{$0.notebookID==book.id}.count) 篇笔记").font(.caption).foregroundStyle(.secondary)}
                                         }.frame(width:145,alignment:.leading).padding(18).background(Paper.surface,in:RoundedRectangle(cornerRadius:19)).overlay(RoundedRectangle(cornerRadius:19).stroke(Paper.line)).foregroundStyle(Paper.ink)
                                     }.buttonStyle(.plain)
@@ -137,6 +137,8 @@ struct SearchView:View {
                 } else if results.isEmpty {EmptyPaper(symbol:"magnifyingglass",title:"还没有找到",message:"换一个关键词，或试试清除筛选。") .listRowBackground(Color.clear).listRowSeparator(.hidden)}
                 else {Section("找到 \(results.count) 篇"){ForEach(results){page in Button{open(page)}label:{PageRow(page:page,book:store.bookName(page.notebookID))}.buttonStyle(.plain)}}}
             }.listStyle(.plain).scrollContentBackground(.hidden).background(Paper.background).navigationTitle("搜索").searchable(text:$query,prompt:"标题、正文或 #标签").autocorrectionDisabled()
+                .scrollDismissesKeyboard(.interactively)
+                .onSubmit(of:.search){UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),to:nil,from:nil,for:nil)}
         }
     }
 }

@@ -28,7 +28,7 @@ struct LibraryView:View {
                 Section {
                     NavigationLink{TrashView()}label:{Label("废纸篓",systemImage:"trash")}
                     NavigationLink{TransferView()}label:{Label("导入与备份",systemImage:"arrow.up.arrow.down")}
-                    NavigationLink{SettingsView()}label:{Label("外观与阅读",systemImage:"textformat.size")}
+                    NavigationLink{SettingsView()}label:{Label("外观与阅读",systemImage:"textformat.size")}.accessibilityIdentifier("library.settings")
                 }
                 Section {VStack(alignment:.leading,spacing:8){Text("以自己的节奏积累。").font(.system(.title3,design:.serif));Text("本地保存 · 无需账号 · 不自动上传").font(.caption).foregroundStyle(.secondary)}.padding(.vertical,10).listRowBackground(Color.clear)}
             }

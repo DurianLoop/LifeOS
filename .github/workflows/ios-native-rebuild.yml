@@ -35,12 +35,32 @@ jobs:
           with open(os.environ['GITHUB_ENV'],'a') as f:f.write('LIFEOS_IOS_DEVICE='+device['udid']+'\n')
           print(device['name'])
           PY
+      - name: Boot iPhone before attaching XCTest
+        run: |
+          xcrun simctl boot "$LIFEOS_IOS_DEVICE" || true
+          xcrun simctl bootstatus "$LIFEOS_IOS_DEVICE" -b
       - name: Build and test actual native iPhone app
         working-directory: mobile/ios-native
         run: |
           set -o pipefail
           mkdir -p build/qa
           xcodebuild test -project LifeOS.xcodeproj -scheme LifeOS -destination "platform=iOS Simulator,id=$LIFEOS_IOS_DEVICE" -derivedDataPath DerivedData -resultBundlePath TestResults.xcresult -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=NO 2>&1 | tee build/qa/xcodebuild.log
+      - name: Verify writing and larger text on compact iPhone
+        working-directory: mobile/ios-native
+        run: |
+          set -o pipefail
+          xcrun simctl shutdown "$LIFEOS_IOS_DEVICE"
+          LIFEOS_COMPACT_DEVICE=$(python3 - <<'PY'
+          import json,subprocess
+          data=json.loads(subprocess.check_output(['xcrun','simctl','list','-j']))
+          runtime=next(r['identifier'] for r in data['runtimes'] if r.get('isAvailable') and 'iOS-26' in r['identifier'])
+          kind=next(d['identifier'] for d in data['devicetypes'] if d['name']=='iPhone SE (3rd generation)')
+          print(subprocess.check_output(['xcrun','simctl','create','LifeOS compact acceptance',kind,runtime],text=True).strip())
+          PY
+          )
+          xcrun simctl boot "$LIFEOS_COMPACT_DEVICE"
+          xcrun simctl bootstatus "$LIFEOS_COMPACT_DEVICE" -b
+          xcodebuild test -project LifeOS.xcodeproj -scheme LifeOS -destination "platform=iOS Simulator,id=$LIFEOS_COMPACT_DEVICE" -derivedDataPath DerivedData -resultBundlePath CompactResults.xcresult -parallel-testing-enabled NO -only-testing:LifeOSUITests/LifeOSUITests/testEditingAndRestartPersistence -only-testing:LifeOSUITests/LifeOSUITests/testAccessibilityLargeText -only-testing:LifeOSUITests/LifeOSUITests/testSearchJournalAndLibrary CODE_SIGNING_ALLOWED=NO 2>&1 | tee build/qa/compact-xcodebuild.log
       - name: Collect native screenshots and test results
         if: always()
         working-directory: mobile/ios-native
@@ -49,6 +69,10 @@ jobs:
           if [ -d TestResults.xcresult ]; then
             xcrun xcresulttool export attachments --path TestResults.xcresult --output-path build/qa/screenshots || true
             xcrun xcresulttool get test-results summary --path TestResults.xcresult --format json > build/qa/TEST_SUMMARY.json || true
+          fi
+          if [ -d CompactResults.xcresult ]; then
+            xcrun xcresulttool export attachments --path CompactResults.xcresult --output-path build/qa/compact-screenshots || true
+            xcrun xcresulttool get test-results summary --path CompactResults.xcresult --format json > build/qa/COMPACT_TEST_SUMMARY.json || true
           fi
           xcrun simctl io "$LIFEOS_IOS_DEVICE" screenshot build/qa/final-screen.png || true
       - name: Build clean simulator distribution

@@ -28,7 +28,7 @@ struct PageEditor:View {
                 TextField("给这一页起个名字",text:$page.title,axis:.vertical).font(.system(.title,design:.default).weight(.semibold)).textFieldStyle(.plain).padding(.horizontal,25).padding(.bottom,19).accessibilityIdentifier("editor.title")
                 if !page.tags.isEmpty{FlowTags(tags:page.tags).padding(.horizontal,25).padding(.bottom,14)}
                 Divider().padding(.horizontal,25)
-                NativeMarkdownEditor(text:$page.body).accessibilityIdentifier("editor.body.container")
+                NativeMarkdownEditor(text:$page.body)
                 if !page.attachments.isEmpty {
                     ScrollView(.horizontal,showsIndicators:false){HStack{ForEach(page.attachments){item in Label(item.name,systemImage:"paperclip").font(.caption).padding(10).background(Paper.background,in:Capsule())}}.padding(.horizontal,20)}.frame(maxHeight:55)
                 }

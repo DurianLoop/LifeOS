@@ -10,8 +10,13 @@ final class LifeOSUITests:XCTestCase {
         XCTAssertTrue(app.buttons["notes.create"].waitForExistence(timeout:15))
     }
     func capture(_ name:String){let shot=XCTAttachment(screenshot:app.screenshot());shot.name=name;shot.lifetime = .keepAlways;add(shot)}
+    func reveal(_ element:XCUIElement){
+        for _ in 0..<5 {if element.exists && element.isHittable{return};app.swipeUp()}
+        XCTAssertTrue(element.waitForExistence(timeout:3))
+        XCTAssertTrue(element.isHittable)
+    }
     override func tearDownWithError()throws{
-        if let app,let run=testRun,run.hasSucceeded==false {
+        if let app,let run=testRun,run.failureCount>0 {
             capture("failure")
             let tree=XCTAttachment(string:app.debugDescription);tree.name="accessibility-tree";tree.lifetime = .keepAlways;add(tree)
         }
@@ -24,13 +29,20 @@ final class LifeOSUITests:XCTestCase {
         app.swipeUp()
         XCTAssertTrue(app.buttons["一些微小的发现"].exists || app.staticTexts["提到这一页"].exists)
         capture("03-links")
+        app.buttons["标为已完成"].tap()
+        XCTAssertEqual(app.buttons.matching(identifier:"标为未完成").count,2)
+        app.links["一些微小的发现"].tap()
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format:"identifier == %@ AND label == %@","reader.title","一些微小的发现")).firstMatch.waitForExistence(timeout:5))
     }
     func testEditingAndRestartPersistence() throws {
         app.buttons["notes.create"].tap()
         let title=app.textFields["editor.title"]
         XCTAssertTrue(title.waitForExistence(timeout:5));title.tap();title.typeText("Acceptance note")
-        let body=app.textViews["editor.body"];body.tap();body.typeText("A quiet place for ideas.\n\n## Reading\n- [ ] Read a book")
+        let body=app.textViews["editor.body"];XCTAssertTrue(body.waitForExistence(timeout:5));body.tap();body.typeText("A quiet place for ideas.\n\n## Reading\n- [ ] Read a book")
         capture("04-editor-keyboard")
+        app.buttons["editor.properties"].tap()
+        app.textFields["properties.tags"].tap();app.textFields["properties.tags"].typeText("reading, focus")
+        app.buttons["properties.done"].tap()
         app.buttons["editor.done"].tap()
         XCTAssertTrue(app.buttons.containing(.staticText,identifier:"Acceptance note").firstMatch.waitForExistence(timeout:5))
         app.terminate()
@@ -40,6 +52,7 @@ final class LifeOSUITests:XCTestCase {
         XCTAssertTrue(note.waitForExistence(timeout:10));note.tap()
         XCTAssertTrue(app.staticTexts["Acceptance note"].exists)
         XCTAssertTrue(app.staticTexts["A quiet place for ideas."].exists)
+        XCTAssertTrue(app.staticTexts["#focus"].exists)
         capture("05-restarted-note")
     }
     func testSearchJournalAndLibrary() throws {
@@ -48,6 +61,8 @@ final class LifeOSUITests:XCTestCase {
         XCTAssertTrue(search.waitForExistence(timeout:5));search.tap();search.typeText("空白")
         XCTAssertTrue(app.buttons.containing(.staticText,identifier:"给生活留一点空白").firstMatch.waitForExistence(timeout:5))
         capture("06-search")
+        search.typeText("\n")
+        XCTAssertTrue(app.keyboards.firstMatch.waitForNonExistence(timeout:5))
         app.tabBars.buttons["日记"].tap()
         XCTAssertTrue(app.buttons["journal.read"].waitForExistence(timeout:5))
         capture("07-journal")
@@ -73,7 +88,7 @@ final class LifeOSUITests:XCTestCase {
         XCTAssertFalse(app.buttons["trash.restore.slow"].exists)
     }
     func testAppearanceAndNativeBackupPicker() throws {
-        app.tabBars.buttons["资料库"].tap();app.buttons["外观与阅读"].tap()
+        app.tabBars.buttons["资料库"].tap();reveal(app.buttons["library.settings"]);app.buttons["library.settings"].tap()
         app.buttons["显示模式"].tap();app.buttons["深色"].tap()
         capture("11-dark-settings")
         app.navigationBars.buttons.element(boundBy:0).tap()
@@ -88,5 +103,19 @@ final class LifeOSUITests:XCTestCase {
         XCTAssertTrue(app.buttons["notes.create"].waitForExistence(timeout:10))
         XCTAssertTrue(app.staticTexts["从空白的一页开始"].exists)
         capture("14-empty-library")
+    }
+    func testAccessibilityLargeText() throws {
+        app.terminate()
+        app.launchArguments += ["-UIPreferredContentSizeCategoryName","UICTContentSizeCategoryAccessibilityXXXL"]
+        app.launch()
+        XCTAssertTrue(app.buttons["notes.create"].waitForExistence(timeout:10))
+        capture("15-accessibility-notes")
+        reveal(app.buttons["page.slow"]);app.buttons["page.slow"].tap()
+        let title=app.staticTexts["reader.title"]
+        XCTAssertTrue(title.waitForExistence(timeout:5))
+        XCTAssertGreaterThan(title.frame.height,65)
+        XCTAssertGreaterThanOrEqual(title.frame.minX,0)
+        XCTAssertLessThanOrEqual(title.frame.maxX,app.frame.width)
+        capture("16-accessibility-reader")
     }
 }
