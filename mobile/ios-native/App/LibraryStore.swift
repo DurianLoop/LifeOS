@@ -14,8 +14,13 @@ import UniformTypeIdentifiers
         do {
             let support = try FileManager.default.url(for:.applicationSupportDirectory,in:.userDomainMask,appropriateFor:nil,create:true)
             let test = ProcessInfo.processInfo.arguments.contains("--ui-testing")
-            let root = support.appendingPathComponent(test ? "LifeOSAcceptance" : "LifeOSNative",isDirectory:true)
-            if test && ProcessInfo.processInfo.arguments.contains("--reset-library") && FileManager.default.fileExists(atPath:root.path) { try FileManager.default.removeItem(at:root) }
+            let preferred=UserDefaults.standard.string(forKey:"libraryFolder") ?? "LifeOSNative"
+            let valid=preferred=="LifeOSNative" || (preferred.hasPrefix("LifeOSRecovered-") && UUID(uuidString:String(preferred.dropFirst(16))) != nil)
+            let root = support.appendingPathComponent(test ? "LifeOSAcceptance" : valid ? preferred : "LifeOSNative",isDirectory:true)
+            if test && ProcessInfo.processInfo.arguments.contains("--reset-library") {
+                if FileManager.default.fileExists(atPath:root.path){try FileManager.default.removeItem(at:root)}
+                for key in ["appearance","serifReading","comfortableReading"]{UserDefaults.standard.removeObject(forKey:key)}
+            }
             let repo = try Repository(root:root)
             repository = repo; workspace = repo.workspace; notice = repo.recoveryMessage
             if test && ProcessInfo.processInfo.arguments.contains("--seed-library") && workspace.pages.isEmpty { try seed() }
@@ -88,9 +93,34 @@ import UniformTypeIdentifiers
         } catch {self.error=error.localizedDescription}
     }
     func confirmImport() {
-        guard let preview=importPreview,let repository else{return}
+        guard let preview=importPreview else{return}
+        if unavailable {
+            do {
+                let support=try FileManager.default.url(for:.applicationSupportDirectory,in:.userDomainMask,appropriateFor:nil,create:true)
+                let name="LifeOSRecovered-"+UUID().uuidString
+                let restored=try Repository(root:support.appendingPathComponent(name,isDirectory:true))
+                let count=try restored.merge(preview)
+                UserDefaults.standard.set(name,forKey:"libraryFolder")
+                repository=restored;workspace=restored.workspace;unavailable=false;error=nil;importPreview=nil;importedCount=count
+                notice="已从备份恢复。之前无法读取的资料库仍保留在设备上。"
+            } catch {self.error=error.localizedDescription}
+            return
+        }
+        guard let repository else{return}
         do {let count=try repository.merge(preview);workspace=repository.workspace;importPreview=nil;importedCount=count}
         catch {self.error=error.localizedDescription}
+    }
+    func previewRecovery(_ url:URL){
+        let scoped=url.startAccessingSecurityScopedResource();defer{if scoped{url.stopAccessingSecurityScopedResource()}}
+        let temp=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString,isDirectory:true)
+        defer{try? FileManager.default.removeItem(at:temp)}
+        do {
+            let size=try url.resourceValues(forKeys:[.fileSizeKey]).fileSize ?? 0
+            guard size<=200_000_000 else{throw LibraryError.tooLarge}
+            let bytes=try Data(contentsOf:url)
+            if url.pathExtension.lowercased()=="zip"{importPreview=try LegacyImport.zip(bytes,temporary:temp)}
+            else{let reader=try Repository(root:temp);importPreview=try reader.decodeBackup(bytes)}
+        } catch {self.error=error.localizedDescription}
     }
     private func discoverLegacy(support:URL) {
         let documents=FileManager.default.urls(for:.documentDirectory,in:.userDomainMask).first!

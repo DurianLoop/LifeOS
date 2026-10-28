@@ -1,5 +1,11 @@
 # LifeOS Mobile v0.6.0
 
+## New iOS implementation
+
+The focused native iOS rewrite lives in [`ios-native/`](ios-native/README.md): SwiftUI, native Liquid Glass on iOS 26, notes, journals, search and a local library. Generate its Xcode project with `python3 ios-native/generate_project.py`. The source and simulator build are the delivery target; no signed iPhone distribution is included.
+
+The Briefcase iOS commands below describe the legacy client, retained for migration testing. Android continues using the Briefcase client.
+
 The native apps bundle the full desktop web application and Python engine.
 Journals, SQLite, revisions, attachments, preferences, imports, exports,
 encryption and backups run in the private application sandbox, offline.

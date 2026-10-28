@@ -43,6 +43,7 @@ struct NotesView:View {
                                 .contextMenu{Button(page.pinned ? "取消置顶" : "置顶",systemImage:"pin"){store.togglePin(page)};Button("移到废纸篓",systemImage:"trash",role:.destructive){store.trash(page)}}
                             Divider()
                         }}
+                        if pages.count>30{NavigationLink("查看全部 \(pages.count) 篇"){PageCollection(title:"全部笔记",open:open)}.font(.subheadline).padding(.vertical,14)}
                     }
                     HStack(spacing:6){Image(systemName:"lock");Text("只在本机，属于你。")} .font(.caption).foregroundStyle(.tertiary).frame(maxWidth:.infinity).padding(.vertical,22)
                 }.padding(.horizontal,24).frame(maxWidth:760).frame(maxWidth:.infinity).padding(.bottom,25)

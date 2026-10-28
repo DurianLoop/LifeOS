@@ -86,7 +86,7 @@ final class Repository {
         try write(data, to: attachmentsURL.appendingPathComponent(stored))
         var page = page; page.attachments.append(attachment)
         try save(page)
-        return page
+        return workspace.pages.first(where:{$0.id==page.id}) ?? page
     }
 
     func backupData() throws -> Data {

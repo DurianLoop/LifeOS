@@ -10,6 +10,12 @@ final class LifeOSUITests:XCTestCase {
         XCTAssertTrue(app.buttons["notes.create"].waitForExistence(timeout:15))
     }
     func capture(_ name:String){let shot=XCTAttachment(screenshot:app.screenshot());shot.name=name;shot.lifetime = .keepAlways;add(shot)}
+    override func tearDownWithError()throws{
+        if let app,let run=testRun,run.hasSucceeded==false {
+            capture("failure")
+            let tree=XCTAttachment(string:app.debugDescription);tree.name="accessibility-tree";tree.lifetime = .keepAlways;add(tree)
+        }
+    }
     func testNotesReaderAndBacklinks() throws {
         capture("01-notes")
         app.buttons["page.slow"].tap()
@@ -74,8 +80,8 @@ final class LifeOSUITests:XCTestCase {
         app.buttons["导入与备份"].tap()
         capture("12-transfer")
         app.buttons["transfer.export"].tap()
-        XCTAssertTrue(app.navigationBars["移到"].waitForExistence(timeout:5) || app.buttons["存储"].waitForExistence(timeout:5) || app.buttons["导出"].exists || app.buttons["Save"].exists)
         capture("13-native-backup-picker")
+        XCTAssertTrue(app.navigationBars["移到"].waitForExistence(timeout:5) || app.buttons["存储"].waitForExistence(timeout:5) || app.buttons["导出"].exists || app.buttons["Save"].exists)
     }
     func testEmptyFirstRun() throws {
         app.terminate();app.launchArguments=["--ui-testing","--reset-library","-AppleLanguages","(zh-Hans)","-AppleLocale","zh_CN"];app.launch()

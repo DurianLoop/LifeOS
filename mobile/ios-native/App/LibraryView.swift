@@ -5,6 +5,8 @@ struct LibraryView:View {
     @EnvironmentObject private var store:LibraryStore
     @State private var newBook=false
     @State private var bookName=""
+    @State private var renaming:Notebook?
+    @State private var removing:Notebook?
     let open:(Page)->Void
     var body:some View {
         NavigationStack {
@@ -13,8 +15,14 @@ struct LibraryView:View {
                     HStack(spacing:18){Image(systemName:"books.vertical").font(.system(size:32,weight:.ultraLight)).foregroundStyle(Paper.accent);VStack(alignment:.leading,spacing:7){Text("你的私人资料库").font(.headline);Text("\(store.active.count) 篇笔记 · \(store.workspace.notebooks.count) 本笔记本").font(.subheadline).foregroundStyle(.secondary)}}.padding(.vertical,12)
                 }
                 Section {
-                    ForEach(store.workspace.notebooks){book in NavigationLink{PageCollection(title:book.name,notebook:book.id,open:open)}label:{Label(book.name,systemImage:book.symbol)}}
-                    Button{bookName="";newBook=true}label:{Label("新建笔记本",systemImage:"plus")}.accessibilityIdentifier("library.addNotebook")
+                    ForEach(store.workspace.notebooks){book in
+                        NavigationLink{PageCollection(title:book.name,notebook:book.id,open:open)}label:{Label(book.name,systemImage:book.symbol)}
+                            .contextMenu{
+                                Button("重命名",systemImage:"pencil"){bookName=book.name;renaming=book;newBook=true}
+                                Button("移除笔记本",systemImage:"folder.badge.minus",role:.destructive){removing=book}
+                            }
+                    }
+                    Button{renaming=nil;bookName="";newBook=true}label:{Label("新建笔记本",systemImage:"plus")}.accessibilityIdentifier("library.addNotebook")
                 }header:{Text("笔记本")}footer:{Text("笔记只属于一个笔记本，也可以用多个标签串联。")}
                 if !store.allTags.isEmpty {Section("标签"){ForEach(store.allTags,id:\.self){tag in NavigationLink{PageCollection(title:"#"+tag,tag:tag,open:open)}label:{Label(tag,systemImage:"number")}}}}
                 Section {
@@ -23,7 +31,29 @@ struct LibraryView:View {
                     NavigationLink{SettingsView()}label:{Label("外观与阅读",systemImage:"textformat.size")}
                 }
                 Section {VStack(alignment:.leading,spacing:8){Text("以自己的节奏积累。").font(.system(.title3,design:.serif));Text("本地保存 · 无需账号 · 不自动上传").font(.caption).foregroundStyle(.secondary)}.padding(.vertical,10).listRowBackground(Color.clear)}
-            }.navigationTitle("资料库").alert("新建笔记本",isPresented:$newBook){TextField("笔记本名称",text:$bookName);Button("取消",role:.cancel){};Button("创建"){let name=bookName.trimmingCharacters(in:.whitespacesAndNewlines);if !name.isEmpty{_ = store.change{$0.notebooks.append(Notebook(name:String(name.prefix(60)))))} }}
+            }
+            .navigationTitle("资料库")
+            .alert(renaming == nil ? "新建笔记本" : "重命名",isPresented:$newBook){
+                TextField("笔记本名称",text:$bookName)
+                Button("取消",role:.cancel){renaming=nil}
+                Button(renaming == nil ? "创建" : "保存"){
+                    let name=String(bookName.trimmingCharacters(in:.whitespacesAndNewlines).prefix(60))
+                    if !name.isEmpty {
+                        if let book=renaming {
+                            _ = store.change{state in if let index=state.notebooks.firstIndex(where:{$0.id==book.id}){state.notebooks[index].name=name}}
+                        } else {_ = store.change{$0.notebooks.append(Notebook(name:name))}}
+                    }
+                    renaming=nil
+                }
+            }
+            .confirmationDialog("移除这个笔记本？",isPresented:Binding(get:{removing != nil},set:{if !$0{removing=nil}}),titleVisibility:.visible){
+                Button("移除笔记本",role:.destructive){
+                    if let book=removing {
+                        _ = store.change{state in state.notebooks.removeAll{$0.id==book.id};for index in state.pages.indices where state.pages[index].notebookID==book.id{state.pages[index].notebookID=nil}}
+                    }
+                    removing=nil
+                }
+            }message:{Text("其中的笔记会保留，移到“未分类”。")}
         }
     }
 }

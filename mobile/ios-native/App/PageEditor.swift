@@ -12,6 +12,7 @@ struct PageEditor:View {
     @State private var attach=false
     @State private var failure=false
     @State private var saving=false
+    @State private var attachmentError:String?
     init(initial:Page){_page=State(initialValue:initial);_saved=State(initialValue:initial)}
     var body:some View {
         NavigationStack {
@@ -32,6 +33,7 @@ struct PageEditor:View {
                     ScrollView(.horizontal,showsIndicators:false){HStack{ForEach(page.attachments){item in Label(item.name,systemImage:"paperclip").font(.caption).padding(10).background(Paper.background,in:Capsule())}}.padding(.horizontal,20)}.frame(maxHeight:55)
                 }
                 if failure{Label("文字仍保留在编辑器中，请重试保存后再离开。",systemImage:"exclamationmark.circle").font(.caption).foregroundStyle(.red).padding(14)}
+                if let attachmentError{Text(attachmentError).font(.caption).foregroundStyle(.red).padding(14)}
             }.background(Paper.surface).navigationTitle(page.kind == .journal ? "写日记" : "写笔记").navigationBarTitleDisplayMode(.inline)
                 .toolbar{
                     ToolbarItem(placement:.cancellationAction){Button("完成"){if persist(){dismiss()}}.fontWeight(.medium).accessibilityIdentifier("editor.done")}
@@ -51,8 +53,9 @@ struct PageEditor:View {
                 .sheet(isPresented:$properties){PropertiesView(page:$page)}
                 .fileImporter(isPresented:$attach,allowedContentTypes:[.item],allowsMultipleSelection:true){result in
                     switch result {
-                    case .success(let urls):for url in urls {if let updated=store.addAttachment(url:url,page:page){page=updated;saved=updated}else{failure=true}}
-                    case .failure(let error):store.error=error.localizedDescription
+                    case .success(let urls):
+                        for url in urls {if let updated=store.addAttachment(url:url,page:page){page=updated;saved=updated;attachmentError=nil}else{attachmentError=store.error ?? "附件未添加，请重试。"}}
+                    case .failure(let error):attachmentError=error.localizedDescription
                     }
                 }
         }

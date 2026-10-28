@@ -14,6 +14,7 @@ struct PageDetail:View {
     @State private var document:ExportDocument?
     @State private var attachment:URL?
     @State private var linked:Page?
+    @State private var missingLink:String?
     let pageID:String
     private var page:Page?{store.page(pageID)}
     var body:some View {
@@ -64,15 +65,26 @@ struct PageDetail:View {
             .quickLookPreview($attachment)
             .fileExporter(isPresented:$export,document:document,contentType:.plainText,defaultFilename:(page?.displayTitle ?? "LifeOS")+".md"){result in if case .failure(let error)=result{store.error=error.localizedDescription}}
             .confirmationDialog("将这一页移到废纸篓？",isPresented:$trashConfirmation,titleVisibility:.visible){Button("移到废纸篓",role:.destructive){if let page{store.trash(page);dismiss()}}}message:{Text("可以随时在资料库的废纸篓中恢复。")}
+            .alert("这条线索还没有页面",isPresented:Binding(get:{missingLink != nil},set:{if !$0{missingLink=nil}})){
+                Button("取消",role:.cancel){missingLink=nil}
+                Button("新建关联笔记"){
+                    if let title=missingLink{let new=Page(title:title);if store.save(new){editor=new}}
+                    missingLink=nil
+                }
+            }message:{Text("创建“\(missingLink ?? "")”，继续写下去。")}
             .environment(\.openURL,OpenURLAction{url in
                 if url.scheme=="lifeos",let components=URLComponents(url:url,resolvingAgainstBaseURL:false),let title=components.queryItems?.first(where:{$0.name=="title"})?.value {
-                    if let match=store.active.first(where:{$0.displayTitle==title}){linked=match}else{store.notice="还没有名为“\(title)”的笔记。"};return .handled
+                    if let match=store.active.first(where:{$0.displayTitle==title}){linked=match}else{missingLink=title};return .handled
                 }
                 return .systemAction
             })
         }
     }
-    private func toggleTask(_ line:Int,page:Page){var copy=page;var lines=copy.body.components(separatedBy:"\n");guard lines.indices.contains(line)else{return};if lines[line].hasPrefix("- [ ] "){lines[line]=lines[line].replacingOccurrences(of:"- [ ] ",with:"- [x] ")}else{lines[line]=lines[line].replacingOccurrences(of:"- [x] ",with:"- [ ] ")};copy.body=lines.joined(separator:"\n");_ = store.save(copy)}
+    private func toggleTask(_ line:Int,page:Page){
+        var copy=page
+        copy.body=Markdown.toggleVisibleTask(page.body,line:line)
+        _ = store.save(copy)
+    }
 }
 
 struct MarkdownBody:View {
@@ -81,7 +93,7 @@ struct MarkdownBody:View {
     var spacing:CGFloat=9
     var onToggle:((Int)->Void)?=nil
     init(body:String,serif:Bool=false,spacing:CGFloat=9,onToggle:((Int)->Void)?=nil){self.source=body;self.serif=serif;self.spacing=spacing;self.onToggle=onToggle}
-    private var lines:[String]{source.components(separatedBy:"\n")}
+    private var lines:[String]{Markdown.readableContent(source).components(separatedBy:"\n")}
     var bodyView:some View {
         VStack(alignment:.leading,spacing:spacing){ForEach(Array(lines.enumerated()),id:\.offset){index,line in
             if line.isEmpty{Color.clear.frame(height:6).accessibilityHidden(true)}
@@ -98,13 +110,7 @@ struct MarkdownBody:View {
     }
     var body:some View {bodyView}
     private func inline(_ text:String)->Text {
-        let regex=try! NSRegularExpression(pattern:#"\[\[([^\]\n]+)\]\]"#)
-        var markdown=text
-        for match in regex.matches(in:text,range:NSRange(text.startIndex...,in:text)).reversed(){
-            guard let full=Range(match.range,in:markdown),let titleRange=Range(match.range(at:1),in:text)else{continue}
-            let title=String(text[titleRange]);var url=URLComponents();url.scheme="lifeos";url.host="note";url.queryItems=[URLQueryItem(name:"title",value:title)]
-            markdown.replaceSubrange(full,with:"[\(title)](\(url.string ?? ""))")
-        }
+        let markdown=Markdown.inlineLinks(text)
         return Text((try? AttributedString(markdown:markdown,options:.init(interpretedSyntax:.inlineOnlyPreservingWhitespace))) ?? AttributedString(text))
     }
 }

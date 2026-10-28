@@ -1,8 +1,8 @@
 import SwiftUI
 
 enum Paper {
-    static let background=Color(uiColor:.systemGroupedBackground)
-    static let surface=Color(uiColor:.secondarySystemGroupedBackground)
+    static let background=Color("PaperBackground")
+    static let surface=Color("PaperSurface")
     static let ink=Color.primary
     static let secondary=Color.secondary
     static let accent=Color("Evergreen")

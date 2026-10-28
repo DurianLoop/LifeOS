@@ -23,7 +23,7 @@ final class RepositoryTests:XCTestCase {
         let repo=try Repository(root:root.appendingPathComponent("original"))
         let page=Page(title:"读书",body:"原文");try repo.save(page)
         let bytes=Data([0,1,2,255])
-        let withFile=try repo.addAttachment(data:bytes,name:"picture.dat",page:page)
+        _ = try repo.addAttachment(data:bytes,name:"picture.dat",page:page)
         let backup=try repo.decodeBackup(repo.backupData())
         let other=try Repository(root:root.appendingPathComponent("other"))
         XCTAssertEqual(try other.merge(backup),1)
@@ -31,7 +31,7 @@ final class RepositoryTests:XCTestCase {
         XCTAssertEqual(try Data(contentsOf:other.attachmentsURL.appendingPathComponent(attachment.storedName)),bytes)
         // Stable IDs plus semantic equality skip repeated imports even after files are relocated.
         XCTAssertEqual(try other.merge(backup),0)
-        var changed=withFile;changed.body="保留本机修改";try other.save(changed)
+        var changed=try XCTUnwrap(other.workspace.pages.first);changed.body="保留本机修改";try other.save(changed)
         XCTAssertEqual(try other.merge(backup),1)
         XCTAssertEqual(other.workspace.pages.count,2)
         XCTAssertTrue(other.workspace.pages.contains{$0.body=="保留本机修改"})
@@ -65,11 +65,34 @@ final class RepositoryTests:XCTestCase {
         for name in ["../escape","/absolute","a/../../outside","a\\outside","C:/path","a\0b"]{XCTAssertFalse(SafeZIP.safe(name))}
         XCTAssertThrowsError(try SafeZIP.extract(Data("not a zip".utf8),to:root.appendingPathComponent("unzip")))
     }
+    func testZIPInflationCRCAndTraversal()throws{
+        let valid=Data(base64Encoded:"UEsDBBQAAAAIABCnXF1KbAgwDgAAAAwAAAAPAAAAbm90ZXMvcmVhZG1lLm1k80jNyclXeLJj7bNp7QBQSwECFAAUAAAACAAQp1xdSmwIMA4AAAAMAAAADwAAAAAAAAAAAAAAgAEAAAAAbm90ZXMvcmVhZG1lLm1kUEsFBgAAAAABAAEAPQAAADsAAAAAAA==")!
+        let output=root.appendingPathComponent("zip")
+        try SafeZIP.extract(valid,to:output)
+        XCTAssertEqual(try String(contentsOf:output.appendingPathComponent("notes/readme.md"),encoding:.utf8),"Hello 中文")
+        var damaged=valid;damaged[46] ^= 0xff
+        XCTAssertThrowsError(try SafeZIP.extract(damaged,to:root.appendingPathComponent("bad-crc")))
+        let traversal=Data(base64Encoded:"UEsDBBQAAAAIABCnXF1KbAgwDgAAAAwAAAAMAAAALi4vZXNjYXBlLm1k80jNyclXeLJj7bNp7QBQSwECFAAUAAAACAAQp1xdSmwIMA4AAAAMAAAADAAAAAAAAAAAAAAAgAEAAAAALi4vZXNjYXBlLm1kUEsFBgAAAAABAAEAOgAAADgAAAAAAA==")!
+        XCTAssertThrowsError(try SafeZIP.extract(traversal,to:root.appendingPathComponent("unsafe")))
+        XCTAssertFalse(FileManager.default.fileExists(atPath:root.appendingPathComponent("escape.md").path))
+    }
     func testMarkdownImportAndExportKeepsWriting() throws {
         let repo=try Repository(root:root)
         let page=try repo.importMarkdown(Data("# 读书札记\n\n中文 **原文**\n- [ ] 待办\n[[关联]]".utf8),name:"note.md")
         XCTAssertEqual(page.title,"读书札记");XCTAssertTrue(page.body.contains("**原文**"));XCTAssertTrue(repo.markdown(page).contains("[[关联]]"))
         XCTAssertThrowsError(try repo.importMarkdown(Data([255,254,253]),name:"broken.txt"))
+    }
+    func testMarkdownTasksAndUnicodeLinks()throws{
+        let line="- [ ] 保留任务里的 - [ ] 原文"
+        XCTAssertEqual(Markdown.toggleTask(line,line:0),"- [x] 保留任务里的 - [ ] 原文")
+        XCTAssertEqual(Markdown.toggleTask(line,line:3),line)
+        let text="前言 [[生活 🍵]]，再回到 [[另一页]]。"
+        XCTAssertEqual(Markdown.linkTitles(text),["生活 🍵","另一页"])
+        let rendered=Markdown.inlineLinks(text)
+        XCTAssertTrue(rendered.contains("[生活 🍵](lifeos://note?title="));XCTAssertTrue(rendered.contains("[另一页](lifeos://note?title="))
+        XCTAssertTrue(rendered.hasSuffix("。"))
+        let metadata="---\r\nlifeos_entry_id: old\r\n---\r\n\r\n- [ ] 保留文字"
+        XCTAssertEqual(Markdown.toggleVisibleTask(metadata,line:0),"---\nlifeos_entry_id: old\n---\n\n- [x] 保留文字")
     }
     func testLegacyDatabaseMigrationPreservesOriginal() throws {
         let workspace=root.appendingPathComponent("legacy")

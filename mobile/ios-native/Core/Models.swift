@@ -38,14 +38,9 @@ struct Page: Identifiable, Codable, Equatable {
     var attachments: [Attachment] = []
 
     var displayTitle: String { title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? (kind == .journal ? "日记 · \(journalDate ?? "今天")" : "未命名笔记") : title }
-    var excerpt: String { String(body.replacingOccurrences(of: #"[#*>`\[\]]"#, with: "", options: .regularExpression).split(whereSeparator: \.isNewline).joined(separator: " ").prefix(120)) }
+    var excerpt: String { String(Markdown.readableContent(body).replacingOccurrences(of: #"[#*>`\[\]]"#, with: "", options: .regularExpression).split(whereSeparator: \.isNewline).joined(separator: " ").prefix(120)) }
     var wordCount: Int { body.filter { !$0.isWhitespace }.count }
-    var wikiLinks: [String] {
-        guard let regex = try? NSRegularExpression(pattern: #"\[\[([^\]\n]+)\]\]"#) else { return [] }
-        return regex.matches(in: body, range: NSRange(body.startIndex..., in: body)).compactMap { match in
-            Range(match.range(at: 1), in: body).map { String(body[$0]) }
-        }
-    }
+    var wikiLinks: [String] {Markdown.linkTitles(body)}
 }
 
 struct Workspace: Codable, Equatable {
