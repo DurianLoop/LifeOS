@@ -28,6 +28,6 @@
 
 ## 兼容性与实际验收
 
-最低部署版本为 iOS 17，iOS 26 及更新版本使用系统 Liquid Glass。CI 会分别编译 iPhone 真机目标和模拟器目标，并在两种 iPhone 模拟器上运行界面验收。用户提供的系统版本为 iOS 27.2；本轮尚未在这台实体 iPhone 上安装测试，不能把模拟器通过等同于真机安装成功。安装失败时可提供错误文字，账号或验证码无需提供。
+最低部署版本为 iOS 17，iOS 26 及更新版本使用系统 Liquid Glass。CI 会分别编译 iPhone 真机目标和模拟器目标，并在两种 iPhone 模拟器上运行界面验收。iOS 27.2 的实际安装与使用仍需在目标手机上确认，不能把模拟器通过等同于真机安装成功。安装失败时可提供错误文字，账号或验证码无需提供。
 
 官方依据：[Apple 会员与 Personal Team 限制](https://developer.apple.com/support/compare-memberships/)、[Sideloadly 安装与免费签名说明](https://sideloadly.io/)。

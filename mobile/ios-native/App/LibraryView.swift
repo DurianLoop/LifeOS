@@ -67,7 +67,12 @@ struct SettingsView:View {
         Form {
             Section("外观") {Picker("显示模式",selection:$appearance){Text("跟随系统").tag("system");Text("浅色").tag("light");Text("深色").tag("dark")}.pickerStyle(.menu).accessibilityIdentifier("settings.appearance")}
             Section {Toggle("衬线字体",isOn:$serif);Toggle("舒展的行距",isOn:$comfortable)}header:{Text("阅读")}footer:{Text("字号随 iPhone 的系统文字大小调整，也支持辅助功能中的更大字体。")}
-            Section("界面材质"){Label("Liquid Glass",systemImage:"circle.lefthalf.filled");Text("iOS 26 的导航与操作控件使用系统玻璃材质。较早系统使用原生半透明材质；开启“减少透明度”后自动提高不透明度。").font(.footnote).foregroundStyle(.secondary)}
+            Section("阅读预览"){
+                VStack(alignment:.leading,spacing:16){
+                    Text("给生活留一点空白").font(.system(.title3,design:serif ? .serif : .default).weight(.semibold))
+                    Text("从一句话开始，慢慢写下去。\n那些细小而明亮的时刻，值得被记住。") .font(.system(.body,design:serif ? .serif : .default)).lineSpacing(comfortable ? 8 : 3)
+                }.padding(.vertical,14).accessibilityElement(children:.combine)
+            }
             Section{NavigationLink("导入与备份"){TransferView()}}
             Section("关于 LifeOS"){LabeledContent("版本",value:"0.7.1");Text("一个安静的地方，用来写下生活、安放想法。\n\n日记与附件保存在本机。请定期导出完整备份，卸载应用会移除设备上的数据。").font(.footnote).foregroundStyle(.secondary).lineSpacing(5)}
         }.scrollContentBackground(.hidden).background(Paper.background).navigationTitle("外观与阅读").navigationBarTitleDisplayMode(.inline)

@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import UniformTypeIdentifiers
 
 @MainActor final class LibraryStore: ObservableObject {
@@ -53,6 +54,7 @@ import UniformTypeIdentifiers
         var p=page;p.deletedAt=Date()
         guard save(p) else{return false}
         pendingTrash=TrashUndo(pageID:page.id,title:page.displayTitle)
+        UIAccessibility.post(notification:.announcement,argument:"已移到废纸篓，可以轻点撤销。")
         return true
     }
     func undoTrash() {

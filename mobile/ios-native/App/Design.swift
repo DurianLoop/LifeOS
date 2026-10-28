@@ -39,7 +39,6 @@ private struct PageNavigation:ViewModifier {
                     }.foregroundStyle(.white).padding(.leading,17).padding(.trailing,7).padding(.vertical,8)
                         .background(Paper.accent,in:RoundedRectangle(cornerRadius:18)).padding(.horizontal,20).padding(.bottom,8)
                         .accessibilityElement(children:.contain).accessibilityLabel("“\(pending.title)”已移到废纸篓，可以撤销")
-                        .accessibilityLiveRegion(.polite)
                 }
             }
             .animation(reduceMotion ? nil : .easeInOut(duration:0.2),value:store.pendingTrash?.id)
