@@ -32,7 +32,7 @@ struct LibraryView:View {
                 }
                 Section {VStack(alignment:.leading,spacing:8){Text("以自己的节奏积累。").font(.system(.title3,design:.serif));Text("本地保存 · 无需账号 · 不自动上传").font(.caption).foregroundStyle(.secondary)}.padding(.vertical,10).listRowBackground(Color.clear)}
             }
-            .navigationTitle("资料库")
+            .scrollContentBackground(.hidden).background(Paper.background).navigationTitle("资料库")
             .alert(renaming == nil ? "新建笔记本" : "重命名",isPresented:$newBook){
                 TextField("笔记本名称",text:$bookName)
                 Button("取消",role:.cancel){renaming=nil}
@@ -64,12 +64,12 @@ struct SettingsView:View {
     @AppStorage("comfortableReading") private var comfortable=true
     var body:some View {
         Form {
-            Section("外观") {Picker("显示模式",selection:$appearance){Text("跟随系统").tag("system");Text("浅色").tag("light");Text("深色").tag("dark")}}
+            Section("外观") {Picker("显示模式",selection:$appearance){Text("跟随系统").tag("system");Text("浅色").tag("light");Text("深色").tag("dark")}.pickerStyle(.menu).accessibilityIdentifier("settings.appearance")}
             Section {Toggle("衬线字体",isOn:$serif);Toggle("舒展的行距",isOn:$comfortable)}header:{Text("阅读")}footer:{Text("字号随 iPhone 的系统文字大小调整，也支持辅助功能中的更大字体。")}
             Section("界面材质"){Label("Liquid Glass",systemImage:"circle.lefthalf.filled");Text("iOS 26 的导航与操作控件使用系统玻璃材质。较早系统使用原生半透明材质；开启“减少透明度”后自动提高不透明度。").font(.footnote).foregroundStyle(.secondary)}
             Section{NavigationLink("导入与备份"){TransferView()}}
             Section("关于 LifeOS"){LabeledContent("版本",value:"0.7.0 · iOS 重构");Text("一个安静的地方，用来写下生活、安放想法。\n\n日记与附件保存在本机。请定期导出完整备份，卸载应用会移除设备上的数据。").font(.footnote).foregroundStyle(.secondary).lineSpacing(5)}
-        }.navigationTitle("外观与阅读").navigationBarTitleDisplayMode(.inline)
+        }.scrollContentBackground(.hidden).background(Paper.background).navigationTitle("外观与阅读").navigationBarTitleDisplayMode(.inline)
     }
 }
 
@@ -80,7 +80,7 @@ struct TrashView:View {
             let pages=store.workspace.pages.filter{$0.deletedAt != nil}.sorted{$0.deletedAt! > $1.deletedAt!}
             if pages.isEmpty{EmptyPaper(symbol:"trash",title:"废纸篓是空的",message:"删除的笔记会留在这里，\n需要时可以恢复。") .listRowBackground(Color.clear).listRowSeparator(.hidden)}
             ForEach(pages){page in VStack(alignment:.leading,spacing:9){PageRow(page:page);Button("恢复笔记",systemImage:"arrow.uturn.backward"){store.restore(page)}.accessibilityIdentifier("trash.restore."+page.id)}.padding(.bottom,12)}
-        }.navigationTitle("废纸篓").listStyle(.plain)
+        }.navigationTitle("废纸篓").listStyle(.plain).scrollContentBackground(.hidden).background(Paper.background)
     }
 }
 
@@ -99,7 +99,7 @@ struct TransferView:View {
                 Button{exportBackup()}label:{HStack{Label("导出完整备份",systemImage:"externaldrive");Spacer();if working{ProgressView()}}}.disabled(working).accessibilityIdentifier("transfer.export")
             }header:{Text("为资料留一份副本")}footer:{Text("备份包含笔记、笔记本、标签、历史版本、废纸篓和附件。请存入“文件”或你信任的位置；备份文件未额外加密，请自行妥善保管。")}
             Section("关于同步"){Text("资料保存在这台设备。当前版本暂不自动同步到其他设备；可通过完整备份迁移。若开启系统设备备份，数据由你的系统备份设置管理。").font(.subheadline).foregroundStyle(.secondary).lineSpacing(4)}
-        }.navigationTitle("导入与备份").navigationBarTitleDisplayMode(.inline)
+        }.scrollContentBackground(.hidden).background(Paper.background).navigationTitle("导入与备份").navigationBarTitleDisplayMode(.inline)
             .fileImporter(isPresented:$importing,allowedContentTypes:[.plainText,.json,.zip,UTType(filenameExtension:"md") ?? .plainText],allowsMultipleSelection:true){result in
                 switch result{case .success(let urls):store.previewImport(urls);case .failure(let error):store.error=error.localizedDescription}
             }

@@ -56,7 +56,7 @@ struct PageRow:View {
             VStack(alignment:.leading,spacing:7){
                 HStack(alignment:.firstTextBaseline){Text(page.displayTitle).font(.body.weight(.medium)).foregroundStyle(Paper.ink).lineLimit(2);if page.pinned{Image(systemName:"pin.fill").font(.caption2).foregroundStyle(.tertiary)}}
                 if !page.excerpt.isEmpty{Text(page.excerpt).font(.subheadline).foregroundStyle(.secondary).lineLimit(2).lineSpacing(3)}
-                HStack(spacing:8){Text(page.updatedAt,format:.dateTime.month(.abbreviated).day());if let book{Text("·");Text(book)};if let tag=page.tags.first{Text("#"+tag).foregroundStyle(Paper.accent)}}.font(.caption).foregroundStyle(.tertiary).lineLimit(1)
+                HStack(spacing:8){Text(page.updatedAt,format:.dateTime.month(.abbreviated).day());if let book{Text("·");Text(book)};if let tag=page.tags.first{Text("#"+tag).foregroundStyle(Paper.accent)}}.font(.caption).foregroundStyle(.secondary).lineLimit(1)
             }
             Spacer(minLength:0)
         }.padding(.vertical,13).contentShape(Rectangle()).accessibilityElement(children:.combine)

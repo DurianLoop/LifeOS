@@ -1,12 +1,17 @@
 from pathlib import Path
-import hashlib,json,plistlib,subprocess
+import hashlib,json,plistlib,re,subprocess
 root=Path(__file__).parent
 app=root/'DerivedData/Build/Products/Release-iphonesimulator/LifeOS.app'
 info=plistlib.loads((app/'Info.plist').read_bytes())
 assert info['CFBundleIdentifier']=='life.lifeos.lifeosmobile'
 assert info['CFBundleShortVersionString']=='0.7.0'
 assert info['DTPlatformName']=='iphonesimulator'
+architectures=subprocess.check_output(['lipo','-archs',str(app/'LifeOS')],text=True).strip().split()
+assert architectures==['arm64']
 assert not list(app.rglob('Library.json'))
+core_log=(root/'build/qa/core-tests.log').read_text()
+core_counts=re.findall(r'Executed (\d+) tests, with 0 failures',core_log)
+assert core_counts and int(core_counts[-1])>=10
 summary=json.loads((root/'build/qa/TEST_SUMMARY.json').read_text())
 assert summary['failedTests']==0 and summary['passedTests']>=7
 compact=json.loads((root/'build/qa/COMPACT_TEST_SUMMARY.json').read_text())
@@ -14,8 +19,8 @@ assert compact['failedTests']==0 and compact['passedTests']>=3
 file=root/'build/dist/LifeOS-0.7.0-ios-simulator-arm64.zip'
 report={'ok':True,'version':'0.7.0','kind':'iOS simulator only','bundle_id':info['CFBundleIdentifier'],
  'commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip(),
- 'native_swiftui':True,'minimum_ios':'17.0','liquid_glass_ios':'26.0','no_phone_distribution':True,
- 'contains_user_memory':False,'external_model_calls':0,'tests':summary,'compact_screen_tests':compact,
+ 'native_swiftui':True,'minimum_ios':'17.0','liquid_glass_ios':'26.0','no_phone_distribution':True,'architectures':architectures,
+ 'contains_user_memory':False,'external_model_calls':0,'core_tests_passed':int(core_counts[-1]),'tests':summary,'compact_screen_tests':compact,
  'asset':{'name':file.name,'bytes':file.stat().st_size,'sha256':hashlib.sha256(file.read_bytes()).hexdigest()}}
 (root/'build/dist/IOS_NATIVE_VALIDATION.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
 (root/'build/dist/SHA256SUMS.txt').write_text(report['asset']['sha256']+'  '+file.name+'\n')

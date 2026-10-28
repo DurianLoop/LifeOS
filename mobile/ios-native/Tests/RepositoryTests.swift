@@ -94,6 +94,19 @@ final class RepositoryTests:XCTestCase {
         let metadata="---\r\nlifeos_entry_id: old\r\n---\r\n\r\n- [ ] 保留文字"
         XCTAssertEqual(Markdown.toggleVisibleTask(metadata,line:0),"---\nlifeos_entry_id: old\n---\n\n- [x] 保留文字")
     }
+    func testFencedCodeKeepsSourceLineIdentity()throws{
+        let source="---\nentry: old\n---\n\n## Code\n\n```swift\nlet value = \"**literal**\"\n- [ ] not a task\n```\n\n- [ ] Actual task\n\n---"
+        let blocks=Markdown.blocks(source)
+        let code=try XCTUnwrap(blocks.first{$0.kind == .code})
+        XCTAssertEqual(code.language,"swift")
+        XCTAssertEqual(code.text,"let value = \"**literal**\"\n- [ ] not a task")
+        XCTAssertEqual(blocks.last?.kind,.divider)
+        let task=try XCTUnwrap(blocks.first{$0.kind == .line && $0.text.hasPrefix("- [ ]")})
+        let changed=Markdown.toggleVisibleTask(source,line:task.id)
+        XCTAssertTrue(changed.contains("- [ ] not a task"))
+        XCTAssertTrue(changed.contains("- [x] Actual task"))
+        XCTAssertEqual(Markdown.blocks("~~~text\n中文代码").first?.text,"中文代码")
+    }
     func testLegacyDatabaseMigrationPreservesOriginal() throws {
         let workspace=root.appendingPathComponent("legacy")
         try FileManager.default.createDirectory(at:workspace.appendingPathComponent(".lifeos"),withIntermediateDirectories:true)

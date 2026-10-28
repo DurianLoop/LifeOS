@@ -25,7 +25,7 @@ struct PageDetail:View {
                         VStack(alignment:.leading,spacing:23){
                             HStack(spacing:8){Image(systemName:page.kind == .journal ? "sun.horizon" : "doc.text");Text(page.kind == .journal ? page.journalDate ?? "日记" : store.bookName(page.notebookID))}.font(.subheadline).foregroundStyle(Paper.accent).padding(.top,16)
                             Text(page.displayTitle).font(.system(.largeTitle,design:serif ? .serif : .default).weight(.semibold)).fixedSize(horizontal:false,vertical:true).accessibilityIdentifier("reader.title")
-                            HStack{Text(page.updatedAt,format:.dateTime.month().day().hour().minute());Text("·");Text("\(page.wordCount) 字")}.font(.caption).foregroundStyle(.tertiary)
+                            HStack{Text(page.updatedAt,format:.dateTime.month().day().hour().minute());Text("·");Text("\(page.wordCount) 字")}.font(.caption).foregroundStyle(.secondary)
                             if !page.tags.isEmpty{FlowTags(tags:page.tags)}
                             Divider()
                             if page.body.isEmpty{Text("这一页还留着空白。轻点编辑，开始写下第一句。").font(.body).foregroundStyle(.secondary).padding(.vertical,24)}
@@ -93,18 +93,27 @@ struct MarkdownBody:View {
     var spacing:CGFloat=9
     var onToggle:((Int)->Void)?=nil
     init(body:String,serif:Bool=false,spacing:CGFloat=9,onToggle:((Int)->Void)?=nil){self.source=body;self.serif=serif;self.spacing=spacing;self.onToggle=onToggle}
-    private var lines:[String]{Markdown.readableContent(source).components(separatedBy:"\n")}
+    private var blocks:[Markdown.Block]{Markdown.blocks(source)}
     var bodyView:some View {
-        VStack(alignment:.leading,spacing:spacing){ForEach(Array(lines.enumerated()),id:\.offset){index,line in
-            if line.isEmpty{Color.clear.frame(height:6).accessibilityHidden(true)}
+        VStack(alignment:.leading,spacing:spacing){ForEach(blocks){block in
+            let line=block.text
+            if block.kind == .code {
+                VStack(alignment:.leading,spacing:12){
+                    if !block.language.isEmpty{Text(block.language.uppercased()).font(.caption2.weight(.medium)).foregroundStyle(.secondary)}
+                    ScrollView(.horizontal){Text(block.text).font(.system(.callout,design:.monospaced)).fixedSize(horizontal:true,vertical:false).textSelection(.enabled).padding(.bottom,4)}
+                }.padding(17).background(Paper.background,in:RoundedRectangle(cornerRadius:13)).overlay(RoundedRectangle(cornerRadius:13).stroke(Paper.line))
+            }
+            else if block.kind == .divider {Divider().padding(.vertical,12)}
+            else if line.isEmpty{Color.clear.frame(height:6).accessibilityHidden(true)}
             else if line.hasPrefix("- [ ] ") || line.hasPrefix("- [x] ") {
                 let checked=line.hasPrefix("- [x] ")
-                HStack(alignment:.top,spacing:11){Button{onToggle?(index)}label:{Image(systemName:checked ? "checkmark.square.fill" : "square").foregroundStyle(checked ? Paper.accent : .secondary).frame(minWidth:28,minHeight:28)}.disabled(onToggle==nil).accessibilityLabel(checked ? "标为未完成" : "标为已完成");inline(String(line.dropFirst(6))).strikethrough(checked).foregroundStyle(checked ? .secondary : .primary)}
+                HStack(alignment:.top,spacing:11){Button{onToggle?(block.id)}label:{Image(systemName:checked ? "checkmark.square.fill" : "square").foregroundStyle(checked ? Paper.accent : .secondary).frame(minWidth:28,minHeight:28)}.disabled(onToggle==nil).accessibilityLabel(checked ? "标为未完成" : "标为已完成");inline(String(line.dropFirst(6))).strikethrough(checked).foregroundStyle(checked ? .secondary : .primary)}
             } else if line.hasPrefix("### "){inline(String(line.dropFirst(4))).font(.headline).padding(.top,10)}
             else if line.hasPrefix("## "){inline(String(line.dropFirst(3))).font(.system(.title3,design:serif ? .serif : .default).weight(.semibold)).padding(.top,14)}
             else if line.hasPrefix("# "){inline(String(line.dropFirst(2))).font(.system(.title2,design:serif ? .serif : .default).weight(.semibold)).padding(.top,14)}
             else if line.hasPrefix("> "){HStack(alignment:.top,spacing:14){Rectangle().fill(Paper.accent.opacity(0.4)).frame(width:3);inline(String(line.dropFirst(2))).foregroundStyle(.secondary)}.fixedSize(horizontal:false,vertical:true).padding(.vertical,9)}
             else if line.hasPrefix("- ") || line.hasPrefix("* "){HStack(alignment:.top,spacing:12){Text("•").foregroundStyle(Paper.accent);inline(String(line.dropFirst(2)))}}
+            else if let range=line.range(of:#"^\d+\.\s+"#,options:.regularExpression){HStack(alignment:.top,spacing:12){Text(String(line[range]).trimmingCharacters(in:.whitespaces)).foregroundStyle(Paper.accent);inline(String(line[range.upperBound...]))}}
             else {inline(line)}
         }}.font(.system(.body,design:serif ? .serif : .default)).lineSpacing(spacing/2).frame(maxWidth:.infinity,alignment:.leading).textSelection(.enabled)
     }
@@ -130,7 +139,7 @@ struct HistoryView:View {
             List {
                 if page.revisions.isEmpty{EmptyPaper(symbol:"clock.arrow.circlepath",title:"还没有历史版本",message:"继续写作后，修改前的内容会在这里留存。\n连续输入会合并为约五分钟一次的版本。") .listRowBackground(Color.clear)}
                 ForEach(page.revisions.reversed()){revision in Button{selected=revision}label:{VStack(alignment:.leading,spacing:8){Text(revision.date,format:.dateTime.month().day().hour().minute()).font(.subheadline.weight(.medium));Text(revision.body).font(.subheadline).foregroundStyle(.secondary).lineLimit(3)}.padding(.vertical,8)}.buttonStyle(.plain)}
-            }.navigationTitle("历史版本").navigationBarTitleDisplayMode(.inline).toolbar{ToolbarItem(placement:.confirmationAction){Button("完成"){dismiss()}}}
+            }.scrollContentBackground(.hidden).background(Paper.background).navigationTitle("历史版本").navigationBarTitleDisplayMode(.inline).toolbar{ToolbarItem(placement:.confirmationAction){Button("完成"){dismiss()}}}
                 .sheet(item:$selected){revision in NavigationStack{ScrollView{VStack(alignment:.leading,spacing:20){Text(revision.title).font(.title2);MarkdownBody(body:revision.body,serif:true)}.padding(26)}.navigationTitle("版本预览").navigationBarTitleDisplayMode(.inline).toolbar{ToolbarItem(placement:.confirmationAction){Button("恢复此版本"){store.restoreRevision(revision,page:page);selected=nil;dismiss()}};ToolbarItem(placement:.cancellationAction){Button("取消"){selected=nil}}}}}
         }
     }

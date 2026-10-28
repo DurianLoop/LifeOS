@@ -23,7 +23,10 @@ jobs:
           python3 mobile/ios-native/generate_project.py
       - name: Test durable storage and migration
         working-directory: mobile/ios-native
-        run: swift test
+        run: |
+          set -o pipefail
+          mkdir -p build/qa
+          swift test 2>&1 | tee build/qa/core-tests.log
       - name: Select iOS 26 simulator
         run: |
           python3 - <<'PY'

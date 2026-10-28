@@ -66,6 +66,10 @@ final class LifeOSUITests:XCTestCase {
         app.tabBars.buttons["日记"].tap()
         XCTAssertTrue(app.buttons["journal.read"].waitForExistence(timeout:5))
         capture("07-journal")
+        app.buttons["journal.calendar"].tap()
+        XCTAssertTrue(app.buttons["journal.calendar.done"].waitForExistence(timeout:5))
+        capture("17-calendar")
+        app.buttons["journal.calendar.done"].tap()
         app.tabBars.buttons["资料库"].tap()
         XCTAssertTrue(app.buttons["library.addNotebook"].waitForExistence(timeout:5))
         capture("08-library")
@@ -89,7 +93,7 @@ final class LifeOSUITests:XCTestCase {
     }
     func testAppearanceAndNativeBackupPicker() throws {
         app.tabBars.buttons["资料库"].tap();reveal(app.buttons["library.settings"]);app.buttons["library.settings"].tap()
-        app.buttons["显示模式"].tap();app.buttons["深色"].tap()
+        app.buttons["settings.appearance"].tap();app.buttons["深色"].tap()
         capture("11-dark-settings")
         app.navigationBars.buttons.element(boundBy:0).tap()
         app.buttons["导入与备份"].tap()

@@ -1,6 +1,38 @@
 import Foundation
 
 enum Markdown {
+    struct Block:Identifiable,Equatable {
+        enum Kind:Equatable {case line,code,divider}
+        var id:Int
+        var kind:Kind
+        var text:String
+        var language:String=""
+    }
+    static func blocks(_ source:String)->[Block]{
+        let lines=readableContent(source).components(separatedBy:"\n")
+        var result:[Block]=[]
+        var index=0
+        while index<lines.count {
+            let text=lines[index].trimmingCharacters(in:.whitespaces)
+            if text.hasPrefix("```") || text.hasPrefix("~~~") {
+                let marker=text.first!
+                let fence=String(text.prefix(while:{$0==marker}))
+                let language=String(text.dropFirst(fence.count)).trimmingCharacters(in:.whitespaces)
+                let start=index;index+=1
+                var code:[String]=[]
+                while index<lines.count {
+                    let candidate=lines[index].trimmingCharacters(in:.whitespaces)
+                    if candidate.count>=fence.count && candidate.allSatisfy({$0==marker}) {index+=1;break}
+                    code.append(lines[index]);index+=1
+                }
+                result.append(Block(id:start,kind:.code,text:code.joined(separator:"\n"),language:language))
+                continue
+            }
+            result.append(Block(id:index,kind:["---","***","___"].contains(text) ? .divider : .line,text:lines[index]))
+            index+=1
+        }
+        return result
+    }
     static func readableContent(_ text:String)->String{
         let normalized=text.replacingOccurrences(of:"\r\n",with:"\n")
         guard normalized.hasPrefix("---\n"),let end=normalized.range(of:"\n---",range:normalized.index(normalized.startIndex,offsetBy:4)..<normalized.endIndex) else{return normalized}

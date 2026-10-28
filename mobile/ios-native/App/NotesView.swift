@@ -6,7 +6,7 @@ struct NotesView:View {
     @State private var filter="全部"
     let open:(Page)->Void
     let create:()->Void
-    private var pages:[Page]{store.active.filter{filter == "全部" || $0.pinned}}
+    private var pages:[Page]{store.active.filter{filter == "全部" || $0.pinned}.sorted{a,b in a.pinned != b.pinned ? a.pinned : a.updatedAt>b.updatedAt}}
     var body:some View {
         NavigationStack {
             ScrollView {
@@ -73,6 +73,7 @@ struct PageCollection:View {
 
 struct JournalView:View {
     @EnvironmentObject private var store:LibraryStore
+    @Environment(\.dynamicTypeSize) private var typeSize
     @State private var day=Date()
     @State private var showCalendar=false
     let open:(Page)->Void
@@ -85,13 +86,9 @@ struct JournalView:View {
                 VStack(alignment:.leading,spacing:28){
                     HStack(alignment:.firstTextBaseline){
                         VStack(alignment:.leading,spacing:7){Text(day,format:.dateTime.year().month(.wide)).font(.subheadline).foregroundStyle(.secondary);Text("日子，一页一页。").font(.system(.title,design:.serif))}
-                        Spacer();Button{showCalendar=true}label:{Image(systemName:"calendar").font(.title3).padding(13)}.glassControl().accessibilityLabel("选择日期")
+                        Spacer();Button{showCalendar=true}label:{Image(systemName:"calendar").font(.title3).padding(13)}.glassControl().accessibilityLabel("选择日期").accessibilityIdentifier("journal.calendar")
                     }.padding(.top,14)
-                    HStack(spacing:4){ForEach(days,id:\.self){date in
-                        let chosen=Day.key(date)==Day.key(day)
-                        let hasPage=store.active.contains{$0.kind == .journal && $0.journalDate==Day.key(date)}
-                        Button{day=date}label:{VStack(spacing:12){Text(date,format:.dateTime.weekday(.narrow)).font(.caption);Text(date,format:.dateTime.day()).font(.body.weight(chosen ? .semibold : .regular));Circle().fill(hasPage ? (chosen ? Color.white : Paper.accent) : .clear).frame(width:4,height:4)}.frame(maxWidth:.infinity).padding(.vertical,12).foregroundStyle(chosen ? .white : .primary).background(chosen ? Paper.accent : Color.clear,in:Capsule())}.buttonStyle(.plain).accessibilityLabel(date.formatted(date:.complete,time:.omitted)).accessibilityAddTraits(chosen ? .isSelected : [])
-                    }}
+                    if typeSize.isAccessibilitySize {ScrollView(.horizontal,showsIndicators:false){weekStrip}} else {weekStrip}
                     if let page=selected {
                         VStack(alignment:.leading,spacing:17){
                             HStack{Text(day,format:.dateTime.month().day().weekday(.wide)).font(.caption).foregroundStyle(.secondary);Spacer();Text("\(page.wordCount) 字").font(.caption).foregroundStyle(.tertiary)}
@@ -99,7 +96,7 @@ struct JournalView:View {
                             MarkdownBody(body:page.body,serif:true).lineLimit(18)
                             Button{open(page)}label:{HStack{Text("继续阅读");Image(systemName:"arrow.up.right")}.font(.subheadline.weight(.medium)).padding(.top,10)}.accessibilityIdentifier("journal.read")
                         }.padding(24).frame(maxWidth:.infinity,alignment:.leading).background(Paper.surface,in:RoundedRectangle(cornerRadius:24)).overlay(RoundedRectangle(cornerRadius:24).stroke(Paper.line))
-                        Button{edit(page)}label:{Label("继续写今天",systemImage:"square.and.pencil").padding(.horizontal,22).padding(.vertical,14)}.glassControl().frame(maxWidth:.infinity)
+                        Button{edit(page)}label:{Label(Calendar.current.isDateInToday(day) ? "继续写今天" : "继续写这一天",systemImage:"square.and.pencil").padding(.horizontal,22).padding(.vertical,14)}.glassControl().frame(maxWidth:.infinity)
                     } else {
                         EmptyPaper(symbol:"sun.horizon",title:Calendar.current.isDateInToday(day) ? "今天，还留着空白" : "这一天，还没有记录",message:"不必写得完整。\n一句话，也能留住今天。",action:"写下这一天"){if let page=store.create(kind:.journal,date:day){edit(page)}}.background(Paper.surface,in:RoundedRectangle(cornerRadius:24))
                     }
@@ -109,8 +106,15 @@ struct JournalView:View {
                     }
                 }.padding(24).frame(maxWidth:760).frame(maxWidth:.infinity).padding(.bottom,30)
             }.background(Paper.background).navigationTitle("日记").navigationBarTitleDisplayMode(.inline)
-                .sheet(isPresented:$showCalendar){NavigationStack{DatePicker("选择一天",selection:$day,displayedComponents:.date).datePickerStyle(.graphical).padding();Spacer();}.presentationDetents([.medium]).toolbar{ToolbarItem(placement:.confirmationAction){Button("完成"){showCalendar=false}}}}
+                .sheet(isPresented:$showCalendar){NavigationStack{ScrollView{DatePicker("选择一天",selection:$day,displayedComponents:.date).datePickerStyle(.graphical).padding().accessibilityIdentifier("journal.datePicker")}.navigationTitle("选择日期").navigationBarTitleDisplayMode(.inline).toolbar{ToolbarItem(placement:.confirmationAction){Button("完成"){showCalendar=false}.accessibilityIdentifier("journal.calendar.done")}}}.presentationDetents([.height(500),.large]).presentationDragIndicator(.visible)}
         }
+    }
+    private var weekStrip:some View {
+        HStack(spacing:typeSize.isAccessibilitySize ? 8 : 4){ForEach(days,id:\.self){date in
+            let chosen=Day.key(date)==Day.key(day)
+            let hasPage=store.active.contains{$0.kind == .journal && $0.journalDate==Day.key(date)}
+            Button{day=date}label:{VStack(spacing:12){Text(date,format:.dateTime.weekday(.narrow)).font(.caption);Text(date,format:.dateTime.day()).font(.body.weight(chosen ? .semibold : .regular));Circle().fill(hasPage ? (chosen ? Color.white : Paper.accent) : .clear).frame(width:4,height:4)}.frame(width:typeSize.isAccessibilitySize ? 80 : nil).frame(maxWidth:.infinity).padding(.vertical,12).foregroundStyle(chosen ? .white : .primary).background(chosen ? Paper.accent : Color.clear,in:Capsule())}.buttonStyle(.plain).accessibilityLabel(date.formatted(date:.complete,time:.omitted)).accessibilityAddTraits(chosen ? .isSelected : [])
+        }}
     }
 }
 
