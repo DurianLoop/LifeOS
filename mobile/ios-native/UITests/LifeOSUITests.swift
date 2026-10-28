@@ -99,8 +99,16 @@ final class LifeOSUITests:XCTestCase {
         app.buttons["导入与备份"].tap()
         capture("12-transfer")
         app.buttons["transfer.export"].tap()
+        let picker=app.navigationBars["FullDocumentManagerViewControllerNavigationBar"]
+        XCTAssertTrue(picker.waitForExistence(timeout:20))
+        let save=picker.buttons["保存"]
+        XCTAssertTrue(save.waitForExistence(timeout:5));XCTAssertTrue(save.isEnabled)
         capture("13-native-backup-picker")
-        XCTAssertTrue(app.navigationBars["移到"].waitForExistence(timeout:5) || app.buttons["存储"].waitForExistence(timeout:5) || app.buttons["导出"].exists || app.buttons["Save"].exists)
+        save.tap()
+        XCTAssertTrue(picker.waitForNonExistence(timeout:20))
+        XCTAssertTrue(app.buttons["transfer.export"].exists)
+        XCTAssertFalse(app.alerts["暂未完成"].exists)
+        capture("18-backup-saved")
     }
     func testEmptyFirstRun() throws {
         app.terminate();app.launchArguments=["--ui-testing","--reset-library","-AppleLanguages","(zh-Hans)","-AppleLocale","zh_CN"];app.launch()

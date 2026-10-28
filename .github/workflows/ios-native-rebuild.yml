@@ -12,7 +12,7 @@ concurrency:
 jobs:
   native-ios:
     runs-on: macos-26
-    timeout-minutes: 40
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - name: Verify public source and toolchain
@@ -49,6 +49,7 @@ jobs:
           mkdir -p build/qa
           xcodebuild test -project LifeOS.xcodeproj -scheme LifeOS -destination "platform=iOS Simulator,id=$LIFEOS_IOS_DEVICE" -derivedDataPath DerivedData -resultBundlePath TestResults.xcresult -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=NO 2>&1 | tee build/qa/xcodebuild.log
       - name: Verify writing and larger text on compact iPhone
+        if: ${{ !cancelled() && env.LIFEOS_IOS_DEVICE != '' }}
         working-directory: mobile/ios-native
         run: |
           set -o pipefail
