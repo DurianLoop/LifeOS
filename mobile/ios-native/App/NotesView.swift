@@ -138,9 +138,9 @@ struct SearchView:View {
     private var recent:[String]{(try? JSONDecoder().decode([String].self,from:Data(recentSearches.utf8))) ?? []}
     private func open(_ page:Page){rememberSearch();path.append(PageRoute(id:page.id))}
     private func rememberSearch(){
-        let value=query.trimmingCharacters(in:.whitespacesAndNewlines)
+        let value=String(query.trimmingCharacters(in:.whitespacesAndNewlines).prefix(120))
         guard !value.isEmpty else{return}
-        let values=Array(([String(value.prefix(120))]+recent.filter{$0 != value}).prefix(5))
+        let values=Array(([value]+recent.filter{$0 != value}).prefix(5))
         if let bytes=try? JSONEncoder().encode(values),let encoded=String(data:bytes,encoding:.utf8){recentSearches=encoded}
     }
     private var results:[Page]{store.search(query,notebook:notebook,tag:tag)}

@@ -45,7 +45,7 @@ private struct PageNavigation:ViewModifier {
             .animation(reduceMotion ? nil : .easeInOut(duration:0.2),value:store.pendingTrash?.id)
             .task(id:store.pendingTrash?.id){
                 guard let pending=store.pendingTrash else{return}
-                do {try await Task.sleep(for:.seconds(max(0,8-Date().timeIntervalSince(pending.date))))}catch{return}
+                do {try await Task.sleep(for:.seconds(max(0,12-Date().timeIntervalSince(pending.date))))}catch{return}
                 if store.pendingTrash?.id == pending.id{store.pendingTrash=nil}
             }
     }

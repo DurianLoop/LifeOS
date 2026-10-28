@@ -60,7 +60,7 @@ import UniformTypeIdentifiers
         page.deletedAt=nil
         if save(page){pendingTrash=nil}
     }
-    func restore(_ page:Page) { var p=page;p.deletedAt=nil;_ = save(p) }
+    func restore(_ page:Page) { var p=page;p.deletedAt=nil;if save(p),pendingTrash?.pageID==page.id{pendingTrash=nil} }
     func togglePin(_ page:Page) { var p=page;p.pinned.toggle();_ = save(p) }
     func restoreRevision(_ revision:Revision,page:Page) {
         do { try repository?.restore(revision,for:page.id);workspace=repository?.workspace ?? workspace }
