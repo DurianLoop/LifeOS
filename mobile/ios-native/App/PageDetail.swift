@@ -13,12 +13,13 @@ struct PageDetail:View {
     @State private var export=false
     @State private var document:ExportDocument?
     @State private var attachment:URL?
-    @State private var linked:Page?
+    private struct LinkedPage:Hashable{let id:String}
+    @State private var linked:LinkedPage?
     @State private var missingLink:String?
     let pageID:String
     private var page:Page?{store.page(pageID)}
     var body:some View {
-        NavigationStack {
+        Group {
             Group {
                 if let page {
                     ScrollView {
@@ -37,16 +38,15 @@ struct PageDetail:View {
                             let backlinks=store.backlinks(page)
                             if !backlinks.isEmpty {
                                 Divider().padding(.top,18);SectionCaption(title:"提到这一页",trailing:"\(backlinks.count) 条关联")
-                                ForEach(backlinks){item in Button{linked=item}label:{Label(item.displayTitle,systemImage:"link").font(.subheadline).padding(.vertical,6)} }
+                                ForEach(backlinks){item in Button{linked=LinkedPage(id:item.id)}label:{Label(item.displayTitle,systemImage:"link").font(.subheadline).padding(.vertical,6)} }
                             }
                             Text("保存在本机").font(.caption2).foregroundStyle(.tertiary).frame(maxWidth:.infinity).padding(.vertical,36)
                         }.padding(.horizontal,27).frame(maxWidth:710).frame(maxWidth:.infinity)
                     }.background(Paper.surface)
                 } else {EmptyPaper(symbol:"doc",title:"这一页暂不可用",message:"返回资料库，再试一次。")}
             }
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("阅读").navigationBarTitleDisplayMode(.inline)
             .toolbar{
-                ToolbarItem(placement:.cancellationAction){Button("完成"){dismiss()}.accessibilityIdentifier("reader.close")}
                 ToolbarItemGroup(placement:.topBarTrailing){
                     if let page{
                         Button{editor=page}label:{Image(systemName:"square.and.pencil")}.accessibilityLabel("编辑笔记").accessibilityIdentifier("reader.edit")
@@ -61,10 +61,10 @@ struct PageDetail:View {
             }
             .sheet(item:$editor){PageEditor(initial:$0)}
             .sheet(isPresented:$history){if let page{HistoryView(page:page)}}
-            .sheet(item:$linked){PageDetail(pageID:$0.id)}
+            .navigationDestination(item:$linked){PageDetail(pageID:$0.id)}
             .quickLookPreview($attachment)
             .fileExporter(isPresented:$export,document:document,contentType:.plainText,defaultFilename:(page?.displayTitle ?? "LifeOS")+".md"){result in if case .failure(let error)=result{store.error=error.localizedDescription}}
-            .confirmationDialog("将这一页移到废纸篓？",isPresented:$trashConfirmation,titleVisibility:.visible){Button("移到废纸篓",role:.destructive){if let page{store.trash(page);dismiss()}}}message:{Text("可以随时在资料库的废纸篓中恢复。")}
+            .confirmationDialog("将这一页移到废纸篓？",isPresented:$trashConfirmation,titleVisibility:.visible){Button("移到废纸篓",role:.destructive){if let page,store.trash(page){dismiss()}}}message:{Text("可以随时在资料库的废纸篓中恢复。")}
             .alert("这条线索还没有页面",isPresented:Binding(get:{missingLink != nil},set:{if !$0{missingLink=nil}})){
                 Button("取消",role:.cancel){missingLink=nil}
                 Button("新建关联笔记"){
@@ -74,7 +74,7 @@ struct PageDetail:View {
             }message:{Text("创建“\(missingLink ?? "")”，继续写下去。")}
             .environment(\.openURL,OpenURLAction{url in
                 if url.scheme=="lifeos",let components=URLComponents(url:url,resolvingAgainstBaseURL:false),let title=components.queryItems?.first(where:{$0.name=="title"})?.value {
-                    if let match=store.active.first(where:{$0.displayTitle==title}){linked=match}else{missingLink=title};return .handled
+                    if let match=store.active.first(where:{$0.displayTitle==title}){linked=LinkedPage(id:match.id)}else{missingLink=title};return .handled
                 }
                 return .systemAction
             })

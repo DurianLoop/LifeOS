@@ -13,6 +13,8 @@ struct PageEditor:View {
     @State private var failure=false
     @State private var saving=false
     @State private var attachmentError:String?
+    @FocusState private var titleFocused:Bool
+    @State private var requestBodyFocus=false
     init(initial:Page){_page=State(initialValue:initial);_saved=State(initialValue:initial)}
     var body:some View {
         NavigationStack {
@@ -22,13 +24,17 @@ struct PageEditor:View {
                     Text(page.kind == .journal ? page.journalDate ?? "日记" : store.bookName(page.notebookID))
                     Spacer()
                     if saving{ProgressView().controlSize(.mini)}
-                    Text(failure ? "保存失败 · 点此重试" : page == saved ? "已保存" : "正在保存…")
-                        .foregroundStyle(failure ? .red : .secondary).onTapGesture{persist()}.accessibilityIdentifier("editor.status")
+                    if failure {
+                        Button("保存失败 · 重试"){persist()}.foregroundStyle(.red).accessibilityIdentifier("editor.status")
+                    } else {
+                        Label(page == saved ? (store.page(page.id)==nil ? "草稿" : "已保存") : "正在保存…",systemImage:page == saved ? "checkmark" : "circle.dotted").accessibilityIdentifier("editor.status")
+                    }
                 }.font(.caption).foregroundStyle(.secondary).padding(.horizontal,25).padding(.top,20).padding(.bottom,16)
-                TextField("给这一页起个名字",text:$page.title,axis:.vertical).font(.system(.title,design:.default).weight(.semibold)).textFieldStyle(.plain).padding(.horizontal,25).padding(.bottom,19).accessibilityIdentifier("editor.title")
+                TextField("给这一页起个名字",text:$page.title,axis:.vertical).font(.system(.title,design:.default).weight(.semibold)).textFieldStyle(.plain).focused($titleFocused).padding(.horizontal,25).padding(.bottom,19).accessibilityIdentifier("editor.title")
                 if !page.tags.isEmpty{FlowTags(tags:page.tags).padding(.horizontal,25).padding(.bottom,14)}
                 Divider().padding(.horizontal,25)
-                NativeMarkdownEditor(text:$page.body)
+                NativeMarkdownEditor(text:$page.body,requestFocus:$requestBodyFocus)
+                    .overlay(alignment:.topLeading){if page.body.isEmpty{Text(page.kind == .journal ? "今天，有什么想记住的？" : "写下一句话，让想法开始。") .font(.body).foregroundStyle(.tertiary).padding(.horizontal,25).padding(.top,23).allowsHitTesting(false).accessibilityHidden(true)}}
                 if !page.attachments.isEmpty {
                     ScrollView(.horizontal,showsIndicators:false){HStack{ForEach(page.attachments){item in Label(item.name,systemImage:"paperclip").font(.caption).padding(10).background(Paper.background,in:Capsule())}}.padding(.horizontal,20)}.frame(maxHeight:55)
                 }
@@ -43,6 +49,10 @@ struct PageEditor:View {
                     }
                 }
                 .interactiveDismissDisabled(page != saved || failure)
+                .task{
+                    guard page.isEmptyDraft else{return}
+                    if page.kind == .journal{requestBodyFocus=true}else{titleFocused=true}
+                }
                 .task(id:page){
                     guard page != saved else{return}
                     do{try await Task.sleep(for:.milliseconds(550))}catch{return}
@@ -61,6 +71,7 @@ struct PageEditor:View {
         }
     }
     @discardableResult private func persist()->Bool{
+        if store.page(page.id)==nil && page.isEmptyDraft{return true}
         guard page != saved else{return !failure}
         saving=true
         let result=store.save(page)
@@ -84,14 +95,16 @@ struct PropertiesView:View {
                     Toggle("置顶",isOn:$page.pinned)
                 }
                 Section{TextField("生活, 阅读, 灵感",text:$tags).autocorrectionDisabled().textInputAutocapitalization(.never).accessibilityIdentifier("properties.tags")}header:{Text("标签")}footer:{Text("用逗号分隔。用 [[笔记标题]] 可以在正文中关联另一页。")}
-            }.navigationTitle("笔记属性").navigationBarTitleDisplayMode(.inline).onAppear{tags=page.tags.joined(separator:", ")}
-                .toolbar{ToolbarItem(placement:.confirmationAction){Button("完成"){page.tags=Array(Set(tags.components(separatedBy:CharacterSet(charactersIn:",，#\n")).map{$0.trimmingCharacters(in:.whitespacesAndNewlines)}.filter{!$0.isEmpty})).sorted();dismiss()}.accessibilityIdentifier("properties.done")}}
+            }.navigationTitle("笔记属性").navigationBarTitleDisplayMode(.inline).onAppear{tags=page.tags.joined(separator:", ")}.onDisappear{applyTags()}
+                .toolbar{ToolbarItem(placement:.confirmationAction){Button("完成"){applyTags();dismiss()}.accessibilityIdentifier("properties.done")}}
         }.presentationDetents([.medium,.large])
     }
+    private func applyTags(){page.tags=Array(Set(tags.components(separatedBy:CharacterSet(charactersIn:",，#\n")).map{$0.trimmingCharacters(in:.whitespacesAndNewlines)}.filter{!$0.isEmpty})).sorted()}
 }
 
 struct NativeMarkdownEditor:UIViewRepresentable {
     @Binding var text:String
+    @Binding var requestFocus:Bool
     func makeCoordinator()->Coordinator{Coordinator(self)}
     func makeUIView(context:Context)->UITextView{
         let view=UITextView()
@@ -125,6 +138,12 @@ struct NativeMarkdownEditor:UIViewRepresentable {
     }
     func updateUIView(_ view:UITextView,context:Context){
         context.coordinator.parent=self
+        if requestFocus {
+            DispatchQueue.main.async{
+                guard self.requestFocus else{return}
+                if view.becomeFirstResponder(){self.requestFocus=false}
+            }
+        }
         if view.text != text && view.markedTextRange == nil {let selection=view.selectedRange;view.text=text;view.selectedRange=NSRange(location:min(selection.location,(text as NSString).length),length:0)}
     }
     final class Coordinator:NSObject,UITextViewDelegate {

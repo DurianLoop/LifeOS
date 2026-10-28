@@ -56,6 +56,20 @@ final class RepositoryTests:XCTestCase {
         XCTAssertTrue(repo.search("Reading").isEmpty)
         page.deletedAt=nil;try repo.save(page);XCTAssertEqual(repo.search("Reading").count,1)
     }
+    func testSearchExcerptFindsTextBeyondOpening() {
+        let page=Page(title:"长笔记",body:String(repeating:"慢慢积累一些想法。",count:40)+"这次想记住的是星空与海岸。"+String(repeating:"继续写下去。",count:30))
+        let snippet=page.searchExcerpt("星空")
+        XCTAssertTrue(snippet.contains("星空与海岸"))
+        XCTAssertTrue(snippet.hasPrefix("…"));XCTAssertTrue(snippet.hasSuffix("…"))
+        XCTAssertLessThanOrEqual(snippet.count,112)
+        XCTAssertEqual(page.searchExcerpt("不存在"),page.excerpt)
+    }
+    func testEmptyDraftKeepsIntentionalMetadata() {
+        XCTAssertTrue(Page(title:" \n",body:"\n ").isEmptyDraft)
+        XCTAssertFalse(Page(tags:["阅读"]).isEmptyDraft)
+        XCTAssertFalse(Page(pinned:true).isEmptyDraft)
+        XCTAssertFalse(Page(body:"一句话").isEmptyDraft)
+    }
     func testRejectsInvalidBackupAndUnsafePaths() throws {
         let repo=try Repository(root:root)
         let p=Page(title:"test",attachments:[Attachment(name:"bad",storedName:"../escape",bytes:0)])

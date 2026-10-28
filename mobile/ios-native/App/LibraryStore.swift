@@ -7,6 +7,7 @@ import UniformTypeIdentifiers
     @Published var notice: String?
     @Published var importPreview: Backup?
     @Published var importedCount: Int?
+    @Published var pendingTrash: TrashUndo?
     private(set) var repository: Repository?
     @Published private(set) var unavailable = false
 
@@ -19,7 +20,7 @@ import UniformTypeIdentifiers
             let root = support.appendingPathComponent(test ? "LifeOSAcceptance" : valid ? preferred : "LifeOSNative",isDirectory:true)
             if test && ProcessInfo.processInfo.arguments.contains("--reset-library") {
                 if FileManager.default.fileExists(atPath:root.path){try FileManager.default.removeItem(at:root)}
-                for key in ["appearance","serifReading","comfortableReading"]{UserDefaults.standard.removeObject(forKey:key)}
+                for key in ["appearance","serifReading","comfortableReading","recentSearches"]{UserDefaults.standard.removeObject(forKey:key)}
             }
             let repo = try Repository(root:root)
             repository = repo; workspace = repo.workspace; notice = repo.recoveryMessage
@@ -46,9 +47,19 @@ import UniformTypeIdentifiers
     func create(kind:PageKind, date:Date=Date(), notebook:String?=nil) -> Page? {
         if kind == .journal, let existing=active.first(where:{$0.kind == .journal && $0.journalDate == Day.key(date)}) { return existing }
         let page=Page(kind:kind,journalDate:kind == .journal ? Day.key(date) : nil,notebookID:notebook)
-        return save(page) ? page : nil
+        return repository == nil ? nil : page
     }
-    func trash(_ page:Page) { var p=page;p.deletedAt=Date();_ = save(p) }
+    @discardableResult func trash(_ page:Page) -> Bool {
+        var p=page;p.deletedAt=Date()
+        guard save(p) else{return false}
+        pendingTrash=TrashUndo(pageID:page.id,title:page.displayTitle)
+        return true
+    }
+    func undoTrash() {
+        guard let pending=pendingTrash, var page=page(pending.pageID), page.deletedAt != nil else{pendingTrash=nil;return}
+        page.deletedAt=nil
+        if save(page){pendingTrash=nil}
+    }
     func restore(_ page:Page) { var p=page;p.deletedAt=nil;_ = save(p) }
     func togglePin(_ page:Page) { var p=page;p.pinned.toggle();_ = save(p) }
     func restoreRevision(_ revision:Revision,page:Page) {
@@ -142,6 +153,13 @@ import UniformTypeIdentifiers
         pages[0].revisions=[Revision(title:"给生活留一点空白",body:"给自己留一段没有安排的下午。")]
         try repository?.commit(Workspace(notebooks:books,pages:pages));workspace=repository!.workspace
     }
+}
+
+struct TrashUndo:Identifiable {
+    let id=UUID()
+    let date=Date()
+    let pageID:String
+    let title:String
 }
 
 struct ExportDocument:FileDocument {

@@ -39,9 +39,12 @@ final class LifeOSUITests:XCTestCase {
         XCTAssertEqual(app.buttons.matching(identifier:"标为未完成").count,2)
         app.links["一些微小的发现"].tap()
         XCTAssertTrue(app.staticTexts.matching(NSPredicate(format:"identifier == %@ AND label == %@","reader.title","一些微小的发现")).firstMatch.waitForExistence(timeout:5))
+        app.navigationBars.buttons.element(boundBy:0).tap()
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format:"identifier == %@ AND label == %@","reader.title","给生活留一点空白")).firstMatch.waitForExistence(timeout:5))
     }
     func testEditingAndRestartPersistence() throws {
         app.buttons["notes.create"].tap()
+        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout:5))
         let title=app.textFields["editor.title"]
         XCTAssertTrue(title.waitForExistence(timeout:5));title.tap();title.typeText("Acceptance note")
         let body=app.textViews["editor.body"];XCTAssertTrue(body.waitForExistence(timeout:5));body.tap();body.typeText("A quiet place for ideas.\n\n## Reading\n- [ ] Read a book")
@@ -69,6 +72,10 @@ final class LifeOSUITests:XCTestCase {
         capture("06-search")
         search.typeText("\n")
         XCTAssertTrue(app.keyboards.firstMatch.waitForNonExistence(timeout:5))
+        app.buttons.containing(.staticText,identifier:"给生活留一点空白").firstMatch.tap()
+        XCTAssertTrue(app.staticTexts["reader.title"].waitForExistence(timeout:5))
+        app.navigationBars.buttons.element(boundBy:0).tap()
+        XCTAssertTrue(search.waitForExistence(timeout:5));XCTAssertEqual(search.value as? String,"空白")
         selectTab("日记")
         XCTAssertTrue(app.buttons["journal.read"].waitForExistence(timeout:5))
         capture("07-journal")
@@ -76,6 +83,10 @@ final class LifeOSUITests:XCTestCase {
         XCTAssertTrue(app.buttons["journal.calendar.done"].waitForExistence(timeout:5))
         capture("17-calendar")
         app.buttons["journal.calendar.done"].tap()
+        app.buttons["journal.previousWeek"].tap()
+        XCTAssertTrue(app.buttons["journal.today"].waitForExistence(timeout:5))
+        app.buttons["journal.today"].tap()
+        XCTAssertTrue(app.buttons["journal.read"].waitForExistence(timeout:5))
         selectTab("资料库")
         XCTAssertTrue(app.buttons["library.addNotebook"].waitForExistence(timeout:5))
         capture("08-library")
@@ -92,11 +103,20 @@ final class LifeOSUITests:XCTestCase {
         XCTAssertTrue(app.staticTexts["给自己留一段没有安排的下午。"].waitForExistence(timeout:5))
         app.buttons["reader.menu"].tap();app.buttons["移到废纸篓"].tap()
         app.buttons["移到废纸篓"].firstMatch.tap()
-        XCTAssertTrue(app.buttons["reader.close"].waitForNonExistence(timeout:10))
+        XCTAssertTrue(app.staticTexts["reader.title"].waitForNonExistence(timeout:10))
         selectTab("资料库");reveal(app.buttons["library.trash"]);app.buttons["library.trash"].tap()
         XCTAssertTrue(app.buttons["trash.restore.slow"].waitForExistence(timeout:5));capture("10-trash")
         app.buttons["trash.restore.slow"].tap()
         XCTAssertFalse(app.buttons["trash.restore.slow"].exists)
+    }
+    func testDeleteCanBeUndoneWithoutLeavingNotes() throws {
+        app.buttons["page.slow"].tap();app.buttons["reader.menu"].tap();app.buttons["移到废纸篓"].tap()
+        app.buttons["移到废纸篓"].firstMatch.tap()
+        let undo=app.buttons["trash.undo"]
+        XCTAssertTrue(undo.waitForExistence(timeout:5));capture("19-delete-undo")
+        undo.tap()
+        XCTAssertTrue(app.buttons["page.slow"].waitForExistence(timeout:5))
+        XCTAssertFalse(app.buttons["trash.undo"].exists);capture("20-undo-restored")
     }
     func testAppearanceAndNativeBackupPicker() throws {
         selectTab("资料库");reveal(app.buttons["library.settings"]);app.buttons["library.settings"].tap()
@@ -122,6 +142,10 @@ final class LifeOSUITests:XCTestCase {
         XCTAssertTrue(app.buttons["notes.create"].waitForExistence(timeout:10))
         XCTAssertTrue(app.staticTexts["从空白的一页开始"].exists)
         capture("14-empty-library")
+        app.buttons["notes.create"].tap()
+        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout:5))
+        app.buttons["editor.done"].tap()
+        XCTAssertTrue(app.staticTexts["从空白的一页开始"].waitForExistence(timeout:5))
     }
     func testAccessibilityLargeText() throws {
         app.terminate()

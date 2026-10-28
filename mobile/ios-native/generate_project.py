@@ -1,12 +1,16 @@
 """Generate a dependency-free Xcode project from the checked-in Swift sources."""
 from pathlib import Path
-import hashlib,json
+import hashlib,json,os,re
 import xml.etree.ElementTree as ET
 
 root=Path(__file__).resolve().parent
 project=root/'LifeOS.xcodeproj'
 project.mkdir(exist_ok=True)
 objects={}
+bundle_id=os.environ.get('LIFEOS_IOS_BUNDLE_ID','life.lifeos.lifeosmobile')
+team_id=os.environ.get('LIFEOS_APPLE_TEAM_ID','')
+assert re.fullmatch(r'[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+',bundle_id),'Invalid bundle identifier'
+assert not team_id or re.fullmatch(r'[A-Z0-9]{10}',team_id),'Invalid Apple Team ID'
 def obj(identity,isa,**fields):
     key=hashlib.sha1(identity.encode()).hexdigest()[:24].upper()
     objects[key]={'isa':isa,**fields}
@@ -37,8 +41,9 @@ objects[mainGroup]['children'].append(privacy)
 resources=obj('resources','PBXResourcesBuildPhase',buildActionMask='2147483647',files=[obj('assets-build','PBXBuildFile',fileRef=assets),obj('privacy-build','PBXBuildFile',fileRef=privacy)],runOnlyForDeploymentPostprocessing='0')
 emptyResources=obj('test-resources','PBXResourcesBuildPhase',buildActionMask='2147483647',files=[],runOnlyForDeploymentPostprocessing='0')
 def phase(name,files):return obj(name,'PBXSourcesBuildPhase',buildActionMask='2147483647',files=files,runOnlyForDeploymentPostprocessing='0')
-base={'SDKROOT':'iphoneos','IPHONEOS_DEPLOYMENT_TARGET':'17.0','SWIFT_VERSION':'5.0','CLANG_ENABLE_MODULES':'YES','TARGETED_DEVICE_FAMILY':'1,2','CODE_SIGNING_ALLOWED':'NO','ENABLE_USER_SCRIPT_SANDBOXING':'YES','SWIFT_STRICT_CONCURRENCY':'targeted','DEBUG_INFORMATION_FORMAT':'dwarf-with-dsym'}
-appSettings={**base,'PRODUCT_BUNDLE_IDENTIFIER':'life.lifeos.lifeosmobile','PRODUCT_NAME':'LifeOS','GENERATE_INFOPLIST_FILE':'YES','INFOPLIST_KEY_CFBundleDisplayName':'LifeOS','INFOPLIST_KEY_UILaunchScreen_Generation':'YES','INFOPLIST_KEY_UIApplicationSceneManifest_Generation':'YES','INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone':'UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight','INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad':'UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight','INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace':'YES','MARKETING_VERSION':'0.7.0','CURRENT_PROJECT_VERSION':'700','ASSETCATALOG_COMPILER_APPICON_NAME':'AppIcon','OTHER_LDFLAGS':['$(inherited)','-lsqlite3','-lz'],'LD_RUNPATH_SEARCH_PATHS':['$(inherited)','@executable_path/Frameworks']}
+base={'SDKROOT':'iphoneos','IPHONEOS_DEPLOYMENT_TARGET':'17.0','SWIFT_VERSION':'5.0','CLANG_ENABLE_MODULES':'YES','TARGETED_DEVICE_FAMILY':'1,2','CODE_SIGN_STYLE':'Automatic','ENABLE_USER_SCRIPT_SANDBOXING':'YES','SWIFT_STRICT_CONCURRENCY':'targeted','DEBUG_INFORMATION_FORMAT':'dwarf-with-dsym'}
+if team_id:base['DEVELOPMENT_TEAM']=team_id
+appSettings={**base,'PRODUCT_BUNDLE_IDENTIFIER':bundle_id,'PRODUCT_NAME':'LifeOS','GENERATE_INFOPLIST_FILE':'YES','INFOPLIST_KEY_CFBundleDisplayName':'LifeOS','INFOPLIST_KEY_UILaunchScreen_Generation':'YES','INFOPLIST_KEY_UIApplicationSceneManifest_Generation':'YES','INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone':'UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight','INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad':'UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight','INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace':'YES','MARKETING_VERSION':'0.7.1','CURRENT_PROJECT_VERSION':'701','ASSETCATALOG_COMPILER_APPICON_NAME':'AppIcon','OTHER_LDFLAGS':['$(inherited)','-lsqlite3','-lz'],'LD_RUNPATH_SEARCH_PATHS':['$(inherited)','@executable_path/Frameworks']}
 def config(name,settings):
     ids=[]
     for mode in ['Debug','Release']:
@@ -50,7 +55,7 @@ appID=obj('app-target','PBXNativeTarget',name='LifeOS',productName='LifeOS',prod
 projectID=hashlib.sha1(b'project').hexdigest()[:24].upper()
 proxy=obj('test-proxy','PBXContainerItemProxy',containerPortal=projectID,proxyType='1',remoteGlobalIDString=appID,remoteInfo='LifeOS')
 dependency=obj('test-dependency','PBXTargetDependency',target=appID,targetProxy=proxy)
-testID=obj('test-target','PBXNativeTarget',name='LifeOSUITests',productName='LifeOSUITests',productReference=testProduct,productType='com.apple.product-type.bundle.ui-testing',buildConfigurationList=config('test',{**base,'PRODUCT_BUNDLE_IDENTIFIER':'life.lifeos.lifeosmobile.uitests','GENERATE_INFOPLIST_FILE':'YES','TEST_TARGET_NAME':'LifeOS','PRODUCT_NAME':'$(TARGET_NAME)','LD_RUNPATH_SEARCH_PATHS':['$(inherited)','@executable_path/Frameworks','@loader_path/Frameworks']}),buildPhases=[phase('test-sources',testFiles),emptyResources],buildRules=[],dependencies=[dependency])
+testID=obj('test-target','PBXNativeTarget',name='LifeOSUITests',productName='LifeOSUITests',productReference=testProduct,productType='com.apple.product-type.bundle.ui-testing',buildConfigurationList=config('test',{**base,'PRODUCT_BUNDLE_IDENTIFIER':bundle_id+'.uitests','GENERATE_INFOPLIST_FILE':'YES','TEST_TARGET_NAME':'LifeOS','PRODUCT_NAME':'$(TARGET_NAME)','LD_RUNPATH_SEARCH_PATHS':['$(inherited)','@executable_path/Frameworks','@loader_path/Frameworks']}),buildPhases=[phase('test-sources',testFiles),emptyResources],buildRules=[],dependencies=[dependency])
 obj('project','PBXProject',attributes={'LastUpgradeCheck':'2600','BuildIndependentTargetsInParallel':'YES','TargetAttributes':{testID:{'TestTargetID':appID}}},buildConfigurationList=config('project',base),compatibilityVersion='Xcode 14.0',developmentRegion='zh-Hans',knownRegions=['zh-Hans','en','Base'],mainGroup=mainGroup,productRefGroup=products,projectDirPath='',projectRoot='',targets=[appID,testID])
 (project/'project.pbxproj').write_text('// !$*UTF8*$!\n'+encode({'archiveVersion':'1','classes':{},'objectVersion':'56','objects':objects,'rootObject':projectID})+'\n',encoding='utf-8')
 

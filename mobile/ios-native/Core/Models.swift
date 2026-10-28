@@ -40,6 +40,15 @@ struct Page: Identifiable, Codable, Equatable {
     var displayTitle: String { title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? (kind == .journal ? "日记 · \(journalDate ?? "今天")" : "未命名笔记") : title }
     var excerpt: String { String(Markdown.readableContent(body).replacingOccurrences(of: #"[#*>`\[\]]"#, with: "", options: .regularExpression).split(whereSeparator: \.isNewline).joined(separator: " ").prefix(120)) }
     var wordCount: Int { body.filter { !$0.isWhitespace }.count }
+    var isEmptyDraft: Bool { title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && body.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && attachments.isEmpty && tags.isEmpty && !pinned }
+    func searchExcerpt(_ query: String) -> String {
+        let text = Markdown.readableContent(body).split(whereSeparator: \.isWhitespace).joined(separator: " ")
+        let terms = query.split(whereSeparator: \.isWhitespace).map(String.init)
+        guard let match = terms.compactMap({text.range(of: $0, options: [.caseInsensitive, .diacriticInsensitive])}).first else { return excerpt }
+        let start = text.index(match.lowerBound, offsetBy: -25, limitedBy: text.startIndex) ?? text.startIndex
+        let end = text.index(start, offsetBy: 110, limitedBy: text.endIndex) ?? text.endIndex
+        return (start == text.startIndex ? "" : "…") + String(text[start..<end]) + (end == text.endIndex ? "" : "…")
+    }
     var wikiLinks: [String] {Markdown.linkTitles(body)}
 }
 

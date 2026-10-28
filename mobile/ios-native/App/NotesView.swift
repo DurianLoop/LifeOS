@@ -4,11 +4,12 @@ import UIKit
 struct NotesView:View {
     @EnvironmentObject private var store:LibraryStore
     @State private var filter="全部"
-    let open:(Page)->Void
+    @State private var path:[PageRoute]=[]
+    private func open(_ page:Page){path.append(PageRoute(id:page.id))}
     let create:()->Void
     private var pages:[Page]{store.active.filter{filter == "全部" || $0.pinned}.sorted{a,b in a.pinned != b.pinned ? a.pinned : a.updatedAt>b.updatedAt}}
     var body:some View {
-        NavigationStack {
+        NavigationStack(path:$path) {
             ScrollView {
                 VStack(alignment:.leading,spacing:22){
                     VStack(alignment:.leading,spacing:10){
@@ -47,7 +48,7 @@ struct NotesView:View {
                     }
                     HStack(spacing:6){Image(systemName:"lock");Text("只在本机，属于你。")} .font(.caption).foregroundStyle(.tertiary).frame(maxWidth:.infinity).padding(.vertical,22)
                 }.padding(.horizontal,24).frame(maxWidth:760).frame(maxWidth:.infinity).padding(.bottom,25)
-            }.background(Paper.background).navigationTitle("LifeOS").navigationBarTitleDisplayMode(.inline)
+            }.background(Paper.background).navigationTitle("LifeOS").navigationBarTitleDisplayMode(.inline).pageNavigation()
                 .toolbar{ToolbarItem(placement:.topBarTrailing){NavigationLink{SettingsView()}label:{Image(systemName:"slider.horizontal.3")}.accessibilityLabel("设置")}}
         }
     }
@@ -76,18 +77,26 @@ struct JournalView:View {
     @Environment(\.dynamicTypeSize) private var typeSize
     @State private var day=Date()
     @State private var showCalendar=false
-    let open:(Page)->Void
+    @State private var path:[PageRoute]=[]
+    private func open(_ page:Page){path.append(PageRoute(id:page.id))}
     let edit:(Page)->Void
     private var selected:Page?{store.active.first{$0.kind == .journal && $0.journalDate==Day.key(day)}}
     private var days:[Date]{let calendar=Calendar.current;let start=calendar.dateInterval(of:.weekOfYear,for:day)!.start;return(0..<7).compactMap{calendar.date(byAdding:.day,value:$0,to:start)}}
     var body:some View {
-        NavigationStack {
+        NavigationStack(path:$path) {
             ScrollView {
                 VStack(alignment:.leading,spacing:28){
-                    HStack(alignment:.firstTextBaseline){
-                        VStack(alignment:.leading,spacing:7){Text(day,format:.dateTime.year().month(.wide)).font(.subheadline).foregroundStyle(.secondary);Text("日子，一页一页。").font(.system(.title,design:.serif))}
-                        Spacer();Button{showCalendar=true}label:{Image(systemName:"calendar").font(.title3).padding(13)}.glassControl().accessibilityLabel("选择日期").accessibilityIdentifier("journal.calendar")
-                    }.padding(.top,14)
+                    VStack(alignment:.leading,spacing:10){
+                        HStack(spacing:0){
+                            Text(day,format:.dateTime.year().month(.wide)).font(.subheadline).foregroundStyle(.secondary).fixedSize(horizontal:false,vertical:true)
+                            Spacer(minLength:4)
+                            if !Calendar.current.isDateInToday(day){Button("今天"){day=Date()}.font(.subheadline.weight(.medium)).frame(minWidth:44,minHeight:44).accessibilityLabel("回到今天").accessibilityIdentifier("journal.today")}
+                            Button{moveWeek(-1)}label:{Image(systemName:"chevron.left").frame(width:44,height:44)}.accessibilityLabel("上一周").accessibilityIdentifier("journal.previousWeek")
+                            Button{moveWeek(1)}label:{Image(systemName:"chevron.right").frame(width:44,height:44)}.accessibilityLabel("下一周").accessibilityIdentifier("journal.nextWeek")
+                            Button{showCalendar=true}label:{Image(systemName:"calendar").font(.title3).frame(width:44,height:44)}.glassControl().accessibilityLabel("选择日期").accessibilityIdentifier("journal.calendar")
+                        }.foregroundStyle(Paper.accent)
+                        Text("日子，一页一页。").font(.system(.title,design:.serif))
+                    }.padding(.top,10)
                     if typeSize.isAccessibilitySize {ScrollView(.horizontal,showsIndicators:false){weekStrip}} else {weekStrip}
                     if let page=selected {
                         VStack(alignment:.leading,spacing:17){
@@ -105,10 +114,11 @@ struct JournalView:View {
                         Button{open(page)}label:{HStack(alignment:.top,spacing:17){Text(page.journalDate.map{String($0.suffix(5))} ?? "—").font(.system(.subheadline,design:.monospaced)).foregroundStyle(Paper.accent).frame(width:54,alignment:.leading).padding(.top,16);PageRow(page:page)}}.buttonStyle(.plain);Divider()
                     }
                 }.padding(24).frame(maxWidth:760).frame(maxWidth:.infinity).padding(.bottom,30)
-            }.background(Paper.background).navigationTitle("日记").navigationBarTitleDisplayMode(.inline)
+            }.background(Paper.background).navigationTitle("日记").navigationBarTitleDisplayMode(.inline).pageNavigation()
                 .sheet(isPresented:$showCalendar){NavigationStack{ScrollView{DatePicker("选择一天",selection:$day,displayedComponents:.date).datePickerStyle(.graphical).padding().accessibilityIdentifier("journal.datePicker")}.navigationTitle("选择日期").navigationBarTitleDisplayMode(.inline).toolbar{ToolbarItem(placement:.confirmationAction){Button("完成"){showCalendar=false}.accessibilityIdentifier("journal.calendar.done")}}}.presentationDetents([.height(500),.large]).presentationDragIndicator(.visible)}
         }
     }
+    private func moveWeek(_ delta:Int){if let date=Calendar.current.date(byAdding:.day,value:delta*7,to:day){day=date}}
     private var weekStrip:some View {
         HStack(spacing:typeSize.isAccessibilitySize ? 8 : 4){ForEach(days,id:\.self){date in
             let chosen=Day.key(date)==Day.key(day)
@@ -123,10 +133,19 @@ struct SearchView:View {
     @State private var query=""
     @State private var tag:String?
     @State private var notebook:String?
-    let open:(Page)->Void
+    @State private var path:[PageRoute]=[]
+    @AppStorage("recentSearches") private var recentSearches="[]"
+    private var recent:[String]{(try? JSONDecoder().decode([String].self,from:Data(recentSearches.utf8))) ?? []}
+    private func open(_ page:Page){rememberSearch();path.append(PageRoute(id:page.id))}
+    private func rememberSearch(){
+        let value=query.trimmingCharacters(in:.whitespacesAndNewlines)
+        guard !value.isEmpty else{return}
+        let values=Array(([String(value.prefix(120))]+recent.filter{$0 != value}).prefix(5))
+        if let bytes=try? JSONEncoder().encode(values),let encoded=String(data:bytes,encoding:.utf8){recentSearches=encoded}
+    }
     private var results:[Page]{store.search(query,notebook:notebook,tag:tag)}
     var body:some View {
-        NavigationStack {
+        NavigationStack(path:$path) {
             List {
                 Section {
                     ScrollView(.horizontal,showsIndicators:false){HStack(spacing:9){
@@ -136,13 +155,16 @@ struct SearchView:View {
                     }.padding(.vertical,4)}
                 }.listRowBackground(Color.clear).listRowSeparator(.hidden)
                 if query.isEmpty && tag == nil && notebook == nil {
+                    if !recent.isEmpty {
+                        Section {ForEach(recent,id:\.self){value in Button{query=value}label:{Label(value,systemImage:"clock.arrow.circlepath").foregroundStyle(Paper.ink)}.accessibilityIdentifier("search.recent."+value)}}header:{HStack{Text("最近搜索");Spacer();Button("清除"){recentSearches="[]"}.font(.caption).textCase(nil)}}
+                    }
                     Section {EmptyPaper(symbol:"text.magnifyingglass",title:"循着一句话，找到那一页",message:"搜索标题、正文与标签。\n多个关键词可以一起查找。") .listRowSeparator(.hidden).listRowBackground(Color.clear)}
                     Section("最近写下"){ForEach(results.prefix(5)){page in Button{open(page)}label:{PageRow(page:page)}.buttonStyle(.plain)}}
                 } else if results.isEmpty {EmptyPaper(symbol:"magnifyingglass",title:"还没有找到",message:"换一个关键词，或试试清除筛选。") .listRowBackground(Color.clear).listRowSeparator(.hidden)}
-                else {Section("找到 \(results.count) 篇"){ForEach(results){page in Button{open(page)}label:{PageRow(page:page,book:store.bookName(page.notebookID))}.buttonStyle(.plain)}}}
-            }.listStyle(.plain).scrollContentBackground(.hidden).background(Paper.background).navigationTitle("搜索").searchable(text:$query,prompt:"标题、正文或 #标签").autocorrectionDisabled()
+                else {Section("找到 \(results.count) 篇"){ForEach(results){page in Button{open(page)}label:{PageRow(page:page,book:store.bookName(page.notebookID),query:query)}.buttonStyle(.plain)}}}
+            }.listStyle(.plain).scrollContentBackground(.hidden).background(Paper.background).navigationTitle("搜索").pageNavigation().searchable(text:$query,prompt:"标题、正文或 #标签").autocorrectionDisabled()
                 .scrollDismissesKeyboard(.interactively)
-                .onSubmit(of:.search){UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),to:nil,from:nil,for:nil)}
+                .onSubmit(of:.search){rememberSearch();UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),to:nil,from:nil,for:nil)}
         }
     }
 }

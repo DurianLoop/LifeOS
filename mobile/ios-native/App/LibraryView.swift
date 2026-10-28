@@ -7,9 +7,10 @@ struct LibraryView:View {
     @State private var bookName=""
     @State private var renaming:Notebook?
     @State private var removing:Notebook?
-    let open:(Page)->Void
+    @State private var path:[PageRoute]=[]
+    private func open(_ page:Page){path.append(PageRoute(id:page.id))}
     var body:some View {
-        NavigationStack {
+        NavigationStack(path:$path) {
             List {
                 Section {
                     HStack(spacing:18){Image(systemName:"books.vertical").font(.system(size:32,weight:.ultraLight)).foregroundStyle(Paper.accent);VStack(alignment:.leading,spacing:7){Text("你的私人资料库").font(.headline);Text("\(store.active.count) 篇笔记 · \(store.workspace.notebooks.count) 本笔记本").font(.subheadline).foregroundStyle(.secondary)}}.padding(.vertical,12)
@@ -32,7 +33,7 @@ struct LibraryView:View {
                 }
                 Section {VStack(alignment:.leading,spacing:8){Text("以自己的节奏积累。").font(.system(.title3,design:.serif));Text("本地保存 · 无需账号 · 不自动上传").font(.caption).foregroundStyle(.secondary)}.padding(.vertical,10).listRowBackground(Color.clear)}
             }
-            .scrollContentBackground(.hidden).background(Paper.background).navigationTitle("资料库")
+            .scrollContentBackground(.hidden).background(Paper.background).navigationTitle("资料库").pageNavigation()
             .alert(renaming == nil ? "新建笔记本" : "重命名",isPresented:$newBook){
                 TextField("笔记本名称",text:$bookName)
                 Button("取消",role:.cancel){renaming=nil}
@@ -68,7 +69,7 @@ struct SettingsView:View {
             Section {Toggle("衬线字体",isOn:$serif);Toggle("舒展的行距",isOn:$comfortable)}header:{Text("阅读")}footer:{Text("字号随 iPhone 的系统文字大小调整，也支持辅助功能中的更大字体。")}
             Section("界面材质"){Label("Liquid Glass",systemImage:"circle.lefthalf.filled");Text("iOS 26 的导航与操作控件使用系统玻璃材质。较早系统使用原生半透明材质；开启“减少透明度”后自动提高不透明度。").font(.footnote).foregroundStyle(.secondary)}
             Section{NavigationLink("导入与备份"){TransferView()}}
-            Section("关于 LifeOS"){LabeledContent("版本",value:"0.7.0 · iOS 重构");Text("一个安静的地方，用来写下生活、安放想法。\n\n日记与附件保存在本机。请定期导出完整备份，卸载应用会移除设备上的数据。").font(.footnote).foregroundStyle(.secondary).lineSpacing(5)}
+            Section("关于 LifeOS"){LabeledContent("版本",value:"0.7.1");Text("一个安静的地方，用来写下生活、安放想法。\n\n日记与附件保存在本机。请定期导出完整备份，卸载应用会移除设备上的数据。").font(.footnote).foregroundStyle(.secondary).lineSpacing(5)}
         }.scrollContentBackground(.hidden).background(Paper.background).navigationTitle("外观与阅读").navigationBarTitleDisplayMode(.inline)
     }
 }

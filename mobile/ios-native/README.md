@@ -15,7 +15,7 @@ xcodebuild test -project LifeOS.xcodeproj -scheme LifeOS \
   -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=NO
 ```
 
-The generated project and runtime data are ignored. GitHub Actions builds on macOS 26, runs storage/migration and UI tests, captures real native screenshots and produces a clean Apple Silicon simulator archive. Source and simulator are the deliverables; an iPhone install or TestFlight distribution needs a separately configured Apple signing identity.
+The generated project and runtime data are ignored. GitHub Actions builds on macOS 26, runs storage/migration and UI tests, captures real native screenshots and produces both a clean Apple Silicon simulator archive and an unsigned arm64 iPhone IPA for local signing. The IPA can be signed on Windows using Sideloadly and a personal Apple account; free provisioning expires after seven days. See [the iPhone installation guide](INSTALL_IPHONE.md). Apple credentials never belong in this repository.
 
 To use the simulator archive on an Apple Silicon Mac, unzip it, open an iOS 26 iPhone in Xcode's Simulator, then run:
 
@@ -25,6 +25,10 @@ xcrun simctl launch booted life.lifeos.lifeosmobile
 ```
 
 The native interface supports iOS 17 and newer; real Liquid Glass requires iOS 26. The archive is built for the arm64 simulator and cannot be installed on a physical iPhone. Normal launches contain no sample notes.
+
+For an iPhone build from source, automatic signing is enabled. Select your Team in Xcode, or set `LIFEOS_APPLE_TEAM_ID` when generating the project. `LIFEOS_IOS_BUNDLE_ID` can select a bundle identifier owned by your team. CI explicitly disables signing and does not install unsigned artifacts onto a phone. TestFlight is not configured.
+
+Interaction refinements in 0.7.1 include standard navigation with swipe back, automatic initial writing focus, empty draft cleanup, reversible deletion with an undo banner, recent local searches and matching body excerpts, and previous/next-week navigation with a return-to-today action. Reading keeps its native system controls and opaque paper surface.
 
 The original bundle ID is retained for future signed upgrades. Legacy workspaces in the same sandbox can be imported via preview. A desktop or old iOS ZIP backup can also be selected from Files. New backups are JSON documents containing the complete library and attachment bytes; import merges and preserves conflicting copies. Normal launches start empty. Test-only sample content requires explicit UI-test launch arguments and a separate storage directory.
 

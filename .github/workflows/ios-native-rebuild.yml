@@ -79,12 +79,19 @@ jobs:
             xcrun xcresulttool get test-results summary --path CompactResults.xcresult --format json > build/qa/COMPACT_TEST_SUMMARY.json || true
           fi
           xcrun simctl io "$LIFEOS_IOS_DEVICE" screenshot build/qa/final-screen.png || true
+      - name: Build iPhone package for local Apple ID signing
+        working-directory: mobile/ios-native
+        run: |
+          xcodebuild archive -project LifeOS.xcodeproj -scheme LifeOS -configuration Release -destination 'generic/platform=iOS' -archivePath build/LifeOS.xcarchive -derivedDataPath DerivedData CODE_SIGNING_ALLOWED=NO
+          mkdir -p build/phone/Payload build/dist
+          ditto build/LifeOS.xcarchive/Products/Applications/LifeOS.app build/phone/Payload/LifeOS.app
+          ditto -c -k --keepParent build/phone/Payload build/dist/LifeOS-0.7.1-iphone-unsigned.ipa
       - name: Build clean simulator distribution
         working-directory: mobile/ios-native
         run: |
           xcodebuild build -project LifeOS.xcodeproj -scheme LifeOS -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath DerivedData ARCHS=arm64 CODE_SIGNING_ALLOWED=NO
           mkdir -p build/dist
-          ditto -c -k --keepParent DerivedData/Build/Products/Release-iphonesimulator/LifeOS.app build/dist/LifeOS-0.7.0-ios-simulator-arm64.zip
+          ditto -c -k --keepParent DerivedData/Build/Products/Release-iphonesimulator/LifeOS.app build/dist/LifeOS-0.7.1-ios-simulator-arm64.zip
           python3 make_validation.py
       - uses: actions/upload-artifact@v4
         with:
