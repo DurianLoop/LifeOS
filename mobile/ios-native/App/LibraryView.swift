@@ -7,17 +7,15 @@ struct LibraryView:View {
     @State private var bookName=""
     @State private var renaming:Notebook?
     @State private var removing:Notebook?
-    @State private var path:[PageRoute]=[]
-    private func open(_ page:Page){path.append(PageRoute(id:page.id))}
     var body:some View {
-        NavigationStack(path:$path) {
+        NavigationStack {
             List {
                 Section {
                     HStack(spacing:18){Image(systemName:"books.vertical").font(.system(size:32,weight:.ultraLight)).foregroundStyle(Paper.accent);VStack(alignment:.leading,spacing:7){Text("你的私人资料库").font(.headline);Text("\(store.active.count) 篇笔记 · \(store.workspace.notebooks.count) 本笔记本").font(.subheadline).foregroundStyle(.secondary)}}.padding(.vertical,12)
                 }
                 Section {
                     ForEach(store.workspace.notebooks){book in
-                        NavigationLink{PageCollection(title:book.name,notebook:book.id,open:open)}label:{Label(book.name,systemImage:book.symbol)}
+                        NavigationLink{PageCollection(title:book.name,notebook:book.id)}label:{Label(book.name,systemImage:book.symbol)}
                             .contextMenu{
                                 Button("重命名",systemImage:"pencil"){bookName=book.name;renaming=book;newBook=true}
                                 Button("移除笔记本",systemImage:"folder.badge.minus",role:.destructive){removing=book}
@@ -25,7 +23,7 @@ struct LibraryView:View {
                     }
                     Button{renaming=nil;bookName="";newBook=true}label:{Label("新建笔记本",systemImage:"plus")}.accessibilityIdentifier("library.addNotebook")
                 }header:{Text("笔记本")}footer:{Text("笔记只属于一个笔记本，也可以用多个标签串联。")}
-                if !store.allTags.isEmpty {Section("标签"){ForEach(store.allTags,id:\.self){tag in NavigationLink{PageCollection(title:"#"+tag,tag:tag,open:open)}label:{Label(tag,systemImage:"number")}}}}
+                if !store.allTags.isEmpty {Section("标签"){ForEach(store.allTags,id:\.self){tag in NavigationLink{PageCollection(title:"#"+tag,tag:tag)}label:{Label(tag,systemImage:"number")}}}}
                 Section {
                     NavigationLink{TrashView()}label:{Label("废纸篓",systemImage:"trash")}.accessibilityIdentifier("library.trash")
                     NavigationLink{TransferView()}label:{Label("导入与备份",systemImage:"arrow.up.arrow.down")}
@@ -33,7 +31,7 @@ struct LibraryView:View {
                 }
                 Section {VStack(alignment:.leading,spacing:8){Text("以自己的节奏积累。").font(.system(.title3,design:.serif));Text("本地保存 · 无需账号 · 不自动上传").font(.caption).foregroundStyle(.secondary)}.padding(.vertical,10).listRowBackground(Color.clear)}
             }
-            .scrollContentBackground(.hidden).background(Paper.background).navigationTitle("资料库").pageNavigation()
+            .scrollContentBackground(.hidden).background(Paper.background).navigationTitle("资料库").trashFeedback()
             .alert(renaming == nil ? "新建笔记本" : "重命名",isPresented:$newBook){
                 TextField("笔记本名称",text:$bookName)
                 Button("取消",role:.cancel){renaming=nil}

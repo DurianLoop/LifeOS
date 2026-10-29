@@ -27,7 +27,7 @@ struct NotesView:View {
                             SectionCaption(title:"我的笔记本",trailing:"\(store.workspace.notebooks.count) 本")
                             ScrollView(.horizontal,showsIndicators:false){
                                 HStack(spacing:12){ForEach(store.workspace.notebooks){book in
-                                    NavigationLink{PageCollection(title:book.name,notebook:book.id,open:open)}label:{
+                                    NavigationLink{PageCollection(title:book.name,notebook:book.id)}label:{
                                         VStack(alignment:.leading,spacing:14){Image(systemName:book.symbol).font(.system(size:24,weight:.light)).foregroundStyle(Paper.accent)
                                             VStack(alignment:.leading,spacing:5){Text(book.name).font(.subheadline.weight(.semibold));Text("\(store.active.filter{$0.notebookID==book.id}.count) 篇笔记").font(.caption).foregroundStyle(.secondary)}
                                         }.frame(width:145,alignment:.leading).padding(18).background(Paper.surface,in:RoundedRectangle(cornerRadius:19)).overlay(RoundedRectangle(cornerRadius:19).stroke(Paper.line)).foregroundStyle(Paper.ink)
@@ -44,7 +44,7 @@ struct NotesView:View {
                                 .contextMenu{Button(page.pinned ? "取消置顶" : "置顶",systemImage:"pin"){store.togglePin(page)};Button("移到废纸篓",systemImage:"trash",role:.destructive){store.trash(page)}}
                             Divider()
                         }}
-                        if pages.count>30{NavigationLink("查看全部 \(pages.count) 篇"){PageCollection(title:"全部笔记",open:open)}.font(.subheadline).padding(.vertical,14)}
+                        if pages.count>30{NavigationLink("查看全部 \(pages.count) 篇"){PageCollection(title:"全部笔记")}.font(.subheadline).padding(.vertical,14)}
                     }
                     HStack(spacing:6){Image(systemName:"lock");Text("只在本机，属于你。")} .font(.caption).foregroundStyle(.tertiary).frame(maxWidth:.infinity).padding(.vertical,22)
                 }.padding(.horizontal,24).frame(maxWidth:760).frame(maxWidth:.infinity).padding(.bottom,25)
@@ -59,14 +59,16 @@ struct PageCollection:View {
     let title:String
     var notebook:String?=nil
     var tag:String?=nil
-    let open:(Page)->Void
+    private struct CollectionPage:Hashable {let id:String}
+    @State private var openedPage:CollectionPage?
     @State private var editor:Page?
     var body:some View {
         List {
             let pages=store.search("",notebook:notebook,tag:tag)
             if pages.isEmpty {EmptyPaper(symbol:"folder",title:"这里还是空白",message:"把相关笔记放在一起，想找时就更容易。") .listRowBackground(Color.clear).listRowSeparator(.hidden)}
-            ForEach(pages){page in Button{open(page)}label:{PageRow(page:page)}.buttonStyle(.plain).accessibilityIdentifier("page."+page.id).swipeActions{Button("废纸篓",role:.destructive){store.trash(page)}}}
+            ForEach(pages){page in Button{openedPage=CollectionPage(id:page.id)}label:{PageRow(page:page)}.buttonStyle(.plain).accessibilityIdentifier("page."+page.id).swipeActions{Button("废纸篓",role:.destructive){store.trash(page)}}}
         }.listStyle(.plain).background(Paper.background).scrollContentBackground(.hidden).navigationTitle(title).trashFeedback()
+            .navigationDestination(item:$openedPage){PageDetail(pageID:$0.id)}
             .toolbar{ToolbarItem(placement:.topBarTrailing){Button{editor=store.create(kind:.note,notebook:notebook)}label:{Image(systemName:"square.and.pencil")}.accessibilityLabel("新建笔记")}}
             .sheet(item:$editor){PageEditor(initial:$0)}
     }
