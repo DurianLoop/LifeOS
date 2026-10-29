@@ -51,6 +51,8 @@ final class RepositoryTests:XCTestCase {
         var page=Page(title:"Reading",body:"我在海边读书",notebookID:"book",tags:["随想"]);try repo.save(page)
         XCTAssertEqual(repo.search("海边 reading",notebook:"book").count,1)
         XCTAssertEqual(repo.search("随想").count,1)
+        XCTAssertEqual(repo.search("#随想 reading").count,1)
+        XCTAssertTrue(repo.search("#海边").isEmpty)
         XCTAssertTrue(repo.search("海边",tag:"missing").isEmpty)
         page.deletedAt=Date();try repo.save(page)
         XCTAssertTrue(repo.search("Reading").isEmpty)

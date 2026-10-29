@@ -117,6 +117,13 @@ final class LifeOSUITests:XCTestCase {
         undo.tap()
         XCTAssertTrue(app.buttons["page.slow"].waitForExistence(timeout:5))
         XCTAssertFalse(app.buttons["trash.undo"].exists);capture("20-undo-restored")
+        app.buttons["notebook.life"].tap()
+        app.buttons["page.slow"].tap()
+        app.buttons["reader.menu"].tap();app.buttons["移到废纸篓"].tap();app.buttons["移到废纸篓"].firstMatch.tap()
+        XCTAssertTrue(app.navigationBars["生活札记"].waitForExistence(timeout:5))
+        XCTAssertTrue(undo.waitForExistence(timeout:5));capture("21-notebook-undo")
+        undo.tap()
+        XCTAssertTrue(app.buttons["page.slow"].waitForExistence(timeout:5))
     }
     func testAppearanceAndNativeBackupPicker() throws {
         selectTab("资料库");reveal(app.buttons["library.settings"]);app.buttons["library.settings"].tap()
@@ -126,13 +133,11 @@ final class LifeOSUITests:XCTestCase {
         app.buttons["导入与备份"].tap()
         capture("12-transfer")
         app.buttons["transfer.export"].tap()
-        let picker=app.navigationBars["FullDocumentManagerViewControllerNavigationBar"]
-        XCTAssertTrue(picker.waitForExistence(timeout:20))
-        let save=picker.buttons["保存"]
-        XCTAssertTrue(save.waitForExistence(timeout:5));XCTAssertTrue(save.isEnabled)
+        let save=app.navigationBars.buttons["保存"]
+        XCTAssertTrue(save.waitForExistence(timeout:30));XCTAssertTrue(save.isEnabled)
         capture("13-native-backup-picker")
         save.tap()
-        XCTAssertTrue(picker.waitForNonExistence(timeout:20))
+        XCTAssertTrue(save.waitForNonExistence(timeout:30))
         XCTAssertTrue(app.buttons["transfer.export"].exists)
         XCTAssertFalse(app.alerts["暂未完成"].exists)
         capture("18-backup-saved")

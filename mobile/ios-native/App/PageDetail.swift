@@ -45,7 +45,7 @@ struct PageDetail:View {
                     }.background(Paper.surface)
                 } else {EmptyPaper(symbol:"doc",title:"这一页暂不可用",message:"返回资料库，再试一次。")}
             }
-            .navigationTitle("阅读").navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("阅读").navigationBarTitleDisplayMode(.inline).trashFeedback()
             .toolbar{
                 ToolbarItemGroup(placement:.topBarTrailing){
                     if let page{

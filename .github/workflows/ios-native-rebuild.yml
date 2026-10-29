@@ -4,15 +4,21 @@ on:
     branches: [codex/ios-glass-rebuild]
     paths: ['mobile/ios-native/**', '.github/workflows/ios-native-rebuild.yml']
   workflow_dispatch:
+    inputs:
+      runner:
+        description: Native macOS host
+        type: choice
+        default: macos-26-intel
+        options: [macos-26-intel, macos-26]
 permissions:
   contents: read
 concurrency:
-  group: ios-native-rebuild-${{ github.ref }}
+  group: ios-native-rebuild-${{ github.ref }}-${{ inputs.runner || 'macos-26-intel' }}
   cancel-in-progress: true
 jobs:
   native-ios:
-    runs-on: macos-26-intel
-    timeout-minutes: 60
+    runs-on: ${{ inputs.runner || 'macos-26-intel' }}
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - name: Verify public source and toolchain
@@ -27,6 +33,18 @@ jobs:
           set -o pipefail
           mkdir -p build/qa
           swift test 2>&1 | tee build/qa/core-tests.log
+      - name: Build iPhone package for local Apple ID signing
+        working-directory: mobile/ios-native
+        run: |
+          xcodebuild archive -project LifeOS.xcodeproj -scheme LifeOS -configuration Release -destination 'generic/platform=iOS' -archivePath build/LifeOS.xcarchive -derivedDataPath DerivedData CODE_SIGNING_ALLOWED=NO
+          mkdir -p build/phone/Payload build/dist
+          ditto build/LifeOS.xcarchive/Products/Applications/LifeOS.app build/phone/Payload/LifeOS.app
+          ditto -c -k --keepParent build/phone/Payload build/dist/LifeOS-0.7.1-iphone-unsigned.ipa
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lifeos-iphone-unsigned
+          if-no-files-found: error
+          path: mobile/ios-native/build/dist/*.ipa
       - name: Select iOS 26 simulator
         run: |
           python3 - <<'PY'
@@ -79,13 +97,6 @@ jobs:
             xcrun xcresulttool get test-results summary --path CompactResults.xcresult --format json > build/qa/COMPACT_TEST_SUMMARY.json || true
           fi
           xcrun simctl io "$LIFEOS_IOS_DEVICE" screenshot build/qa/final-screen.png || true
-      - name: Build iPhone package for local Apple ID signing
-        working-directory: mobile/ios-native
-        run: |
-          xcodebuild archive -project LifeOS.xcodeproj -scheme LifeOS -configuration Release -destination 'generic/platform=iOS' -archivePath build/LifeOS.xcarchive -derivedDataPath DerivedData CODE_SIGNING_ALLOWED=NO
-          mkdir -p build/phone/Payload build/dist
-          ditto build/LifeOS.xcarchive/Products/Applications/LifeOS.app build/phone/Payload/LifeOS.app
-          ditto -c -k --keepParent build/phone/Payload build/dist/LifeOS-0.7.1-iphone-unsigned.ipa
       - name: Build clean simulator distribution
         working-directory: mobile/ios-native
         run: |

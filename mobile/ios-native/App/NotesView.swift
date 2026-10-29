@@ -31,7 +31,7 @@ struct NotesView:View {
                                         VStack(alignment:.leading,spacing:14){Image(systemName:book.symbol).font(.system(size:24,weight:.light)).foregroundStyle(Paper.accent)
                                             VStack(alignment:.leading,spacing:5){Text(book.name).font(.subheadline.weight(.semibold));Text("\(store.active.filter{$0.notebookID==book.id}.count) 篇笔记").font(.caption).foregroundStyle(.secondary)}
                                         }.frame(width:145,alignment:.leading).padding(18).background(Paper.surface,in:RoundedRectangle(cornerRadius:19)).overlay(RoundedRectangle(cornerRadius:19).stroke(Paper.line)).foregroundStyle(Paper.ink)
-                                    }.buttonStyle(.plain)
+                                    }.buttonStyle(.plain).accessibilityIdentifier("notebook."+book.id)
                                 }}
                             }
                         }
@@ -65,8 +65,8 @@ struct PageCollection:View {
         List {
             let pages=store.search("",notebook:notebook,tag:tag)
             if pages.isEmpty {EmptyPaper(symbol:"folder",title:"这里还是空白",message:"把相关笔记放在一起，想找时就更容易。") .listRowBackground(Color.clear).listRowSeparator(.hidden)}
-            ForEach(pages){page in Button{open(page)}label:{PageRow(page:page)}.buttonStyle(.plain).swipeActions{Button("废纸篓",role:.destructive){store.trash(page)}}}
-        }.listStyle(.plain).background(Paper.background).scrollContentBackground(.hidden).navigationTitle(title)
+            ForEach(pages){page in Button{open(page)}label:{PageRow(page:page)}.buttonStyle(.plain).accessibilityIdentifier("page."+page.id).swipeActions{Button("废纸篓",role:.destructive){store.trash(page)}}}
+        }.listStyle(.plain).background(Paper.background).scrollContentBackground(.hidden).navigationTitle(title).trashFeedback()
             .toolbar{ToolbarItem(placement:.topBarTrailing){Button{editor=store.create(kind:.note,notebook:notebook)}label:{Image(systemName:"square.and.pencil")}.accessibilityLabel("新建笔记")}}
             .sheet(item:$editor){PageEditor(initial:$0)}
     }

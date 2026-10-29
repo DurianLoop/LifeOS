@@ -146,7 +146,10 @@ final class Repository {
         let terms = query.split(whereSeparator: \.isWhitespace).map(String.init)
         return workspace.pages.filter { page in
             page.deletedAt == nil && (notebook == nil || page.notebookID == notebook) && (tag == nil || page.tags.contains(tag!)) && terms.allSatisfy { term in
-                (page.title + "\n" + page.body + "\n" + page.tags.joined(separator: " ")).localizedStandardContains(term)
+                if term.hasPrefix("#"), !term.hasPrefix("##"), term.count>1 {
+                    return page.tags.contains{$0.localizedStandardContains(String(term.dropFirst()))}
+                }
+                return (page.title + "\n" + page.body + "\n" + page.tags.joined(separator: " ")).localizedStandardContains(term)
             }
         }.sorted { $0.updatedAt > $1.updatedAt }
     }

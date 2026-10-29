@@ -20,15 +20,20 @@ struct GlassControl:ViewModifier {
 extension View {
     func glassControl()->some View{modifier(GlassControl())}
     func pageNavigation()->some View{modifier(PageNavigation())}
+    func trashFeedback()->some View{modifier(TrashFeedback())}
 }
 
 struct PageRoute:Hashable {let id:String}
 private struct PageNavigation:ViewModifier {
+    func body(content:Content)->some View {
+        content.navigationDestination(for:PageRoute.self){PageDetail(pageID:$0.id)}.trashFeedback()
+    }
+}
+private struct TrashFeedback:ViewModifier {
     @EnvironmentObject private var store:LibraryStore
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     func body(content:Content)->some View {
-        content.navigationDestination(for:PageRoute.self){PageDetail(pageID:$0.id)}
-            .safeAreaInset(edge:.bottom,spacing:8){
+        content.safeAreaInset(edge:.bottom,spacing:8){
                 if let pending=store.pendingTrash {
                     HStack(spacing:12){
                         Image(systemName:"trash").accessibilityHidden(true)
