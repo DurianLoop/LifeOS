@@ -21,7 +21,7 @@ struct RootView:View {
     var body:some View {
         Group {
             if store.unavailable {
-                EmptyPaper(symbol:"externaldrive.badge.exclamationmark",title:"资料库需要恢复",message:store.error ?? "原有文件已保留，请从设备备份恢复后重试。",action:"从完整备份恢复"){recoveryImport=true}
+                EmptyPaper(title:"资料库需要恢复",message:store.error ?? "原有文件已保留，请从设备备份恢复后重试。",action:"从完整备份恢复"){recoveryImport=true}
             } else {
                 TabView(selection:$tab){
                     NotesView(create:{if let p=store.create(kind:.note){editor=p}}).tabItem{Label("笔记",systemImage:"doc.text")}.tag(Destination.notes)

@@ -35,3 +35,5 @@ The original bundle ID is retained for future signed upgrades. Legacy workspaces
 Data stays in Application Support/LifeOSNative. A previous snapshot is retained before each atomic write. A failed read never silently overwrites an unreadable library. All deletion goes to reversible Trash. Backups are portable, not additionally encrypted, and need to be kept in a trusted location. There is no automatic multi-device synchronization.
 
 See [the design and scope](../../docs/IOS_REBUILD.md). Existing desktop, website and Android clients are unaffected by this target.
+
+The 0.7.2 simplification removes decorative slogans, large notebook cards, input placeholders, synthetic reading previews, and generated formatting text. Creation lives in the native toolbar; collection rows and journal reading use a plain paper layout. Empty libraries show actual state without demo records. Test fixtures are compiled only in Debug and are checked absent from both Release app binaries. Existing notes and backups remain compatible.

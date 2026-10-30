@@ -15,7 +15,11 @@ import UniformTypeIdentifiers
     init() {
         do {
             let support = try FileManager.default.url(for:.applicationSupportDirectory,in:.userDomainMask,appropriateFor:nil,create:true)
+            #if DEBUG
             let test = ProcessInfo.processInfo.arguments.contains("--ui-testing")
+            #else
+            let test = false
+            #endif
             let preferred=UserDefaults.standard.string(forKey:"libraryFolder") ?? "LifeOSNative"
             let valid=preferred=="LifeOSNative" || (preferred.hasPrefix("LifeOSRecovered-") && UUID(uuidString:String(preferred.dropFirst(16))) != nil)
             let root = support.appendingPathComponent(test ? "LifeOSAcceptance" : valid ? preferred : "LifeOSNative",isDirectory:true)
@@ -25,7 +29,9 @@ import UniformTypeIdentifiers
             }
             let repo = try Repository(root:root)
             repository = repo; workspace = repo.workspace; notice = repo.recoveryMessage
+            #if DEBUG
             if test && ProcessInfo.processInfo.arguments.contains("--seed-library") && workspace.pages.isEmpty { try seed() }
+            #endif
             if !test && workspace.pages.isEmpty { discoverLegacy(support:support) }
         } catch { self.error = error.localizedDescription; unavailable = true }
     }
@@ -144,6 +150,7 @@ import UniformTypeIdentifiers
             break
         }
     }
+    #if DEBUG
     private func seed() throws {
         let books=[Notebook(id:"life",name:"生活札记",symbol:"leaf"),Notebook(id:"ideas",name:"想法与阅读",symbol:"book.closed")]
         var pages=[
@@ -155,6 +162,7 @@ import UniformTypeIdentifiers
         pages[0].revisions=[Revision(title:"给生活留一点空白",body:"给自己留一段没有安排的下午。")]
         try repository?.commit(Workspace(notebooks:books,pages:pages));workspace=repository!.workspace
     }
+    #endif
 }
 
 struct TrashUndo:Identifiable {

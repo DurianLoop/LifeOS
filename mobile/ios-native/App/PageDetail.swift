@@ -29,8 +29,7 @@ struct PageDetail:View {
                             HStack{Text(page.updatedAt,format:.dateTime.month().day().hour().minute());Text("·");Text("\(page.wordCount) 字")}.font(.caption).foregroundStyle(.secondary)
                             if !page.tags.isEmpty{FlowTags(tags:page.tags)}
                             Divider()
-                            if page.body.isEmpty{Text("这一页还留着空白。轻点编辑，开始写下第一句。").font(.body).foregroundStyle(.secondary).padding(.vertical,24)}
-                            else {MarkdownBody(body:page.body,serif:serif,spacing:comfortable ? 11 : 5,onToggle:{line in toggleTask(line,page:page)})}
+                            if !page.body.isEmpty {MarkdownBody(body:page.body,serif:serif,spacing:comfortable ? 11 : 5,onToggle:{line in toggleTask(line,page:page)})}
                             if !page.attachments.isEmpty {
                                 SectionCaption(title:"附件",trailing:"\(page.attachments.count)")
                                 ForEach(page.attachments){item in Button{attachment=store.attachmentURL(item)}label:{HStack(spacing:12){Image(systemName:"paperclip");VStack(alignment:.leading,spacing:4){Text(item.name).lineLimit(2);Text(ByteCountFormatter.string(fromByteCount:Int64(item.bytes),countStyle:.file)).font(.caption).foregroundStyle(.secondary)};Spacer();Image(systemName:"arrow.up.right")}.padding(15).background(Paper.background,in:RoundedRectangle(cornerRadius:14))}.buttonStyle(.plain)}
@@ -40,10 +39,9 @@ struct PageDetail:View {
                                 Divider().padding(.top,18);SectionCaption(title:"提到这一页",trailing:"\(backlinks.count) 条关联")
                                 ForEach(backlinks){item in Button{linked=LinkedPage(id:item.id)}label:{Label(item.displayTitle,systemImage:"link").font(.subheadline).padding(.vertical,6)} }
                             }
-                            Text("保存在本机").font(.caption2).foregroundStyle(.tertiary).frame(maxWidth:.infinity).padding(.vertical,36)
-                        }.padding(.horizontal,27).frame(maxWidth:710).frame(maxWidth:.infinity)
+                        }.padding(.horizontal,25).padding(.bottom,28).frame(maxWidth:710).frame(maxWidth:.infinity)
                     }.background(Paper.surface)
-                } else {EmptyPaper(symbol:"doc",title:"这一页暂不可用",message:"返回资料库，再试一次。")}
+                } else {EmptyPaper(title:"笔记不可用",message:"返回资料库后重试。")}
             }
             .navigationTitle("阅读").navigationBarTitleDisplayMode(.inline).trashFeedback()
             .toolbar{
@@ -137,7 +135,7 @@ struct HistoryView:View {
     var body:some View {
         NavigationStack {
             List {
-                if page.revisions.isEmpty{EmptyPaper(symbol:"clock.arrow.circlepath",title:"还没有历史版本",message:"继续写作后，修改前的内容会在这里留存。\n连续输入会合并为约五分钟一次的版本。") .listRowBackground(Color.clear)}
+                if page.revisions.isEmpty{EmptyPaper(title:"暂无历史版本").listRowBackground(Color.clear)}
                 ForEach(page.revisions.reversed()){revision in Button{selected=revision}label:{VStack(alignment:.leading,spacing:8){Text(revision.date,format:.dateTime.month().day().hour().minute()).font(.subheadline.weight(.medium));Text(revision.body).font(.subheadline).foregroundStyle(.secondary).lineLimit(3)}.padding(.vertical,8)}.buttonStyle(.plain)}
             }.scrollContentBackground(.hidden).background(Paper.background).navigationTitle("历史版本").navigationBarTitleDisplayMode(.inline).toolbar{ToolbarItem(placement:.confirmationAction){Button("完成"){dismiss()}}}
                 .sheet(item:$selected){revision in NavigationStack{ScrollView{VStack(alignment:.leading,spacing:20){Text(revision.title).font(.title2);MarkdownBody(body:revision.body,serif:true)}.padding(26)}.navigationTitle("版本预览").navigationBarTitleDisplayMode(.inline).toolbar{ToolbarItem(placement:.confirmationAction){Button("恢复此版本"){store.restoreRevision(revision,page:page);selected=nil;dismiss()}};ToolbarItem(placement:.cancellationAction){Button("取消"){selected=nil}}}}}

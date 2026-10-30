@@ -30,11 +30,13 @@ struct PageEditor:View {
                         Label(page == saved ? (store.page(page.id)==nil ? "草稿" : "已保存") : "正在保存…",systemImage:page == saved ? "checkmark" : "circle.dotted").accessibilityIdentifier("editor.status")
                     }
                 }.font(.caption).foregroundStyle(.secondary).padding(.horizontal,25).padding(.top,20).padding(.bottom,16)
-                TextField("给这一页起个名字",text:$page.title,axis:.vertical).font(.system(.title,design:.default).weight(.semibold)).textFieldStyle(.plain).focused($titleFocused).padding(.horizontal,25).padding(.bottom,19).accessibilityIdentifier("editor.title")
+                VStack(alignment:.leading,spacing:6){
+                    Text("标题").font(.caption).foregroundStyle(.secondary)
+                    TextField("",text:$page.title,axis:.vertical).font(.system(.title2,design:.default).weight(.semibold)).textFieldStyle(.plain).focused($titleFocused).accessibilityLabel("标题").accessibilityIdentifier("editor.title")
+                }.padding(.horizontal,25).padding(.bottom,16)
                 if !page.tags.isEmpty{FlowTags(tags:page.tags).padding(.horizontal,25).padding(.bottom,14)}
                 Divider().padding(.horizontal,25)
                 NativeMarkdownEditor(text:$page.body,requestFocus:$requestBodyFocus)
-                    .overlay(alignment:.topLeading){if page.body.isEmpty{Text(page.kind == .journal ? "今天，有什么想记住的？" : "写下一句话，让想法开始。") .font(.body).foregroundStyle(.tertiary).padding(.horizontal,25).padding(.top,23).allowsHitTesting(false).accessibilityHidden(true)}}
                 if !page.attachments.isEmpty {
                     ScrollView(.horizontal,showsIndicators:false){HStack{ForEach(page.attachments){item in Label(item.name,systemImage:"paperclip").font(.caption).padding(10).background(Paper.background,in:Capsule())}}.padding(.horizontal,20)}.frame(maxHeight:55)
                 }
@@ -94,7 +96,7 @@ struct PropertiesView:View {
                     }
                     Toggle("置顶",isOn:$page.pinned)
                 }
-                Section{TextField("生活, 阅读, 灵感",text:$tags).autocorrectionDisabled().textInputAutocapitalization(.never).accessibilityIdentifier("properties.tags")}header:{Text("标签")}footer:{Text("用逗号分隔。用 [[笔记标题]] 可以在正文中关联另一页。")}
+                Section{TextField("",text:$tags).accessibilityLabel("标签").autocorrectionDisabled().textInputAutocapitalization(.never).accessibilityIdentifier("properties.tags")}header:{Text("标签")}footer:{Text("用逗号分隔。")}
             }.navigationTitle("笔记属性").navigationBarTitleDisplayMode(.inline).onAppear{tags=page.tags.joined(separator:", ")}.onDisappear{applyTags()}
                 .toolbar{ToolbarItem(placement:.confirmationAction){Button("完成"){applyTags();dismiss()}.accessibilityIdentifier("properties.done")}}
         }.presentationDetents([.medium,.large])
@@ -151,11 +153,11 @@ struct NativeMarkdownEditor:UIViewRepresentable {
         weak var view:UITextView?
         init(_ parent:NativeMarkdownEditor){self.parent=parent}
         func textViewDidChange(_ textView:UITextView){parent.text=textView.text}
-        func insert(_ prefix:String,_ suffix:String="",placeholder:String=""){
+        func insert(_ prefix:String,_ suffix:String=""){
             guard let view else{return}
             let selection=view.selectedRange
             let old=view.text as NSString
-            let selected=selection.length>0 ? old.substring(with:selection) : placeholder
+            let selected=selection.length>0 ? old.substring(with:selection) : ""
             let replacement=prefix+selected+suffix
             guard let start=view.position(from:view.beginningOfDocument,offset:selection.location),let end=view.position(from:start,offset:selection.length),let range=view.textRange(from:start,to:end)else{return}
             view.replace(range,withText:replacement)
@@ -163,9 +165,9 @@ struct NativeMarkdownEditor:UIViewRepresentable {
             parent.text=view.text
         }
         @objc func heading(){insert("\n## ")}
-        @objc func bold(){insert("**","**",placeholder:"加粗文字")}
+        @objc func bold(){insert("**","**")}
         @objc func checklist(){insert("\n- [ ] ")}
-        @objc func link(){insert("[[","]]",placeholder:"笔记标题")}
+        @objc func link(){insert("[[","]]")}
         @objc func endEditing(){view?.resignFirstResponder()}
     }
 }

@@ -64,18 +64,16 @@ struct SectionCaption:View {
     }
 }
 struct EmptyPaper:View {
-    var symbol:String
     var title:String
-    var message:String
+    var message:String=""
     var action:String?=nil
     var perform:(()->Void)?=nil
     var body:some View {
-        VStack(spacing:16){
-            Image(systemName:symbol).font(.system(size:34,weight:.ultraLight)).foregroundStyle(Paper.accent).frame(height:52).accessibilityHidden(true)
-            Text(title).font(.title3.weight(.semibold))
-            Text(message).font(.subheadline).foregroundStyle(.secondary).multilineTextAlignment(.center).lineSpacing(5)
+        VStack(spacing:12){
+            Text(title).font(.subheadline).foregroundStyle(.secondary)
+            if !message.isEmpty {Text(message).font(.subheadline).foregroundStyle(.secondary).multilineTextAlignment(.center).lineSpacing(4)}
             if let action,let perform{Button(action,action:perform).buttonStyle(.borderedProminent).buttonBorderShape(.capsule).controlSize(.large).padding(.top,6)}
-        }.frame(maxWidth:460).padding(.horizontal,30).padding(.vertical,54).frame(maxWidth:.infinity)
+        }.frame(maxWidth:460).padding(.horizontal,22).padding(.vertical,28).frame(maxWidth:.infinity)
     }
 }
 struct PageRow:View {
@@ -83,8 +81,7 @@ struct PageRow:View {
     var book:String?=nil
     var query:String=""
     var body:some View {
-        HStack(alignment:.top,spacing:15){
-            Image(systemName:page.kind == .journal ? "sun.horizon" : "doc.text").font(.system(size:21,weight:.light)).foregroundStyle(Paper.accent).frame(width:27).padding(.top,3).accessibilityHidden(true)
+        HStack(alignment:.top,spacing:12){
             VStack(alignment:.leading,spacing:7){
                 HStack(alignment:.firstTextBaseline){Text(page.displayTitle).font(.body.weight(.medium)).foregroundStyle(Paper.ink).lineLimit(2);if page.pinned{Image(systemName:"pin.fill").font(.caption2).foregroundStyle(.tertiary)}}
                 if !page.excerpt.isEmpty{Text(query.isEmpty ? page.excerpt : page.searchExcerpt(query)).font(.subheadline).foregroundStyle(.secondary).lineLimit(2).lineSpacing(3)}

@@ -11,8 +11,8 @@ struct LibraryView:View {
         NavigationStack {
             List {
                 Section {
-                    HStack(spacing:18){Image(systemName:"books.vertical").font(.system(size:32,weight:.ultraLight)).foregroundStyle(Paper.accent);VStack(alignment:.leading,spacing:7){Text("你的私人资料库").font(.headline);Text("\(store.active.count) 篇笔记 · \(store.workspace.notebooks.count) 本笔记本").font(.subheadline).foregroundStyle(.secondary)}}.padding(.vertical,12)
-                }
+                    Text("\(store.active.count) 篇笔记 · \(store.workspace.notebooks.count) 本笔记本").font(.subheadline).foregroundStyle(.secondary).accessibilityIdentifier("library.count")
+                }.listRowBackground(Color.clear)
                 Section {
                     ForEach(store.workspace.notebooks){book in
                         NavigationLink{PageCollection(title:book.name,notebook:book.id)}label:{Label(book.name,systemImage:book.symbol)}
@@ -22,18 +22,17 @@ struct LibraryView:View {
                             }
                     }
                     Button{renaming=nil;bookName="";newBook=true}label:{Label("新建笔记本",systemImage:"plus")}.accessibilityIdentifier("library.addNotebook")
-                }header:{Text("笔记本")}footer:{Text("笔记只属于一个笔记本，也可以用多个标签串联。")}
+                }header:{Text("笔记本")}
                 if !store.allTags.isEmpty {Section("标签"){ForEach(store.allTags,id:\.self){tag in NavigationLink{PageCollection(title:"#"+tag,tag:tag)}label:{Label(tag,systemImage:"number")}}}}
                 Section {
                     NavigationLink{TrashView()}label:{Label("废纸篓",systemImage:"trash")}.accessibilityIdentifier("library.trash")
                     NavigationLink{TransferView()}label:{Label("导入与备份",systemImage:"arrow.up.arrow.down")}
                     NavigationLink{SettingsView()}label:{Label("外观与阅读",systemImage:"textformat.size")}.accessibilityIdentifier("library.settings")
                 }
-                Section {VStack(alignment:.leading,spacing:8){Text("以自己的节奏积累。").font(.system(.title3,design:.serif));Text("本地保存 · 无需账号 · 不自动上传").font(.caption).foregroundStyle(.secondary)}.padding(.vertical,10).listRowBackground(Color.clear)}
             }
-            .scrollContentBackground(.hidden).background(Paper.background).navigationTitle("资料库").trashFeedback()
+            .scrollContentBackground(.hidden).background(Paper.background).navigationTitle("资料库").navigationBarTitleDisplayMode(.inline).trashFeedback()
             .alert(renaming == nil ? "新建笔记本" : "重命名",isPresented:$newBook){
-                TextField("笔记本名称",text:$bookName)
+                TextField("",text:$bookName).accessibilityLabel("笔记本名称")
                 Button("取消",role:.cancel){renaming=nil}
                 Button(renaming == nil ? "创建" : "保存"){
                     let name=String(bookName.trimmingCharacters(in:.whitespacesAndNewlines).prefix(60))
@@ -65,14 +64,8 @@ struct SettingsView:View {
         Form {
             Section("外观") {Picker("显示模式",selection:$appearance){Text("跟随系统").tag("system");Text("浅色").tag("light");Text("深色").tag("dark")}.pickerStyle(.menu).accessibilityIdentifier("settings.appearance")}
             Section {Toggle("衬线字体",isOn:$serif);Toggle("舒展的行距",isOn:$comfortable)}header:{Text("阅读")}footer:{Text("字号随 iPhone 的系统文字大小调整，也支持辅助功能中的更大字体。")}
-            Section("阅读预览"){
-                VStack(alignment:.leading,spacing:16){
-                    Text("给生活留一点空白").font(.system(.title3,design:serif ? .serif : .default).weight(.semibold))
-                    Text("从一句话开始，慢慢写下去。\n那些细小而明亮的时刻，值得被记住。") .font(.system(.body,design:serif ? .serif : .default)).lineSpacing(comfortable ? 8 : 3)
-                }.padding(.vertical,14).accessibilityElement(children:.combine)
-            }
             Section{NavigationLink("导入与备份"){TransferView()}}
-            Section("关于 LifeOS"){LabeledContent("版本",value:"0.7.1");Text("一个安静的地方，用来写下生活、安放想法。\n\n日记与附件保存在本机。请定期导出完整备份，卸载应用会移除设备上的数据。").font(.footnote).foregroundStyle(.secondary).lineSpacing(5)}
+            Section("关于 LifeOS"){LabeledContent("版本",value:"0.7.2");Text("资料保存在本机。卸载前请导出完整备份。").font(.footnote).foregroundStyle(.secondary)}
         }.scrollContentBackground(.hidden).background(Paper.background).navigationTitle("外观与阅读").navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -82,7 +75,7 @@ struct TrashView:View {
     var body:some View {
         List {
             let pages=store.workspace.pages.filter{$0.deletedAt != nil}.sorted{$0.deletedAt! > $1.deletedAt!}
-            if pages.isEmpty{EmptyPaper(symbol:"trash",title:"废纸篓是空的",message:"删除的笔记会留在这里，\n需要时可以恢复。") .listRowBackground(Color.clear).listRowSeparator(.hidden)}
+            if pages.isEmpty{EmptyPaper(title:"废纸篓为空").listRowBackground(Color.clear).listRowSeparator(.hidden)}
             ForEach(pages){page in VStack(alignment:.leading,spacing:9){PageRow(page:page);Button("恢复笔记",systemImage:"arrow.uturn.backward"){store.restore(page)}.accessibilityIdentifier("trash.restore."+page.id)}.padding(.bottom,12)}
         }.navigationTitle("废纸篓").listStyle(.plain).scrollContentBackground(.hidden).background(Paper.background)
     }
@@ -98,11 +91,11 @@ struct TransferView:View {
         Form {
             Section {
                 Button{importing=true}label:{Label("从文件导入",systemImage:"square.and.arrow.down")}.accessibilityIdentifier("transfer.import")
-            }header:{Text("把旧的文字带来")}footer:{Text("支持 Markdown、TXT、新版 LifeOS JSON 完整备份，以及旧版 LifeOS 工作区 ZIP。导入前会显示预览，已有笔记不会被覆盖。")}
+            }header:{Text("导入")}footer:{Text("支持 Markdown、TXT、LifeOS 完整备份和旧版工作区 ZIP。导入前可预览，已有笔记保留。")}
             Section {
                 Button{exportBackup()}label:{HStack{Label("导出完整备份",systemImage:"externaldrive");Spacer();if working{ProgressView()}}}.disabled(working).accessibilityIdentifier("transfer.export")
-            }header:{Text("为资料留一份副本")}footer:{Text("备份包含笔记、笔记本、标签、历史版本、废纸篓和附件。请存入“文件”或你信任的位置；备份文件未额外加密，请自行妥善保管。")}
-            Section("关于同步"){Text("资料保存在这台设备。当前版本暂不自动同步到其他设备；可通过完整备份迁移。若开启系统设备备份，数据由你的系统备份设置管理。").font(.subheadline).foregroundStyle(.secondary).lineSpacing(4)}
+            }header:{Text("备份")}footer:{Text("包含笔记、历史版本、废纸篓和附件。备份文件未加密，请妥善保存。")}
+            Section{Text("当前不自动跨设备同步，可通过完整备份迁移。").font(.footnote).foregroundStyle(.secondary)}
         }.scrollContentBackground(.hidden).background(Paper.background).navigationTitle("导入与备份").navigationBarTitleDisplayMode(.inline)
             .fileImporter(isPresented:$importing,allowedContentTypes:[.plainText,.json,.zip,UTType(filenameExtension:"md") ?? .plainText],allowsMultipleSelection:true){result in
                 switch result{case .success(let urls):store.previewImport(urls);case .failure(let error):store.error=error.localizedDescription}
@@ -124,7 +117,7 @@ struct ImportPreviewView:View {
         NavigationStack {
             List {
                 if let preview=store.importPreview{
-                    Section{VStack(alignment:.leading,spacing:12){Image(systemName:"tray.and.arrow.down").font(.largeTitle).foregroundStyle(Paper.accent);Text("让这些文字，\n在这里继续。").font(.system(.title,design:.serif));Text("\(preview.workspace.pages.count) 篇笔记 · \(preview.workspace.pages.flatMap(\.attachments).count) 个附件").font(.subheadline).foregroundStyle(.secondary)}.padding(.vertical,20)}
+                    Section{Text("\(preview.workspace.pages.count) 篇笔记 · \(preview.workspace.pages.flatMap(\.attachments).count) 个附件").font(.subheadline).foregroundStyle(.secondary)}
                     Section("即将导入"){ForEach(preview.workspace.pages.prefix(30)){page in PageRow(page:page)}}
                     Section{Text("已有内容会保留。相同内容会跳过；同一标识但内容不同的笔记会另存为副本。旧工作区原件保持可用。").font(.footnote).foregroundStyle(.secondary)}
                 }

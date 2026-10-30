@@ -1,12 +1,12 @@
 # 在 iPhone 上免费使用 LifeOS
 
-无需一定从 App Store 下载。你可以在自己的 Windows 电脑上，用免费 Apple 账号给 LifeOS 签名并装到自己的手机。本轮提供 `LifeOS-0.7.1-iphone-unsigned.ipa`：这是为 iPhone 编译的 arm64 应用，签名由你本机的安装工具完成。模拟器 ZIP 不能用于手机安装。
+无需一定从 App Store 下载。你可以在自己的 Windows 电脑上，用免费 Apple 账号给 LifeOS 签名并装到自己的手机。本轮提供 `LifeOS-0.7.2-iphone-unsigned.ipa`：这是为 iPhone 编译的 arm64 应用，签名由你本机的安装工具完成。模拟器 ZIP 不能用于手机安装。
 
 ## Windows：Sideloadly
 
 1. 从 [Sideloadly 官网](https://sideloadly.io/) 下载 Windows 版本，按官网提示准备 Apple 驱动和所需的 iTunes、iCloud 组件。使用官方来源的安装程序。
 2. 用数据线连接 iPhone，在手机上选择“信任此电脑”，保持设备解锁。
-3. 打开 Sideloadly，选择这台 iPhone，把 `LifeOS-0.7.1-iphone-unsigned.ipa` 拖入工具。
+3. 打开 Sideloadly，选择这台 iPhone，把 `LifeOS-0.7.2-iphone-unsigned.ipa` 拖入工具。
 4. 在工具中输入你自己的 Apple 账号，并在你自己的设备上完成验证。账号、密码和验证码不需要发给开发者，也不需要写入 LifeOS。
 5. 点击 Start，等待签名及安装。按手机提示，在“设置 → 通用 → VPN 与设备管理”信任对应的开发者；若要求开发者模式，按“设置 → 隐私与安全 → 开发者模式”的提示启用。
 6. 打开 LifeOS，创建一条测试笔记，退出应用后重开，确认内容仍在。再从“资料库 → 导入与备份”保存一份完整备份。
